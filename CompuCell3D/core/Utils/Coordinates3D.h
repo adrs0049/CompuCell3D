@@ -1,6 +1,7 @@
 #ifndef COORDINATES3D_H
 #define COORDINATES3D_H
 #include <iostream>
+#include <cmath>
 
 ///T must provide copy constructor and operator=
 template <typename T>
@@ -8,9 +9,9 @@ class Coordinates3D{
 
    public:
       Coordinates3D():
-                     x(T()),
-                     y(T()),
-                     z(T())
+                     x(T(0)),
+                     y(T(0)),
+                     z(T(0))
                      
       {}
       
@@ -48,7 +49,13 @@ class Coordinates3D{
          return *this;
       }
       
-
+	  Coordinates3D<T> & operator*=(T val)
+	  {
+		 x*=val;
+		 y*=val;
+		 z*=val;
+		 return *this;
+	  }
    
       T x;
       T y;
@@ -62,7 +69,6 @@ Coordinates3D<T> crossProduct(const Coordinates3D<T> &a,const Coordinates3D<T> &
    return Coordinates3D<T>(a.y*b.z-a.z*b.y , a.z*b.x-a.x*b.z , a.x*b.y-a.y*b.x);
 }
 
-
 template<typename T>
 Coordinates3D<T> operator+(const Coordinates3D<T> &a,const Coordinates3D<T> &b){
    return Coordinates3D<T>(a.X()+b.X(),a.Y()+b.Y(),a.Z()+b.Z());
@@ -73,9 +79,26 @@ Coordinates3D<T> operator-(const Coordinates3D<T> &a,const Coordinates3D<T> &b){
    return Coordinates3D<T>(a.X()-b.X(),a.Y()-b.Y(),a.Z()-b.Z());
 }
 
+template<typename T>
+Coordinates3D<T> operator*(const Coordinates3D<T> &a, T val){
+	Coordinates3D<T> r (a);
+	r*=val;
+	return r;
+}
+
+template<typename T>
+Coordinates3D<T> operator*(T val, const Coordinates3D<T> &a){
+	return Coordinates3D<T>(a*val);
+}
+
 template<typename T> //scalar product
 T operator*(const Coordinates3D<T> &a,const Coordinates3D<T> &b){
    return a.x*b.x+a.y*b.y+a.z*b.z;
+}
+
+template<typename T>
+T norm2(const Coordinates3D<T> &a){
+	return std::sqrt(a * a);
 }
    
 template<typename T>
