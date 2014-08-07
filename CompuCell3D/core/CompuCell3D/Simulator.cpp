@@ -484,15 +484,12 @@ void Simulator::processMetadataCC3D(CC3DXMLElement * _xmlData){
 
 }
 
-void Simulator::initializeCC3D(){
-
-
+void Simulator::initializeCC3D()
+{
 	try{
 		cerr<<"BEFORE initializePotts"<<endl;
 		//initializePotts(ps.pottsParseData);
 		initializePottsCC3D(ps.pottsCC3DXMLElement);
-		
-
 
 		//initializing parallel utils  - OpenMP
 		pUtils->init(potts.getCellFieldG()->getDim());
@@ -500,19 +497,16 @@ void Simulator::initializeCC3D(){
         
         //initializing parallel utils  - OpenMP  - for single CPU runs of selecte modules
         pUtilsSingle->init(potts.getCellFieldG()->getDim());
-
-        
         
 		//after pUtils have been initialized we process metadata -  in this function potts may get pUtils limiting it to use single thread
 		processMetadataCC3D(ps.metadataCC3DXMLElement);
-
 
 		cerr<<"AFTER initializePotts"<<endl;
 		std::set<std::string> initializedPlugins;
 		std::set<std::string> initializedSteppables;
 
-		for(size_t i=0; i <ps.pluginCC3DXMLElementVector.size(); ++i){
-
+		for(size_t i=0; i <ps.pluginCC3DXMLElementVector.size(); ++i)
+		{
 			std::string pluginName = ps.pluginCC3DXMLElementVector[i]->getAttribute("Name");
 			bool pluginAlreadyRegisteredFlag=false;
 			Plugin *plugin = pluginManager.get(pluginName,&pluginAlreadyRegisteredFlag);
@@ -564,13 +558,14 @@ void Simulator::initializeCC3D(){
 
 
 
-void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
-
-	cerr<<"INSIDE initializePottsCC3D="<<endl;
+void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
+{
+	cerr<<"INSIDE: initializingPottsCC3D..."<<endl;
 	//registering Potts as SteerableObject
 	registerSteerableObject(&potts);
 
-	if (!ppdCC3DPtr){
+	if (!ppdCC3DPtr)
+	{
 		delete ppdCC3DPtr;
 		ppdCC3DPtr=0;
 	}
@@ -579,29 +574,24 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
 
 	cerr<<"ppdCC3DPtr="<<ppdCC3DPtr<<"ppdCC3DPtr->dim="<<ppdCC3DPtr->dim<<endl;
 
-	cerr<<"_xmlData->getFirstElement(Dimensions)->getAttributeAsUInt(x)="<<_xmlData->getFirstElement("Dimensions")->getAttributeAsUInt("x")<<endl;
-	cerr<<"_xmlData->getFirstElement(Dimensions)->getAttributeAsUInt(y)="<<_xmlData->getFirstElement("Dimensions")->getAttributeAsUInt("y")<<endl;
-	cerr<<"_xmlData->getFirstElement(Dimensions)->getAttributeAsUInt(z)="<<_xmlData->getFirstElement("Dimensions")->getAttributeAsUInt("z")<<endl;
-
+	cerr<<"Dim_x (xml)="<<_xmlData->getFirstElement("Dimensions")->getAttributeAsUInt("x")<<endl;
+	cerr<<"Dim_y (xml)="<<_xmlData->getFirstElement("Dimensions")->getAttributeAsUInt("y")<<endl;
+	cerr<<"Dim_z (xml)="<<_xmlData->getFirstElement("Dimensions")->getAttributeAsUInt("z")<<endl;
+	
 	ppdCC3DPtr->dim.x = _xmlData->getFirstElement("Dimensions")->getAttributeAsUInt("x");
 	ppdCC3DPtr->dim.y = _xmlData->getFirstElement("Dimensions")->getAttributeAsUInt("y");
 	ppdCC3DPtr->dim.z = _xmlData->getFirstElement("Dimensions")->getAttributeAsUInt("z");
 
-	
-	//if (_xmlData->getFirstElement("FluctuationAmplitude")) {
-	//	ppdCC3DPtr->temperature=_xmlData->getFirstElement("FluctuationAmplitude")->getDouble();
-	//	fluctAmplGlobalReadFlag=true;
-	//}
-
-	
 	bool fluctAmplGlobalReadFlag=false;
 
 	bool fluctAmplByTypeReadFlag=false;
-	if(_xmlData->getFirstElement("FluctuationAmplitude")){
+	if(_xmlData->getFirstElement("FluctuationAmplitude"))
+	{
 		if (_xmlData->getFirstElement("FluctuationAmplitude")->findElement("FluctuationAmplitudeParameters")){
 		
 			CC3DXMLElementList motilityVec=_xmlData->getFirstElement("FluctuationAmplitude")->getElements("FluctuationAmplitudeParameters");
-			for (size_t i = 0 ; i<motilityVec.size(); ++i){
+			for (size_t i = 0 ; i<motilityVec.size(); ++i)
+			{
 				CellTypeMotilityData motilityData;
 
 				motilityData.typeName=motilityVec[i]->getAttribute("CellType");
@@ -616,14 +606,14 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
 		
 	}	
 
-	if (!fluctAmplGlobalReadFlag && _xmlData->getFirstElement("Temperature")) {
+	if (!fluctAmplGlobalReadFlag && _xmlData->getFirstElement("Temperature")) 
 		ppdCC3DPtr->temperature=_xmlData->getFirstElement("Temperature")->getDouble();
-	}
 
-
-	if(!fluctAmplByTypeReadFlag && _xmlData->getFirstElement("CellMotility")){
+	if(!fluctAmplByTypeReadFlag && _xmlData->getFirstElement("CellMotility"))
+	{
 		CC3DXMLElementList motilityVec=_xmlData->getFirstElement("CellMotility")->getElements("MotilityParameters");
-		for (size_t i = 0 ; i<motilityVec.size(); ++i){
+		for (size_t i = 0 ; i<motilityVec.size(); ++i)
+		{
 			CellTypeMotilityData motilityData;
 
 			motilityData.typeName=motilityVec[i]->getAttribute("CellType");
@@ -632,19 +622,21 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
 		}
 	}	
 
-	if (_xmlData->getFirstElement("Steps")) {
+	if (_xmlData->getFirstElement("Steps")) 
+	{
+		cerr<<"Steps="<<_xmlData->getFirstElement("Steps")->getUInt();
 		ppdCC3DPtr->numSteps=_xmlData->getFirstElement("Steps")->getUInt();
 	}
-	if (_xmlData->getFirstElement("Anneal")) {
+	if (_xmlData->getFirstElement("Anneal")) 
+	{
+		cerr<<"Anneal="<<_xmlData->getFirstElement("Anneal")->getUInt();
 		ppdCC3DPtr->anneal=_xmlData->getFirstElement("Anneal")->getUInt();
 	}
-	if (_xmlData->getFirstElement("Flip2DimRatio")) {
+	if (_xmlData->getFirstElement("Flip2DimRatio")) 
+	{
+		cerr<<"Flip2DimRatio="<<_xmlData->getFirstElement("Flip2DimRatio")->getUInt();
 		ppdCC3DPtr->flip2DimRatio=_xmlData->getFirstElement("Flip2DimRatio")->getDouble();
 	}
-
-
-
-
 
 	ASSERT_OR_THROW("You must set Dimensions!", ppdCC3DPtr->dim.x!=0 || ppdCC3DPtr->dim.y!=0 || ppdCC3DPtr->dim.z!=0);
 	potts.createCellField(ppdCC3DPtr->dim);
@@ -653,19 +645,19 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
 	//cerr<<"Flip2DimRatio="<<_xmlData->getFirstElement("Flip2DimRatio")->getDouble()<<endl;
 
 	std::string metropolisAlgorithmName="";
-	if(_xmlData->getFirstElement("MetropolisAlgorithm"))
+	if(_xmlData->getFirstElement("MetropolisAlgorithm")) 
+	{
+		cerr << "MetropolisAlgorithm (xml)= " << _xmlData->getFirstElement("MetropolisAlgorithm")->getText() << endl;
 		metropolisAlgorithmName = _xmlData->getFirstElement("MetropolisAlgorithm")->getText();
-
-	cerr << "_ppdCC3DPtr->algorithmName = " << metropolisAlgorithmName << endl;
-
-	if(metropolisAlgorithmName!=""){
-		potts.setMetropolisAlgorithm(metropolisAlgorithmName);
 	}
 
+	if(metropolisAlgorithmName!="")
+		potts.setMetropolisAlgorithm(metropolisAlgorithmName);
+	
+	cerr<<"MetropolisAlgorithm="<<metropolisAlgorithmName<<endl;
 
-
-
-	if(!_xmlData->getFirstElement("RandomSeed")){
+	if(!_xmlData->getFirstElement("RandomSeed"))
+	{
 		srand((unsigned int)time(0));
 		unsigned int randomSeed=(unsigned int)rand()*((std::numeric_limits<unsigned int>::max)()-1);
 
@@ -677,10 +669,10 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
 		ppdCC3DPtr->seed=_xmlData->getFirstElement("RandomSeed")->getUInt();
 	}
 
-	cerr << " ppdCC3DPtr->seed = " << ppdCC3DPtr->seed << endl;
+	cerr << "ppdCC3DPtr->seed = " << ppdCC3DPtr->seed << endl;
 	
-
-	if (_xmlData->getFirstElement("Shape")) {
+	if (_xmlData->getFirstElement("Shape")) 
+	{
 		ppdCC3DPtr->shapeFlag=true;
 		ppdCC3DPtr->shapeAlgorithm = _xmlData->getFirstElement("Shape")->getAttribute("Algorithm");
 		ppdCC3DPtr->shapeIndex = _xmlData->getFirstElement("Shape")->getAttributeAsInt("Index");
@@ -689,47 +681,38 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
 		ppdCC3DPtr->shapeReg = _xmlData->getFirstElement("Shape")->getText();
 	}
 
-
-	if (_xmlData->getFirstElement("Boundary_x")) {
+	if (_xmlData->getFirstElement("Boundary_x")) 
 		ppdCC3DPtr->boundary_x = _xmlData->getFirstElement("Boundary_x")->getText();
-	}
-	if (_xmlData->getFirstElement("Boundary_y")) {
+	if (_xmlData->getFirstElement("Boundary_y")) 
 		ppdCC3DPtr->boundary_y = _xmlData->getFirstElement("Boundary_y")->getText();
-	}
-
-	if (_xmlData->getFirstElement("Boundary_z")) {
+	if (_xmlData->getFirstElement("Boundary_z")) 
 		ppdCC3DPtr->boundary_z = _xmlData->getFirstElement("Boundary_z")->getText();
-	}
 
 	//Initializing shapes - if used at all
 	if(ppdCC3DPtr->shapeFlag){
-		if (ppdCC3DPtr->shapeReg == "irregular") {
+		if (ppdCC3DPtr->shapeReg == "irregular") 
+		{
 			ppdCC3DPtr->boundary_x = "noflux";
 			ppdCC3DPtr->boundary_y = "noflux";
 			ppdCC3DPtr->boundary_z = "noflux";
 		}
 	}
-	//	cerr << "" <<  << endl;
 
 	cerr << "ppdCC3DPtr->boundary_x = " << ppdCC3DPtr->boundary_x << endl;
 	//setting boundary conditions
-	if(ppdCC3DPtr->boundary_x!=""){
+	if(ppdCC3DPtr->boundary_x!="")
 		potts.setBoundaryXName(ppdCC3DPtr->boundary_x);
-	}
 
-	cerr << "_ppdCC3DPtr->boundary_y = " << ppdCC3DPtr->boundary_y << endl;
-	if(ppdCC3DPtr->boundary_y!=""){
+	cerr << "ppdCC3DPtr->boundary_y = " << ppdCC3DPtr->boundary_y << endl;
+	if(ppdCC3DPtr->boundary_y!="")
 		potts.setBoundaryYName(ppdCC3DPtr->boundary_y);
-	}
 
 	cerr << "ppdCC3DPtr->boundary_z = " << ppdCC3DPtr->boundary_z << endl;
-	if(ppdCC3DPtr->boundary_z!=""){
+	if(ppdCC3DPtr->boundary_z!="")
 		potts.setBoundaryZName(ppdCC3DPtr->boundary_z);
-	}
 
-	if (_xmlData->getFirstElement("LatticeType")) {
+	if (_xmlData->getFirstElement("LatticeType")) 
 		ppdCC3DPtr->latticeType = _xmlData->getFirstElement("LatticeType")->getText();
-	}
 
 	cerr << "ppdCC3DPtr->latticeType = " << ppdCC3DPtr->latticeType << endl;
 
@@ -741,17 +724,11 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
 	if(ppdCC3DPtr->latticeType=="hexagonal")
 	{
 		if(ppdCC3DPtr->boundary_x=="Periodic")
-		{
 			ASSERT_OR_THROW("For hexagonal lattice and x periodic boundary conditions x dimension must be an even number",!(ppdCC3DPtr->dim.x%2));
-		}
 		if(ppdCC3DPtr->boundary_y=="Periodic")
-		{
 			ASSERT_OR_THROW("For hexagonal lattice and y periodic boundary conditions y dimension must be an even number",!(ppdCC3DPtr->dim.y%2));
-		}
 		if(ppdCC3DPtr->boundary_z=="Periodic")
-		{
 			ASSERT_OR_THROW("For hexagonal lattice and z periodic boundary conditions z dimension must be a number divisible by 3",!(ppdCC3DPtr->dim.z%3));
-		}
 
 		BoundaryStrategy::instantiate(ppdCC3DPtr->boundary_x, ppdCC3DPtr->boundary_y, ppdCC3DPtr->boundary_z, ppdCC3DPtr->shapeAlgorithm, ppdCC3DPtr->shapeIndex, ppdCC3DPtr->shapeSize, ppdCC3DPtr->shapeInputfile,HEXAGONAL_LATTICE);
 		cerr<<"initialized hex lattice"<<endl;
@@ -764,38 +741,29 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
 
 	cerr<<"potts.getLatticeType()="<<potts.getLatticeType()<<endl; //potts.getLatticeType() only works when the BoundaryStrategy singleton is instantiated! 
 
-	//    exit(0);
 	BoundaryStrategy::getInstance()->setDim(ppdCC3DPtr->dim);
 
-
-
-	if (_xmlData->getFirstElement("FlipNeighborMaxDistance")) {
-
+	if (_xmlData->getFirstElement("FlipNeighborMaxDistance")) 
+	{
 		ppdCC3DPtr->depth=_xmlData->getFirstElement("FlipNeighborMaxDistance")->getDouble();
 		ppdCC3DPtr->depthFlag=true;
 	}
 
-	if (_xmlData->getFirstElement("NeighborOrder")) {
-
+	if (_xmlData->getFirstElement("NeighborOrder")) 
+	{
 		ppdCC3DPtr->neighborOrder=_xmlData->getFirstElement("NeighborOrder")->getUInt();
 		ppdCC3DPtr->depthFlag=false;
 	}
 
 	if(ppdCC3DPtr->depthFlag)
-	{
 		potts.setDepth(ppdCC3DPtr->depth);
-	}
 	else
-	{
 		potts.setNeighborOrder(ppdCC3DPtr->neighborOrder);
-	}
 
 	cerr << "ppdCC3DPtr->depthFlag = " << ppdCC3DPtr->depthFlag << endl;
 
-	if (_xmlData->getFirstElement("DebugOutputFrequency")) {
+	if (_xmlData->getFirstElement("DebugOutputFrequency")) 
 		ppdCC3DPtr->debugOutputFrequency=_xmlData->getFirstElement("DebugOutputFrequency")->getUInt();
-	}
-
 
 	cerr << "ppdCC3DPtr->debugOutputFrequency = " << ppdCC3DPtr->debugOutputFrequency << endl;
 	if(ppdCC3DPtr->debugOutputFrequency<=0)
@@ -808,38 +776,28 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
 		potts.setDebugOutputFrequency(ppdCC3DPtr->debugOutputFrequency);
 	}
 
-	if (_xmlData->getFirstElement("AcceptanceFunctionName")) {
+	if (_xmlData->getFirstElement("AcceptanceFunctionName")) 
 		ppdCC3DPtr->acceptanceFunctionName=_xmlData->getFirstElement("AcceptanceFunctionName")->getText();
-	}
+
 	//Setting Acceptance Function 
-	//    cerr<<"ppdCC3DPtr->acceptanceFunctionName="<<ppdCC3DPtr->acceptanceFunctionName<<endl;
+	cerr<<"ppdCC3DPtr->acceptanceFunctionName="<<ppdCC3DPtr->acceptanceFunctionName<<endl;
 	potts.setAcceptanceFunctionByName(ppdCC3DPtr->acceptanceFunctionName);
-	//    exit(0);
 	
+	if (_xmlData->getFirstElement("Offset"))
+		ppdCC3DPtr->offset=_xmlData->getFirstElement("Offset")->getDouble();
 
-	if (_xmlData->getFirstElement("Offset")) {//TODO: these two are really strange: assigning double into strings??
-		ppdCC3DPtr->acceptanceFunctionName=_xmlData->getFirstElement("Offset")->getDouble();
-	}
-
-	if (_xmlData->getFirstElement("KBoltzman")) {
-		ppdCC3DPtr->acceptanceFunctionName=_xmlData->getFirstElement("KBoltzman")->getDouble();
-	}
+	if (_xmlData->getFirstElement("KBoltzman")) 
+		ppdCC3DPtr->kBoltzman=_xmlData->getFirstElement("KBoltzman")->getDouble();
 
 	if(ppdCC3DPtr->offset!=0.)
-	{
 		potts.getAcceptanceFunction()->setOffset(ppdCC3DPtr->offset);
-	}
 	if(ppdCC3DPtr->kBoltzman!=1.0)
-	{
 		potts.getAcceptanceFunction()->setK(ppdCC3DPtr->kBoltzman);
-	}
 
-	if (_xmlData->getFirstElement("FluctuationAmplitudeFunctionName")) {
+	if (_xmlData->getFirstElement("FluctuationAmplitudeFunctionName")) 
 		ppdCC3DPtr->fluctuationAmplitudeFunctionName=_xmlData->getFirstElement("FluctuationAmplitudeFunctionName")->getText();
-	}
 
 	potts.setFluctuationAmplitudeFunctionByName(ppdCC3DPtr->fluctuationAmplitudeFunctionName);
-
 
 	if(_xmlData->getFirstElement("EnergyFunctionCalculator"))
 	{
@@ -853,9 +811,6 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
 		enCalculator->setSimulator(this);
 		enCalculator->init(_xmlData->getFirstElement("EnergyFunctionCalculator"));
 	}
-
-
-
 
 	//Units
 	//if(_xmlData->getFirstElement("Units")){
@@ -884,12 +839,9 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData){
 	potts.setTimeUnit(ppdCC3DPtr->timeUnit);
 	//potts.setEnergyUnit(ppdCC3DPtr->massUnit*(ppdCC3DPtr->lengthUnit)*(ppdCC3DPtr->lengthUnit)/((ppdCC3DPtr->timeUnit)*(ppdCC3DPtr->timeUnit)));
 
-
 	//this might reinitialize some of the POtts members but it also makes sure that units are initialized too.
 	potts.update(_xmlData);
-
 }
-
 
 /////////////////////////////////// Steering //////////////////////////////////////////////
 CC3DXMLElement * Simulator::getCC3DModuleData(std::string _moduleType,std::string _moduleName){
