@@ -3,7 +3,7 @@
 
 #include <CompuCell3D/Field3D/Point3D.h>
 
-#include <Python.h>
+#include "PythonInclude.h"
 
 namespace CompuCell3D{
 

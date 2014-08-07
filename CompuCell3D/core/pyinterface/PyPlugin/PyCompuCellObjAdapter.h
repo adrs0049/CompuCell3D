@@ -5,8 +5,7 @@
 #include <CompuCell3D/Field3D/Point3D.h>
 #include <PublicUtilities/ParallelUtilsOpenMP.h>
 #include <vector>
-#include <Python.h>
-
+#include "PythonInclude.h"
 
 namespace CompuCell3D{
    class Simulator;
