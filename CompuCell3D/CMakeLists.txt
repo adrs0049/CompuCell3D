@@ -315,6 +315,7 @@ ENDIF(USE_LIBRARY_VERSIONS)
   
   if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${LIBRARY_NAME}Test.h")
 	CXXTEST_ADD_TEST("${LIBRARY_NAME}Test" "${LIBRARY_NAME}-test.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/${LIBRARY_NAME}Test.h")
+	target_link_libraries("${LIBRARY_NAME}Test" ${LIBRARY_NAME}Shared)
 	message(STATUS "Unit Test added for ${CMAKE_CURRENT_SOURCE_DIR}")
   else()
 	message(STATUS "no Unit test found for ${CMAKE_CURRENT_SOURCE_DIR}")
