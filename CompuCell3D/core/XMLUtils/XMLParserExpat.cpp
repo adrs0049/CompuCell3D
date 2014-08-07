@@ -44,33 +44,40 @@ int XMLParserExpat::parse(){
 	XML_SetCharacterDataHandler(parser,
 		(XML_CharacterDataHandler)handleCharacterData);
 
-  ifstream inputStream(fileName.c_str());
-  std::string line;
-  bool done=false;
-  long lineNumber=1;
-  while(getline(inputStream,line)) {
+  ifstream inputStream;
+  inputStream.exceptions( ifstream::failbit | ifstream::badbit );
+  
+  try {
+	inputStream.open(fileName.c_str());
+	std::string line;
+	bool done=false;
+	long lineNumber=1;
+	while(getline(inputStream,line)) {
 	
-    if (XML_Parse(parser, line.c_str(), line.size(), done) == XML_STATUS_ERROR) {
-		cerr<<"ERROR in the XML file: "<<fileName<<" "<<(const char*)XML_ErrorString(XML_GetErrorCode(parser))<<" in line "<< lineNumber<<endl;;
-		const char * error_string=XML_ErrorString(XML_GetErrorCode(parser));
+		if (XML_Parse(parser, line.c_str(), line.size(), done) == XML_STATUS_ERROR) {
+			cerr<<"ERROR in the XML file: "<<fileName<<" "<<(const char*)XML_ErrorString(XML_GetErrorCode(parser))<<" in line "<< lineNumber<<endl;;
+			const char * error_string=XML_ErrorString(XML_GetErrorCode(parser));
 			//<<endl;
 			//
       //fprintf(stderr,
       //        "%s at line %" XML_FMT_INT_MOD "u\n",
       //        XML_ErrorString(XML_GetErrorCode(parser)),
       //        XML_GetCurrentLineNumber(parser));
-      return 1;
-    }
-	++lineNumber;
+		return 1;
+		}
+		++lineNumber;
+	}
+  }
+  catch(ifstream::failure e)
+  {
+	cerr<<"Exception opening/reading file " << fileName<<" : "<<e.what()<<endl;
   }
 
-
-
+  inputStream.close();
+  
   XML_ParserFree(parser);
 
-
 }
-
 
 void handleStartElement(XMLParserExpat *_xmlExpatParser,const XML_Char *name, const XML_Char **atts ){
 
