@@ -1,11 +1,8 @@
 #ifndef FIPYINTERFACE_H
 #define FIPYINTERFACE_H
 
-// #include <CompuCell3D/Field3D/Field3D.h>
-// #include <CompuCell3D/Field3D/Array3D.h>
-
 #include <vector>
-#include <Python.h>
+#include <PythonInclude.h>
 #include <CompuCell3D/Field3D/Field3D.h>
 
 #include "FiPyInterfaceDLLSpecifier.h"
@@ -32,58 +29,5 @@ namespace CompuCell3D{
       std::vector<std::vector<int> > doNotDiffuseVec;
   };
 };
-
-
-/*
-#include <CompuCell3D/Field3D/Field3D.h>
-
-template <typename Y> class Field3D;
-typedef float precision_t;*/
-
-// #include <iostream>
-// #include <CompuCell3D/Field3D/Field3D.h>
-// #include <CompuCell3D/Field3D/Array3D.h>
-
-// void TestFuncOutSideClass();
-
-// #include <CompuCell3D/Field3D/Field3D.h>
-// #include <Python.h>
-// #include <numpy/arrayobject.h>
-
-/*class Zoo{
-    public:
-      Zoo();
-      void test1();
-      void test2();
-      void fillArray3D(PyObject * _FiPyArray);
-
-};*/
-
-
-// #include <vector>
-// #include <iostream>
-
-// #include <python2.7/Python.h>
-// #include <numpy/arrayobject.h>
-
-
-
-// #include <CompuCell3D/Field3D/Array3D.h>
-
-// void test() {}
-
-//   template <typename Y> class Field3D;
-//   template <typename Y> class Field3DImpl;
-//   typedef float precision_t;
-// 
-//   void fillArray3D(Array3DFiPy<precision_t> *Field, PyObject * _FiPyArray) {
-//     cout << "Hello World\n";
-//   }
-
-  
-// }
-
-
-
 
 #endif

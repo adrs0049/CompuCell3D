@@ -1,15 +1,12 @@
 #include <iostream>
 #include <CompuCell3D/Field3D/Field3D.h>
 
-#include <Python.h>
 #include <numpy/arrayobject.h>
 
 #include "FiPyInterface.h"
 
 using namespace std;
 using namespace CompuCell3D;
-
-
 
 FiPyInterfaceBase::FiPyInterfaceBase(int _dim) {
 //   dimPtr=&FiPyInterfaceBase::secrete;
