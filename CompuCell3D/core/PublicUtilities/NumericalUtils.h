@@ -58,7 +58,7 @@ namespace CompuCell3D{
 	Point3D distanceVectorInvariant(const Point3D & _pt1 ,const Point3D & _pt0,const Point3D & _fieldDim);
     
     Coordinates3D<double> distanceVectorCoordinatesInvariant(const Coordinates3D<double> & _pt1 ,const Coordinates3D<double> & _pt0,const Point3D & _fieldDim);
-    
+    Coordinates3D<float> distanceVectorCoordinatesInvariant(const Coordinates3D<float> & _pt1 ,const Coordinates3D<float> & _pt0,const Point3D & _fieldDim);
 
 	std::pair<InertiaTensorComponents,InertiaTensorComponents> precalculateInertiaTensorComponentsAfterFlip(const Coordinates3D<double> & ptTrans,const CellG *newCell ,const CellG *oldCell);
 
