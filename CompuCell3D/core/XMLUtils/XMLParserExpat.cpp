@@ -45,10 +45,12 @@ int XMLParserExpat::parse(){
 		(XML_CharacterDataHandler)handleCharacterData);
 
   ifstream inputStream;
-  inputStream.exceptions( ifstream::failbit | ifstream::badbit );
+//   inputStream.exceptions( ifstream::failbit | ifstream::badbit );
+  inputStream.open(fileName.c_str());
   
-  try {
-	inputStream.open(fileName.c_str());
+  if (!inputStream.is_open())
+	cerr<<"Error opening file "<<fileName<<endl;
+  else {
 	std::string line;
 	bool done=false;
 	long lineNumber=1;
@@ -68,11 +70,10 @@ int XMLParserExpat::parse(){
 		++lineNumber;
 	}
   }
-  catch(ifstream::failure e)
-  {
-	cerr<<"Exception opening/reading file " << fileName<<" : "<<e.what()<<endl;
-  }
-
+  
+  if(inputStream.bad())
+	  cerr<<"Error reading file"<<endl;
+  
   inputStream.close();
   
   XML_ParserFree(parser);
