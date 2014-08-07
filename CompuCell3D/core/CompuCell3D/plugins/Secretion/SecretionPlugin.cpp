@@ -22,26 +22,14 @@
 
 #include <CompuCell3D/CC3D.h>
 
-// // // #include <CompuCell3D/ClassRegistry.h>
-
 using namespace CompuCell3D;
 
 #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
 #include <CompuCell3D/plugins/PixelTracker/PixelTrackerPlugin.h>
 #include <CompuCell3D/plugins/BoundaryPixelTracker/BoundaryPixelTrackerPlugin.h>
 #include <CompuCell3D/steppables/BoxWatcher/BoxWatcher.h>
-// // // #include <PublicUtilities/ParallelUtilsOpenMP.h>
-
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-
 
 using namespace std;
-
 
 #include "SecretionPlugin.h"
 #include "FieldSecretor.h"
@@ -287,6 +275,7 @@ void SecretionPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 //
 //	return true;
 //}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void SecretionPlugin::secreteSingleField(unsigned int idx){
 
