@@ -96,6 +96,8 @@ Simulator::~Simulator() {
 	// cerr<<"\n\n\n\n INSIDE SIMULATOR DELETE \n\n\n\n "<<endl;	
 	// cerr<<"\n\n\n********************************************************************************"<<endl;
 	
+	cleanAfterSimulation();
+	
 	delete classRegistry;
 	delete pUtils;
     delete pUtilsSingle;
@@ -349,14 +351,9 @@ void Simulator::extraInit(){
 
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Simulator::step(const unsigned int currentStep) {
-
+void Simulator::step(const unsigned int currentStep)
+{
 	try{
-		//potts is initialized in readXML - so is most of other Steppables etc.
-
-		//    for (std::map<std::string,SteerableObject *>::iterator mitr=steerableObjectMap.begin() ; mitr!=steerableObjectMap.end() ; ++mitr){
-		//       cerr<<"Module "<<mitr->first <<" toString() "<< mitr->second->toString()<<endl;
-		//    }
 		// Run potts metropolis
 		Dim3D dim = potts.getCellFieldG()->getDim();
 		int flipAttempts = (int)(dim.x * dim.y * dim.z * ppdCC3DPtr->flip2DimRatio); //may be a member 
@@ -387,15 +384,11 @@ void Simulator::step(const unsigned int currentStep) {
 		if (!newPlayerFlag){
 			throw e;
 		}
-
 	}
-
 }
 
-
-
-void Simulator::finish() {
-
+void Simulator::finish() 
+{
 	try{
 		//cerr<<"inside finish"<<endl;
 		ppdCC3DPtr->temperature = 0.0;

@@ -159,9 +159,7 @@ namespace CompuCell3D {
 		void cleanAfterSimulation(); 
 		//unloads all the plugins - plugin destructors are called
 		void unloadModules();
-			
 	
-
 		void initializePottsCC3D(CC3DXMLElement * _xmlData);
 		void processMetadataCC3D(CC3DXMLElement * _xmlData);
 
