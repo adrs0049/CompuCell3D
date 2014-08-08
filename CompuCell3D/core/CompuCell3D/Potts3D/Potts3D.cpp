@@ -30,31 +30,22 @@
 #include "CellGChangeWatcher.h"
 #include "Stepper.h"
 #include "FixedStepper.h"
+#include "SteppablePlugin.h"
 #include "AttributeAdder.h"
 #include <CompuCell3D/Automaton/Automaton.h>
-
-// #include <CompuCell3D/Field3D/WatchableField3D.h>
 
 #include <CompuCell3D/Potts3D/TypeTransition.h>
 #include "EnergyFunctionCalculator.h"
 #include "EnergyFunctionCalculatorStatistics.h"
 
 #include <CompuCell3D/Simulator.h>
-//#include <CompuCell3D/plugins/Volume/VolumePlugin.h>
-//#include <CompuCell3D/plugins/Surface/SurfacePlugin.h>
-
 #include <BasicUtils/BasicRandomNumberGenerator.h>
 #include <BasicUtils/BasicPluginInfo.h>
-
-
 #include <PublicUtilities/StringUtils.h>
 #include <PublicUtilities/ParallelUtilsOpenMP.h>
 #include <deque>
 #include <sstream>
 #include <algorithm>
-
-
-
 
 #include "Potts3D.h"
 
@@ -120,7 +111,6 @@ pUtils(0)
 
 }
 
-
 Potts3D::~Potts3D() {
 	if (cellFieldG) delete cellFieldG;
 	if (energyCalculator) delete energyCalculator; energyCalculator=0;
@@ -161,35 +151,6 @@ void Potts3D::setDepth(double _depth){
 	minCoordinates=Point3D(0,0,0);
 	maxCoordinates=Point3D(dim.x,dim.y,dim.z);
 
-	//will calculate necesary space for neighbor storage
-	//this may not work for lattice types other than square
-
-	//   Dim3D dim=cellFieldG->getDim();
-	// 
-	//   minCoordinates=Point3D(0,0,0);
-	//   maxCoordinates=Point3D(dim.x,dim.y,dim.z);
-	// 
-	// 
-	//   Point3D middlePt(dim.x/2,dim.y/2,dim.z/2);
-	//   
-	//    unsigned int token = 0;
-	//    int numNeighbors = 0;
-	//    double distance;
-	//    Point3D testPt;
-	//    token =0;
-	//    distance=0;
-	//    
-	//    
-	//       while(true){
-	//       testPt = cellFieldG->getNeighbor(middlePt, token, distance);
-	//       if (distance > depth) break;
-	//    
-	//          numNeighbors++;
-	//       }
-	//    //empty previously allocated container for neighbors
-	//    neighbors.clear();
-	//    neighbors.assign(numNeighbors+1,Point3D());
-
 	maxNeighborIndex=BoundaryStrategy::getInstance()->getMaxNeighborIndexFromDepth(depth);
 	cerr<<"\t\t\t\t\t setDepth  maxNeighborIndex="<<maxNeighborIndex<<endl;
 	neighbors.clear();
@@ -210,7 +171,6 @@ void Potts3D::setNeighborOrder(unsigned int _neighborOrder){
 
 }
 
-
 void Potts3D::createCellField(const Dim3D dim) {
 
 	ASSERT_OR_THROW("createCellField() cell field G already created!", !cellFieldG);
@@ -224,23 +184,9 @@ void Potts3D::resizeCellField(const Dim3D dim, Dim3D shiftVec) {
     cellFieldG->resizeAndShift(dim,shiftVec);
 }
 
-////////added for more convenient Python scripting
-//////// notice that SWIG will automatically convert tupples and lists to vectors of a given type provided 
-//////// they are passed by a constant reference
-//////void Potts3D::resizeCellField(const vector<int> & dim, const vector<int> & shiftVec) {
-//////	if (dim.size()==3 && shiftVec.size()==3){
-//////		resizeCellField(Dim3D(dim[0],dim[1],dim[2]),Dim3D(shiftVec[0],shiftVec[1],shiftVec[2]));
-//////	}
-//////}
-
-
 void Potts3D::registerAttributeAdder(AttributeAdder * _attrAdder){
 	attrAdder=_attrAdder;
 }
-
-// void Potts3D::registerTypeChangeWatcher(TypeChangeWatcher * _typeChangeWatcher){
-//    typeTransition->registerTypeChangeWatcher(_typeChangeWatcher);
-// }
 
 void Potts3D::registerAutomaton(Automaton* autom) {automaton = autom;}
 Automaton* Potts3D::getAutomaton() {return automaton;}
@@ -259,13 +205,11 @@ void Potts3D::registerEnergyFunctionWithName(EnergyFunction *_function,std::stri
 
 }
 
-
 void Potts3D::unregisterEnergyFunction(std::string _functionName) {
 
 	energyCalculator->unregisterEnergyFunction(_functionName);
 	//    sim->unregisterSteerableObject(_functionName);
 	return;
-
 }
 
 double Potts3D::getEnergy() {return energy;}
@@ -275,6 +219,7 @@ void Potts3D::registerConnectivityConstraint(EnergyFunction * _connectivityConst
 }
 
 EnergyFunction * Potts3D::getConnectivityConstraint(){ return connectivityConstraint;}
+<<<<<<< HEAD
 
 void Potts3D::setAcceptanceFunctionByName(std::string _acceptanceFunctionName){
 	if(_acceptanceFunctionName=="FirstOrderExpansion"){
@@ -1162,9 +1107,7 @@ unsigned int Potts3D::metropolisBoundaryWalker(const unsigned int steps, const d
 
 }
 
-
 void Potts3D::setMetropolisAlgorithm(std::string _algName){
-
 	string algName=_algName;
 	changeToLower(algName);
 
@@ -1177,15 +1120,13 @@ void Potts3D::setMetropolisAlgorithm(std::string _algName){
 	}else{
 		metropolisFcnPtr=&Potts3D::metropolisFast;
 	}
-
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 void Potts3D::setCellTypeMotilityVec(std::vector<float> & _cellTypeMotilityVec){
 	cellTypeMotilityVec=_cellTypeMotilityVec;
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Potts3D::initializeCellTypeMotility(std::vector<CellTypeMotilityData> & _cellTypeMotilityVector){
 
@@ -1205,27 +1146,15 @@ void Potts3D::initializeCellTypeMotility(std::vector<CellTypeMotilityData> & _ce
 		unsigned int id = automaton->getTypeId(_cellTypeMotilityVector[i].typeName);
 		cellTypeMotilityVec[id]=_cellTypeMotilityVector[i].motility;
 	}
-
-	//for(int i =0 ; i < _cellTypeMotilityVector.size() ;++i ){
-	//	
-	//	cerr<<"cellTypeMotilityVec["<<i<<"]="<<cellTypeMotilityVec[i]<<endl;
-	//}
-	//
-	//exit(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 bool Potts3D::checkIfFrozen(unsigned char _type){
-
-
-
 	for (unsigned int i = 0 ; i< frozenTypeVec.size(); ++i ){
 		if(frozenTypeVec[i]==_type)
 			return true;
 	}
 	return false;
-
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Potts3D::setFrozenTypeVector(std::vector<unsigned char> & _frozenTypeVec){
@@ -1233,32 +1162,6 @@ void Potts3D::setFrozenTypeVector(std::vector<unsigned char> & _frozenTypeVec){
 	sizeFrozenTypeVec=frozenTypeVec.size();   
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//void Potts3D::update(ParseData *pd, bool _fullInitFlag){
-//	PottsParseData * ppdPtr=(PottsParseData *)pd;
-//	sim->ppdPtr=ppdPtr;
-//	BasicRandomNumberGenerator *rand = BasicRandomNumberGenerator::getInstance();
-//	if(rand->getSeed() != ppdPtr->seed)
-//		rand->setSeed(ppdPtr->seed);
-//
-//	if(ppdPtr->offset!=0.){
-//		getAcceptanceFunction()->setOffset(ppdPtr->offset);
-//	}
-//	if(ppdPtr->kBoltzman!=1.0){
-//		getAcceptanceFunction()->setK(ppdPtr->kBoltzman);
-//	}
-//
-//	if(debugOutputFrequency != ppdPtr->debugOutputFrequency){
-//		setDebugOutputFrequency(ppdPtr->debugOutputFrequency >0 ?ppdPtr->debugOutputFrequency:1 );
-//	}
-//	if(ppdPtr->depthFlag){
-//		setDepth(ppdPtr->depth);
-//	}else{
-//		setNeighborOrder(ppdPtr->neighborOrder);
-//	}
-//
-//
-//}
-
 
 void Potts3D::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 
@@ -1272,12 +1175,9 @@ void Potts3D::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 		}
 	}
 
-
 	if(!fluctAmplGlobalReadFlag && _xmlData->getFirstElement("Temperature")){
 		sim->ppdCC3DPtr->temperature=_xmlData->getFirstElement("Temperature")->getDouble();
 	}
-
-
 
 	if(_xmlData->getFirstElement("RandomSeed")){
 		BasicRandomNumberGenerator *rand = BasicRandomNumberGenerator::getInstance();
@@ -1335,8 +1235,6 @@ void Potts3D::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 		registerAcceptanceFunction(&customAcceptanceFunction);
 	}		
 
-
-
 	//Units
 	if(_xmlData->getFirstElement("Units")){
 		if(_xmlData->getFirstElement("Units")->findAttribute("DoNotDisplayUnits")){
@@ -1356,7 +1254,6 @@ void Potts3D::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 		if (unitElemPtr){
 			timeUnit=Unit(unitElemPtr->getText());
 		}
-
 
 		//cerr<<"massUnit="<<massUnit.toString()<<endl;
 		//cerr<<"lengthUnit="<<lengthUnit.toString()<<endl;
@@ -1412,15 +1309,10 @@ void Potts3D::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 		//if( !energyUnitElem  ){ //element alread exists
 		//	unitsPtr->getFirstElement("EnergyUnit")->updateElementValue(energyUnit.toString());
 		//}
-
 	}
-
 }
 
-
 void Potts3D::updateUnits(CC3DXMLElement * _unitsPtr){
-
-
 	//displaying basic units
 
 	if(_unitsPtr->getFirstElement("MassUnit")){

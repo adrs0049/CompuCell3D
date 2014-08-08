@@ -42,4 +42,5 @@
     #include <CompuCell3D/Potts3D/Stepper.h>
     #include <CompuCell3D/Potts3D/AcceptanceFunction.h>
     #include <CompuCell3D/Potts3D/EnergyFunctionCalculator.h>
+	#include <CompuCell3D/Potts3D/SteppablePlugin.h>
 #endif

@@ -25,38 +25,21 @@
 
 #include <CompuCell3D/Field3D/CC3D_Field3D.h>
 #include <CompuCell3D/Boundary/CC3D_Boundary.h>
-
-// #include <CompuCell3D/Field3D/Dim3D.h>
-// #include <CompuCell3D/Field3D/Point3D.h>
-//#include <CompuCell3D/Field3D/WatchableField3D.h>
-// #include <CompuCell3D/Field3D/NeighborFinder.h>
-
-
 #include "DefaultAcceptanceFunction.h"
 #include "FirstOrderExpansionAcceptanceFunction.h"
 #include "CustomAcceptanceFunction.h"
 
 #include <BasicUtils/BasicUtils.h>
-// #include <BasicUtils/BasicArray.h>
-// #include <BasicUtils/BasicDynamicClassFactory.h>
-
-// #include <BasicUtils/BasicClassAccessor.h>
-// #include <BasicUtils/BasicClassGroupFactory.h>
-// #include <BasicUtils/BasicClassGroup.h>
-// #include <BasicUtils/BasicRandomNumberGenerator.h>
 #include "CellInventory.h"
 #include "Cell.h"
 #include <string>
 #include <vector>
 #include <map>
-// #include <list>
 #include <CompuCell3D/Boundary/BoundaryTypeDefinitions.h>
 #include <CompuCell3D/SteerableObject.h>
 
 #include <PublicUtilities/Units/Unit.h>
 #include <muParser/ExpressionEvaluator/ExpressionEvaluator.h>
-
-// #include <CompuCell3D/dllDeclarationSpecifier.h>
 
 class BasicRandomNumberGeneratorNonStatic;
 
@@ -70,6 +53,7 @@ namespace CompuCell3D {
   class BCGChangeWatcher;
   class Stepper;
   class FixedStepper;
+  class SteppablePlugin;
   class Automaton;
   class TypeTransition;
   class TypeChangeWatcher;
@@ -88,8 +72,6 @@ namespace CompuCell3D {
   template<typename T>
   class Field3DImpl;
 
-
-
   /**
    * A generic implementation of the potts model in 3D.
    *
@@ -98,9 +80,8 @@ namespace CompuCell3D {
    */
   class /*DECLSPECIFIER*/ Potts3D :public SteerableObject{
     /// The potts field of cell spins.
-    //WatchableField3D<Cell *> *cellField;
     WatchableField3D<CellG *> *cellFieldG;
-	 AttributeAdder * attrAdder;
+	AttributeAdder * attrAdder;
     EnergyFunctionCalculator * energyCalculator;
     /// Cell class aggregator and allocator.
     
@@ -112,19 +93,17 @@ namespace CompuCell3D {
 	EnergyFunction * connectivityConstraint;
 
     std::map<std::string,EnergyFunction *> nameToEnergyFuctionMap;
-	 std::set<Point3D> boundaryPixelSet;
-
+	std::set<Point3D> boundaryPixelSet;
 	std::vector<BasicRandomNumberGeneratorNonStatic> randNSVec;
 
     TypeTransition *typeTransition; //fires up automatic tasks associated with type reassignment
 
     /// An array of potts steppers.  These are called after each potts step.
     std::vector<Stepper *> steppers;
-
     std::vector<FixedStepper *> fixedSteppers;
+	std::vector<SteppablePlugin *> steppablePlugins;
     /// The automaton to use.  Assuming one automaton per simulation.
     Automaton* automaton;
-
 
     DefaultAcceptanceFunction defaultAcceptanceFunction;
     FirstOrderExpansionAcceptanceFunction   firstOrderExpansionAcceptanceFunction;
@@ -136,13 +115,10 @@ namespace CompuCell3D {
 	CustomAcceptanceFunction customAcceptanceFunction;
 	bool customAcceptanceExpressionDefined;
 	
-
-
 	FluctuationAmplitudeFunction * fluctAmplFcn;
 
     /// The current total energy of the system.
     double energy;
-
 
     std::string boundary_x; // boundary condition for x axiz
     std::string boundary_y; // boundary condition for y axis
@@ -209,7 +185,7 @@ namespace CompuCell3D {
 	
 	bool checkIfFrozen(unsigned char _type);
 
-	 std::set<Point3D> * getBoundaryPixelSetPtr(){return & boundaryPixelSet;}
+	std::set<Point3D> * getBoundaryPixelSetPtr(){return & boundaryPixelSet;}
 
     LatticeType getLatticeType();
 
@@ -226,8 +202,6 @@ namespace CompuCell3D {
     
     void setFrozenTypeVector(std::vector<unsigned char> & _frozenTypeVec);
     const std::vector<unsigned char> & getFrozenTypeVector(){return frozenTypeVec;}
-   
-
 	
 	void setMassUnit(const Unit & _unit){massUnit=_unit;}
 	void setLengthUnit(const Unit & _unit){lengthUnit=_unit;}
@@ -256,14 +230,12 @@ namespace CompuCell3D {
    Point3D getMinCoordinates() const {return minCoordinates;}
    Point3D getMaxCoordinates() const {return maxCoordinates;}
    TypeTransition *getTypeTransition(){return typeTransition;}
-//     std::vector<EnergyFunction *>  & getEnergyFunctionsArray(){return energyFunctions;}
-    virtual void createEnergyFunction(std::string _energyFunctionType);
-    EnergyFunctionCalculator * getEnergyFunctionCalculator(){return energyCalculator;}
+   virtual void createEnergyFunction(std::string _energyFunctionType);
+   EnergyFunctionCalculator * getEnergyFunctionCalculator(){return energyCalculator;}
 
-    CellInventory &getCellInventory(){return cellInventory;}
+   CellInventory &getCellInventory(){return cellInventory;}
     
     virtual void registerAttributeAdder(AttributeAdder * _attrAdder);
-//     virtual void registerTypeChangeWatcher(TypeChangeWatcher * _typeChangeWatcher);
     /// Add an energy function to the list.
     virtual void registerEnergyFunction(EnergyFunction *function);
     virtual void registerEnergyFunctionWithName(EnergyFunction *_function,std::string _functionName);
@@ -285,17 +257,13 @@ namespace CompuCell3D {
     virtual void setAcceptanceFunctionByName(std::string _acceptanceFunctionName);
 
     virtual AcceptanceFunction *getAcceptanceFunction() {
-      return acceptanceFunction;
+		return acceptanceFunction;
     }
 
-
 	virtual void setFluctuationAmplitudeFunctionByName(std::string _fluctuationAmplitudeFunctionName);
-    /// Add a cell field update watcher.
-
     
     /// registration of the BCG watcher	
     virtual void registerCellGChangeWatcher(CellGChangeWatcher *_watcher);
-    
     
     /// Register accessor to a class with a cellGroupFactory. Accessor will access a class which is a mamber of a BasicClassGroup	
     virtual void registerClassAccessor(BasicClassAccessorBase *_accessor);
@@ -304,6 +272,8 @@ namespace CompuCell3D {
     virtual void registerStepper(Stepper *stepper);
     virtual void registerFixedStepper(FixedStepper *fixedStepper, bool _front=false);
 	virtual void unregisterFixedStepper(FixedStepper *fixedStepper);
+	virtual void registerSteppablePlugin(SteppablePlugin * steppablePlugin);
+
     /** 
      * @return Current energy.
      */
@@ -316,32 +286,26 @@ namespace CompuCell3D {
      * 
      * @return The newly created cell.
      */
-    
 
     virtual CellG *createCellG(const Point3D pt, long _clusterId=-1);
     virtual CellG *createCellGSpecifiedIds(const Point3D pt,long _cellId,long _clusterId=-1);
     virtual CellG *createCell(long _clusterId=-1);
 	virtual CellG *createCellSpecifiedIds(long _cellId,long _clusterId=-1);
-    
 
     virtual void destroyCellG(CellG * cell,bool _removeFromInventory=true);
 
     BasicClassGroupFactory * getCellFactoryGroupPtr(){return &cellFactoryGroup;};
-    
 
     /** 
      * Deallocate a cell.
      * 
      * @param cell The cell to destroy.
      */
-    
-    /// dealocate a BasicClassGroup
+	/// dealocate a BasicClassGroup
     //virtual void Potts3D::destroyBasicClassGroup(BasicClassGroup *_BCG); 
-
 
     /// @return The current number of cells in the field.
     virtual unsigned int getNumCells() {return cellInventory.getCellInventorySize();}
-
 
     /// @return The current size in bytes of a cell.
 //    virtual unsigned int getCellSize() {return cellFactory.getClassSize();}
@@ -352,7 +316,6 @@ namespace CompuCell3D {
      * @return The freshly calculated energy.
      */
     virtual double totalEnergy();
-
 
     /** 
      * Calculate the energy change of a proposed flip.
@@ -399,10 +362,9 @@ namespace CompuCell3D {
     //SteerableObject interface
     virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
     virtual std::string steerableName();
-	 virtual void runSteppers();
-	 long getRecentlyCreatedClusterId(){return recentlyCreatedClusterId;}
-	 long getRecentlyCreatedCellId(){return recentlyCreatedCellId;}
-
+	virtual void runSteppers();
+	long getRecentlyCreatedClusterId(){return recentlyCreatedClusterId;}
+	long getRecentlyCreatedCellId(){return recentlyCreatedCellId;}
   };
 };
 #endif
