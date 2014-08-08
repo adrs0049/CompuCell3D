@@ -52,9 +52,9 @@ using namespace CompuCell3D;
 using namespace std;
 
 Potts3D::Potts3D() :
-connectivityConstraint(0),
-cellFieldG(0),
-attrAdder(0),
+connectivityConstraint(nullptr),
+cellFieldG(nullptr),
+attrAdder(nullptr),
 acceptanceFunction(&defaultAcceptanceFunction), 
 customAcceptanceExpressionDefined(false),
 energy(0),
@@ -63,11 +63,10 @@ displayUnitsFlag(true),
 recentlyCreatedCellId(1),
 recentlyCreatedClusterId(1),
 debugOutputFrequency(10),
-sim(0),
-automaton(0),
+sim(nullptr),
+automaton(nullptr),
 temperature(0.0),
-pUtils(0)
-
+pUtils(nullptr)
 {
 	neighbors.assign(100,Point3D());//statically allocated this buffer maybe will come with something better later
 	frozenTypeVec.assign(0,0);
@@ -80,9 +79,9 @@ pUtils(0)
 }
 
 Potts3D::Potts3D(const Dim3D dim) :
-connectivityConstraint(0),
-cellFieldG(0),
-attrAdder(0),
+connectivityConstraint(nullptr),
+cellFieldG(nullptr),
+attrAdder(nullptr),
 acceptanceFunction(&defaultAcceptanceFunction), 
 energy(0) ,
 customAcceptanceExpressionDefined(false),
@@ -91,11 +90,10 @@ displayUnitsFlag(true),
 recentlyCreatedCellId(1),
 recentlyCreatedClusterId(1),
 debugOutputFrequency(10),
-sim(0),
-automaton(0),
+sim(nullptr),
+automaton(nullptr),
 temperature(0.0),
-pUtils(0)
-
+pUtils(nullptr)
 {
 	neighbors.assign(100,Point3D());//statically allocated this buffer maybe will come with something better later
 	frozenTypeVec.assign(0,0);
@@ -107,20 +105,19 @@ pUtils(0)
 	metropolisFcnPtr=&Potts3D::metropolisFast;
 	cellInventory.setPotts3DPtr(this);
 	fluctAmplFcn=new MinFluctuationAmplitudeFunction(this);
-
 }
 
 Potts3D::~Potts3D() {
-	if (cellFieldG) delete cellFieldG;
-	if (energyCalculator) delete energyCalculator; energyCalculator=0;
-	if (typeTransition) delete typeTransition; typeTransition=0;
+	if (cellFieldG) delete cellFieldG; cellFieldG=nullptr;
+	if (energyCalculator) delete energyCalculator; energyCalculator=nullptr;
+	if (typeTransition) delete typeTransition; typeTransition=nullptr;
 	//   if (attrAdder) delete attrAdder; attrAdder=0;
 	if (fluctAmplFcn) delete fluctAmplFcn;
 }
 
 void Potts3D::createEnergyFunction(std::string _energyFunctionType){
 	if(_energyFunctionType=="Statistics"){
-		if (energyCalculator) delete energyCalculator; energyCalculator=0;
+		if (energyCalculator) delete energyCalculator; energyCalculator=nullptr;
 		energyCalculator=new EnergyFunctionCalculatorStatistics();
 		energyCalculator->setPotts(this);
 		//initialize Statistics Output Energy Finction Here
@@ -888,8 +885,6 @@ unsigned int Potts3D::metropolisFast(const unsigned int steps, const double temp
 	if(debugOutputFrequency && ! (currentStep % debugOutputFrequency) ){
 		cerr<<"Number of Attempted Energy Calculations="<<attemptedEC<<endl;
 	}
-	//cerr<<"CURRENT ATTEMPT="<<currentAttempt<<" numberOfAttempts="<<numberOfAttempts<<endl;
-	//    exit(0);
 	return flips;
 
 }
@@ -1100,7 +1095,8 @@ unsigned int Potts3D::metropolisBoundaryWalker(const unsigned int steps, const d
 
 }
 
-void Potts3D::setMetropolisAlgorithm(std::string _algName){
+void Potts3D::setMetropolisAlgorithm(std::string _algName)
+{
 	string algName=_algName;
 	changeToLower(algName);
 
