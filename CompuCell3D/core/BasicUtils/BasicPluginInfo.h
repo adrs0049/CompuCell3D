@@ -63,10 +63,10 @@ public:
   }
 
   ~BasicPluginInfo() {
-    if (dependencies) {
-      for (unsigned int i = 0; i < numDeps; i++)
+    if (dependencies) 
+	{
+		for (unsigned int i = 0; i < numDeps; ++i) 
 			free(dependencies[i]);
-
       delete [] dependencies;
     }
   }
