@@ -324,12 +324,11 @@ void Simulator::extraInit(){
 	try{
 		BasicPluginManager<Plugin>::infos_t *infos = &pluginManager.getPluginInfos();
 		BasicPluginManager<Plugin>::infos_t::iterator it; 
+		cerr << "Running extraInit for: " << endl;
 		for (it = infos->begin(); it != infos->end(); it++)
 			if (pluginManager.isLoaded((*it)->getName())) {
 				pluginManager.get((*it)->getName())->extraInit(this);
-				if (it != infos->begin()) cerr << ",";
-				cerr << " extraInit for: " << (*it)->getName()<<endl;
-
+				cerr << " " << (*it)->getName() << endl;
 			}
 
 			classRegistry->extraInit(this);
@@ -423,72 +422,77 @@ void Simulator::finish() {
 	}
 
 }
-void Simulator::cleanAfterSimulation(){
 
+void Simulator::cleanAfterSimulation()
+{
 	potts.getCellInventory().cleanInventory();
 	unloadModules();
 }
-void Simulator::unloadModules(){
+
+void Simulator::unloadModules()
+{
 	pluginManager.unload();
 	steppableManager.unload();
 }
 
-void Simulator::processMetadataCC3D(CC3DXMLElement * _xmlData){
-		if (!_xmlData) //no metadata were specified
-			return; 
-		if (_xmlData->getFirstElement("NumberOfProcessors")) {
-			unsigned int numberOfProcessors=_xmlData->getFirstElement("NumberOfProcessors")->getUInt();
-			pUtils->setNumberOfWorkNodes(numberOfProcessors);
-			CC3DEventChangeNumberOfWorkNodes workNodeChangeEvent;
-			workNodeChangeEvent.newNumberOfNodes=numberOfProcessors;
-			
-			// this will cause redundant calculations inside pUtils but since we do not call it often it is ok . This way code remains cleaner
-			postEvent(workNodeChangeEvent);
+void Simulator::processMetadataCC3D(CC3DXMLElement * _xmlData)
+{
+	cerr<<"Processing Metadata..."<<endl;
+	if (!_xmlData) //no metadata were specified
+        return;
+	
+    if (_xmlData->getFirstElement("NumberOfProcessors")) 
+	{
+        unsigned int numberOfProcessors=_xmlData->getFirstElement("NumberOfProcessors")->getUInt();
+        pUtils->setNumberOfWorkNodes(numberOfProcessors);
+        CC3DEventChangeNumberOfWorkNodes workNodeChangeEvent;
+        workNodeChangeEvent.newNumberOfNodes=numberOfProcessors;
 
-		}else if(_xmlData->getFirstElement("VirtualProcessingUnits")){
-			
-			unsigned int numberOfVPUs=_xmlData->getFirstElement("VirtualProcessingUnits")->getUInt();
-			unsigned int threadsPerVPU=0;
-			
-			if (_xmlData->getFirstElement("VirtualProcessingUnits")->findAttribute("ThreadsPerVPU")){
-				threadsPerVPU=_xmlData->getFirstElement("VirtualProcessingUnits")->getAttributeAsUInt("ThreadsPerVPU");				
-			}
-			cerr<<"updating VPU's numberOfVPUs="<<numberOfVPUs<<" threadsPerVPU="<<threadsPerVPU<<endl;	
-			pUtils->setVPUs(numberOfVPUs,threadsPerVPU);
+        // this will cause redundant calculations inside pUtils but since we do not call it often it is ok . This way code remains cleaner
+        postEvent(workNodeChangeEvent);
+    }
+    else if(_xmlData->getFirstElement("VirtualProcessingUnits")) 
+	{
+        unsigned int numberOfVPUs=_xmlData->getFirstElement("VirtualProcessingUnits")->getUInt();
+        unsigned int threadsPerVPU=0;
 
-			CC3DEventChangeNumberOfWorkNodes workNodeChangeEvent;
-			workNodeChangeEvent.newNumberOfNodes=numberOfVPUs;
-			
-			// this will cause redundant calculations inside pUtils but since we do not call it often it is ok . This way code remains cleaner
-			postEvent(workNodeChangeEvent);
-		}
-
-		if(_xmlData->getFirstElement("DebugOutputFrequency")){
-			//updating DebugOutputFrequency in Potts using Metadata
-			unsigned int debugOutputFrequency=_xmlData->getFirstElement("DebugOutputFrequency")->getUInt();			
-			potts.setDebugOutputFrequency(debugOutputFrequency>0 ?debugOutputFrequency: 0);
-			ppdCC3DPtr->debugOutputFrequency=debugOutputFrequency;
-		}
-        
-        CC3DXMLElementList npmVec=_xmlData->getElements("NonParallelModule");
-        
-        for (size_t i = 0 ; i<npmVec.size(); ++i){
-            // this is simple initialization because for now we only allow Potts to have non-parallel execution. Adding more functionalty later will be straight-forward
-            string moduleName=npmVec[i]->getAttribute("Name");
-            if (moduleName=="Potts"){
-                potts.setParallelUtils(pUtilsSingle);
-            }
+        if (_xmlData->getFirstElement("VirtualProcessingUnits")->findAttribute("ThreadsPerVPU")) {
+            threadsPerVPU=_xmlData->getFirstElement("VirtualProcessingUnits")->getAttributeAsUInt("ThreadsPerVPU");
         }
-        
-        
+        cerr<<"updating VPU's numberOfVPUs="<<numberOfVPUs<<" threadsPerVPU="<<threadsPerVPU<<endl;
+        pUtils->setVPUs(numberOfVPUs,threadsPerVPU);
 
+        CC3DEventChangeNumberOfWorkNodes workNodeChangeEvent;
+        workNodeChangeEvent.newNumberOfNodes=numberOfVPUs;
+
+        // this will cause redundant calculations inside pUtils but since we do not call it often it is ok . This way code remains cleaner
+        postEvent(workNodeChangeEvent);
+    }
+
+    if(_xmlData->getFirstElement("DebugOutputFrequency")) 
+	{
+        //updating DebugOutputFrequency in Potts using Metadata
+        unsigned int debugOutputFrequency=_xmlData->getFirstElement("DebugOutputFrequency")->getUInt();
+        potts.setDebugOutputFrequency(debugOutputFrequency>0 ?debugOutputFrequency: 0);
+        ppdCC3DPtr->debugOutputFrequency=debugOutputFrequency;
+    }
+
+    CC3DXMLElementList npmVec=_xmlData->getElements("NonParallelModule");
+    for (size_t i = 0 ; i<npmVec.size(); ++i)
+	{
+        // this is simple initialization because for now we only allow Potts to have non-parallel execution. Adding more functionalty later will be straight-forward
+        string moduleName=npmVec[i]->getAttribute("Name");
+        if (moduleName=="Potts")
+            potts.setParallelUtils(pUtilsSingle);
+    }
+        
+    cerr<<"Successfully processed Metadata."<<endl;
 }
 
 void Simulator::initializeCC3D()
 {
 	try{
-		cerr<<"BEFORE initializePotts"<<endl;
-		//initializePotts(ps.pottsParseData);
+		cerr<<"Initialising CompuCell3D simulation..."<<endl;
 		initializePottsCC3D(ps.pottsCC3DXMLElement);
 
 		//initializing parallel utils  - OpenMP
@@ -501,7 +505,7 @@ void Simulator::initializeCC3D()
 		//after pUtils have been initialized we process metadata -  in this function potts may get pUtils limiting it to use single thread
 		processMetadataCC3D(ps.metadataCC3DXMLElement);
 
-		cerr<<"AFTER initializePotts"<<endl;
+		cerr<<"Initialising Plugins and Steppables..."<<endl;
 		std::set<std::string> initializedPlugins;
 		std::set<std::string> initializedSteppables;
 
@@ -530,7 +534,6 @@ void Simulator::initializeCC3D()
 
 				steppable->init(this, ps.steppableCC3DXMLElementVector[i]);
 				classRegistry->addStepper(steppableName,steppable);
-
 			} 
 		}
 		if(ppdCC3DPtr->cellTypeMotilityVector.size()){
@@ -540,8 +543,9 @@ void Simulator::initializeCC3D()
 
 			potts.initializeCellTypeMotility(ppdCC3DPtr->cellTypeMotilityVector);		
 		}
-
-	}catch (const BasicException &e) {
+	}
+	catch (const BasicException &e) 
+	{
 		cerr << "ERROR: " << e << endl;
 		stringstream errorMessageStream;
 
@@ -553,14 +557,13 @@ void Simulator::initializeCC3D()
 		}
 
 	}
+	
+	cerr<<"Successfully initialised CompuCell3D simulation."<<endl;
 }
-
-
-
 
 void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
 {
-	cerr<<"INSIDE: initializingPottsCC3D..."<<endl;
+	cerr<<"Initialising Potts..."<<endl;
 	//registering Potts as SteerableObject
 	registerSteerableObject(&potts);
 
@@ -603,7 +606,6 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
 			ppdCC3DPtr->temperature=_xmlData->getFirstElement("FluctuationAmplitude")->getDouble();
 			fluctAmplGlobalReadFlag=true;
 		}
-		
 	}	
 
 	if (!fluctAmplGlobalReadFlag && _xmlData->getFirstElement("Temperature")) 
@@ -624,17 +626,17 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
 
 	if (_xmlData->getFirstElement("Steps")) 
 	{
-		cerr<<"Steps="<<_xmlData->getFirstElement("Steps")->getUInt();
+		cerr<<"Steps="<<_xmlData->getFirstElement("Steps")->getUInt()<<std::endl;
 		ppdCC3DPtr->numSteps=_xmlData->getFirstElement("Steps")->getUInt();
 	}
 	if (_xmlData->getFirstElement("Anneal")) 
 	{
-		cerr<<"Anneal="<<_xmlData->getFirstElement("Anneal")->getUInt();
+		cerr<<"Anneal="<<_xmlData->getFirstElement("Anneal")->getUInt()<<std::endl;
 		ppdCC3DPtr->anneal=_xmlData->getFirstElement("Anneal")->getUInt();
 	}
 	if (_xmlData->getFirstElement("Flip2DimRatio")) 
 	{
-		cerr<<"Flip2DimRatio="<<_xmlData->getFirstElement("Flip2DimRatio")->getUInt();
+		cerr<<"Flip2DimRatio="<<_xmlData->getFirstElement("Flip2DimRatio")->getUInt()<<std::endl;
 		ppdCC3DPtr->flip2DimRatio=_xmlData->getFirstElement("Flip2DimRatio")->getDouble();
 	}
 
@@ -841,6 +843,8 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
 
 	//this might reinitialize some of the POtts members but it also makes sure that units are initialized too.
 	potts.update(_xmlData);
+	
+	cerr<<"Successfully initialised Potts."<<endl;
 }
 
 /////////////////////////////////// Steering //////////////////////////////////////////////
