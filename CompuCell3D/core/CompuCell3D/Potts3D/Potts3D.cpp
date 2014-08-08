@@ -30,7 +30,6 @@
 #include "CellGChangeWatcher.h"
 #include "Stepper.h"
 #include "FixedStepper.h"
-#include "SteppablePlugin.h"
 #include "AttributeAdder.h"
 #include <CompuCell3D/Automaton/Automaton.h>
 
@@ -219,7 +218,6 @@ void Potts3D::registerConnectivityConstraint(EnergyFunction * _connectivityConst
 }
 
 EnergyFunction * Potts3D::getConnectivityConstraint(){ return connectivityConstraint;}
-<<<<<<< HEAD
 
 void Potts3D::setAcceptanceFunctionByName(std::string _acceptanceFunctionName){
 	if(_acceptanceFunctionName=="FirstOrderExpansion"){
@@ -304,7 +302,6 @@ void Potts3D::unregisterFixedStepper(FixedStepper *_fixedStepper) {
 	}
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CellG * Potts3D::createCellG(const Point3D pt,long _clusterId) {
 	ASSERT_OR_THROW("createCell() cellFieldG Point out of range!", cellFieldG->isValid(pt));
@@ -314,7 +311,6 @@ CellG * Potts3D::createCellG(const Point3D pt,long _clusterId) {
 	cellFieldG->set(pt, cell);
 
 	return cell;   
-
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CellG *Potts3D::createCell(long _clusterId){	
@@ -412,7 +408,6 @@ void Potts3D::destroyCellG(CellG *cell,bool _removeFromInventory) {
 	}else{
 		delete cell;
 	}
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -429,17 +424,17 @@ double Potts3D::totalEnergy() {
 					energy += energyFunctions[i]->localEnergy(pt);
 
 	return energy;
-
 }
 
 
 double Potts3D::changeEnergy(Point3D pt, const CellG *newCell,
-							 const CellG *oldCell) {
-								 double change = 0;
-								 for (unsigned int i = 0; i < energyFunctions.size(); i++)
-									 change += energyFunctions[i]->changeEnergy(pt, newCell, oldCell);
+							 const CellG *oldCell) 
+{
+	double change = 0;
+	for (unsigned int i = 0; i < energyFunctions.size(); i++)
+		change += energyFunctions[i]->changeEnergy(pt, newCell, oldCell);
 
-								 return change;
+	return change;
 }
 
 void Potts3D::runSteppers(){
@@ -499,7 +494,6 @@ unsigned int Potts3D::metropolisList(const unsigned int steps, const double temp
 
 #pragma omp parallel
 	{
-
 		for (unsigned int i = 0; i < numberOfAttempts; i++) {
 
 			currentAttempt=i;
@@ -610,6 +604,7 @@ unsigned int Potts3D::metropolisList(const unsigned int steps, const double temp
 				steppers[j]->step();
 		}
 	}//#pragma omp parallel 
+
 	unsigned int currentStep=sim->getStep();
 	if(debugOutputFrequency && ! (currentStep % debugOutputFrequency) ){
 		cerr<<"Number of Attempted Energy Calculations="<<attemptedEC<<endl;
@@ -887,10 +882,7 @@ unsigned int Potts3D::metropolisFast(const unsigned int steps, const double temp
 			energyVec[currentWorkNodeNumber]=0.0;
 			attemptedECVec[currentWorkNodeNumber]=0;
 			flipsVec[currentWorkNodeNumber]=0;
-
-
 		}
-
 	} //pragma omp parallel
 
 	if(debugOutputFrequency && ! (currentStep % debugOutputFrequency) ){
@@ -1098,6 +1090,7 @@ unsigned int Potts3D::metropolisBoundaryWalker(const unsigned int steps, const d
 			//     exit(0);
 		}
 	}// #pragma omp parallel
+
 	if(debugOutputFrequency && ! (currentStep % debugOutputFrequency) ){
 		cerr<<"Number of Attempted Energy Calculations="<<attemptedEC<<endl;
 	}

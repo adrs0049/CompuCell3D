@@ -53,7 +53,6 @@ namespace CompuCell3D {
   class BCGChangeWatcher;
   class Stepper;
   class FixedStepper;
-  class SteppablePlugin;
   class Automaton;
   class TypeTransition;
   class TypeChangeWatcher;
@@ -101,7 +100,6 @@ namespace CompuCell3D {
     /// An array of potts steppers.  These are called after each potts step.
     std::vector<Stepper *> steppers;
     std::vector<FixedStepper *> fixedSteppers;
-	std::vector<SteppablePlugin *> steppablePlugins;
     /// The automaton to use.  Assuming one automaton per simulation.
     Automaton* automaton;
 
@@ -193,9 +191,9 @@ namespace CompuCell3D {
     void setDepth(double _depth);
     void setNeighborOrder(unsigned int _neighborOrder);
 
-	 void initializeCellTypeMotility(std::vector<CellTypeMotilityData> & _cellTypeMotilityVector);
-	 void setCellTypeMotilityVec(std::vector<float> & _cellTypeMotilityVec);
-	 const std::vector<float> & getCellTypeMotilityVec() const {return cellTypeMotilityVec;}
+	void initializeCellTypeMotility(std::vector<CellTypeMotilityData> & _cellTypeMotilityVector);
+	void setCellTypeMotilityVec(std::vector<float> & _cellTypeMotilityVec);
+	const std::vector<float> & getCellTypeMotilityVec() const {return cellTypeMotilityVec;}
 
     void setDebugOutputFrequency(unsigned int _freq){debugOutputFrequency=_freq;}
     void setSimulator(Simulator *_sim){sim=_sim;}
@@ -225,15 +223,15 @@ namespace CompuCell3D {
     std::string const & getBoundaryYName() const{return boundary_y;}
     std::string const & getBoundaryZName() const{return boundary_z;}
 
-   void setMinCoordinates(Point3D _minCoord){minCoordinates=_minCoord;}
-   void setMaxCoordinates(Point3D _maxCoord){maxCoordinates=_maxCoord;}
-   Point3D getMinCoordinates() const {return minCoordinates;}
-   Point3D getMaxCoordinates() const {return maxCoordinates;}
-   TypeTransition *getTypeTransition(){return typeTransition;}
-   virtual void createEnergyFunction(std::string _energyFunctionType);
-   EnergyFunctionCalculator * getEnergyFunctionCalculator(){return energyCalculator;}
+	void setMinCoordinates(Point3D _minCoord){minCoordinates=_minCoord;}
+	void setMaxCoordinates(Point3D _maxCoord){maxCoordinates=_maxCoord;}
+	Point3D getMinCoordinates() const {return minCoordinates;}
+	Point3D getMaxCoordinates() const {return maxCoordinates;}
+	TypeTransition *getTypeTransition(){return typeTransition;}
+	virtual void createEnergyFunction(std::string _energyFunctionType);
+	EnergyFunctionCalculator * getEnergyFunctionCalculator(){return energyCalculator;}
 
-   CellInventory &getCellInventory(){return cellInventory;}
+	CellInventory &getCellInventory(){return cellInventory;}
     
     virtual void registerAttributeAdder(AttributeAdder * _attrAdder);
     /// Add an energy function to the list.
@@ -271,8 +269,7 @@ namespace CompuCell3D {
     /// Add a potts stepper to be called after each potts step.
     virtual void registerStepper(Stepper *stepper);
     virtual void registerFixedStepper(FixedStepper *fixedStepper, bool _front=false);
-	virtual void unregisterFixedStepper(FixedStepper *fixedStepper);
-	virtual void registerSteppablePlugin(SteppablePlugin * steppablePlugin);
+    virtual void unregisterFixedStepper(FixedStepper *fixedStepper);
 
     /** 
      * @return Current energy.
