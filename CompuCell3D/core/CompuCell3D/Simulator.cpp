@@ -47,13 +47,10 @@ using namespace CompuCell3D;
 	#include <QtWrappers/StreamRedirectors/CustomStreamBuffers.h>
 #endif
 
-
 #undef max
 #undef min
 
-
 #include "Simulator.h"
-
 
 #define DEBUG_IN "("<<in.getLineNumber()<<" , "<<in.getColumnNumber()<<")"<<endl
 
@@ -63,16 +60,15 @@ PluginManager<Plugin> Simulator::pluginManager;
 PluginManager<Steppable> Simulator::steppableManager;
 BasicPluginManager<PluginBase> Simulator::pluginBaseManager;
 
-
 Simulator::Simulator() :
-cerrStreamBufOrig(0),
-coutStreamBufOrig(0),
-qStreambufPtr(0),
+cerrStreamBufOrig(nullptr),
+coutStreamBufOrig(nullptr),
+qStreambufPtr(nullptr),
 restartEnabled(false)
 {
 	newPlayerFlag=false;
-	ppdPtr=0;
-	ppdCC3DPtr=0;
+	ppdPtr=nullptr;
+	ppdCC3DPtr=nullptr;
 	readPottsSectionFromXML=false;
 	simValue=20.5;
 	pluginManager.setSimulator(this);
@@ -114,26 +110,24 @@ Simulator::~Simulator() {
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-long Simulator::getCerrStreamBufOrig(){
-	return (long)cerrStreamBufOrig;
+long Simulator::getCerrStreamBufOrig()
+{
+	return static_cast<long>(cerrStreamBufOrig);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Simulator::restoreCerrStreamBufOrig(long _ptr){
-	cerr.rdbuf((streambuf *)_ptr);
+void Simulator::restoreCerrStreamBufOrig(long _ptr)
+{
+	cerr.rdbuf(static_cast<streambuf *>(_ptr));
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-void Simulator::setOutputRedirectionTarget(long  _ptr){
-
+void Simulator::setOutputRedirectionTarget(long  _ptr)
+{
 	//CustomStreamBufferFactory bufferFactory;
 	//qStreambufPtr=bufferFactory.getQTextEditBuffer();
 
 //we may also try to implement buffer switching during player runtime so that it does not require player restart
 //for now it is ok to have this basic type of switching
 #ifdef QT_WRAPPERS_AVAILABLE
-
-
 	//if (!qStreambufPtr)
 	//	return ; //means setOutputRedirectionTarget has already been called
 
@@ -150,69 +144,55 @@ void Simulator::setOutputRedirectionTarget(long  _ptr){
 
 	qStreambufPtr = new QTextEditBuffer;
 
-
 	qStreambufPtr->setQTextEditPtr((void*)_ptr);
 	cerr.rdbuf(qStreambufPtr); //redirecting output to the external target
 #endif
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-BoundaryStrategy * Simulator::getBoundaryStrategy(){
+BoundaryStrategy * Simulator::getBoundaryStrategy()
+{
 	return BoundaryStrategy::getInstance();
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Simulator::registerConcentrationField(std::string _name,Field3D<float>* _fieldPtr){
+void Simulator::registerConcentrationField(std::string _name,Field3D<float>* _fieldPtr)
+{
 	concentrationFieldNameMap.insert(std::make_pair(_name,_fieldPtr));
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::vector<std::string> Simulator::getConcentrationFieldNameVector(){
+std::vector<std::string> Simulator::getConcentrationFieldNameVector()
+{
 	vector<string> fieldNameVec;
-	std::map<std::string,Field3D<float>*>::iterator mitr;
-	for (mitr=concentrationFieldNameMap.begin()  ; mitr !=concentrationFieldNameMap.end() ; ++mitr){
-		fieldNameVec.push_back(mitr->first);	
-	}
+	for (const auto& mitr : concentrationFieldNameMap)
+		fieldNameVec.push_back(mitr.first);	
 	return fieldNameVec;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Field3D<float>* Simulator::getConcentrationFieldByName(std::string _fieldName){
-		//this function crashes CC3D when called from outside Simulator. 
-      std::map<std::string,Field3D<float>*> & fieldMap=this->getConcentrationFieldNameMap();
-	  //cerr<<" mapSize="<<fieldMap.size()<<endl;
-      std::map<std::string,Field3D<float>*>::iterator mitr;
-      mitr=fieldMap.find(_fieldName);
-      if(mitr!=fieldMap.end()){
-         return mitr->second;
-      }else{
-         return 0;
-      }
-
-
-	//cerr<<"LOOKING FOR FIELD "<<_fieldName<<endl;
-	//cerr<<" mapSize="<<concentrationFieldNameMap.size()<<endl;
-	//std::map<std::string,Field3DImpl<float>*>::iterator mitr=concentrationFieldNameMap.find(_fieldName);
-
-	//if(mitr!=concentrationFieldNameMap.end()){
-	//	cerr<<" GOT NON ZERO PTR="<<mitr->second<<endl;
-	//	return mitr->second;
-	//}
-	//else{
-	//	cerr<<" GOT ZERO PTR"<<endl;
-	//	return 0;
-	//}
+Field3D<float>* Simulator::getConcentrationFieldByName(std::string _fieldName)
+{
+	//this function crashes CC3D when called from outside Simulator. 
+    std::map<std::string,Field3D<float>*> & fieldMap=this->getConcentrationFieldNameMap();
+	//cerr<<" mapSize="<<fieldMap.size()<<endl;
+    auto mitr=fieldMap.find(_fieldName);
+    if(mitr!=fieldMap.end()){
+       return mitr->second;
+    }else{
+        return nullptr;
+    }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Simulator::serialize(){
-	for(size_t i = 0 ; i < serializerVec.size() ; ++i){
-		serializerVec[i]->serialize();
-	}
+void Simulator::serialize()
+{
+	for(auto& s : serializerVec)
+		s->serialize();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Simulator::registerSteerableObject(SteerableObject * _steerableObject){
+void Simulator::registerSteerableObject(SteerableObject * _steerableObject)
+{
 	// cerr<<"Dealing with _steerableObject->steerableName()="<<_steerableObject->steerableName()<<endl;   
-	std::map<std::string,SteerableObject *>::iterator mitr;
-	mitr=steerableObjectMap.find(_steerableObject->steerableName());
+	auto mitr=steerableObjectMap.find(_steerableObject->steerableName());
 	// cerr<<"after find"<<endl;
 
 	ASSERT_OR_THROW("Steerable Object "+_steerableObject->steerableName()+" already exist!",  mitr==steerableObjectMap.end());
@@ -221,9 +201,9 @@ void Simulator::registerSteerableObject(SteerableObject * _steerableObject){
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void Simulator::unregisterSteerableObject(const std::string & _objectName){
-	std::map<std::string,SteerableObject *>::iterator mitr;
-	mitr=steerableObjectMap.find(_objectName);
+void Simulator::unregisterSteerableObject(const std::string & _objectName)
+{
+	auto mitr=steerableObjectMap.find(_objectName);
 	if(mitr!=steerableObjectMap.end()){
 		steerableObjectMap.erase(mitr);
 	}else{
@@ -232,56 +212,52 @@ void Simulator::unregisterSteerableObject(const std::string & _objectName){
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-SteerableObject * Simulator::getSteerableObject(const std::string & _objectName){
-	std::map<std::string,SteerableObject *>::iterator mitr;
-	mitr=steerableObjectMap.find(_objectName);
+SteerableObject * Simulator::getSteerableObject(const std::string & _objectName)
+{
+	auto mitr=steerableObjectMap.find(_objectName);
 	if(mitr!=steerableObjectMap.end()){
 		return mitr->second;
 	}else{
-		return 0;
+		return nullptr;
 	}
 
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Simulator::postEvent(CC3DEvent & _ev){
+void Simulator::postEvent(CC3DEvent & _ev)
+{
 	//cerr<<"INSIDE SIMULATOR::postEvent"<<endl;
-		pUtils->handleEvent(_ev); //let parallel utils konw about all events
+    pUtils->handleEvent(_ev); //let parallel utils konw about all events
 
-		string pluginName;
-		BasicPluginManager<Plugin>::infos_t *infos = &pluginManager.getPluginInfos();
-		BasicPluginManager<Plugin>::infos_t::iterator it; 
-		//for (it = infos->begin(); it != infos->end(); it++)	{		
-		//	cerr<<" THIS IS PLUGIN NAME "<<(*it)->getName()<<endl;
-		//}
+    string pluginName;
+    BasicPluginManager<Plugin>::infos_t *infos = &pluginManager.getPluginInfos();
 
-		for (it = infos->begin(); it != infos->end(); it++){
-			pluginName=(*it)->getName();			
-			if (pluginManager.isLoaded((*it)->getName())) {
-				Plugin *plugin = pluginManager.get((*it)->getName());
-				plugin->handleEvent(_ev); 
-			}	
+    for (auto& it : *infos)
+    {
+        pluginName=it->getName();
+        if (pluginManager.isLoaded(it->getName()))
+        {
+            Plugin *plugin = pluginManager.get(it->getName());
+            plugin->handleEvent(_ev);
+        }
+    }
 
-		}
+    string steppableName;
+    BasicPluginManager<Steppable>::infos_t *infos_step = &steppableManager.getPluginInfos();
 
-		string steppableName;
-		BasicPluginManager<Steppable>::infos_t *infos_step = &steppableManager.getPluginInfos();
-		BasicPluginManager<Steppable>::infos_t::iterator it_step; 
-		for (it_step = infos_step->begin(); it_step != infos_step->end(); it_step++){
+    for (auto& it_step : *infos_step)
+    {
+        steppableName=it_step->getName();
+        // cerr<<"processign steppable="<<steppableName<<endl;
 
-			steppableName=(*it_step)->getName();
-			// cerr<<"processign steppable="<<steppableName<<endl;
-			
-			if (steppableManager.isLoaded(steppableName)) {
-				// cerr<<"SENDING EVENT TO THE STEPPABLE "<<steppableName<<endl;
-				Steppable *steppable= steppableManager.get(steppableName);
-				steppable->handleEvent(_ev); 
-			}	
-		}
-
+        if (steppableManager.isLoaded(steppableName))
+        {
+            // cerr<<"SENDING EVENT TO THE STEPPABLE "<<steppableName<<endl;
+            Steppable * steppable= steppableManager.get(steppableName);
+            steppable->handleEvent(_ev);
+        }
+    }
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 void Simulator::start() {
 
 	try{
@@ -289,13 +265,13 @@ void Simulator::start() {
 		cerr << "Simulator::start():  Plugins:";
 		BasicPluginManager<Plugin>::infos_t *infos = &pluginManager.getPluginInfos();
 		BasicPluginManager<Plugin>::infos_t::iterator it; 
+		
 		for (it = infos->begin(); it != infos->end(); it++)
 			if (pluginManager.isLoaded((*it)->getName())) {
 				if (it != infos->begin()) cerr << ",";
 				cerr << " " << (*it)->getName();
 			}
 			cerr << endl;
-
 
 			classRegistry->start();
 
@@ -307,7 +283,7 @@ void Simulator::start() {
 				<< endl;
 
 			simulatorIsStepping=true; //initialize flag that simulator is stepping
-	}catch (const BasicException &e) {
+	} catch (const BasicException &e) {
 		cerr << "ERROR: " << e << endl;
 		unloadModules();
 		stringstream errorMessageStream;
@@ -325,16 +301,16 @@ void Simulator::start() {
 void Simulator::extraInit(){
 	try{
 		BasicPluginManager<Plugin>::infos_t *infos = &pluginManager.getPluginInfos();
-		BasicPluginManager<Plugin>::infos_t::iterator it; 
 		cerr << "Running extraInit for: " << endl;
-		for (it = infos->begin(); it != infos->end(); it++)
-			if (pluginManager.isLoaded((*it)->getName())) {
-				pluginManager.get((*it)->getName())->extraInit(this);
-				cerr << " " << (*it)->getName() << endl;
+		for (auto& it : *infos)
+			if (pluginManager.isLoaded(it->getName())) 
+			{
+				pluginManager.get(it->getName())->extraInit(this);
+				cerr << " " << it->getName() << endl;
 			}
 
 			classRegistry->extraInit(this);
-	}catch (const BasicException &e) {
+	} catch (const BasicException &e) {
 		cerr << "ERROR: " << e << endl;
 		unloadModules();
 		stringstream errorMessageStream;
@@ -345,10 +321,7 @@ void Simulator::extraInit(){
 		if (!newPlayerFlag){
 			throw e;
 		}
-
-
 	}
-
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Simulator::step(const unsigned int currentStep)
@@ -401,7 +374,7 @@ void Simulator::finish()
 		unloadModules();
 		//cerr<<"inside finish 3"<<endl;
 
-	}catch (const BasicException &e) {
+	} catch (const BasicException &e) {
 		cerr << "ERROR: " << e << endl;
 		stringstream errorMessageStream;
 
@@ -411,9 +384,7 @@ void Simulator::finish()
 		if (!newPlayerFlag){
 			throw e;
 		}
-
 	}
-
 }
 
 void Simulator::cleanAfterSimulation()
@@ -449,10 +420,10 @@ void Simulator::processMetadataCC3D(CC3DXMLElement * _xmlData)
         unsigned int numberOfVPUs=_xmlData->getFirstElement("VirtualProcessingUnits")->getUInt();
         unsigned int threadsPerVPU=0;
 
-        if (_xmlData->getFirstElement("VirtualProcessingUnits")->findAttribute("ThreadsPerVPU")) {
+        if (_xmlData->getFirstElement("VirtualProcessingUnits")->findAttribute("ThreadsPerVPU")) 
             threadsPerVPU=_xmlData->getFirstElement("VirtualProcessingUnits")->getAttributeAsUInt("ThreadsPerVPU");
-        }
-        cerr<<"updating VPU's numberOfVPUs="<<numberOfVPUs<<" threadsPerVPU="<<threadsPerVPU<<endl;
+
+		cerr<<"updating VPU's numberOfVPUs="<<numberOfVPUs<<" threadsPerVPU="<<threadsPerVPU<<endl;
         pUtils->setVPUs(numberOfVPUs,threadsPerVPU);
 
         CC3DEventChangeNumberOfWorkNodes workNodeChangeEvent;
@@ -471,10 +442,10 @@ void Simulator::processMetadataCC3D(CC3DXMLElement * _xmlData)
     }
 
     CC3DXMLElementList npmVec=_xmlData->getElements("NonParallelModule");
-    for (size_t i = 0 ; i<npmVec.size(); ++i)
+	for (const auto& npmVec_i : npmVec)
 	{
         // this is simple initialization because for now we only allow Potts to have non-parallel execution. Adding more functionalty later will be straight-forward
-        string moduleName=npmVec[i]->getAttribute("Name");
+        string moduleName {npmVec_i->getAttribute("Name")};
         if (moduleName=="Potts")
             potts.setParallelUtils(pUtilsSingle);
     }
@@ -502,30 +473,32 @@ void Simulator::initializeCC3D()
 		std::set<std::string> initializedPlugins;
 		std::set<std::string> initializedSteppables;
 
-		for(size_t i=0; i <ps.pluginCC3DXMLElementVector.size(); ++i)
+		for (const auto& elem : ps.pluginCC3DXMLElementVector)
 		{
-			std::string pluginName = ps.pluginCC3DXMLElementVector[i]->getAttribute("Name");
+			std::string pluginName {elem->getAttribute("Name")};
 			bool pluginAlreadyRegisteredFlag=false;
 			Plugin *plugin = pluginManager.get(pluginName,&pluginAlreadyRegisteredFlag);
 			if(!pluginAlreadyRegisteredFlag){
 				//Will only process first occurence of a given plugin
 				cerr<<"INITIALIZING "<<pluginName<<endl;
-				plugin->init(this, ps.pluginCC3DXMLElementVector[i]);
+				plugin->init(this, elem);
 			}
 		}
 
-		for(size_t i=0; i <ps.steppableCC3DXMLElementVector.size(); ++i){
-			std::string steppableName = ps.steppableCC3DXMLElementVector[i]->getAttribute("Type");
+		for (const auto& elem : ps.steppableCC3DXMLElementVector)
+		{
+			std::string steppableName {elem->getAttribute("Type")};
 			bool steppableAlreadyRegisteredFlag=false;
 			Steppable *steppable = steppableManager.get(steppableName,&steppableAlreadyRegisteredFlag);
 
-			if(!steppableAlreadyRegisteredFlag){
+			if(!steppableAlreadyRegisteredFlag)
+			{
 				//Will only process first occurence of a given steppable
 				cerr<<"INITIALIZING "<<steppableName<<endl;
-				if(ps.steppableCC3DXMLElementVector[i]->findAttribute("Frequency"))
-					steppable->frequency=ps.steppableCC3DXMLElementVector[i]->getAttributeAsUInt("Frequency");
+				if(elem->findAttribute("Frequency"))
+					steppable->frequency=elem->getAttributeAsUInt("Frequency");
 
-				steppable->init(this, ps.steppableCC3DXMLElementVector[i]);
+				steppable->init(this, elem);
 				classRegistry->addStepper(steppableName,steppable);
 			} 
 		}
@@ -586,16 +559,16 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
 		if (_xmlData->getFirstElement("FluctuationAmplitude")->findElement("FluctuationAmplitudeParameters")){
 		
 			CC3DXMLElementList motilityVec=_xmlData->getFirstElement("FluctuationAmplitude")->getElements("FluctuationAmplitudeParameters");
-			for (size_t i = 0 ; i<motilityVec.size(); ++i)
+			for (const auto& elem : motilityVec)
 			{
 				CellTypeMotilityData motilityData;
 
-				motilityData.typeName=motilityVec[i]->getAttribute("CellType");
-				motilityData.motility=static_cast<float>(motilityVec[i]->getAttributeAsDouble("FluctuationAmplitude"));
+				motilityData.typeName=elem->getAttribute("CellType");
+				motilityData.motility=static_cast<float>(elem->getAttributeAsDouble("FluctuationAmplitude"));
 				ppdCC3DPtr->cellTypeMotilityVector.push_back(motilityData);				
 			}
 			fluctAmplByTypeReadFlag=true;
-		}else{
+		} else {
 			ppdCC3DPtr->temperature=_xmlData->getFirstElement("FluctuationAmplitude")->getDouble();
 			fluctAmplGlobalReadFlag=true;
 		}
@@ -607,12 +580,12 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
 	if(!fluctAmplByTypeReadFlag && _xmlData->getFirstElement("CellMotility"))
 	{
 		CC3DXMLElementList motilityVec=_xmlData->getFirstElement("CellMotility")->getElements("MotilityParameters");
-		for (size_t i = 0 ; i<motilityVec.size(); ++i)
+		for (const auto& elem : motilityVec)
 		{
 			CellTypeMotilityData motilityData;
 
-			motilityData.typeName=motilityVec[i]->getAttribute("CellType");
-			motilityData.motility=static_cast<float>(motilityVec[i]->getAttributeAsDouble("Motility"));
+			motilityData.typeName=elem->getAttribute("CellType");
+			motilityData.motility=static_cast<float>(elem->getAttributeAsDouble("Motility"));
 			ppdCC3DPtr->cellTypeMotilityVector.push_back(motilityData);				
 		}
 	}	
@@ -639,7 +612,7 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
 	//cerr<<"Temp="<<_xmlData->getFirstElement("Temperature")->getDouble()<<endl;
 	//cerr<<"Flip2DimRatio="<<_xmlData->getFirstElement("Flip2DimRatio")->getDouble()<<endl;
 
-	std::string metropolisAlgorithmName="";
+	std::string metropolisAlgorithmName {""};
 	if(_xmlData->getFirstElement("MetropolisAlgorithm")) 
 	{
 		cerr << "MetropolisAlgorithm (xml)= " << _xmlData->getFirstElement("MetropolisAlgorithm")->getText() << endl;
@@ -798,9 +771,8 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
 	{
 		if(_xmlData->getFirstElement("EnergyFunctionCalculator")->findAttribute("Type")){
 			std::string energyFunctionCalculatorType=_xmlData->getFirstElement("EnergyFunctionCalculator")->getAttribute("Type");
-			if(energyFunctionCalculatorType=="Statistics"){
+			if(energyFunctionCalculatorType=="Statistics")
 				potts.createEnergyFunction(energyFunctionCalculatorType);
-			}
 		}
 		EnergyFunctionCalculator * enCalculator=potts.getEnergyFunctionCalculator();
 		enCalculator->setSimulator(this);
@@ -841,29 +813,31 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
 }
 
 /////////////////////////////////// Steering //////////////////////////////////////////////
-CC3DXMLElement * Simulator::getCC3DModuleData(std::string _moduleType,std::string _moduleName){
-	if(_moduleType=="Potts"){
+CC3DXMLElement * Simulator::getCC3DModuleData(std::string _moduleType,std::string _moduleName)
+{
+	if(_moduleType=="Potts") {
 		return ps.pottsCC3DXMLElement;
-	}else if(_moduleType=="Metadata"){
+	} else if(_moduleType=="Metadata") {
 		return ps.metadataCC3DXMLElement;
-	}else if(_moduleType=="Plugin"){
-		for (size_t i = 0 ; i<ps.pluginCC3DXMLElementVector.size() ;  ++i){
-			if (ps.pluginCC3DXMLElementVector[i]->getAttribute("Name")==_moduleName)
-				return ps.pluginCC3DXMLElementVector[i];
-		}
-		return 0;
-	}else if(_moduleType=="Steppable"){
-		for (size_t i = 0 ; i<ps.pluginCC3DXMLElementVector.size() ;  ++i){
-			if (ps.steppableCC3DXMLElementVector[i]->getAttribute("Type")==_moduleName)
-				return ps.steppableCC3DXMLElementVector[i];
-		}
-		return 0;		
-	}else{
-		return 0;
+	} else if(_moduleType=="Plugin") {
+		for (const auto& elem : ps.pluginCC3DXMLElementVector)
+			if (elem->getAttribute("Name")==_moduleName)
+				return elem;
+
+		return nullptr;
+	} else if(_moduleType=="Steppable") {
+		for (const auto& elem : ps.pluginCC3DXMLElementVector)
+			if (elem->getAttribute("Type")==_moduleName)
+				return elem;
+
+		return nullptr;		
+	} else {
+		return nullptr;
 	}
 }
 
-void Simulator::updateCC3DModule(CC3DXMLElement *_element){
+void Simulator::updateCC3DModule(CC3DXMLElement *_element)
+{
 	if(!_element)
 		return;
 	if(_element->getName()=="Potts"){
@@ -877,26 +851,25 @@ void Simulator::updateCC3DModule(CC3DXMLElement *_element){
 	}
 }
 
-void Simulator::steer(){
-	std::map<std::string,SteerableObject *>::iterator mitr;
-
-	if(ps.updatePottsCC3DXMLElement){
-
-		mitr=steerableObjectMap.find("Potts");
-		if(mitr!=steerableObjectMap.end()){
+void Simulator::steer()
+{
+	if(ps.updatePottsCC3DXMLElement)
+	{
+		auto mitr=steerableObjectMap.find("Potts");
+		if(mitr!=steerableObjectMap.end())
+		{
 			mitr->second->update(ps.updatePottsCC3DXMLElement);
 			ps.pottsCC3DXMLElement=ps.updatePottsCC3DXMLElement;
 
-			if(ps.updatePottsCC3DXMLElement->getFirstElement("Steps")){
+			if(ps.updatePottsCC3DXMLElement->getFirstElement("Steps"))
 				ppdCC3DPtr->numSteps=ps.updatePottsCC3DXMLElement->getFirstElement("Steps")->getUInt();
-			}
 
-			ps.updatePottsCC3DXMLElement=0;
+			ps.updatePottsCC3DXMLElement=nullptr;
 		}
-
 	}
 
-	if(ps.updateMetadataCC3DXMLElement){
+	if(ps.updateMetadataCC3DXMLElement)
+	{
 		//here we will update Debug Frequency - the way we handle this will have to be rewritten though. This is ad hoc solution only
 		//mitr=steerableObjectMap.find("Potts"); 
 		//if(mitr!=steerableObjectMap.end()){
@@ -911,45 +884,40 @@ void Simulator::steer(){
 		//}
 		
 		processMetadataCC3D(ps.updateMetadataCC3DXMLElement); // here we update number of work nodes and Debug output frequency
-		ps.updateMetadataCC3DXMLElement=0;
-
+		ps.updateMetadataCC3DXMLElement=nullptr;
 	}
-
-
-	else if(ps.updatePluginCC3DXMLElementVector.size()){
-
-		string moduleName;
-		for (size_t i = 0 ; i < ps.updatePluginCC3DXMLElementVector.size() ; ++i){
-			moduleName=ps.updatePluginCC3DXMLElementVector[i]->getAttribute("Name");
-			mitr=steerableObjectMap.find(moduleName);
-			if(mitr!=steerableObjectMap.end()){
-				mitr->second->update(ps.updatePluginCC3DXMLElementVector[i]);
+	else if(ps.updatePluginCC3DXMLElementVector.size())
+	{
+		for (const auto& elem : ps.updatePluginCC3DXMLElementVector)
+		{
+			string moduleName {elem->getAttribute("Name")};
+			auto mitr=steerableObjectMap.find(moduleName);
+			if(mitr!=steerableObjectMap.end())
+			{
+				mitr->second->update(elem);
 				//now overwrite pointer to existing copy of the module data
-				for(size_t j=0 ; j < ps.pluginCC3DXMLElementVector.size(); ++j){
-					if(ps.pluginCC3DXMLElementVector[j]->getAttribute("Name")==moduleName)
-						ps.pluginCC3DXMLElementVector[j]=ps.updatePluginCC3DXMLElementVector[i];
-				}
+				for (auto& pelem : ps.pluginCC3DXMLElementVector)
+					if (pelem->getAttribute("Name")==moduleName)
+						pelem=elem;
 			}
 
 		}
 		ps.updatePluginCC3DXMLElementVector.clear();
-	}else if(ps.updateSteppableCC3DXMLElementVector.size()){
-
-		string moduleName;
-		for (size_t i = 0 ; i < ps.updateSteppableCC3DXMLElementVector.size() ; ++i){
-			moduleName=ps.updateSteppableCC3DXMLElementVector[i]->getAttribute("Type");
-			mitr=steerableObjectMap.find(moduleName);
-			if(mitr!=steerableObjectMap.end()){
-				mitr->second->update(ps.updateSteppableCC3DXMLElementVector[i]);
+	} else if(ps.updateSteppableCC3DXMLElementVector.size()) {
+		for (const auto& elem : ps.updateSteppableCC3DXMLElementVector)
+		{
+			string moduleName {elem->getAttribute("Type")};
+			auto mitr=steerableObjectMap.find(moduleName);
+			if(mitr!=steerableObjectMap.end())
+			{
+				mitr->second->update(elem);
                 
 				//now overwrite pointer to existing copy of the module data
-				for(size_t j=0 ; j < ps.steppableCC3DXMLElementVector.size(); ++j){
-					if(ps.steppableCC3DXMLElementVector[j]->getAttribute("Type")==moduleName)
-						ps.steppableCC3DXMLElementVector[j]=ps.updateSteppableCC3DXMLElementVector[i];
-				}
+				for (auto& pelem : ps.steppableCC3DXMLElementVector)
+					if (pelem->getAttribute("Type")==moduleName)
+						pelem=elem;
 			}	
 		}
 		ps.updateSteppableCC3DXMLElementVector.clear();
 	}
-
 }

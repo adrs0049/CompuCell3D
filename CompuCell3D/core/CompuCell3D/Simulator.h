@@ -23,9 +23,7 @@
 #ifndef SIMULATOR_H
 #define SIMULATOR_H
 
-//#include <CompuCell3D/dllDeclarationSpecifier.h>
 #include <CompuCell3D/CompuCellLibDLLSpecifier.h>
-
 
 #include "PluginManager.h"
 #include "Plugin.h"
@@ -40,9 +38,6 @@
 #include <CompuCell3D/PottsParseData.h>
 #include <CompuCell3D/ParserStorage.h>
 #include <CompuCell3D/CC3DEvents.h>
-//#include <QtWrappers/StreamRedirectors/CustomStreamBuffers.h>
-
-
 
 class CC3DXMLElement;
 class CustomStreamBufferBase;
@@ -56,14 +51,13 @@ namespace CompuCell3D {
 	class PottsParseData;
 	class ParallelUtilsOpenMP;
 
-	class COMPUCELLLIB_EXPORT Simulator : public Steppable {
-
+	class COMPUCELLLIB_EXPORT Simulator : public Steppable
+	{
 		ClassRegistry *classRegistry;
 
 		Potts3D potts;
 
 		int currstep;
-
 		bool simulatorIsStepping;
 		bool readPottsSectionFromXML;
 		std::map<std::string,Field3D<float>*> concentrationFieldNameMap;
@@ -80,7 +74,6 @@ namespace CompuCell3D {
 
 		std::string basePath;
 		bool restartEnabled;
-        
 
 	public:
 
@@ -105,7 +98,6 @@ namespace CompuCell3D {
 		static BasicPluginManager<PluginBase> pluginBaseManager;
 		Simulator();
 		virtual ~Simulator();
-		//     PluginManager::plugins_t & getPluginMap(){return pluginManager.getPluginMap();}
 
 		//Error handling functions
 		std::string getRecentErrorMessage(){return recentErrorMessage;}
@@ -117,7 +109,6 @@ namespace CompuCell3D {
 
 		ParallelUtilsOpenMP * getParallelUtils(){return pUtils;}
         ParallelUtilsOpenMP * getParallelUtilsSingleThread(){return pUtilsSingle;}
-
 
 		BoundaryStrategy * getBoundaryStrategy();
 		void registerSteerableObject(SteerableObject *);
@@ -132,7 +123,6 @@ namespace CompuCell3D {
 		Potts3D *getPotts() {return &potts;}
 		Simulator *getSimulatorPtr(){return this;}
 		ClassRegistry *getClassRegistry() {return classRegistry;}
-
 
 		void registerConcentrationField(std::string _name,Field3D<float>* _fieldPtr);
 		std::map<std::string,Field3D<float>*> & getConcentrationFieldNameMap(){
@@ -168,7 +158,6 @@ namespace CompuCell3D {
 		CC3DXMLElement * getCC3DModuleData(std::string _moduleType,std::string _moduleName="");
 		void updateCC3DModule(CC3DXMLElement *_element);
 		void steer();
-		
 	};
 };
 #endif
