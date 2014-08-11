@@ -38,43 +38,49 @@
 template <class B, class T>
 class BasicPluginProxy {
 public:
-  BasicPluginProxy(const std::string name, const std::string description, 
-		   BasicPluginManager<B> *manager)
-  {init(new BasicPluginInfo(name, description), manager);}
+    BasicPluginProxy(const std::string name, const std::string description,
+                     BasicPluginManager<B> *manager)
+    {
+        init(new BasicPluginInfo(name, description), manager);
+    }
 
-  BasicPluginProxy(const std::string name, const std::string description,
-		   const unsigned int numDeps, const char *deps[],
-		   BasicPluginManager<B> *manager)
-  {init(new BasicPluginInfo(name, description, numDeps, deps), manager);}
+    BasicPluginProxy(const std::string name, const std::string description,
+                     const unsigned int numDeps, const char *deps[],
+                     BasicPluginManager<B> *manager)
+    {
+        init(new BasicPluginInfo(name, description, numDeps, deps), manager);
+    }
 
-  BasicPluginProxy(const BasicPluginInfo &info, BasicPluginManager<B> *manager)
-  {init(new BasicPluginInfo(info), manager);}
+    BasicPluginProxy(const BasicPluginInfo &info, BasicPluginManager<B> *manager)
+    {
+        init(new BasicPluginInfo(info), manager);
+    }
 
 protected:
-  /** 
-   * Initialize the class.  Called by constructors.
-   * Throws a BasicException of manager is NULL.
-   * 
-   * @param manager A pointer to the Plugin Manager.
-   */
-  virtual void init(BasicPluginInfo *info, BasicPluginManager<B> *manager) {
-    try {
-      if (!manager) {
-	std::cerr << "BasicPluginProxyBase() manager cannot be NULL!"
-		  << std::endl;
-	exit(1);
-      }
+    /**
+     * Initialize the class.  Called by constructors.
+     * Throws a BasicException of manager is NULL.
+     *
+     * @param manager A pointer to the Plugin Manager.
+     */
+    virtual void init(BasicPluginInfo *info, BasicPluginManager<B> *manager) {
+        try {
+            if (!manager) {
+                std::cerr << "BasicPluginProxyBase() manager cannot be NULL!"
+                          << std::endl;
+                exit(1);
+            }
 
-      manager->registerPlugin(info, new BasicClassFactory<B, T>);
+            manager->registerPlugin(info, new BasicClassFactory<B, T>);
 
-    } catch (BasicException &e) {
-      manager->setPluginException(e);
+        } catch (BasicException &e) {
+            manager->setPluginException(e);
 
-    } catch (...) {
-      manager->setPluginException
-	(BasicException("Unknown exception during registration!"));
+        } catch (...) {
+            manager->setPluginException
+            (BasicException("Unknown exception during registration!"));
+        }
     }
-  }
 };
 
 #endif
