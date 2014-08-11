@@ -25,26 +25,41 @@
 #ifndef BASICCLASSFACTORY_H
 #define BASICCLASSFACTORY_H
 
+#include "memory_include.h"
 #include "BasicClassFactoryBase.h"
-
 
 /** 
  * A templated class factory. B is the base class and T the derived class.
  * The base class may be void, but otherwise B must be a base class of T.
  */
-template <class B, class T>
-class BasicClassFactory: public BasicClassFactoryBase<B> {
+template <class BaseType, class DerivedType>
+class BasicClassFactory: public BasicClassFactoryBase<BaseType> 
+{
 public:
   /** 
    * @return A pointer to a newly allocated instance of class T.
    */
-  virtual B *create() {return new T;}
+  virtual std::unique_ptr<BaseType> create() {return std::make_unique<DerivedType>();}
 
   /** 
    * @param classNode A pointer to the instance of class T to deallocate.
    */
-  virtual void destroy(B *classNode) {
-     delete (B*)classNode;
-  }
+  virtual void destroy(std::unique_ptr<BaseType>& classNode) { classNode.reset(nullptr); }
 };
+
+template <class DerivedType>
+class BasicClassFactory<void, DerivedType> : public BasicClassFactoryBase<void>
+{
+public:
+  /** 
+   * @return A pointer to a newly allocated instance of class T.
+   */
+  virtual std::shared_ptr<void> create() {return std::make_shared<DerivedType>();}
+
+  /** 
+   * @param classNode A pointer to the instance of class T to deallocate.
+   */
+  virtual void destroy(std::shared_ptr<void>& classNode) { classNode.reset(); }
+};
+
 #endif
