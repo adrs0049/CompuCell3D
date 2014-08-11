@@ -28,50 +28,44 @@
 #include "BasicClassAccessorBase.h"
 #include "BasicClassGroup.h"
 
+#include <vector>
+#include <memory>
+#include <boost/concept_check.hpp>
+#include "make_unique.h"
+
 #include "BasicException.h"
 
-#include <iostream>
-
-BasicClassGroupFactory::~BasicClassGroupFactory() {
-  for (unsigned int i = 0; i < classFactories.getSize(); i++)
-    delete classFactories[i];
+BasicClassGroupFactory::~BasicClassGroupFactory()
+{
+	// DO I EVEN NEED THIS??
+ 	for (auto& factory : classFactories)
+ 		factory.reset(nullptr);
 }
 
-void BasicClassGroupFactory::registerClass(BasicClassAccessorBase *accessor) {
-  int id = classFactories.put(accessor->createClassFactory());
-  accessor->setId(id);
-  classAccessors.put(accessor);
+void BasicClassGroupFactory::registerClass(std::shared_ptr<BasicClassAccessorBase> accessor)
+{
+    classFactories.emplace_back(accessor->createClassFactory());
+    accessor->setId(classFactories.size()-1);
+    classAccessors.push_back(accessor);
 }
 
-BasicClassGroup *BasicClassGroupFactory::create() {
-  void **classes = new void *[classFactories.getSize()];
-
-  for (unsigned int i = 0; i < classFactories.getSize(); i++)
-    classes[i] = classFactories[i]->create();
-
-  return new BasicClassGroup(classes, classFactories.getSize());
-}
-
-void BasicClassGroupFactory::destroy(BasicClassGroup *group) {
-	using namespace std;   
-  ASSERT_OR_THROW("BasicClassGroupFactory NULL group pointer!", group);
-  //Original code - it atually did not call destructor of the class in the BasicClassGroup on windows 
-  //for (unsigned int i = 0; i < group->size; i++){
-	 //cerr<<"group->classes[i]="<<group->classes[i]<<endl;
-  //  classFactories[i]->destroy(group->classes[i]);
-  //}
-//  cerr<<"classAccessors="<<classAccessors<<endl;		
-  //cerr<<"group="<<group<<endl;
-  //cerr<<"group->size="<<group->size<<endl;	
-  //cerr<<"classAccessors[0]="<<classAccessors[0]<<endl;
-  //cerr<<"INSIDE DESTROY BasicClassGroupFactory"<<endl; 		
-  for (unsigned int i = 0; i < group->size; i++){
+std::unique_ptr<BasicClassGroup> BasicClassGroupFactory::create()
+{
+	std::vector<std::shared_ptr<void> > classes {};
+	classes.reserve(classFactories.size());
 	
-	 //cerr<<"group->classes[i]="<<group->classes[i]<<endl;
-    classAccessors[i]->deallocateClass(group);
-  }
+	for (auto& factory : classFactories)
+		classes.emplace_back( factory->create() );
+			
+    return std::make_unique<BasicClassGroup>(classes);
+}
 
+void BasicClassGroupFactory::destroy(std::unique_ptr<BasicClassGroup>& group) 
+{
+    ASSERT_OR_THROW("BasicClassGroupFactory NULL group pointer!", group);
 
-  delete [] group->classes;
-  delete group;
+	for (auto& accessor : classAccessors)
+		accessor->deallocateClass(group);
+
+    group.reset(nullptr);
 }

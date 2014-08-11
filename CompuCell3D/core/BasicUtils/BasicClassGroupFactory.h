@@ -25,67 +25,67 @@
 #ifndef BASICCLASSGROUPFACTORY_H
 #define BASICCLASSGROUPFACTORY_H
 
-#include "BasicArray.h"
 #include "BasicClassFactoryBase.h"
 #include "BasicClassGroup.h"
 
 class BasicClassAccessorBase;
 
-/** 
+/**
  * Manages (de)allocation of groups of classes in a type safe manner.
  *
  * Pros:
  *  <ul>
  *   <li>Classes can be dynamically added to the group after compile time.</li>
- *   <li>Unlike BasicDynamicClassFactory constructors and destructors are 
+ *   <li>Unlike BasicDynamicClassFactory constructors and destructors are
  *       called.</li>
  *   <li>Unlike BasicDynamicClassFactory virtual classes are ok.</li>
  *  </ul>
  *
- * Cons: 
+ * Cons:
  *  <ul>
  *   <li>Used more memory than BasicDynamicClassFactory because a list of
  *       pointers to the classes is kept in each BasicClassGroup.</li>
  *   <li>If you want to use a constructor with arguments you must override both
  *       BasicClassFactory::create() and
- *       BasicClassAccessor::createClassFactory() 
+ *       BasicClassAccessor::createClassFactory()
  *       with your own implementations.<li>
  *  </ul>
  *
  * See also BasicDynamicClassFactory.
  */
-class BasicClassGroupFactory : public BasicClassFactoryBase<BasicClassGroup> {
-  BasicArray<BasicClassFactoryBase<void> *> classFactories;
-  BasicArray<BasicClassAccessorBase *> classAccessors;
+class BasicClassGroupFactory : public BasicClassFactoryBase<BasicClassGroup> 
+{
+    std::vector<std::unique_ptr<BasicClassFactoryBase<void> > > classFactories;
+    std::vector<std::shared_ptr<BasicClassAccessorBase> > classAccessors;
 
 public:
-  virtual ~BasicClassGroupFactory();
+    virtual ~BasicClassGroupFactory();
 
-  /** 
-   * Register a new class with the group.
-   * BasicClassAccessor::createClassFactory() is
-   * called to get an instance of the class factory. BasicClassGroupFactory 
-   * will deallocate this factory when it is destructed.
-   * 
-   * @param accessor The accessor for the class.
-   */
-  void registerClass(BasicClassAccessorBase *accessor);
+    /**
+     * Register a new class with the group.
+     * BasicClassAccessor::createClassFactory() is
+     * called to get an instance of the class factory. BasicClassGroupFactory
+     * will deallocate this factory when it is destructed.
+     *
+     * @param accessor The accessor for the class.
+     */
+    void registerClass(std::shared_ptr<BasicClassAccessorBase> accessor);
 
-  /** 
-   * The constructors of each of the classes in the group will be called in 
-   * the order they where registered with the factory.
-   *
-   * @return A new instance of the class group.
-   */
-  virtual BasicClassGroup *create();
+    /**
+     * The constructors of each of the classes in the group will be called in
+     * the order they where registered with the factory.
+     *
+     * @return A new instance of the class group.
+     */
+    virtual std::unique_ptr<BasicClassGroup> create();
 
-  /** 
-   * The destructors of each of the classes in the group will be called in the 
-   * order they were registered with the factory.
-   *
-   * @param group The class group to be deallocated.
-   */
-  virtual void destroy(BasicClassGroup *group);
+    /**
+     * The destructors of each of the classes in the group will be called in the
+     * order they were registered with the factory.
+     *
+     * @param group The class group to be deallocated.
+     */
+    virtual void destroy(std::unique_ptr<BasicClassGroup>& group);
 };
 
 #endif
