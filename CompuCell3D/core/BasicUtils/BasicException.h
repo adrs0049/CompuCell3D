@@ -27,16 +27,11 @@
 #define BASICEXCEPTION_H
 
 #include "BasicFileLocation.h"
-#include "BasicSmartPointer.h"
-#include "Zap.h"
 
 #include <string>
 #include <iostream>
 #include <list>
-
-// Forward Declarations
-template <class T, sp_alloc_t alloc_t>
-class BasicSmartPointer;
+#include "memory_include.h"
 
 /**
  * BasicException is a general purpose exception class.  It is similar to
@@ -49,126 +44,144 @@ class BasicSmartPointer;
  * These are:
  *
  * THROW(const string message)
- * 
+ *
  * and
- * 
+ *
  * ASSERT_OR_THROW(const string message, const bool condition)
  *
- * The latter can be used to in place of assert(const bool condition).  
- * Throwing an exception instead of aborting overcomes some of the limitations 
+ * The latter can be used to in place of assert(const bool condition).
+ * Throwing an exception instead of aborting overcomes some of the limitations
  * of the standard assert.
  */
 class BasicException {
-  std::string message;
-  BasicFileLocation location;
-  BasicSmartPointer<BasicException> cause;
-  BasicSmartPointer<std::list<std::string> > trace;
+    std::string message;
+    BasicFileLocation location;
+    std::shared_ptr<BasicException> cause;
+    std::shared_ptr<std::list<std::string> > trace;
 
 public:
-  static unsigned int causePrintLevel;
-  static bool enableStackTraces;
+    static unsigned int causePrintLevel;
+    static bool enableStackTraces;
 
-  BasicException() {init();}
-
-  BasicException(const std::string message) : message(message) {
-    init();
-  }
-
-  BasicException(const std::string message, const BasicFileLocation &location) 
-    : message(message), location(location) {
-    init();
-  }
-  
-  BasicException(const std::string message, BasicException &cause) :
-    message(message) {
-    this->cause = new BasicException(cause);
-    init();
-  }
-
-  BasicException(const std::string message, const BasicFileLocation &location, 
-		 BasicException &cause) :
-    message(message), location(location) {
-    this->cause = new BasicException(cause);
-    init();
-  }
-
-  /// Copy constructor
-  BasicException(const BasicException &e) :
-    message(e.message), location(e.location), cause(e.cause), trace(e.trace) {}
-
-  virtual ~BasicException() {}
-
-  const std::string getMessage() const {return message;}
-  BasicFileLocation getLocation() const {return location;}
-
-  /**
-   * @return A BasicSmartPointer to the BasicException that caused this 
-   *         exception or NULL.
-   */  
-  BasicSmartPointer<BasicException> getCause() const {return cause;}
-
-  BasicSmartPointer<std::list<std::string> > getTrace() const {return trace;}
-
-  /** 
-   * Prints the complete exception recuring down to the cause exception if
-   * not null.  WARNING: If there are many layers of causes this function
-   * could print a very large amount of data.  This can be limited by
-   * setting the causePrintLevel variable.
-   * 
-   * @param stream The output stream.
-   * @param printLocations Print file locations.
-   * @param printLevel The current cause print level.
-   * 
-   * @return A reference to the passed stream.
-   */  
-  std::ostream &print(std::ostream &stream,
-		      bool printLocations = true,
-		      unsigned int printLevel = 0) const {
-
-    if (printLocations && !location.isEmpty())
-      stream << "@ " << location << " ";
-
-    stream << message;
-
-    if (enableStackTraces && !trace.isNull()) {
-      std::list<std::string>::iterator it;
-      for (it = trace->begin(); it != trace->end(); it++)
-	stream << std::endl << "  " << *it;
+    BasicException() {
+        init();
     }
 
-    if (!cause.isNull()) {
-      stream << std::endl << " ";
-
-      if (printLevel > causePrintLevel) {
-	stream << "Aborting exception dump due to causePrintLevel limit! "
-	       << "Increase BasicException::causePrintLevel to see more.";
-
-      } else {
-	stream << "caused by: ";
-	cause->print(stream, printLocations, printLevel);
-      }
+    BasicException(const std::string message) : message {message} {
+        init();
     }
 
-    return stream;
-  }
+    BasicException(const std::string message, const BasicFileLocation &location)
+        : message {message}, location(location) {
+        init();
+    }
+
+    BasicException(const std::string _message, BasicException &_cause) :
+        message {_message}, cause {std::make_shared<BasicException>(_cause)} {
+        init();
+    }
+
+    BasicException(const std::string _message, const BasicFileLocation &_location,
+                   BasicException &_cause) :
+        message {_message}, location(_location),
+    cause {std::make_shared<BasicException>(_cause)}
+    {
+        init();
+    }
+
+    /// Copy constructor
+    BasicException(const BasicException &e) :
+        message {e.message}, location(e.location), cause {e.cause}, trace {e.trace} {}
+
+    // move constructor
+    BasicException(BasicException && e) :
+        message {e.message}, location(e.location), cause {std::move(e.cause)}, trace {std::move(e.trace)}
+    {
+        e.message.clear();
+        e.location.clear();
+    }
+
+    virtual ~BasicException() {}
+
+    const std::string getMessage() const {
+        return message;
+    }
+    BasicFileLocation getLocation() const {
+        return location;
+    }
+
+    /**
+     * @return A BasicSmartPointer to the BasicException that caused this
+     *         exception or NULL.
+     */
+    std::shared_ptr<BasicException> getCause() const {
+        return cause;
+    }
+
+    std::shared_ptr<std::list<std::string> > getTrace() const {
+        return trace;
+    }
+
+    /**
+     * Prints the complete exception recuring down to the cause exception if
+     * not null.  WARNING: If there are many layers of causes this function
+     * could print a very large amount of data.  This can be limited by
+     * setting the causePrintLevel variable.
+     *
+     * @param stream The output stream.
+     * @param printLocations Print file locations.
+     * @param printLevel The current cause print level.
+     *
+     * @return A reference to the passed stream.
+     */
+    std::ostream &print(std::ostream &stream,
+                        bool printLocations = true,
+                        unsigned int printLevel = 0) const {
+
+        if (printLocations && !location.isEmpty())
+            stream << "@ " << location << " ";
+
+        stream << message;
+
+        if (enableStackTraces && !trace) {
+            std::list<std::string>::iterator it;
+            for (it = trace->begin(); it != trace->end(); it++)
+                stream << std::endl << "  " << *it;
+        }
+
+        if (!cause) {
+            stream << std::endl << " ";
+
+            if (printLevel > causePrintLevel) {
+                stream << "Aborting exception dump due to causePrintLevel limit! "
+                       << "Increase BasicException::causePrintLevel to see more.";
+
+            } else {
+                stream << "caused by: ";
+                cause->print(stream, printLocations, printLevel);
+            }
+        }
+
+        return stream;
+    }
 
 protected:
-  void init() {
-    if (enableStackTraces) {
-      trace = new std::list<std::string>;
+    void init() {
+        if (enableStackTraces) {
+            trace = std::make_shared<std::list<std::string>>();
 
-      // When Optimization is turned on functions such as this
-      // one are often inlined and not visable to the debugger.
-      // This means stack traces for optimized code will often
-      // be incomplete.  Here we remove the offset in order
-      // to get as much of the stack trace as possible.
+            // When Optimization is turned on functions such as this
+            // one are often inlined and not visable to the debugger.
+            // This means stack traces for optimized code will often
+            // be incomplete.  Here we remove the offset in order
+            // to get as much of the stack trace as possible.
+        }
     }
-  }
 
-  friend std::ostream &operator<<(std::ostream &, const BasicException &);
+    friend std::ostream &operator<<(std::ostream &, const BasicException &);
 };
 
-/** 
+/**
  * An stream output operator for BasicException.  This allows you to print the
  * text of an exception to a stream like so:
  *
@@ -179,9 +192,9 @@ protected:
  * }
  */
 inline std::ostream &operator<<(std::ostream &stream,
-				const BasicException &e) {
-  e.print(stream);
-  return stream;
+                                const BasicException &e) {
+    e.print(stream);
+    return stream;
 }
 
 #define THROW(msg) throw BasicException((msg), FILE_LOCATION)
