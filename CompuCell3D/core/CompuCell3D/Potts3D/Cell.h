@@ -23,6 +23,9 @@
 #ifndef CELL_H
 #define CELL_H
 
+#include <BasicUtils/memory_include.h>
+// I don't really want to do it like this FIXME
+#include <BasicUtils/BasicClassGroup.h>
 
 #ifndef PyObject_HEAD
 struct _object; //forward declare
@@ -65,7 +68,7 @@ namespace CompuCell3D {
         id(0),
         clusterId(0),
 		fluctAmpl(-1.0),
-        extraAttribPtr(0),
+        extraAttribPtr(nullptr),
         pyAttrib(0)
       {}
       long volume;
@@ -92,7 +95,7 @@ namespace CompuCell3D {
       long id;
       long clusterId;
 	  double fluctAmpl;
-      BasicClassGroup *extraAttribPtr;
+      std::unique_ptr<BasicClassGroup> extraAttribPtr;
 
       PyObject *pyAttrib;
    };
