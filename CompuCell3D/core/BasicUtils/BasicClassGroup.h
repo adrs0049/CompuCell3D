@@ -25,42 +25,47 @@
 #ifndef BASICCLASSGROUP_H
 #define BASICCLASSGROUP_H
 
+#include <vector>
+#include "memory_include.h"
 #include "BasicException.h"
 
-/** 
+/**
  * A group of classes allocated by BasicClassGroupFactory.
  * Should not be accessed directly, but rather through an instance of
  * BasicClassGroupAccessor.
  */
 class BasicClassGroup {
+public:
+	// FIXME i should be protected
+	/**
+     * @param classes The class array.
+     */
+    BasicClassGroup(std::vector<std::shared_ptr<void> > classes)
+        : classes{classes}
+    {}
+        
+    ~BasicClassGroup() {}
+	
 protected:
-  void **classes;
-  unsigned int size;
+    std::vector<std::shared_ptr<void> > classes;
 
-  /** 
-   * @param classes The class array.
-   * @param size The number of classes in the array.
-   */
-  BasicClassGroup(void **classes, const unsigned int size) :
-    classes(classes), size(size) {}
+	std::size_t size() const { return classes.size(); }
+    
+    /**
+     * A BasicException will be thrown if the id is invalid.
+     *
+     * @param id A class id as assigned by BasicClassGroupFactory.
+     *
+     * @return A pointer to the allocate memory for this class id.
+     */
+    std::shared_ptr<void> getClass(const unsigned int id) {
+        ASSERT_OR_THROW("BasicClassGroup id out of range!",
+                        0 <= id && id < classes.size());
+        return classes[id];
+    }
 
-  ~BasicClassGroup() {}
-
-  /** 
-   * A BasicException will be thrown if the id is invalid.
-   *
-   * @param id A class id as assigned by BasicClassGroupFactory.
-   * 
-   * @return A pointer to the allocate memory for this class id.
-   */
-  void *getClass(const unsigned int id) {
-    ASSERT_OR_THROW("BasicClassGroup id out of range!", 
-		    0 <= id && id < size);
-    return classes[id];
-  }
-
-  friend class BasicClassGroupFactory;
-  friend class BasicClassAccessorBase;
+    friend class BasicClassGroupFactory;
+    friend class BasicClassAccessorBase;
 };
 
 #endif
