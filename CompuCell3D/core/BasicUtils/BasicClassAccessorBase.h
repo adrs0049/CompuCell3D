@@ -25,6 +25,7 @@
 #ifndef BASICCLASSACCESSORBASE_H
 #define BASICCLASSACCESSORBASE_H
 
+#include "memory_include.h"
 #include "BasicClassGroup.h"
 
 template <class T>
@@ -41,7 +42,7 @@ public:
   BasicClassAccessorBase() : id(-1) {}
 
 protected:
-  virtual BasicClassFactoryBase<void> *createClassFactory() = 0;
+  virtual std::unique_ptr<BasicClassFactoryBase<void>> createClassFactory() = 0;
 
 
   /** 
@@ -56,10 +57,10 @@ protected:
    * Called by BasicClassAccessor to get a pointer to this accessors class in 
    * the group.
    */
-  void *getClass(BasicClassGroup *group) const {
+  std::shared_ptr<void> getClass(std::unique_ptr<BasicClassGroup>& group) const {
     return group->getClass(id);
   }
-  virtual void deallocateClass(BasicClassGroup *group) const{}
+  virtual void deallocateClass(std::unique_ptr<BasicClassGroup>& group) const {}
   friend class BasicClassGroupFactory;
 };
 

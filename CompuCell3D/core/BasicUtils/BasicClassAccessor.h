@@ -27,11 +27,12 @@
 
 #include "BasicClassAccessorBase.h"
 #include "BasicClassFactory.h"
+#include "memory_include.h"
 
 template <class T>
 class BasicClassFactoryBase;
 
-/** 
+/**
  * Used to access the classes of a BasicClassGroup in a type safe manner.
  *
  * By registering an instance of this class with BasicClassGroupFactory you
@@ -40,28 +41,31 @@ class BasicClassFactoryBase;
 template <class T>
 class BasicClassAccessor: public BasicClassAccessorBase {
 public:
-  /** 
-   * @param group An instance of a class group allocated by 
-   *              BasicClassGroupFactory.
-   * 
-   * @return A pointer the class T with in the given class group.
-   */
-  T *get(BasicClassGroup *group) const {return (T *)getClass(group);}
+    /**
+     * @param group An instance of a class group allocated by
+     *              BasicClassGroupFactory.
+     *
+     * @return A pointer the class T with in the given class group.
+     */
+    std::shared_ptr<T> get(std::unique_ptr<BasicClassGroup>& group) const
+    {
+        return std::static_pointer_cast<T>(getClass(group));
+    }
 
 protected:
-  /** 
-   * Used by BasicClassGroupFactory to create a new BasicClassFactory for this
-   * class type.
-   */
-  virtual BasicClassFactoryBase<void> *createClassFactory() {
-    return new BasicClassFactory<void, T>;
-  }
+    /**
+     * Used by BasicClassGroupFactory to create a new BasicClassFactory for this
+     * class type.
+     */
+    virtual std::unique_ptr<BasicClassFactoryBase<void> > createClassFactory() {
+        return std::make_unique<BasicClassFactory<void, T> >();
+    }
 
-  virtual void deallocateClass(BasicClassGroup *group) const{
-	T * ptr=get(group);
-	if (ptr)
-		delete ptr;
-  }
+    virtual void deallocateClass(std::unique_ptr<BasicClassGroup>& group) const 
+    {
+        auto ptr=get(group);
+        if (ptr) ptr.reset(); // this calls the destructed of the class
+    }
 };
 
 #endif
