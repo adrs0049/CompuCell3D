@@ -25,63 +25,70 @@
 #ifndef BASICPLUGININFO_H
 #define BASICPLUGININFO_H
 
-#include <iostream>
+#include <ostream>
 #include <string>
 #include <string.h>
-#include <stdlib.h>
 
 class BasicPluginInfo {
-  /// Plugin name.
-  std::string name;
+    /// Plugin name.
+    std::string name;
 
-  /// Plugin description.
-  std::string description;
+    /// Plugin description.
+    std::string description;
 
-  /// The number of dependencies in the array
-  unsigned int numDeps;
+    /// The number of dependencies in the array
+    unsigned int numDeps;
 
-  /// An array of plugin dependencies.  
-  char **dependencies;
+    /// An array of plugin dependencies.
+    char **dependencies;
 
 public:
-  BasicPluginInfo(std::string name, std::string description) :
-    name(name), description(description), numDeps(0), dependencies(0) {}
+    BasicPluginInfo(std::string name, std::string description) :
+        name(name), description(description), numDeps(0), dependencies(0) {}
 
-  /** 
-   * @param name Plugin name.
-   * @param description Plugin description.
-   * @param numDeps Number of dependencies in the array.
-   * @param deps A constant array of dependency names.
-   */
-  BasicPluginInfo(std::string name, std::string description,
-		  const unsigned int numDeps, const char *deps[]) :
-    name(name), description(description), numDeps(numDeps) {
-    dependencies = new char *[numDeps];
+    /**
+     * @param name Plugin name.
+     * @param description Plugin description.
+     * @param numDeps Number of dependencies in the array.
+     * @param deps A constant array of dependency names.
+     */
+    BasicPluginInfo(std::string name, std::string description,
+                    const unsigned int numDeps, const char *deps[]) :
+        name(name), description(description), numDeps(numDeps) {
+        dependencies = new char *[numDeps];
 
-    for (unsigned int i = 0; i < numDeps; i++)
-      dependencies[i] = strdup(deps[i]);
-  }
-
-  ~BasicPluginInfo() {
-    if (dependencies) 
-	{
-		for (unsigned int i = 0; i < numDeps; ++i) 
-			free(dependencies[i]);
-      delete [] dependencies;
+        for (unsigned int i = 0; i < numDeps; i++)
+            dependencies[i] = strdup(deps[i]);
     }
-  }
 
-  /// Copy constructor
-  BasicPluginInfo(const BasicPluginInfo &info) :
-    name(info.name), description(info.description), numDeps(info.numDeps),
-    dependencies(info.dependencies) {}
+    ~BasicPluginInfo() {
+        if (dependencies)
+        {
+            for (unsigned int i = 0; i < numDeps; ++i)
+                free(dependencies[i]);
+            delete [] dependencies;
+        }
+    }
 
-  const std::string &getName() const {return name;}
-  const std::string &getDescription() const {return description;}
-  const unsigned int getNumDeps() const {return numDeps;}
-  const std::string getDependency(const int i) const {return dependencies[i];}
+    /// Copy constructor
+    BasicPluginInfo(const BasicPluginInfo &info) :
+        name(info.name), description(info.description), numDeps(info.numDeps),
+        dependencies(info.dependencies) {}
 
-  friend std::ostream &operator<<(std::ostream &, BasicPluginInfo &);
+    const std::string &getName() const {
+        return name;
+    }
+    const std::string &getDescription() const {
+        return description;
+    }
+    const unsigned int getNumDeps() const {
+        return numDeps;
+    }
+    const std::string getDependency(const int i) const {
+        return dependencies[i];
+    }
+
+    friend std::ostream &operator<<(std::ostream &, BasicPluginInfo &);
 };
 
 std::ostream &operator<<(std::ostream &, BasicPluginInfo &);

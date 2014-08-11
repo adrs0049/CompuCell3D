@@ -27,23 +27,23 @@
 using namespace std;
 
 ostream &operator<<(ostream &stream, BasicPluginInfo &info) {
-  stream << info.name;
-  if (info.getNumDeps()) {
-    stream << " (";
+    stream << info.name;
+    if (info.getNumDeps()) {
+        stream << " (";
 
-    bool first = true;
-    for (unsigned int i = 0; i < info.getNumDeps(); i++) {
-      if (first) first = false;
-      else stream << ", ";
-      
-      stream << info.getDependency(i);
+        bool first = true;
+        for (unsigned int i = 0; i < info.getNumDeps(); i++) {
+            if (first) first = false;
+            else stream << ", ";
+
+            stream << info.getDependency(i);
+        }
+
+        stream << ")";
+
     }
 
-    stream << ")";
+    stream << ": " << info.description;
 
-  }
-
-  stream << ": " << info.description;
-
-  return stream;
+    return stream;
 }
