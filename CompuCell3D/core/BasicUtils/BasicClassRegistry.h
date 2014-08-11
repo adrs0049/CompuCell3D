@@ -27,14 +27,14 @@
 
 #include "BasicException.h"
 #include "BasicClassFactoryBase.h"
-#include "BasicSmartPointer.h"
+#include "memory_include.h"
 
 #include <string>
 #include <map>
 
 template <class T>
 class BasicClassRegistry {
-  typedef std::map<std::string, BasicClassFactoryBase<T> *> factoryMap_t;
+  using factoryMap_t = std::map<std::string, BasicClassFactoryBase<T> *>;
   factoryMap_t factoryMap;
 
 public:
@@ -61,12 +61,12 @@ public:
     factoryMap[id] = factory;
   }
 
-  BasicSmartPointer<T> create(const std::string id) {
+  std::unique_ptr<T> create(const std::string id) {
     BasicClassFactoryBase<T> *factory = factoryMap[id];
     ASSERT_OR_THROW(std::string("create() Factory '") + id + "' not found!",
 		    factory);
     
-    return BasicSmartPointer<T>(factory->create());
+    return std::make_unique<T>(factory->create());
   }
 };
 
