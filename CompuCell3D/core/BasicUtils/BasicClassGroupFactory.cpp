@@ -29,9 +29,7 @@
 #include "BasicClassGroup.h"
 
 #include <vector>
-#include <memory>
-#include <boost/concept_check.hpp>
-#include "make_unique.h"
+#include "memory_include.h"
 
 #include "BasicException.h"
 
