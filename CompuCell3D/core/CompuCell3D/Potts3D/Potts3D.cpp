@@ -263,7 +263,7 @@ void Potts3D::registerCellGChangeWatcher(CellGChangeWatcher *_watcher) {
 }
 
 
-void Potts3D::registerClassAccessor(BasicClassAccessorBase *_accessor) {
+void Potts3D::registerClassAccessor(std::shared_ptr<BasicClassAccessorBase> _accessor) {
 	ASSERT_OR_THROW("registerClassAccessor() _accessor cannot be NULL!", _accessor);
 
 	cellFactoryGroup.registerClass(_accessor);

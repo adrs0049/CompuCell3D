@@ -35,6 +35,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <BasicUtils/memory_include.h>
 #include <CompuCell3D/Boundary/BoundaryTypeDefinitions.h>
 #include <CompuCell3D/SteerableObject.h>
 
@@ -264,7 +265,7 @@ namespace CompuCell3D {
     virtual void registerCellGChangeWatcher(CellGChangeWatcher *_watcher);
     
     /// Register accessor to a class with a cellGroupFactory. Accessor will access a class which is a mamber of a BasicClassGroup	
-    virtual void registerClassAccessor(BasicClassAccessorBase *_accessor);
+    virtual void registerClassAccessor(std::shared_ptr<BasicClassAccessorBase> _accessor);
     
     /// Add a potts stepper to be called after each potts step.
     virtual void registerStepper(Stepper *stepper);
