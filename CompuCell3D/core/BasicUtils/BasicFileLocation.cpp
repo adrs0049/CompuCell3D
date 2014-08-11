@@ -22,23 +22,22 @@
 
 \*******************************************************************/
 
-
 #include "BasicFileLocation.h"
 
-#include <iostream>
+#include <ostream>
 
 using namespace std;
 
-ostream &operator<<(ostream &stream, const BasicFileLocation &fl) {
+ostream &operator<<(ostream &stream, const BasicFileLocation &fl) 
+{
+    if (!fl.isEmpty()) {
+        stream << fl.filename;
+        if (fl.line >= 0) {
+            stream << ':' << fl.line;
 
-  if (!fl.isEmpty()) {
-    stream << fl.filename;
-    if (fl.line >= 0) {
-      stream << ':' << fl.line;
-
-      if (fl.col >= 0) stream << ':' << fl.col;
+            if (fl.col >= 0) stream << ':' << fl.col;
+        }
     }
-  }
 
-  return stream;
+    return stream;
 }

@@ -22,74 +22,104 @@
 
 \*******************************************************************/
 
-
 #ifndef BASICFILELOCATION_H
 #define BASICFILELOCATION_H
 
 #include <string>
 
-/** 
+/**
  * This class is mainly used by BasicException, but can be used
  * as a general class for recording a line and column location
  * with in a file.
  */
 class BasicFileLocation {
-  std::string filename;
-  long line;
-  long col;
-  bool empty;
+    std::string filename;
+    long line;
+    long col;
+    bool empty;
 
 public:
-  /** 
-   * Construct a default BasicFileLocation with an empty value.
-   */
-  BasicFileLocation() : line(-1), col(-1), empty(true) {}
+    /**
+     * Construct a default BasicFileLocation with an empty value.
+     */
+    BasicFileLocation() : line{-1}, col{-1}, empty{true} {}
 
-  /** 
-   * Copy constructor.
-   */
-  BasicFileLocation(const BasicFileLocation &x) : 
-    filename(x.filename), line(x.line), col(x.col), empty(x.empty) {}
+    /**
+     * Copy constructor.
+     */
+    BasicFileLocation(const BasicFileLocation &x) :
+        filename{x.filename}, line{x.line}, col{x.col}, empty{x.empty} 
+    {}
 
-  /** 
-   * @param filename The name of the file.
-   * @param line The line with that file.
-   * @param col The column on that line.
-   */
-  BasicFileLocation(const std::string filename, const long line, 
-		    const long col) : 
-    filename(filename), line(line), col(col), empty(false) {}
+    /**
+	 * Move constructor.
+	 */
+    BasicFileLocation(BasicFileLocation&& x) :
+		filename{std::move(x.filename)}, line{x.line}, col{x.col}, empty{x.empty}
+	{
+		x.empty = true;
+		x.col = -1;
+		x.line = -1;
+	}
+	
+    /**
+     * @param filename The name of the file.
+     * @param line The line with that file.
+     * @param col The column on that line.
+     */
+    BasicFileLocation(const std::string filename, const long line,
+                      const long col) :
+        filename{filename}, line{line}, col{col}, empty{false} {}
 
-  virtual ~BasicFileLocation() {}
+    virtual ~BasicFileLocation() {}
 
-  const std::string getFilename() const {return filename;}
+    const std::string getFilename() const {
+        return filename;
+    }
 
-  /** 
-   * @return -1 if no line was set the line number otherwise.
-   */  
-  const long getLine() const {return line;}
+    /**
+     * @return -1 if no line was set the line number otherwise.
+     */
+    const long getLine() const {
+        return line;
+    }
 
-  /** 
-   * @return -1 of no column was set the column number otherwise.
-   */
-  const long getCol() const {return col;}
+    /**
+     * @return -1 of no column was set the column number otherwise.
+     */
+    const long getCol() const {
+        return col;
+    }
 
-  /** 
-   * @return True of no filename, line, or column have been set.
-   */
-  bool isEmpty() const {return empty;}
+    /**
+     * @return True of no filename, line, or column have been set.
+     */
+    bool isEmpty() const {
+        return empty;
+    }
 
-  friend std::ostream &operator<<(std::ostream &stream, 
-				  const BasicFileLocation &fl);
-};  
+    /**
+	 * Clear BasicFileLocation
+	 */
+    void clear()
+    {
+        filename.clear();
+        line = -1;
+        col = -1;
+        empty = true;
+    }
 
-/** 
+    friend std::ostream &operator<<(std::ostream &stream,
+                                    const BasicFileLocation &fl);
+};
+
+/**
  * Print a file location to a stream.  The format is as follows.
  *
  * filename[:line[:col]]
  *
  * If no line or column has been set then they will not be displayed.
- * 
+ *
  * @return A reference to the passed stream.
  */
 std::ostream &operator<<(std::ostream &stream, const BasicFileLocation &fl);
