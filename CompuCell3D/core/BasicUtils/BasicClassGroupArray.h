@@ -26,72 +26,92 @@
 #define BASICCLASSGROUPARRAY_H
 
 #include "BasicClassGroupFactory.h"
-#include "BasicArray.h"
+#include <vector>
+#include "memory_include.h"
 
 class BasicClassGroup;
 
-/** 
+/**
  * A BasicArray and a BasicClassGroupFactory wrapped together.  Allocated
  * BasicClassGroups are kept in an array.  They can then be accessed or
  * deleted using an id which is simply an array index.
  */
 class BasicClassGroupArray {
-  BasicArray<BasicClassGroup *> groups;
-  BasicClassGroupFactory factory;
+    std::vector<std::unique_ptr<BasicClassGroup> > groups;
+    BasicClassGroupFactory factory;
 
 public:
 
-  /** 
-   * Add a new BasicClassGroup to the end of the array.
-   * 
-   * @return The id or index of the new class group.
-   */  
-  unsigned int create() {
-    return groups.put(factory.create());
-  }
+    /**
+     * Add a new BasicClassGroup to the end of the array.
+     *
+     * @return The id or index of the new class group.
+     */
+    unsigned int create() {
+        groups.emplace_back(factory.create());
+        return groups.size()-1;
+    }
 
-  /** 
-   * Destroy an instance of a class group.  If the id is invalid
-   * unexpected behavior may occur.
-   * 
-   * @param id The class group id.
-   */
-  void destroy(const unsigned int id) {
-    factory.destroy(get(id));
-  }
+    /**
+     * Destroy an instance of a class group.  If the id is invalid
+     * unexpected behavior may occur.
+     *
+     * @param id The class group id.
+     */
+    void destroy(const unsigned int id) {
+        factory.destroy(get(id));
+    }
 
-  /** 
-   * Register a class with the group factory.
-   * See BasicClassGroupFactory::registerClass().
-   * 
-   * @param accessor The class accessor.
-   */
-  void registerClass(BasicClassAccessorBase *accessor) {
-    factory.registerClass(accessor);
-  }
+    /**
+     * Register a class with the group factory.
+     * See BasicClassGroupFactory::registerClass().
+     *
+     * @param accessor The class accessor.
+     */
+    void registerClass(std::shared_ptr<BasicClassAccessorBase> accessor) {
+        factory.registerClass(accessor);
+    }
 
-  /** 
-   * If the id is invalid unexpected behavior may occur.
-   * See BasicClassGroupAccessor for information on how to access a class
-   * with in the group.
-   *
-   * @param id A valid class group id.
-   * 
-   * @return A pointer to the class group.
-   */
-  BasicClassGroup *get(const unsigned int id) const {return groups[id];}
+    /**
+     * If the id is invalid unexpected behavior may occur.
+     * See BasicClassGroupAccessor for information on how to access a class
+     * with in the group.
+     *
+     * @param id A valid class group id.
+     *
+     * @return A pointer to the class group.
+     */
+    std::unique_ptr<BasicClassGroup>& get(const unsigned int id) {
+        return groups[id];
+    }
+    
+    // const version
+    std::unique_ptr<BasicClassGroup> const& get(const unsigned int id) const {
+        return groups[id];
+    }
 
-  /** 
-   * See BasicClassGroupArray::get()
-   */
-  BasicClassGroup *operator[](const unsigned int id) const {return groups[id];}
+    /**
+     * See BasicClassGroupArray::get()
+     */
+    std::unique_ptr<BasicClassGroup>& operator[](const unsigned int id) {
+        return groups[id];
+    }
 
-  /** 
-   * See BasicArray::getSize()
-   *
-   * @return The current size of the array.
-   */
-  unsigned int getSize() const {return groups.getSize();}
+    /** CONST version
+     * See BasicClassGroupArray::get()
+     */
+    std::unique_ptr<BasicClassGroup> const& operator[](const unsigned int id) const {
+        return groups[id];
+    }
+
+    /**
+     * See BasicArray::getSize()
+     *
+     * @return The current size of the array.
+     */
+    unsigned int getSize() const {
+        return groups.size();
+    }
 };
 
 #endif
