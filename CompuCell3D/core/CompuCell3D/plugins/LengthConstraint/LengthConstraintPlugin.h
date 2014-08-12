@@ -65,7 +65,8 @@ namespace CompuCell3D {
 		Potts3D *potts;
 		//energy function parse data
 
-		BasicClassAccessor<LengthConstraintData> lengthConstraintDataAccessor;
+		using DataAccessor_t = BasicClassAccessor<LengthConstraintData>;
+		DataAccessor_t lengthConstraintDataAccessor;
 
 		std::vector<LengthEnergyParam> lengthEnergyParamVector;
 		std::vector<std::string> typeNameVec;//temporary vector for storage type names
@@ -84,7 +85,7 @@ namespace CompuCell3D {
 		virtual void extraInit(Simulator *simulator);
 		virtual std::string toString();
 
-		BasicClassAccessor<LengthConstraintData> * getLengthConstraintDataPtr(){return & lengthConstraintDataAccessor;}
+		DataAccessor_t * getLengthConstraintDataPtr(){return & lengthConstraintDataAccessor;}
 
 		void setLengthConstraintData(CellG * _cell, double _lambdaLength=0.0, double _targetLength=0.0 ,double _minorTargetLength=0.0);    	
 		double getLambdaLength(CellG * _cell);  

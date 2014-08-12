@@ -54,13 +54,13 @@ void LengthConstraintPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData
 	potts = simulator->getPotts();  
 
 	bool pluginAlreadyRegisteredFlag;
-	Plugin *plugin=Simulator::pluginManager.get("MomentOfInertia",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+	auto plugin=Simulator::pluginManager.get("MomentOfInertia",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
 	if(!pluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
 
 	boundaryStrategy=BoundaryStrategy::getInstance();
 
-	potts->getCellFactoryGroupPtr()->registerClass(&lengthConstraintDataAccessor);
+	potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<DataAccessor_t>(lengthConstraintDataAccessor));
 	potts->registerEnergyFunctionWithName(this,"LengthConstraint");
 
 
