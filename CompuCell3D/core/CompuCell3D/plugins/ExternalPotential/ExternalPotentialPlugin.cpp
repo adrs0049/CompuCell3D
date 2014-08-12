@@ -36,7 +36,7 @@ void ExternalPotentialPlugin::init(Simulator *_simulator, CC3DXMLElement *_xmlDa
   simulator=_simulator;
 
 	bool pluginAlreadyRegisteredFlag;
-	Plugin *plugin=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+	auto plugin=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
 	if(!pluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
 
