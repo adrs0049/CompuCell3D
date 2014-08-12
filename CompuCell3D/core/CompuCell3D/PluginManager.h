@@ -25,30 +25,35 @@
 
 #include <BasicUtils/BasicPluginManager.h>
 #include <BasicUtils/BasicException.h>
+#include <BasicUtils/memory_include.h>
 
-// #include "Plugin.h"
 namespace CompuCell3D {
-  class Simulator;
+class Simulator;
 
-  template<typename PluginType>
-  class PluginManager : public BasicPluginManager<PluginType> {
-     Simulator *simulator;
+template<typename PluginType>
+class PluginManager : public BasicPluginManager<PluginType> 
+{
+    Simulator *simulator;
 
+public:
+	using plugins_t = std::map<std::string, std::shared_ptr<PluginType> >;
 
-  public:
-    typedef std::map<std::string, PluginType *> plugins_t;
-//     typedef plugins_t::iterator pluginMapItr_t;
-    plugins_t & getPluginMap(){return BasicPluginManager<PluginType>::getPluginMapBPM();}
-    PluginManager() : simulator(0) {}
+    plugins_t & getPluginMap() {
+        return BasicPluginManager<PluginType>::getPluginMapBPM();
+    }
+    
+    PluginManager() : simulator(nullptr) {}
     virtual ~PluginManager() {}
 
-    void setSimulator(Simulator *simulator) {this->simulator = simulator;}
-
-    virtual void init(PluginType *plugin) {
-      ASSERT_OR_THROW("PluginManager::init() Simulator not set!", simulator);
-      //plugin->init(simulator);
+    void setSimulator(Simulator *simulator) {
+        this->simulator = simulator;
     }
 
-  };
+    virtual void init(PluginType *plugin) {
+        ASSERT_OR_THROW("PluginManager::init() Simulator not set!", simulator);
+        //plugin->init(simulator);
+    }
+
 };
+}; // end namespace
 #endif
