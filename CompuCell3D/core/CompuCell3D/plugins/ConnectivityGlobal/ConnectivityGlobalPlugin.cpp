@@ -62,7 +62,7 @@ double ConnectivityGlobalPlugin::getConnectivityStrength(CellG * _cell){
 void ConnectivityGlobalPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 
 	potts=simulator->getPotts();
-	potts->getCellFactoryGroupPtr()->registerClass(&connectivityGlobalDataAccessor);
+	potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<DataAccessor_t>(connectivityGlobalDataAccessor));
 	//potts->registerEnergyFunction(this);
 	potts->registerConnectivityConstraint(this); // we give it a special status to run it only when really needed 
 	simulator->registerSteerableObject(this);
@@ -74,9 +74,6 @@ void ConnectivityGlobalPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFl
 
 	if(potts->getDisplayUnitsFlag()){
 		Unit energyUnit=potts->getEnergyUnit();
-
-
-
 
 		CC3DXMLElement * unitsElem=_xmlData->getFirstElement("Units"); 
 		if (!unitsElem){ //add Units element
