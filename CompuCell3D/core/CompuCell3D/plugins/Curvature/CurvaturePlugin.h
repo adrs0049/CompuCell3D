@@ -24,19 +24,7 @@
 #define CURVATUREPLUGIN_H
 
 #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-// // // #include <CompuCell3D/Plugin.h>
 #include "CurvatureTracker.h"
-// // // #include <PublicUtilities/Vector3.h>
-
-
-// // // #include <map>
-// // // #include <set>
-// // // #include <string>
-// // // #include <vector>
-
-
 #include "CurvatureDLLSpecifier.h"
 
 class CC3DXMLElement;
@@ -44,120 +32,114 @@ class CC3DXMLElement;
 //Note: Target distance is set to be 0.9 * current distance between cells. target distance from xml is ignored
 
 namespace CompuCell3D {
-	class Potts3D;
-	class Automaton;
-	class BoundaryStrategy;
-    class ParallelUtilsOpenMP;
+class Potts3D;
+class Automaton;
+class BoundaryStrategy;
+class ParallelUtilsOpenMP;
 
-	class CURVATURE_EXPORT CurvaturePlugin : public Plugin,public EnergyFunction, public CellGChangeWatcher  {
+class CURVATURE_EXPORT CurvaturePlugin : public Plugin,public EnergyFunction, public CellGChangeWatcher  {
 
-	    ParallelUtilsOpenMP *pUtils;            
-        
-        
-      BasicClassAccessor<CurvatureTracker> curvatureTrackerAccessor;
-      
-		Potts3D *potts;
+    ParallelUtilsOpenMP *pUtils;
 
+    using TrackerAccessor_t = BasicClassAccessor<CurvatureTracker>;
+    TrackerAccessor_t curvatureTrackerAccessor;
 
-		std::string autoName;
-		double depth;
+    Potts3D *potts;
 
-		Automaton *automaton;
-		bool weightDistance;
-		unsigned int maxNeighborIndex;
-	   unsigned int maxNeighborIndexJunctionMove;
-		BoundaryStrategy * boundaryStrategy;
-		CC3DXMLElement *xmlData;
+    std::string autoName;
+    double depth;
 
-      std::set<std::string> plasticityTypesNames;
-      std::set<unsigned char> plasticityTypes;
-      std::set<unsigned char> internalPlasticityTypes;
-      
-		Dim3D fieldDim;
-      double lambda;
-		
-      double activationEnergy;
-      double targetDistance;
-      double maxDistance;
-      double potentialFunction(double _lambda,double _offset,double _targetDistance, double _distance);
-      
-      
-      //vectorized variables for convenient parallel access
-	  std::vector<short> newJunctionInitiatedFlagWithinClusterVec;           
-	  std::vector<CellG *> newNeighborVec;
+    Automaton *automaton;
+    bool weightDistance;
+    unsigned int maxNeighborIndex;
+    unsigned int maxNeighborIndexJunctionMove;
+    BoundaryStrategy * boundaryStrategy;
+    CC3DXMLElement *xmlData;
 
-		unsigned int maxNumberOfJunctions;
+    std::set<std::string> plasticityTypesNames;
+    std::set<unsigned char> plasticityTypes;
+    std::set<unsigned char> internalPlasticityTypes;
+
+    Dim3D fieldDim;
+    double lambda;
+
+    double activationEnergy;
+    double targetDistance;
+    double maxDistance;
+    double potentialFunction(double _lambda,double _offset,double _targetDistance, double _distance);
 
 
-		enum FunctionType {GLOBAL=0,BYCELLTYPE=1,BYCELLID=2};
+    //vectorized variables for convenient parallel access
+    std::vector<short> newJunctionInitiatedFlagWithinClusterVec;
+    std::vector<CellG *> newNeighborVec;
 
-		FunctionType functionType;
-
-		typedef double (CurvaturePlugin::*diffEnergyFcnPtr_t)(float _deltaL,float _lBefore,const CurvatureTrackerData * _curvatureTrackerData,const CellG *_cell);
-		diffEnergyFcnPtr_t diffEnergyFcnPtr;
-		
+    unsigned int maxNumberOfJunctions;
 
 
-		double diffEnergyLocal(float _deltaL,float _lBefore,const CurvatureTrackerData * _curvatureTrackerData,const CellG *_cell);
-		double diffEnergyGlobal(float _deltaL,float _lBefore,const CurvatureTrackerData * _curvatureTrackerData,const CellG *_cell);
-		double diffEnergyByType(float _deltaL,float _lBefore,const CurvatureTrackerData * _curvatureTrackerData,const CellG *_cell);
+    enum FunctionType {GLOBAL=0,BYCELLTYPE=1,BYCELLID=2};
 
-		
+    FunctionType functionType;
 
+    typedef double (CurvaturePlugin::*diffEnergyFcnPtr_t)(float _deltaL,float _lBefore,const CurvatureTrackerData * _curvatureTrackerData,const CellG *_cell);
+    diffEnergyFcnPtr_t diffEnergyFcnPtr;
 
-		double tryAddingNewJunction(const Point3D &pt,const CellG *newCell);
-		double tryAddingNewJunctionWithinCluster(const Point3D &pt,const CellG *newCell);
-        double calculateInverseCurvatureSquare(const Vector3 & _leftVec, const Vector3 & _middleVec , const Vector3 & _rightVec);
-        
-		typedef std::map<int, CurvatureTrackerData> curvatureParams_t;
-		
+    double diffEnergyLocal(float _deltaL,float _lBefore,const CurvatureTrackerData * _curvatureTrackerData,const CellG *_cell);
+    double diffEnergyGlobal(float _deltaL,float _lBefore,const CurvatureTrackerData * _curvatureTrackerData,const CellG *_cell);
+    double diffEnergyByType(float _deltaL,float _lBefore,const CurvatureTrackerData * _curvatureTrackerData,const CellG *_cell);
 
-		// plastParams_t plastParams;
-		curvatureParams_t internalCurvatureParams;
+    double tryAddingNewJunction(const Point3D &pt,const CellG *newCell);
+    double tryAddingNewJunctionWithinCluster(const Point3D &pt,const CellG *newCell);
+    double calculateInverseCurvatureSquare(const Vector3 & _leftVec, const Vector3 & _middleVec , const Vector3 & _rightVec);
 
-		// plastParams_t typeSpecificPlastParams;
-		curvatureParams_t internalTypeSpecificCurvatureParams;
+    typedef std::map<int, CurvatureTrackerData> curvatureParams_t;
 
 
-		typedef std::vector<std::vector<CurvatureTrackerData> > CurvatureTrackerDataArray_t;
-		typedef std::vector<CurvatureTrackerData> CurvatureTrackerDataVector_t;
+    // plastParams_t plastParams;
+    curvatureParams_t internalCurvatureParams;
 
-		// CurvatureTrackerDataArray_t plastParamsArray;
-		CurvatureTrackerDataArray_t internalCurvatureParamsArray;
-
-		// CurvatureTrackerDataVector_t typeSpecificPlastParamsVec;
-		CurvatureTrackerDataVector_t internalTypeSpecificCurvatureParamsVec;
-
-	public:
-		CurvaturePlugin();
-		virtual ~CurvaturePlugin();
+    // plastParams_t typeSpecificPlastParams;
+    curvatureParams_t internalTypeSpecificCurvatureParams;
 
 
-		//Plugin interface
-		virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
-		virtual void extraInit(Simulator *simulator);
-        virtual void handleEvent(CC3DEvent & _event);
-		
-		//EnergyFunction Interface
-		virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
+    typedef std::vector<std::vector<CurvatureTrackerData> > CurvatureTrackerDataArray_t;
+    typedef std::vector<CurvatureTrackerData> CurvatureTrackerDataVector_t;
 
-      // Field3DChangeWatcher interface
-      virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                                 CellG *oldCell);
+    // CurvatureTrackerDataArray_t plastParamsArray;
+    CurvatureTrackerDataArray_t internalCurvatureParamsArray;
+
+    // CurvatureTrackerDataVector_t typeSpecificPlastParamsVec;
+    CurvatureTrackerDataVector_t internalTypeSpecificCurvatureParamsVec;
+
+public:
+    CurvaturePlugin();
+    virtual ~CurvaturePlugin();
 
 
-		//used to manually control parameters plasticity term for pair of cells involved
-		void setPlasticityParameters(CellG * _cell1,CellG * _cell2,double _lambda, double targetDistance=0.0);
-		double getPlasticityParametersLambdaDistance(CellG * _cell1,CellG * _cell2);
-		double getPlasticityParametersTargetDistance(CellG * _cell1,CellG * _cell2);
+    //Plugin interface
+    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
+    virtual void extraInit(Simulator *simulator);
+    virtual void handleEvent(CC3DEvent & _event);
 
-		//Steerable interface
-		virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-		virtual std::string steerableName();
-		virtual std::string toString();
-	protected:
-	int getIndex(const int type1, const int type2) const ;
+    //EnergyFunction Interface
+    virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
 
-	};
+    // Field3DChangeWatcher interface
+    virtual void field3DChange(const Point3D &pt, CellG *newCell,
+                               CellG *oldCell);
+
+
+    //used to manually control parameters plasticity term for pair of cells involved
+    void setPlasticityParameters(CellG * _cell1,CellG * _cell2,double _lambda, double targetDistance=0.0);
+    double getPlasticityParametersLambdaDistance(CellG * _cell1,CellG * _cell2);
+    double getPlasticityParametersTargetDistance(CellG * _cell1,CellG * _cell2);
+
+    //Steerable interface
+    virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
+    virtual std::string steerableName();
+    virtual std::string toString();
+protected:
+    int getIndex(const int type1, const int type2) const ;
+
+};
 };
 #endif

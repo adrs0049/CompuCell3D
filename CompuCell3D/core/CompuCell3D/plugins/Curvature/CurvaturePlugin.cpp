@@ -22,32 +22,11 @@
 
 #include <CompuCell3D/CC3D.h>
 
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-
-
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
-// // // #include <PublicUtilities/NumericalUtils.h>
-// // // #include <PublicUtilities/ParallelUtilsOpenMP.h>
-// // // #include <Utils/Coordinates3D.h>
-
 using namespace CompuCell3D;
-
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-// // // #include <iostream>
-// // // #include <algorithm>
 
 using namespace std;
 
 #include "CurvaturePlugin.h"
-
-
-
 
 CurvaturePlugin::CurvaturePlugin():
 pUtils(0),
@@ -94,12 +73,12 @@ void CurvaturePlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 
 
 	bool pluginAlreadyRegisteredFlag;
-	Plugin *plugin=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+	auto plugin=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
 	if(!pluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
 
 	//first need to register center of mass plugin and then register Curvature
-	potts->getCellFactoryGroupPtr()->registerClass(&curvatureTrackerAccessor);
+	potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<TrackerAccessor_t>(curvatureTrackerAccessor));
 	potts->registerCellGChangeWatcher(this);  
 
 	pUtils=simulator->getParallelUtils();
