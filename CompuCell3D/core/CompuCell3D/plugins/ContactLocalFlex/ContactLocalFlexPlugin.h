@@ -43,24 +43,26 @@
 class CC3DXMLElement;
 
 namespace CompuCell3D {
-  
-  class Simulator;
-  class Potts3D;
-  class Automaton;
-  class ContactLocalFlexDataContainer;
-  class BoundaryStrategy;
+
+class Simulator;
+class Potts3D;
+class Automaton;
+class ContactLocalFlexDataContainer;
+class BoundaryStrategy;
 
 
-  class CONTACTLOCALFLEX_EXPORT ContactLocalFlexPlugin : public Plugin ,public CellGChangeWatcher,public EnergyFunction{
-    
+class CONTACTLOCALFLEX_EXPORT ContactLocalFlexPlugin : public Plugin ,public CellGChangeWatcher,public EnergyFunction {
+
 
     ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
-      
-    BasicClassAccessor<ContactLocalFlexDataContainer> contactDataContainerAccessor;
+
+	using DataAccessor_t = BasicClassAccessor<ContactLocalFlexDataContainer>;
+	
+    DataAccessor_t contactDataContainerAccessor;
     Potts3D *potts;
     Simulator *sim;
-    void updateContactEnergyData(CellG *_cell);  
+    void updateContactEnergyData(CellG *_cell);
     bool initializadContactData;
 
 
@@ -68,11 +70,11 @@ namespace CompuCell3D {
 
     typedef std::map<int, double> contactEnergies_t;
     typedef std::vector<std::vector<double> > contactEnergyArray_t;
-    
+
     contactEnergies_t contactEnergies;
 
     contactEnergyArray_t contactEnergyArray;
-    
+
     std::string autoName;
     double depth;
 
@@ -81,56 +83,58 @@ namespace CompuCell3D {
 
     unsigned int maxNeighborIndex;
     BoundaryStrategy * boundaryStrategy;
-	 CC3DXMLElement *xmlData;
+    CC3DXMLElement *xmlData;
 
-  public:
+public:
     ContactLocalFlexPlugin();
     virtual ~ContactLocalFlexPlugin();
-    
-   BasicClassAccessor<ContactLocalFlexDataContainer> * getContactDataContainerAccessorPtr(){return & contactDataContainerAccessor;}
-   void initializeContactLocalFlexData();
 
-	//CellGCellwatcher interface
-   virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                                 CellG *oldCell);
-	//EnergyFunction interface
+    DataAccessor_t * getContactDataContainerAccessorPtr() {
+        return & contactDataContainerAccessor;
+    }
+    void initializeContactLocalFlexData();
+
+    //CellGCellwatcher interface
+    virtual void field3DChange(const Point3D &pt, CellG *newCell,
+                               CellG *oldCell);
+    //EnergyFunction interface
     virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
                                 const CellG *oldCell);
-	//Plugin interface 
-	virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-	virtual void extraInit(Simulator *simulator);
-	virtual std::string toString();
+    //Plugin interface
+    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
+    virtual void extraInit(Simulator *simulator);
+    virtual std::string toString();
 
     //Steerrable interface
     virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
     virtual std::string steerableName();
 
 
-	 //void initializeContactEnergy(CC3DXMLElement *_xmlData);
+    //void initializeContactEnergy(CC3DXMLElement *_xmlData);
 
     /**
      * @return The contact energy between cell1 and cell2.
      */
     double contactEnergy(const CellG *cell1, const CellG *cell2);
 
-	 double defaultContactEnergy(const CellG *cell1, const CellG *cell2);
+    double defaultContactEnergy(const CellG *cell1, const CellG *cell2);
 
     /**
      * Sets the contact energy for two cell types.  A -1 type is interpreted
      * as the medium.
      */
     void setContactEnergy(const std::string typeName1,
-			  const std::string typeName2, const double energy);
+                          const std::string typeName2, const double energy);
 
-  protected:
+protected:
     /**
      * @return The index used for ordering contact energies in the map.
      */
     int getIndex(const int type1, const int type2) const;
-  };
-	
+};
 
 
-  };
+
+};
 
 #endif
