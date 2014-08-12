@@ -67,7 +67,7 @@ namespace CompuCell3D {
      
      
 	 BasicClassAccessor<PixelTracker> *pixelTrackerAccessorPtr;
-	 PixelTrackerPlugin * pixelTrackerPlugin;
+	 std::shared_ptr<PixelTrackerPlugin> pixelTrackerPlugin;
 
      virtual void handleEvent(CC3DEvent & _event);
      
