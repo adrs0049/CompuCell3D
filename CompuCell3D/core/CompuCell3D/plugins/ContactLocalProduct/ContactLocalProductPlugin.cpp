@@ -22,29 +22,10 @@
 
 #include <CompuCell3D/CC3D.h>
 
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
-// // // #include <CompuCell3D/Potts3D/CellInventory.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
 using namespace CompuCell3D;
 
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-// // // #include <PublicUtilities/StringUtils.h>
-// // // #include <PublicUtilities/ParallelUtilsOpenMP.h>
 #include <CompuCell3D/plugins/NeighborTracker/NeighborTrackerPlugin.h>
-// // // #include <algorithm>
-
-
-
 #include "ContactLocalProductPlugin.h"
-
-
-
 
 ContactLocalProductPlugin::ContactLocalProductPlugin():
    pUtils(0),
@@ -104,7 +85,7 @@ void ContactLocalProductPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlD
   
   pUtils=sim->getParallelUtils();
   
-  potts->getCellFactoryGroupPtr()->registerClass(&contactProductDataAccessor);
+  potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<DataAccessor_t>(contactProductDataAccessor));
   
   potts->registerEnergyFunctionWithName(this,"ContactLocalProduct");
   simulator->registerSteerableObject(this);

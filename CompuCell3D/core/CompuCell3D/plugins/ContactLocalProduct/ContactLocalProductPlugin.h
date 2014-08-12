@@ -58,7 +58,9 @@ namespace CompuCell3D {
    private:
    	ParallelUtilsOpenMP *pUtils;    
     
-    BasicClassAccessor<ContactLocalProductData> contactProductDataAccessor;
+	using DataAccessor_t = BasicClassAccessor<ContactLocalProductData>;
+	
+    DataAccessor_t contactProductDataAccessor;
     Potts3D *potts;
     Simulator *sim;
     CC3DXMLElement *xmlData;
@@ -75,7 +77,7 @@ namespace CompuCell3D {
 	 std::string contactFunctionType;
     double depth;
 
-    BasicClassAccessor<ContactLocalProductData> * contactProductDataAccessorPtr;
+    DataAccessor_t * contactProductDataAccessorPtr;
 
     Automaton *automaton;
     bool weightDistance;
@@ -104,7 +106,7 @@ namespace CompuCell3D {
     ContactLocalProductPlugin();
     virtual ~ContactLocalProductPlugin();
     
-    BasicClassAccessor<ContactLocalProductData> * getContactProductDataAccessorPtr(){return & contactProductDataAccessor;}
+    DataAccessor_t * getContactProductDataAccessorPtr(){return & contactProductDataAccessor;}
 
 		//EnergyFunction Interface
 		virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
