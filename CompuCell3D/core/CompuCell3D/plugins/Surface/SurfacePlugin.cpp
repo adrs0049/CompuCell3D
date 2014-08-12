@@ -48,7 +48,7 @@ void SurfacePlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData){
 
 
 	bool pluginAlreadyRegisteredFlag;
-	SurfaceTrackerPlugin *plugin=(SurfaceTrackerPlugin*)Simulator::pluginManager.get("SurfaceTracker",&pluginAlreadyRegisteredFlag); //this will load SurfaceTracker plugin if it is not already loaded
+	auto plugin=std::static_pointer_cast<SurfaceTrackerPlugin>(Simulator::pluginManager.get("SurfaceTracker",&pluginAlreadyRegisteredFlag)); //this will load SurfaceTracker plugin if it is not already loaded
 	cerr<<"GOT HERE BEFORE CALLING INIT"<<endl;
 	if(!pluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
