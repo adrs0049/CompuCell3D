@@ -58,7 +58,7 @@ void StretchnessPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
   boundaryStrategy=BoundaryStrategy::getInstance();
  
    bool pluginAlreadyRegisteredFlag;
-   SurfaceTrackerPlugin *trackerPlugin=(SurfaceTrackerPlugin*)Simulator::pluginManager.get("SurfaceTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+   auto trackerPlugin=std::static_pointer_cast<SurfaceTrackerPlugin>(Simulator::pluginManager.get("SurfaceTracker",&pluginAlreadyRegisteredFlag)); //this will load VolumeTracker plugin if it is not already loaded
    if(!pluginAlreadyRegisteredFlag)
       trackerPlugin->init(simulator);
 
@@ -71,7 +71,7 @@ void StretchnessPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 		scaleSurface=_xmlData->getFirstElement("ScaleSurface")->getDouble();	
 	}
 
-	SurfaceTrackerPlugin *trackerPlugin=(SurfaceTrackerPlugin*)Simulator::pluginManager.get("SurfaceTracker"); 
+	auto trackerPlugin=std::static_pointer_cast<SurfaceTrackerPlugin>(Simulator::pluginManager.get("SurfaceTracker")); 
    maxNeighborIndex=trackerPlugin->getMaxNeighborIndex() ;
    lmf= trackerPlugin->getLatticeMultiplicativeFactors();
 
