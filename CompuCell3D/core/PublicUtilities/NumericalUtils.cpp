@@ -1026,5 +1026,4 @@ std::pair<InertiaTensorComponents,InertiaTensorComponents>precalculateInertiaTen
 	return make_pair(newCellInertiaTensor,oldCellInertiaTensor);
 }
 
-
-};
+} // end namespace
