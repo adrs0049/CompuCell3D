@@ -20,20 +20,12 @@
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
 
- #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Potts3D/CellInventory.h>
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
+#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/helpers.h>
 
 using namespace CompuCell3D;
 
-// // // #include <iostream>
-// // // #include <cmath>
 using namespace std;
-
 
 #include "BoundaryPixelTrackerPlugin.h"
 
@@ -43,23 +35,16 @@ simulator(0),potts(0),boundaryStrategy(0),xmlData(0),maxNeighborIndex(0)
 
 BoundaryPixelTrackerPlugin::~BoundaryPixelTrackerPlugin() {}
 
-
-
-
 void BoundaryPixelTrackerPlugin::init(Simulator *_simulator, CC3DXMLElement *_xmlData) {
 
   xmlData=_xmlData;
   simulator=_simulator;
   potts = simulator->getPotts();
 
-
-
-  ///will register BoundaryPixelTracker here
-  BasicClassAccessorBase * cellBoundaryPixelTrackerAccessorPtr=&boundaryPixelTrackerAccessor;
    ///************************************************************************************************  
   ///REMARK. HAVE TO USE THE SAME BASIC CLASS ACCESSOR INSTANCE THAT WAS USED TO REGISTER WITH FACTORY
    ///************************************************************************************************  
-  potts->getCellFactoryGroupPtr()->registerClass(cellBoundaryPixelTrackerAccessorPtr);
+  registerClassOnCell<TrackerAccessor_t>(potts, boundaryPixelTrackerAccessor);
 
   potts->registerCellGChangeWatcher(this);
 

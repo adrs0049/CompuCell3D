@@ -51,7 +51,9 @@ class BOUNDARYPIXELTRACKER_EXPORT BoundaryPixelTrackerPlugin : public Plugin, pu
 
       //WatchableField3D<CellG *> *cellFieldG;
       Dim3D fieldDim;
-      BasicClassAccessor<BoundaryPixelTracker> boundaryPixelTrackerAccessor;
+	  
+	  using TrackerAccessor_t =  BasicClassAccessor<BoundaryPixelTracker>;
+      TrackerAccessor_t boundaryPixelTrackerAccessor;
       Simulator *simulator;
 		Potts3D* potts;
 		unsigned int maxNeighborIndex;
@@ -80,7 +82,7 @@ class BOUNDARYPIXELTRACKER_EXPORT BoundaryPixelTrackerPlugin : public Plugin, pu
 		virtual std::string toString();
 
 
-		BasicClassAccessor<BoundaryPixelTracker> * getBoundaryPixelTrackerAccessorPtr(){return & boundaryPixelTrackerAccessor;}
+		TrackerAccessor_t * getBoundaryPixelTrackerAccessorPtr(){return & boundaryPixelTrackerAccessor;}
 		//had to include this function to get set inereation working properly with Python , and Player that has restart capabilities
 		BoundaryPixelTrackerData * getBoundaryPixelTrackerData(BoundaryPixelTrackerData * _psd){return _psd;}
 
