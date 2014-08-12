@@ -58,15 +58,10 @@ namespace mu
       When defining custom binary operators with #AddOprt(...) make sure not to choose 
       names conflicting with these definitions. 
   */
-  const char_type* ParserBase::c_DefaultOprt[] = 
-  { 
-    _T("<="), _T(">="),  _T("!="), 
-    _T("=="), _T("<"),   _T(">"), 
-    _T("+"),  _T("-"),   _T("*"), 
-    _T("/"),  _T("^"),   _T("&&"), 
-    _T("||"), _T("="),   _T("("),  
-    _T(")"),   _T("?"),  _T(":"), 0 
-  };
+  const char_type *ParserBase::c_DefaultOprt[] = {
+      _T("<="), _T(">="), _T("!="), _T("=="), _T("<"),  _T(">"),  _T("+"),
+      _T("-"),  _T("*"),  _T("/"),  _T("^"),  _T("&&"), _T("||"), _T("="),
+      _T("("),  _T(")"),  _T("?"),  _T(":"),  nullptr};
 
   //------------------------------------------------------------------------------
   /** \brief Constructor.
@@ -339,7 +334,7 @@ namespace mu
                                 funmap_type &a_Storage,
                                 const char_type *a_szCharSet )
   {
-    if (a_Callback.GetAddr()==0)
+    if (a_Callback.GetAddr() == nullptr)
         Error(ecINVALID_FUN_PTR);
 
     const funmap_type *pFunMap = &a_Storage;
@@ -594,7 +589,7 @@ namespace mu
   */
   void ParserBase::DefineVar(const string_type &a_sName, value_type *a_pVar)
   {
-    if (a_pVar==0)
+    if (a_pVar == nullptr)
       Error(ecINVALID_VAR_PTR);
 
     // Test if a constant with that names already exists
@@ -798,7 +793,7 @@ namespace mu
     assert(m_pTokenReader.get());
 
     // Operator stack empty or does not contain tokens with callback functions
-    if (a_stOpt.empty() || a_stOpt.top().GetFuncAddr()==0 )
+    if (a_stOpt.empty() || a_stOpt.top().GetFuncAddr() == nullptr)
       return;
 
     token_type funTok = a_stOpt.pop();
@@ -1276,11 +1271,9 @@ namespace mu
                     
                     // The opening bracket was popped from the stack now check if there
                     // was a function before this bracket
-                    if (stOpt.size() && 
-                        stOpt.top().GetCode()!=cmOPRT_INFIX && 
-                        stOpt.top().GetCode()!=cmOPRT_BIN && 
-                        stOpt.top().GetFuncAddr()!=0)
-                    {
+                    if (stOpt.size() && stOpt.top().GetCode() != cmOPRT_INFIX &&
+                        stOpt.top().GetCode() != cmOPRT_BIN &&
+                        stOpt.top().GetFuncAddr() != nullptr) {
                       ApplyFunc(stOpt, stVal, iArgCount);
                     }
                   }
@@ -1463,7 +1456,7 @@ namespace mu
   */
   void ParserBase::RemoveVar(const string_type &a_strVarName)
   {
-    varmap_type::iterator item = m_VarDef.find(a_strVarName);
+    auto item = m_VarDef.find(a_strVarName);
     if (item!=m_VarDef.end())
     {
       m_VarDef.erase(item);

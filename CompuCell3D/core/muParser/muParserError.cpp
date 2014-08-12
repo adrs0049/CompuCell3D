@@ -153,17 +153,10 @@ namespace mu
       \param [in] sExpr The expression related to the error.
       \param [in] a_iPos the position in the expression where the error occured. 
   */
-  ParserError::ParserError( EErrorCodes iErrc,
-                            const string_type &sTok,
-                            const string_type &sExpr,
-                            int iPos )
-    :m_strMsg()
-    ,m_strFormula(sExpr)
-    ,m_strTok(sTok)
-    ,m_iPos(iPos)
-    ,m_iErrc(iErrc)
-    ,m_ErrMsg(ParserErrorMsg::Instance())
-  {
+  ParserError::ParserError(EErrorCodes iErrc, string_type sTok,
+                           string_type sExpr, int iPos)
+      : m_strMsg(), m_strFormula(std::move(sExpr)), m_strTok(std::move(sTok)),
+        m_iPos(iPos), m_iErrc(iErrc), m_ErrMsg(ParserErrorMsg::Instance()) {
     m_strMsg = m_ErrMsg[m_iErrc];
     stringstream_type stream;
     stream << (int)m_iPos;
@@ -177,14 +170,9 @@ namespace mu
       \param [in] iPos the position in the expression where the error occured. 
       \param [in] sTok The token string related to this error.
   */
-  ParserError::ParserError(EErrorCodes iErrc, int iPos, const string_type &sTok) 
-    :m_strMsg()
-    ,m_strFormula()
-    ,m_strTok(sTok)
-    ,m_iPos(iPos)
-    ,m_iErrc(iErrc)
-    ,m_ErrMsg(ParserErrorMsg::Instance())
-  {
+  ParserError::ParserError(EErrorCodes iErrc, int iPos, string_type sTok)
+      : m_strMsg(), m_strFormula(), m_strTok(std::move(sTok)), m_iPos(iPos),
+        m_iErrc(iErrc), m_ErrMsg(ParserErrorMsg::Instance()) {
     m_strMsg = m_ErrMsg[m_iErrc];
     stringstream_type stream;
     stream << (int)m_iPos;
@@ -198,14 +186,9 @@ namespace mu
       \param [in] iPos the position related to the error.
       \param [in] sTok The token string related to this error.
   */
-  ParserError::ParserError(const char_type *szMsg, int iPos, const string_type &sTok) 
-    :m_strMsg(szMsg)
-    ,m_strFormula()
-    ,m_strTok(sTok)
-    ,m_iPos(iPos)
-    ,m_iErrc(ecGENERIC)
-    ,m_ErrMsg(ParserErrorMsg::Instance())
-  {
+  ParserError::ParserError(const char_type *szMsg, int iPos, string_type sTok)
+      : m_strMsg(szMsg), m_strFormula(), m_strTok(std::move(sTok)),
+        m_iPos(iPos), m_iErrc(ecGENERIC), m_ErrMsg(ParserErrorMsg::Instance()) {
     stringstream_type stream;
     stream << (int)m_iPos;
     ReplaceSubString(m_strMsg, _T("$POS$"), stream.str());

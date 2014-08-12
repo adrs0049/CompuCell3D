@@ -76,10 +76,10 @@ class EXPRESSIONEVALUATOR_EXPORT ExpressionEvaluatorDepot{
 				
 			  if (first==last) return ;
 
-			for (unsigned i = 0 ; i < eeVec.size() ; ++i){
-			  for (ForwardIterator fitr=first; fitr!=last ; ++fitr){				  
-				  eeVec[i].addVariable(*fitr);
-			  }				
+                        for (auto &elem : eeVec) {
+                          for (ForwardIterator fitr=first; fitr!=last ; ++fitr){
+                            elem.addVariable(*fitr);
+                          }				
 			}
 
 
@@ -90,13 +90,13 @@ class EXPRESSIONEVALUATOR_EXPORT ExpressionEvaluatorDepot{
 		void setVariables(ForwardIterator first, ForwardIterator last,unsigned int offset=0){			  
 				
 			  if (first==last) return ;
-			  
-			for (unsigned i = 0 ; i < eeVec.size() ; ++i){
+
+                          for (auto &elem : eeVec) {
 
               unsigned int idx=0;
-			  for (ForwardIterator fitr=first; fitr!=last ; ++fitr){				  
-				  eeVec[i][offset+idx]=*fitr;
-					++idx;
+			  for (ForwardIterator fitr=first; fitr!=last ; ++fitr){
+                            elem[offset + idx] = *fitr;
+                                        ++idx;
 			  }				
 			}
 

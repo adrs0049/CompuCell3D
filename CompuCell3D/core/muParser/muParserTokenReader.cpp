@@ -109,27 +109,12 @@ namespace mu
       \param a_pParent Parent parser object of the token reader.
   */
   ParserTokenReader::ParserTokenReader(ParserBase *a_pParent)
-    :m_pParser(a_pParent)
-    ,m_strFormula()
-    ,m_iPos(0)
-    ,m_iSynFlags(0)
-    ,m_bIgnoreUndefVar(false)
-    ,m_pFunDef(NULL)
-    ,m_pPostOprtDef(NULL)
-    ,m_pInfixOprtDef(NULL)
-    ,m_pOprtDef(NULL)
-    ,m_pConstDef(NULL)
-    ,m_pStrVarDef(NULL)
-    ,m_pVarDef(NULL)
-    ,m_pFactory(NULL)
-    ,m_pFactoryData(NULL)
-    ,m_vIdentFun()
-    ,m_UsedVar()
-    ,m_fZero(0)
-    ,m_iBrackets(0)
-    ,m_lastTok()
-    ,m_cArgSep(',')
-  {
+      : m_pParser(a_pParent), m_strFormula(), m_iPos(0), m_iSynFlags(0),
+        m_bIgnoreUndefVar(false), m_pFunDef(nullptr), m_pPostOprtDef(nullptr),
+        m_pInfixOprtDef(nullptr), m_pOprtDef(nullptr), m_pConstDef(nullptr),
+        m_pStrVarDef(nullptr), m_pVarDef(nullptr), m_pFactory(nullptr),
+        m_pFactoryData(nullptr), m_vIdentFun(), m_UsedVar(), m_fZero(0),
+        m_iBrackets(0), m_lastTok(), m_cArgSep(',') {
     assert(m_pParser);
     SetParent(m_pParser);
   }
@@ -145,7 +130,7 @@ namespace mu
   */
   ParserTokenReader* ParserTokenReader::Clone(ParserBase *a_pParent) const
   {
-    std::auto_ptr<ParserTokenReader> ptr(new ParserTokenReader(*this));
+    std::unique_ptr<ParserTokenReader> ptr(new ParserTokenReader(*this));
     ptr->SetParent(a_pParent);
     return ptr.release();
   }
@@ -538,7 +523,7 @@ namespace mu
       return false;
 
     // iteraterate over all postfix operator strings
-    funmap_type::const_reverse_iterator it = m_pInfixOprtDef->rbegin();
+    auto it = m_pInfixOprtDef->rbegin();
     for ( ; it!=m_pInfixOprtDef->rend(); ++it)
     {
       if (sTok.find(it->first)!=0)
@@ -582,7 +567,7 @@ namespace mu
     if (iEnd==m_iPos)
       return false;
 
-    funmap_type::const_iterator item = m_pFunDef->find(strTok);
+    auto item = m_pFunDef->find(strTok);
     if (item==m_pFunDef->end())
       return false;
 
@@ -629,7 +614,7 @@ namespace mu
     // are part of long token names (like: "add123") will be found instead 
     // of the long ones.
     // Length sorting is done with ascending length so we use a reverse iterator here.
-    funmap_type::const_reverse_iterator it = m_pOprtDef->rbegin();
+    auto it = m_pOprtDef->rbegin();
     for ( ; it!=m_pOprtDef->rend(); ++it)
     {
       const string_type &sID = it->first;
@@ -694,7 +679,7 @@ namespace mu
       return false;
 
     // iteraterate over all postfix operator strings
-    funmap_type::const_reverse_iterator it = m_pPostOprtDef->rbegin();
+    auto it = m_pPostOprtDef->rbegin();
     for ( ; it!=m_pPostOprtDef->rend(); ++it)
     {
       if (sTok.find(it->first)!=0)
@@ -732,7 +717,7 @@ namespace mu
     iEnd = ExtractToken(m_pParser->ValidNameChars(), strTok, m_iPos);
     if (iEnd!=m_iPos)
     {
-      valmap_type::const_iterator item = m_pConstDef->find(strTok);
+      auto item = m_pConstDef->find(strTok);
       if (item!=m_pConstDef->end())
       {
         m_iPos = iEnd;
@@ -813,7 +798,7 @@ namespace mu
     if (iEnd==m_iPos)
       return false;
 
-    strmap_type::const_iterator item =  m_pStrVarDef->find(strTok);
+    auto item = m_pStrVarDef->find(strTok);
     if (item==m_pStrVarDef->end())
       return false;
 
@@ -872,7 +857,7 @@ namespace mu
     else
     {
       a_Tok.SetVar((value_type*)&m_fZero, strTok);
-      m_UsedVar[strTok] = 0;  // Add variable to used-var-list
+      m_UsedVar[strTok] = nullptr; // Add variable to used-var-list
     }
 
     m_iPos = iEnd;
