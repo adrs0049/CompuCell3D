@@ -43,14 +43,10 @@ using namespace CompuCell3D;
 
 #include "ContactMultiCadPlugin.h"
 
-
-
-
-ContactMultiCadPlugin::ContactMultiCadPlugin():
-xmlData(0) ,
-contactEnergyPtr(&ContactMultiCadPlugin::contactEnergyLinear),
-weightDistance(false)
-{}
+ContactMultiCadPlugin::ContactMultiCadPlugin()
+    : xmlData(nullptr),
+      contactEnergyPtr(&ContactMultiCadPlugin::contactEnergyLinear),
+      weightDistance(false) {}
 
 ContactMultiCadPlugin::~ContactMultiCadPlugin() {
 }
@@ -85,8 +81,8 @@ double ContactMultiCadPlugin::changeEnergy(const Point3D &pt,
   double distance = 0;
 //   Point3D n;
   Neighbor neighbor;
-  
-  CellG *nCell=0;
+
+  CellG *nCell = nullptr;
   WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
 
 	//cerr<<"maxNeighborIndex="<<maxNeighborIndex<<endl;
@@ -105,8 +101,8 @@ double ContactMultiCadPlugin::changeEnergy(const Point3D &pt,
          nCell = fieldG->get(neighbor.pt);
 
          if(nCell!=oldCell){
-			if((nCell != 0) && (oldCell != 0)) {
-			   if((nCell->clusterId) != (oldCell->clusterId)) {
+           if ((nCell != nullptr) && (oldCell != nullptr)) {
+                           if((nCell->clusterId) != (oldCell->clusterId)) {
 				  energy -= (this->*contactEnergyPtr)(oldCell,nCell)/ neighbor.distance;
 			   }
 			}else{
@@ -115,8 +111,8 @@ double ContactMultiCadPlugin::changeEnergy(const Point3D &pt,
             
          }
          if(nCell!=newCell){
-			if((newCell != 0) && (nCell != 0)) {
-			   if((newCell->clusterId) != (nCell->clusterId)) {
+           if ((newCell != nullptr) && (nCell != nullptr)) {
+                           if((newCell->clusterId) != (nCell->clusterId)) {
 				  energy += (this->*contactEnergyPtr)(newCell,nCell)/ neighbor.distance;
 			   }
 			}
@@ -138,8 +134,8 @@ double ContactMultiCadPlugin::changeEnergy(const Point3D &pt,
          nCell = fieldG->get(neighbor.pt);
 
          if(nCell!=oldCell){
-				if((nCell != 0) && (oldCell != 0)) {
-				   if((nCell->clusterId) != (oldCell->clusterId)) {
+           if ((nCell != nullptr) && (oldCell != nullptr)) {
+                                   if((nCell->clusterId) != (oldCell->clusterId)) {
 					  energy -= (this->*contactEnergyPtr)(oldCell,nCell);
 				   }
 				}else{
@@ -147,8 +143,8 @@ double ContactMultiCadPlugin::changeEnergy(const Point3D &pt,
 			   }            
          }
          if(nCell!=newCell){
-			if((newCell != 0) && (nCell != 0)) {
-			   if((newCell->clusterId) != (nCell->clusterId)) {
+           if ((newCell != nullptr) && (nCell != nullptr)) {
+                           if((newCell->clusterId) != (nCell->clusterId)) {
 				  energy += (this->*contactEnergyPtr)(newCell,nCell);
 			   }
 			}
@@ -227,7 +223,7 @@ void ContactMultiCadPlugin::setContactEnergy(const string typeName1,
     
   int index = getIndex(type1, type2);
 
-  contactEnergies_t::iterator it = contactEnergies.find(index);
+  auto it = contactEnergies.find(index);
   ASSERT_OR_THROW(string("Contact energy for ") + typeName1 + " " + typeName2 +
 		  " already set!", it == contactEnergies.end());
 
@@ -353,19 +349,21 @@ void ContactMultiCadPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag)
 				}
 
 				//copy all set elements to a master set - cadherinNameSet, defined in ContactMultiCadEnergy class
-				for(int i =0 ; i < vecMultCadSpecCad.size() ; ++i){
-					std::set<std::string> & cadherinNameLocalSetRef=vecMultCadSpecCad[i].cadherinNameLocalSet;
-					cerr<<"cadherinNameLocalSetRef.size()="<<cadherinNameLocalSetRef.size()<<endl;
+                                for (auto &elem : vecMultCadSpecCad) {
+                                  std::set<std::string> &
+                                      cadherinNameLocalSetRef =
+                                          elem.cadherinNameLocalSet;
+                                        cerr<<"cadherinNameLocalSetRef.size()="<<cadherinNameLocalSetRef.size()<<endl;
 
 					cadherinNameSet.insert(cadherinNameLocalSetRef.begin(),cadherinNameLocalSetRef.end());
 				}
 
+                                for (const auto &elem : cadherinNameSet) {
 
-				for(set<string>::iterator sitr=cadherinNameSet.begin() ;sitr != cadherinNameSet.end() ; ++sitr){
-
-					mapCadNameToIndex.insert(make_pair(*sitr,cadIndex));
-					cadherinNameOrderedVector.push_back(*sitr);
-					++cadIndex;
+                                  mapCadNameToIndex.insert(
+                                      make_pair(elem, cadIndex));
+                                  cadherinNameOrderedVector.push_back(elem);
+                                        ++cadIndex;
 				}
 
 
@@ -380,21 +378,26 @@ void ContactMultiCadPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag)
 
 				cadherinDataList.clear();
 
-				for(int i =0 ; i < vecMultCadSpecCad.size() ; ++i){
-					std::vector<CadherinData> & cadherinDataVecRef = vecMultCadSpecCad[i].specificityCadherinTuppleVec;
+                                for (auto &elem : vecMultCadSpecCad) {
+                                  std::vector<CadherinData> &
+                                      cadherinDataVecRef =
+                                          elem.specificityCadherinTuppleVec;
 
-					cadherinDataList.insert(cadherinDataList.end(),cadherinDataVecRef.begin(),cadherinDataVecRef.end());
+                                        cadherinDataList.insert(cadherinDataList.end(),cadherinDataVecRef.begin(),cadherinDataVecRef.end());
 			      
 				}
 
-				for (list<CadherinData>::iterator litr=cadherinDataList.begin() ; litr != cadherinDataList.end() ; ++litr){
-					mitr_i=mapCadNameToIndex.find(litr->cad1Name);
-					mitr_j=mapCadNameToIndex.find(litr->cad2Name);
-			      
-					int i=mitr_i->second;
+                                for (auto &elem : cadherinDataList) {
+                                  mitr_i =
+                                      mapCadNameToIndex.find(elem.cad1Name);
+                                  mitr_j =
+                                      mapCadNameToIndex.find(elem.cad2Name);
+
+                                        int i=mitr_i->second;
 					int j=mitr_j->second;
-					cadherinSpecificityArray[i][j]=litr->specificity;
-					cadherinSpecificityArray[j][i]=cadherinSpecificityArray[i][j];
+                                        cadherinSpecificityArray[i][j] =
+                                            elem.specificity;
+                                        cadherinSpecificityArray[j][i]=cadherinSpecificityArray[i][j];
 			      
 				}
 

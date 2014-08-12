@@ -154,12 +154,13 @@ class Array3DLinearFortranField3DAdapter:public Field3DImpl<float>{
          
          
       }
-    virtual void setDim(const Dim3D newDim){
-		this->resizeAndShift(newDim);
+      virtual void setDim(const Dim3D newDim) override {
+                this->resizeAndShift(newDim);
 	}
 
-	virtual void resizeAndShift(const Dim3D newDim,  Dim3D shiftVec=Dim3D()){
-		vector<double> tmpContainer=container; 
+        virtual void resizeAndShift(const Dim3D newDim,
+                                    Dim3D shiftVec = Dim3D()) override {
+                vector<double> tmpContainer=container; 
 		tmpContainer.swap(container);// swapping vector content  => copy old vec to new
 
 		Dim3D oldInternalDim=internalDim;
@@ -210,23 +211,22 @@ class Array3DLinearFortranField3DAdapter:public Field3DImpl<float>{
 		//return _x + (_y+ (_z) * internalDim.y) * internalDim.x;
         
        }
-       
-       
-      virtual Dim3D getDim() const {return dim;}
 
-      virtual bool isValid(const Point3D &pt) const {      
+       virtual Dim3D getDim() const override { return dim; }
+
+       virtual bool isValid(const Point3D &pt) const override {
          return (0 <= pt.x && pt.x < dim.x &&
 	      0 <= pt.y && pt.y < dim.y &&
 	      0 <= pt.z && pt.z < dim.z);
       }
 
-      virtual void set(const Point3D &pt, const float value) {
+      virtual void set(const Point3D &pt, const float value) override {
             container[index(pt.x,pt.y,pt.z)]=value;            
          
       }
 
-      virtual float get(const Point3D &pt) const {
-		  //TODO: we'd better check why we cast from doubles to floats here      
+      virtual float get(const Point3D &pt) const override {
+                  //TODO: we'd better check why we cast from doubles to floats here      
 		  //Either doubles are not used, either interface is incorrect
          return container[index(pt.x,pt.y,pt.z)];
 
@@ -249,14 +249,9 @@ class Array3DLinearFortranField3DAdapter:public Field3DImpl<float>{
          return container[index(_x,_y,_z)];            
 
       }
-      
-      
-      virtual float getByIndex(long _offset) const {
-         return float();
-      }
-      virtual void setByIndex(long _offset, const float _value) {
-         
-      }
+
+      virtual float getByIndex(long _offset) const override { return float(); }
+      virtual void setByIndex(long _offset, const float _value) override {}
       
       
       
@@ -304,13 +299,14 @@ class Array2DLinearFortranField3DAdapter:public Field3DImpl<float>{
          container.assign((internalDim.x)*(internalDim.y),_initVal);          
          
       }
-	  
-		virtual void setDim(const Dim3D newDim){
-			this->resizeAndShift(newDim);
+
+      virtual void setDim(const Dim3D newDim) override {
+                        this->resizeAndShift(newDim);
 		}
 
-	    virtual void resizeAndShift(const Dim3D newDim,  Dim3D shiftVec=Dim3D()){
-		vector<double> tmpContainer=container; 
+                virtual void resizeAndShift(const Dim3D newDim,
+                                            Dim3D shiftVec = Dim3D()) override {
+                vector<double> tmpContainer=container; 
 		tmpContainer.swap(container);// swapping vector content  => copy old vec to new
 
 		Dim3D oldInternalDim=internalDim;
@@ -357,18 +353,18 @@ class Array2DLinearFortranField3DAdapter:public Field3DImpl<float>{
 		return _x + (_y) * internalDim.x; //start indexing from 0'th element but calculate index based on increased lattice dimmension
         
        }
-                 
-      virtual Dim3D getDim() const {return dim;};
-      virtual bool isValid(const Point3D &pt) const {      
+
+       virtual Dim3D getDim() const override { return dim; };
+       virtual bool isValid(const Point3D &pt) const override {
          return (0 <= pt.x && pt.x < dim.x &&
 	      0 <= pt.y && pt.y < dim.y);
       }
-      virtual void set(const Point3D &pt, const float value) {
+      virtual void set(const Point3D &pt, const float value) override {
             container[index(pt.x,pt.y)]=value;            
          
       }
-      virtual float get(const Point3D &pt) const {
-		  //return Array2DLinearFortranField3DAdapter<float>::container[Array2DLinearFortranField3DAdapter<float>::indexPt(pt)];  
+      virtual float get(const Point3D &pt) const override {
+                  //return Array2DLinearFortranField3DAdapter<float>::container[Array2DLinearFortranField3DAdapter<float>::indexPt(pt)];  
 		 //return (float)indexPt(pt);
 		 //return container[0];
    //      using namespace std;
@@ -397,14 +393,9 @@ class Array2DLinearFortranField3DAdapter:public Field3DImpl<float>{
          return container[index(_x,_y)];            
 
       };
-      
-      
-      virtual float getByIndex(long _offset) const {
-         return float();
-      }
-      virtual void setByIndex(long _offset, const float _value) {
-         
-      }
+
+      virtual float getByIndex(long _offset) const override { return float(); }
+      virtual void setByIndex(long _offset, const float _value) override {}
    protected:      
       std::vector<double> container;
       //Dim3D dim; //defined already in Field3DImpl<>
@@ -904,9 +895,9 @@ void Array3DContiguous<T>::resizeAndShift(const Dim3D newDim,  Dim3D shiftVec){
 	newInternalDim.z+=3;
     
 	int newArraySize=newInternalDim.x*newInternalDim.y*2*newInternalDim.z;
-	T * newArrayCont=new T[newArraySize];
-    
-	//initialization 
+        auto newArrayCont = new T[newArraySize];
+
+        //initialization 
 	for (int i = 0 ;i<newArraySize;++i){
 		newArrayCont[i]=T();
 	}
@@ -981,23 +972,21 @@ public:
 		borderWidth(1)
 	{}
 
-	Array3DCUDA(Dim3D & _dim,T  _initVal=static_cast<T>(0)):
-		Field3DImpl<T>(Dim3D(1,1,1),static_cast<T>(0)),
-		arrayCont(0),
-		arraySize(0),
-		//shiftArray(0),
-		//shiftSwap(1),
-		borderWidth(1)
-	{
-		allocateArray(_dim,_initVal);
+        Array3DCUDA(Dim3D &_dim, T _initVal = static_cast<T>(0))
+            : Field3DImpl<T>(Dim3D(1, 1, 1), static_cast<T>(0)),
+              arrayCont(nullptr), arraySize(0),
+              // shiftArray(0),
+              // shiftSwap(1),
+              borderWidth(1) {
+                allocateArray(_dim,_initVal);
 	}
 	~Array3DCUDA(){
 		if (arrayCont){
 			// delete [] arrayCont;
             free(arrayCont);
 		}
-		arrayCont=0;
-	}
+                arrayCont = nullptr;
+        }
 	void allocateArray(const Dim3D & _dim , T val=static_cast<T>(0));
 	//       operator Type&();
 	ContainerType getContainer(){return arrayCont;}
@@ -1088,8 +1077,8 @@ void Array3DCUDA<T>::allocateArray(const Dim3D & _dim , T  val){
 		// delete [] arrayCont;
 		// arrayCont=0;
 		free(arrayCont);
-		arrayCont=0;        
-	}
+                arrayCont = nullptr;
+        }
 	arraySize=internalDim.x*internalDim.y*internalDim.z;
 	// arrayCont=new T[arraySize];
     arrayCont=(ContainerType) malloc(arraySize*sizeof(T));
@@ -1270,9 +1259,9 @@ void Array2DContiguous<T>::resizeAndShift(const Dim3D newDim,  Dim3D shiftVec){
 	newInternalDim.z=1;
     
 	int newArraySize=newInternalDim.x*newInternalDim.y*2;
-	T * newArrayCont=new T[newArraySize];
-    
-	//initialization 
+        auto newArrayCont = new T[newArraySize];
+
+        //initialization 
 	for (int i = 0 ;i<newArraySize;++i){
 		newArrayCont[i]=T();
 	}

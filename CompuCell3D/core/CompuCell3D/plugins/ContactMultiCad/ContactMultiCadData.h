@@ -28,6 +28,7 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <utility>
 
 #include "ContactMultiCadDLLSpecifier.h"
 namespace CompuCell3D {
@@ -68,9 +69,10 @@ class CONTACTMULTICAD_EXPORT ContactMultiCadData{
 
    class CONTACTMULTICAD_EXPORT CadherinData{
    public:
-      CadherinData(std::string _cad1Name,std::string _cad2Name,float _specificity):
-      cad1Name(_cad1Name),cad2Name(_cad2Name),specificity(_specificity)
-      {}
+     CadherinData(std::string _cad1Name, std::string _cad2Name,
+                  float _specificity)
+         : cad1Name(std::move(_cad1Name)), cad2Name(std::move(_cad2Name)),
+           specificity(_specificity) {}
       std::string cad1Name,cad2Name;
       float specificity;
    };
@@ -92,15 +94,14 @@ class CONTACTMULTICAD_EXPORT ContactMultiCadData{
          }
 
          CadherinData * getSpecificity(std::string _cad1,std::string _cad2){
-            for (int i=0 ; i < specificityCadherinTuppleVec.size() ; ++i){
-               if(specificityCadherinTuppleVec[i].cad1Name==_cad1 && specificityCadherinTuppleVec[i].cad2Name==_cad2){
-                  return & specificityCadherinTuppleVec[i];
-               }
-               else if (specificityCadherinTuppleVec[i].cad1Name==_cad2 && specificityCadherinTuppleVec[i].cad2Name==_cad1){
-                  return & specificityCadherinTuppleVec[i];
+           for (auto &elem : specificityCadherinTuppleVec) {
+             if (elem.cad1Name == _cad1 && elem.cad2Name == _cad2) {
+               return &elem;
+             } else if (elem.cad1Name == _cad2 && elem.cad2Name == _cad1) {
+               return &elem;
                }
             }
-            return 0;
+            return nullptr;
          }
 
 

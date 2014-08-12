@@ -48,10 +48,12 @@ namespace CompuCell3D {
 	class LENGTHCONSTRAINT_EXPORT LengthEnergyParam{
 	public:
 		LengthEnergyParam():targetLength(0),lambdaLength(0.0),minorTargetLength(0.0){}
-		LengthEnergyParam(std::string _cellTypeName,double _targetLength,double _lambdaLength):
-		cellTypeName(_cellTypeName),targetLength(_targetLength),lambdaLength(_lambdaLength)
-		{}
-		double targetLength;
+                LengthEnergyParam(std::string _cellTypeName,
+                                  double _targetLength, double _lambdaLength)
+                    : cellTypeName(std::move(_cellTypeName)),
+                      targetLength(_targetLength), lambdaLength(_lambdaLength) {
+                }
+                double targetLength;
 		double minorTargetLength;
 		float lambdaLength;
 		std::string cellTypeName;
@@ -81,11 +83,12 @@ namespace CompuCell3D {
 		virtual ~LengthConstraintPlugin();
 
 		// Plugin interface
-		virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-		virtual void extraInit(Simulator *simulator);
-		virtual std::string toString();
+                virtual void init(Simulator *simulator,
+                                  CC3DXMLElement *_xmlData = nullptr) override;
+                virtual void extraInit(Simulator *simulator) override;
+                virtual std::string toString() override;
 
-		DataAccessor_t * getLengthConstraintDataPtr(){return & lengthConstraintDataAccessor;}
+                DataAccessor_t * getLengthConstraintDataPtr(){return & lengthConstraintDataAccessor;}
 
 		void setLengthConstraintData(CellG * _cell, double _lambdaLength=0.0, double _targetLength=0.0 ,double _minorTargetLength=0.0);    	
 		double getLambdaLength(CellG * _cell);  
@@ -94,9 +97,11 @@ namespace CompuCell3D {
 
 
 		//EnergyFunction interface
-		virtual double changeEnergy(const Point3D &pt, const CellG *newCell,const CellG *oldCell);
+                virtual double changeEnergy(const Point3D &pt,
+                                            const CellG *newCell,
+                                            const CellG *oldCell) override;
 
-		double changeEnergy_xz(const Point3D &pt,const CellG *newCell,const CellG *oldCell);
+                double changeEnergy_xz(const Point3D &pt,const CellG *newCell,const CellG *oldCell);
 
 		double changeEnergy_xy(const Point3D &pt,const CellG *newCell,const CellG *oldCell);
 
@@ -111,9 +116,9 @@ namespace CompuCell3D {
 		void initTypeId(Potts3D * potts);
 
 		//SteerableObject interface
-		virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-		virtual std::string steerableName();
-
-	};
+                virtual void update(CC3DXMLElement *_xmlData,
+                                    bool _fullInitFlag = false) override;
+                virtual std::string steerableName() override;
+        };
 };
 #endif

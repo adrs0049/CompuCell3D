@@ -9,9 +9,7 @@
 using namespace CompuCell3D;
 using namespace std;
 
-EnergyFunctionCalculator::EnergyFunctionCalculator(){
-   potts=0;
-}
+EnergyFunctionCalculator::EnergyFunctionCalculator() { potts = nullptr; }
 
 EnergyFunctionCalculator::~EnergyFunctionCalculator(){
 
@@ -83,9 +81,9 @@ double EnergyFunctionCalculator::changeEnergy(Point3D &pt, const CellG *newCell,
 
 
   double change = 0;
-  for (unsigned int i = 0; i < energyFunctions.size(); i++){
-    change += energyFunctions[i]->changeEnergy(pt, newCell, oldCell);
-		//cerr<<"CHANGE FROM ACCEPTANCE FUNCTION"<<change<<" FCNNAME="<<energyFunctionsNameVec[i]<<endl;
+  for (auto &elem : energyFunctions) {
+    change += elem->changeEnergy(pt, newCell, oldCell);
+                //cerr<<"CHANGE FROM ACCEPTANCE FUNCTION"<<change<<" FCNNAME="<<energyFunctionsNameVec[i]<<endl;
   }
   return change;
 

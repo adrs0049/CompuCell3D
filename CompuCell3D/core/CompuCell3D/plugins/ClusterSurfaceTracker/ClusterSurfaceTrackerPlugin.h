@@ -61,21 +61,23 @@ namespace CompuCell3D {
         
                 
         // CellChangeWatcher interface
-        virtual void field3DChange(const Point3D &pt, CellG *newCell, CellG *oldCell);
-                
-		const LatticeMultiplicativeFactors & getLatticeMultiplicativeFactors() const {return lmf;}
+        virtual void field3DChange(const Point3D &pt, CellG *newCell,
+                                   CellG *oldCell) override;
+
+                const LatticeMultiplicativeFactors & getLatticeMultiplicativeFactors() const {return lmf;}
 		unsigned int getMaxNeighborIndex(){return maxNeighborIndex;}
         void updateClusterSurface(long _clusterId);
 
-        virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
+        virtual void init(Simulator *simulator,
+                          CC3DXMLElement *_xmlData = nullptr) override;
 
-        virtual void extraInit(Simulator *simulator);
+        virtual void extraInit(Simulator *simulator) override;
 
         //Steerrable interface
-        virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-        virtual std::string steerableName();
-        virtual std::string toString();
-
+        virtual void update(CC3DXMLElement *_xmlData,
+                            bool _fullInitFlag = false) override;
+        virtual std::string steerableName() override;
+        virtual std::string toString() override;
     };
 };
 #endif

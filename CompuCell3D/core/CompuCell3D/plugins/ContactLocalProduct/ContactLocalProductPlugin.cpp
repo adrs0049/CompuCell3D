@@ -27,24 +27,14 @@ using namespace CompuCell3D;
 #include <CompuCell3D/plugins/NeighborTracker/NeighborTrackerPlugin.h>
 #include "ContactLocalProductPlugin.h"
 
-ContactLocalProductPlugin::ContactLocalProductPlugin():
-   pUtils(0),
-   potts(0),
-   sim(0),
-   contactProductDataAccessorPtr(0),
-   automaton(0),
-   xmlData(0),
-   depth(1),
-   weightDistance(false),
-   contactEnergyPtr(&ContactLocalProductPlugin::contactEnergyLinear),
-   maxNeighborIndex(0),
-   boundaryStrategy(0),
-   energyOffset(0.0)
-   
+ContactLocalProductPlugin::ContactLocalProductPlugin()
+    : pUtils(nullptr), potts(nullptr), sim(nullptr),
+      contactProductDataAccessorPtr(nullptr), automaton(nullptr),
+      xmlData(nullptr), depth(1), weightDistance(false),
+      contactEnergyPtr(&ContactLocalProductPlugin::contactEnergyLinear),
+      maxNeighborIndex(0), boundaryStrategy(nullptr), energyOffset(0.0)
 
-{
-
-}
+{}
 
 ContactLocalProductPlugin::~ContactLocalProductPlugin() {
   
@@ -300,22 +290,23 @@ void ContactLocalProductPlugin::handleEvent(CC3DEvent & _event){
 
 				int variableCount=0;
 				bool variableInitializationOK=false;
-				for (int i = 0 ; i<variableNameVector.size(); ++i){
-                    
-                
-					if (variableCount==0){
-						cerr<<"ADDING VARIABLE "<<variableNameVector[i]<<endl;						
-                        
+                                for (auto &elem : variableNameVector) {
+
+                                        if (variableCount==0){
+                                          cerr << "ADDING VARIABLE " << elem
+                                               << endl;
+
                         for (int idx  = 0 ; idx< maxNumberOfWorkNodes ; ++idx){
-                            pVec[idx].DefineVar(variableNameVector[i], &k1Vec[idx]);
+                          pVec[idx].DefineVar(elem, &k1Vec[idx]);
                         }
                         
 					}
 					else{
-						cerr<<"ADDING VARIABLE "<<variableNameVector[i]<<endl;
-						// p.DefineVar(variableVec[i]->getText(), &k2);					
+                                          cerr << "ADDING VARIABLE " << elem
+                                               << endl;
+                                                // p.DefineVar(variableVec[i]->getText(), &k2);					
                         for (int idx  = 0 ; idx< maxNumberOfWorkNodes ; ++idx){
-                            pVec[idx].DefineVar(variableNameVector[i], &k2Vec[idx]);
+                          pVec[idx].DefineVar(elem, &k2Vec[idx]);
                         }
                         
 					}
@@ -352,8 +343,8 @@ double ContactLocalProductPlugin::changeEnergy(const Point3D &pt,
   double distance = 0;
 //   Point3D n;
   Neighbor neighbor;
-  
-  CellG *nCell=0;
+
+  CellG *nCell = nullptr;
   WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
 
    if(weightDistance){
@@ -366,8 +357,8 @@ double ContactLocalProductPlugin::changeEnergy(const Point3D &pt,
          nCell = fieldG->get(neighbor.pt);
 
          if(nCell!=oldCell){
-			if((nCell != 0) && (oldCell != 0)) {
-			   if((nCell->clusterId) != (oldCell->clusterId)) {
+           if ((nCell != nullptr) && (oldCell != nullptr)) {
+                           if((nCell->clusterId) != (oldCell->clusterId)) {
 				  energy -= (this->*contactEnergyPtr)(oldCell,nCell)/ neighbor.distance;
 			   }
 			}else{
@@ -376,8 +367,8 @@ double ContactLocalProductPlugin::changeEnergy(const Point3D &pt,
             
          }
          if(nCell!=newCell){
-			if((newCell != 0) && (nCell != 0)) {
-			   if((newCell->clusterId) != (nCell->clusterId)) {
+           if ((newCell != nullptr) && (nCell != nullptr)) {
+                           if((newCell->clusterId) != (nCell->clusterId)) {
 				  energy += (this->*contactEnergyPtr)(newCell,nCell)/ neighbor.distance;
 			   }
 			}
@@ -398,8 +389,8 @@ double ContactLocalProductPlugin::changeEnergy(const Point3D &pt,
          nCell = fieldG->get(neighbor.pt);
 
          if(nCell!=oldCell){
-				if((nCell != 0) && (oldCell != 0)) {
-				   if((nCell->clusterId) != (oldCell->clusterId)) {
+           if ((nCell != nullptr) && (oldCell != nullptr)) {
+                                   if((nCell->clusterId) != (oldCell->clusterId)) {
 					  energy -= (this->*contactEnergyPtr)(oldCell,nCell);
 				   }
 				}else{
@@ -407,8 +398,8 @@ double ContactLocalProductPlugin::changeEnergy(const Point3D &pt,
 			   }            
          }
          if(nCell!=newCell){
-			if((newCell != 0) && (nCell != 0)) {
-			   if((newCell->clusterId) != (nCell->clusterId)) {
+           if ((newCell != nullptr) && (nCell != nullptr)) {
+                           if((newCell->clusterId) != (nCell->clusterId)) {
 				  energy += (this->*contactEnergyPtr)(newCell,nCell);
 			   }
 			}
@@ -676,7 +667,7 @@ void ContactLocalProductPlugin::setContactEnergy(const string typeName1,
     
   int index = getIndex(type1, type2);
 
-  contactEnergies_t::iterator it = contactEnergies.find(index);
+  auto it = contactEnergies.find(index);
   ASSERT_OR_THROW(string("Contact energy for ") + typeName1 + " " + typeName2 +
 		  " already set!", it == contactEnergies.end());
 

@@ -1366,6 +1366,7 @@ std::string DiffusionSolverFE<Cruncher>::steerableName(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //The explicit instantiation part.
 //Add new solvers here
+namespace CompuCell3D {
 template class DiffusionSolverFE<DiffusionSolverFE_CPU>; 
 template class DiffusionSolverFE<DiffusionSolverFE_CPU_Implicit>; 
 
@@ -1374,3 +1375,5 @@ template class DiffusionSolverFE<DiffusionSolverFE_OpenCL>;
 //template class DiffusionSolverFE<DiffusionSolverFE_OpenCL_Implicit>;
 template class DiffusionSolverFE<ReactionDiffusionSolverFE_OpenCL_Implicit>;
 #endif
+
+} // end namespace

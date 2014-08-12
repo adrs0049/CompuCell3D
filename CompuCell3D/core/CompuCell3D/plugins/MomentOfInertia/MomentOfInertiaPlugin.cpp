@@ -29,7 +29,9 @@ using namespace CompuCell3D;
 
 using namespace std;
 
-MomentOfInertiaPlugin::MomentOfInertiaPlugin():potts(0),simulator(0),boundaryStrategy(0),lastMCSPrintedWarning(-1),cellOrientationFcnPtr(0) {}
+MomentOfInertiaPlugin::MomentOfInertiaPlugin()
+    : potts(nullptr), simulator(nullptr), boundaryStrategy(nullptr),
+      lastMCSPrintedWarning(-1), cellOrientationFcnPtr(nullptr) {}
 
 MomentOfInertiaPlugin::~MomentOfInertiaPlugin() {}
 
@@ -106,9 +108,8 @@ void CompuCell3D::MomentOfInertiaPlugin::field3DChange(const Point3D &pt, CellG 
 		}
 	}
 	double xcm, ycm, zcm;
-	if (newCell != 0)
-	{
-		// Assumption: COM and Volume has been updated.
+        if (newCell != nullptr) {
+                // Assumption: COM and Volume has been updated.
 		double xcmOld, ycmOld, zcmOld, xcm, ycm, zcm;
 		if (newCell->volume > 1) {
 			xcmOld = (newCell->xCM - ptTrans.x)/ ((double)newCell->volume - 1);
@@ -133,10 +134,9 @@ void CompuCell3D::MomentOfInertiaPlugin::field3DChange(const Point3D &pt, CellG 
 		newCell->iXZ=newCell->iXZ-(newCell->volume - 1)*xcmOld*zcmOld+(newCell->volume)*xcm*zcm-ptTrans.x*ptTrans.z;	
 		newCell->iYZ=newCell->iYZ-(newCell->volume - 1)*ycmOld*zcmOld+(newCell->volume)*ycm*zcm-ptTrans.y*ptTrans.z;	
 
-	}  
-	if (oldCell != 0)
-	{
-		// Assumption: COM and Volume has been updated.
+	}
+        if (oldCell != nullptr) {
+                // Assumption: COM and Volume has been updated.
 		double xcmOld = (oldCell->xCM + ptTrans.x) / ((double)oldCell->volume + 1);
 		double ycmOld = (oldCell->yCM + ptTrans.y) / ((double)oldCell->volume + 1);
 		double zcmOld = (oldCell->zCM + ptTrans.z) / ((double)oldCell->volume + 1);

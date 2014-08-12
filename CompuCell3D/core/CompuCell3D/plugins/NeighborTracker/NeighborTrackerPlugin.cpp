@@ -28,25 +28,17 @@ using namespace std;
 
 #include "NeighborTrackerPlugin.h"
 
-NeighborTrackerPlugin::NeighborTrackerPlugin() :
-pUtils(0),
-cellFieldG(0),
-checkSanity(false),
-checkFreq(1),
-changeCounter(0),
-periodicX(false),
-periodicY(false),
-periodicZ(false),
+NeighborTrackerPlugin::NeighborTrackerPlugin()
+    : pUtils(nullptr), cellFieldG(nullptr), checkSanity(false), checkFreq(1),
+      changeCounter(0), periodicX(false), periodicY(false), periodicZ(false),
 
-maxNeighborIndex(0),
-boundaryStrategy(0)
-{}
+      maxNeighborIndex(0), boundaryStrategy(nullptr) {}
 
 NeighborTrackerPlugin::~NeighborTrackerPlugin() {
 	pUtils->destroyLock(lockPtr);
 	delete lockPtr;
-	lockPtr=0;
-	//cerr<<"\n\n\n DELETING NeighborTrackerPlugin"<<endl;
+        lockPtr = nullptr;
+        //cerr<<"\n\n\n DELETING NeighborTrackerPlugin"<<endl;
 }
 
 void NeighborTrackerPlugin::init(Simulator *_simulator, CC3DXMLElement *_xmlData) {
@@ -115,21 +107,21 @@ void NeighborTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCell,Cell
 	long adjNeighborIndex=0;
 	long adjFace2FaceNeighborIndex=0;
 
-	CellG * currentCellPtr=0;
-	CellG * adjCellPtr=0;
+        CellG *currentCellPtr = nullptr;
+        CellG *adjCellPtr = nullptr;
 
-	unsigned int token = 0;
+        unsigned int token = 0;
 	double distance;
 	int oldDiff = 0;
 	int newDiff = 0;
 	Point3D n;
 	Point3D ptAdj;
-	CellG *nCell=0;
-	Neighbor neighbor;
+        CellG *nCell = nullptr;
+        Neighbor neighbor;
 
-	set<NeighborSurfaceData> * oldCellNeighborSurfaceDataSetPtr=0;
-	set<NeighborSurfaceData> * newCellNeighborSurfaceDataSetPtr=0;
-	pair<set<NeighborSurfaceData>::iterator,bool > set_NSD_itr_OK_Pair;
+        set<NeighborSurfaceData> *oldCellNeighborSurfaceDataSetPtr = nullptr;
+        set<NeighborSurfaceData> *newCellNeighborSurfaceDataSetPtr = nullptr;
+        pair<set<NeighborSurfaceData>::iterator,bool > set_NSD_itr_OK_Pair;
 	set<NeighborSurfaceData>::iterator set_NSD_itr;
 
 
@@ -264,8 +256,8 @@ void NeighborTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCell,Cell
 				if(adjCellPtr){ ///now process common area for adj cell
 					set<NeighborSurfaceData> &set_NSD_ref  = neighborTrackerAccessor.get(adjCellPtr->extraAttribPtr)->cellNeighbors;
 					pair<set<NeighborSurfaceData>::iterator,bool> sitr_OK_pair=set_NSD_ref.insert(NeighborSurfaceData(newCell));
-					set<NeighborSurfaceData>::iterator sitr=sitr_OK_pair.first;
-					sitr->incrementCommonSurfaceArea(*sitr); ///increment commonSurfArea of adj cell with current cell
+                                        auto sitr = sitr_OK_pair.first;
+                                        sitr->incrementCommonSurfaceArea(*sitr); ///increment commonSurfArea of adj cell with current cell
 				}
 
 			}
@@ -342,8 +334,8 @@ void NeighborTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCell,Cell
 					if(adjCellPtr){ ///now process common area of adj cell with medium in this case
 						set<NeighborSurfaceData> &set_NSD_ref  = neighborTrackerAccessor.get(adjCellPtr->extraAttribPtr)->cellNeighbors;
 						pair<set<NeighborSurfaceData>::iterator,bool> sitr_OK_pair=set_NSD_ref.insert(NeighborSurfaceData(newCell));
-						set<NeighborSurfaceData>::iterator sitr=sitr_OK_pair.first;
-						sitr->incrementCommonSurfaceArea(*sitr); ///increment commonSurfArea of adj cell with current cell
+                                                auto sitr = sitr_OK_pair.first;
+                                                sitr->incrementCommonSurfaceArea(*sitr); ///increment commonSurfArea of adj cell with current cell
 					}
 
 				}

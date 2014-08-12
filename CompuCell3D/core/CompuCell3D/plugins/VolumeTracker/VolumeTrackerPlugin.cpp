@@ -29,13 +29,13 @@ using namespace std;
 
 #include "VolumeTrackerPlugin.h"
 
-VolumeTrackerPlugin::VolumeTrackerPlugin() : pUtils(0),lockPtr(0), potts(0), deadCellG(0) {
-}
+VolumeTrackerPlugin::VolumeTrackerPlugin()
+    : pUtils(nullptr), lockPtr(nullptr), potts(nullptr), deadCellG(nullptr) {}
 
 VolumeTrackerPlugin::~VolumeTrackerPlugin() {
 	pUtils->destroyLock(lockPtr);
 	delete lockPtr;
-	lockPtr=0;
+        lockPtr = nullptr;
 }
 
 void VolumeTrackerPlugin::initVec(const vector<int> & _vec){
@@ -88,15 +88,17 @@ void VolumeTrackerPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 	potts->registerCellGChangeWatcher(this);
 	potts->registerStepper(this);
 
-	deadCellVec.assign(pUtils->getMaxNumberOfWorkNodesPotts(), (CellG*)0);
+        deadCellVec.assign(pUtils->getMaxNumberOfWorkNodesPotts(),
+                           (CellG *)nullptr);
 }
 
 
 void VolumeTrackerPlugin::handleEvent(CC3DEvent & _event){
 	if (_event.id==CHANGE_NUMBER_OF_WORK_NODES){
 		CC3DEventChangeNumberOfWorkNodes ev = static_cast<CC3DEventChangeNumberOfWorkNodes&>(_event);
-		deadCellVec.assign(pUtils->getMaxNumberOfWorkNodesPotts(), (CellG*)0);		
-		cerr<<"VolumeTrackerPlugin::handleEvent="<<endl;
+                deadCellVec.assign(pUtils->getMaxNumberOfWorkNodesPotts(),
+                                   (CellG *)nullptr);
+                cerr<<"VolumeTrackerPlugin::handleEvent="<<endl;
 	}
 }
 
@@ -147,8 +149,8 @@ void VolumeTrackerPlugin::step() {
 		pUtils->setLock(lockPtr);
 		//cerr<<"THIS IS VolumeTrackerPlugin removing cell "<<deadCellPtr<<" deadCellG->type="<<(int)deadCellPtr->type<<" deadCellG->id="<<deadCellPtr->id<<" thread="<<pUtils->getCurrentWorkNodeNumber()<<endl; 
 		potts->destroyCellG(deadCellPtr);
-		deadCellVec[pUtils->getCurrentWorkNodeNumber()]=0;
-		pUtils->unsetLock(lockPtr);
+                deadCellVec[pUtils->getCurrentWorkNodeNumber()] = nullptr;
+                pUtils->unsetLock(lockPtr);
 	}
 
 	

@@ -64,7 +64,8 @@ namespace CompuCell3D {
         virtual ~ClusterSurfacePlugin();
     
         //Energy function interface
-        virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);        
+        virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
+                                    const CellG *oldCell) override;
         double changeEnergyByCellId(const Point3D &pt, const CellG *newCell, const CellG *oldCell);       
         double changeEnergyGlobal(const Point3D &pt, const CellG *newCell, const CellG *oldCell);       
         
@@ -73,18 +74,16 @@ namespace CompuCell3D {
         
         std::pair<double,double> getNewOldClusterSurfaceDiffs(const Point3D &pt, const CellG *newCell,const CellG *oldCell);
         double diffEnergy(double lambda, double targetSurface,double surface,  double diff);
-            
-        
-        virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
-        virtual void extraInit(Simulator *simulator);
+
+        virtual void init(Simulator *simulator,
+                          CC3DXMLElement *_xmlData) override;
+        virtual void extraInit(Simulator *simulator) override;
 
         //Steerrable interface
-        virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-        virtual std::string steerableName();
-        virtual std::string toString();
-            
-        
-
+        virtual void update(CC3DXMLElement *_xmlData,
+                            bool _fullInitFlag = false) override;
+        virtual std::string steerableName() override;
+        virtual std::string toString() override;
     };
 };
 #endif

@@ -38,11 +38,13 @@ public:
      virtual ~ElasticityTrackerPlugin();
 
      // SimObject interface
-     virtual void init ( Simulator *_simulator, CC3DXMLElement *_xmlData=0 );
-     virtual void extraInit ( Simulator *simulator );
+     virtual void init(Simulator *_simulator,
+                       CC3DXMLElement *_xmlData = nullptr) override;
+     virtual void extraInit(Simulator *simulator) override;
 
      // BCGChangeWatcher interface
-     virtual void field3DChange ( const Point3D &pt, CellG *newCell,CellG *oldCell );
+     virtual void field3DChange(const Point3D &pt, CellG *newCell,
+                                CellG *oldCell) override;
 
      TrackerAccessor_t * getElasticityTrackerAccessorPtr() {
           return & elasticityTrackerAccessor;

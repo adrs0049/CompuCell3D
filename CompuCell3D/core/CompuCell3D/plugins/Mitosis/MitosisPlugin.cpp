@@ -27,9 +27,7 @@ using namespace std;
 
 #include "MitosisPlugin.h"
 
-MitosisPlugin::MitosisPlugin() {
-    potts=0;
-}
+MitosisPlugin::MitosisPlugin() { potts = nullptr; }
 
 MitosisPlugin::~MitosisPlugin() {}
 
@@ -52,8 +50,8 @@ void MitosisPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 
     pUtils=simulator->getParallelUtils();
     unsigned int maxNumberOfWorkNodes=pUtils->getMaxNumberOfWorkNodesPotts();
-    childCellVec.assign(maxNumberOfWorkNodes,0);
-    parentCellVec.assign(maxNumberOfWorkNodes,0);
+    childCellVec.assign(maxNumberOfWorkNodes, nullptr);
+    parentCellVec.assign(maxNumberOfWorkNodes, nullptr);
     splitPtVec.assign(maxNumberOfWorkNodes,Point3D());
     splitVec.assign(maxNumberOfWorkNodes,false);
     onVec.assign(maxNumberOfWorkNodes,false);
@@ -69,8 +67,8 @@ void MitosisPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 void MitosisPlugin::handleEvent(CC3DEvent & _event) {
     if (_event.id==CHANGE_NUMBER_OF_WORK_NODES) {
         unsigned int maxNumberOfWorkNodes=pUtils->getMaxNumberOfWorkNodesPotts();
-        childCellVec.assign(maxNumberOfWorkNodes,0);
-        parentCellVec.assign(maxNumberOfWorkNodes,0);
+        childCellVec.assign(maxNumberOfWorkNodes, nullptr);
+        parentCellVec.assign(maxNumberOfWorkNodes, nullptr);
         splitPtVec.assign(maxNumberOfWorkNodes,Point3D());
         splitVec.assign(maxNumberOfWorkNodes,false);
         onVec.assign(maxNumberOfWorkNodes,false);
@@ -168,8 +166,8 @@ bool MitosisPlugin::doMitosis()
 
         WatchableField3D<CellG *> *cellField =(WatchableField3D<CellG *> *) potts->getCellFieldG();
         //reseting poiters to parent and child cell - neessary otherwise may get some strange side effects when mitosis is aborted
-        childCell=0;
-        parentCell=0;
+        childCell = nullptr;
+        parentCell = nullptr;
 
         CellG *cell = cellField->get(splitPtVec[currentWorkNodeNumber]);
         parentCell=cell;
@@ -195,7 +193,7 @@ bool MitosisPlugin::doMitosis()
         // Put the first point in the array
         ary0->push_back(splitPt);
 
-        CellG *splitCell = 0;
+        CellG *splitCell = nullptr;
 
         // Do a breadth first search for approximately half of the  cell's
         // volume.
@@ -204,12 +202,12 @@ bool MitosisPlugin::doMitosis()
             Point3D n;
             CellG *nCell;
             // Loop over all the points from the last round.
-            for (unsigned int i = 0; i < ary0->size(); i++) {
+            for (auto &elem : *ary0) {
                 unsigned int token = 0;
                 double distance = 0;
 
                 for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ) {
-                    neighbor=boundaryStrategy->getNeighborDirect((*ary0)[i],nIdx);
+                  neighbor = boundaryStrategy->getNeighborDirect(elem, nIdx);
                     if(!neighbor.distance) {
                         //if distance is 0 then the neighbor returned is invalid
                         continue;

@@ -29,7 +29,7 @@ namespace CompuCell3D {
   class Plugin : public SimObject {
   public:
   Plugin(){}
-  virtual std::string toString(){return "Plugin";}
+  virtual std::string toString() override { return "Plugin"; }
   virtual ~Plugin(){}
   };
 };

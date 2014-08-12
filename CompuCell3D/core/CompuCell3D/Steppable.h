@@ -43,8 +43,7 @@ namespace CompuCell3D {
     virtual void start() {};
     virtual void step(const unsigned int currentStep) {};
     virtual void finish() {};
-    virtual std::string toString(){return "Steppable";}
-
+    virtual std::string toString() override { return "Steppable"; }
   };
 };
 #endif

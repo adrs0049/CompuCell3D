@@ -24,10 +24,13 @@ namespace CompuCell3D {
 
    class ELASTICITYTRACKER_EXPORT ElasticityTrackerData{
       public:
-
-			ElasticityTrackerData(CellG * _neighborAddress=0,float _lambdaLength=0.0, float _targetLength=0.0,float _maxLengthElasticity=std::numeric_limits<float>::max())
-         :neighborAddress(_neighborAddress),lambdaLength(_lambdaLength),targetLength(_targetLength),maxLengthElasticity(_maxLengthElasticity)
-          {}
+        ElasticityTrackerData(
+            CellG *_neighborAddress = nullptr, float _lambdaLength = 0.0,
+            float _targetLength = 0.0,
+            float _maxLengthElasticity = std::numeric_limits<float>::max())
+            : neighborAddress(_neighborAddress), lambdaLength(_lambdaLength),
+              targetLength(_targetLength),
+              maxLengthElasticity(_maxLengthElasticity) {}
 
          ///have to define < operator if using a class in the set and no < operator is defined for this class
          bool operator<(const ElasticityTrackerData & _rhs) const{

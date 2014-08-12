@@ -119,8 +119,9 @@ namespace CompuCell3D {
 	typedef void (SecretionPlugin::*secrSingleFieldFcnPtr_t)(unsigned int idx);
 
     ///SimObject interface
-    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-   virtual void  extraInit(Simulator *simulator);
+        virtual void init(Simulator *simulator,
+                          CC3DXMLElement *_xmlData = nullptr) override;
+        virtual void extraInit(Simulator *simulator) override;
 
    Field3D<float>*  getConcentrationFieldByName(std::string _fieldName);
 
@@ -130,6 +131,7 @@ namespace CompuCell3D {
 
    FieldSecretor getFieldSecretor(std::string _fieldName);
 
+<<<<<<< HEAD
 
     // Stepper interface
     virtual void step();
@@ -141,6 +143,24 @@ namespace CompuCell3D {
     virtual std::string steerableName();
     virtual std::string toString();
     
+=======
+   std::string cellTypeVariableName;
+   
+   // Stepper interface
+   virtual void step() override;
+
+        //bool secreteInsideCell(CellG * _cell, std::string _fieldName, float _amount);
+    //SteerableObject interface
+   virtual void update(CC3DXMLElement *_xmlData,
+                       bool _fullInitFlag = false) override;
+   virtual std::string steerableName() override;
+   virtual std::string toString() override;
+
+  protected:
+      std::vector<ExpressionEvaluatorDepot> eedVec;
+//       std::map<std::string, std::vector<ExpressionEvaluator> > eed;
+      unsigned int numberOfFields;
+>>>>>>> fe1f361... run clang-modernize
   };
 };
 #endif

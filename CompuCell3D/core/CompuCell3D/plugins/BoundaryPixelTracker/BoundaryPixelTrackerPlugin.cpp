@@ -29,9 +29,9 @@ using namespace std;
 
 #include "BoundaryPixelTrackerPlugin.h"
 
-BoundaryPixelTrackerPlugin::BoundaryPixelTrackerPlugin():
-simulator(0),potts(0),boundaryStrategy(0),xmlData(0),maxNeighborIndex(0)
-{}
+BoundaryPixelTrackerPlugin::BoundaryPixelTrackerPlugin()
+    : simulator(nullptr), potts(nullptr), boundaryStrategy(nullptr),
+      xmlData(nullptr), maxNeighborIndex(0) {}
 
 BoundaryPixelTrackerPlugin::~BoundaryPixelTrackerPlugin() {}
 
@@ -74,9 +74,9 @@ void BoundaryPixelTrackerPlugin::handleEvent(CC3DEvent & _event){
     {
 		cell=cInvItr->second;
 		set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessor.get(cell->extraAttribPtr)->pixelSet;
-		for (set<BoundaryPixelTrackerData >::iterator sitr=pixelSetRef.begin() ; sitr != pixelSetRef.end() ; ++sitr ){
-                    
-                        Point3D & pixel=const_cast<Point3D&>(sitr->pixel);
+                for (const auto &elem : pixelSetRef) {
+
+                  Point3D &pixel = const_cast<Point3D &>(elem.pixel);
                         pixel.x+=shiftVec.x;
                         pixel.y+=shiftVec.y;
                         pixel.z+=shiftVec.z;
@@ -179,8 +179,9 @@ void BoundaryPixelTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCell
 				}
 			}
 			if(!keepNeighborInBoundary){
-				std::set<BoundaryPixelTrackerData >::iterator sitr=pixelSetRef.find(BoundaryPixelTrackerData(neighbor.pt));	
-				ASSERT_OR_THROW("Could not find point:"+neighbor.pt+" in the boundary of cell id: "+BasicString(newCell->id)+" type: "+BasicString((int)newCell->type),
+                          auto sitr = pixelSetRef.find(
+                              BoundaryPixelTrackerData(neighbor.pt));
+                                ASSERT_OR_THROW("Could not find point:"+neighbor.pt+" in the boundary of cell id: "+BasicString(newCell->id)+" type: "+BasicString((int)newCell->type),
 				sitr!=pixelSetRef.end());
 				pixelSetRef.erase(sitr);
 			}

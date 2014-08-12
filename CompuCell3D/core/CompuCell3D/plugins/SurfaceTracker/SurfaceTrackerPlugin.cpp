@@ -37,7 +37,8 @@ using namespace std;
 
 #include "SurfaceTrackerPlugin.h"
 
-SurfaceTrackerPlugin::SurfaceTrackerPlugin() :  cellFieldG(0),boundaryStrategy(0),maxNeighborIndex(0) {}
+SurfaceTrackerPlugin::SurfaceTrackerPlugin()
+    : cellFieldG(nullptr), boundaryStrategy(nullptr), maxNeighborIndex(0) {}
 
 SurfaceTrackerPlugin::~SurfaceTrackerPlugin() {
 }
@@ -71,8 +72,8 @@ void SurfaceTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCell, Cell
 	double distance;
 	double oldDiff 		= 0.;
 	double newDiff 		= 0.;
-	CellG *nCell		= 0;
-	Neighbor neighbor; 
+        CellG *nCell = nullptr;
+        Neighbor neighbor; 
 
    for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx )
 	{

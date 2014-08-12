@@ -35,21 +35,13 @@ using namespace std;
 #include "SecretionPlugin.h"
 #include "FieldSecretor.h"
 
-SecretionPlugin::SecretionPlugin():
-sim(0),
-potts(0), 
-xmlData(0),
-cellFieldG(0),
-automaton(0),
-boxWatcherSteppable(0),
-pUtils(0),
-boundaryStrategy(0),
-maxNeighborIndex(0),
-pixelTrackerPlugin(0),
-boundaryPixelTrackerPlugin(0),
-disablePixelTracker(false),
-disableBoundaryPixelTracker(false)
-{}
+SecretionPlugin::SecretionPlugin()
+    : sim(nullptr), potts(nullptr), xmlData(nullptr), cellFieldG(nullptr),
+      automaton(nullptr), boxWatcherSteppable(nullptr), pUtils(nullptr),
+      cellTypeVariableName("CellType"), boundaryStrategy(nullptr),
+      maxNeighborIndex(0), pixelTrackerPlugin(nullptr),
+      boundaryPixelTrackerPlugin(nullptr), disablePixelTracker(false),
+      disableBoundaryPixelTracker(false), numberOfFields(0) {}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 SecretionPlugin::~SecretionPlugin() 
 {}
@@ -97,9 +89,9 @@ void SecretionPlugin::extraInit(Simulator *simulator) {
 	update(xmlData,true);
 
 	bool useBoxWatcher=false;
-	for (int i = 0 ; i < secretionDataPVec.size() ; ++i){
-		if(secretionDataPVec[i].useBoxWatcher){
-			useBoxWatcher=true;
+        for (auto &elem : secretionDataPVec) {
+          if (elem.useBoxWatcher) {
+                        useBoxWatcher=true;
 			break;
 		}
 	}
@@ -137,8 +129,8 @@ Field3D<float>*  SecretionPlugin::getConcentrationFieldByName(std::string _field
 	if(mitr!=fieldMap.end()){
 		return mitr->second;
 	}else{
-		return 0;
-	}
+          return nullptr;
+        }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FieldSecretor SecretionPlugin::getFieldSecretor(std::string _fieldName){
@@ -242,10 +234,9 @@ void SecretionPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 
 	}
 
-	for(unsigned int i = 0 ; i < secretionDataPVec.size() ; ++i ){
-		secretionDataPVec[i].initialize(potts->getAutomaton());
-	}
-
+        for (auto &elem : secretionDataPVec) {
+          elem.initialize(potts->getAutomaton());
+        }
 
 	// CC3DXMLElementList pdeSolversXMLList=_xmlData->getElements("CallPDE");
 	// for(unsigned int i=0; i < pdeSolversXMLList.size() ; ++i ){
@@ -277,7 +268,6 @@ void SecretionPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 //	return true;
 //}
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void SecretionPlugin::secreteSingleField(unsigned int idx){
 
 	SecretionDataP & secrData=secretionDataPVec[idx];
@@ -288,13 +278,11 @@ void SecretionPlugin::secreteSingleField(unsigned int idx){
 	float secrConstMedium=0.0;
 
 	std::map<unsigned char,float>::iterator mitrShared;
-	std::map<unsigned char,float>::iterator end_mitr=secrData.typeIdSecrConstMap.end();
-	std::map<unsigned char,UptakeDataP>::iterator mitrUptakeShared;
-	std::map<unsigned char,UptakeDataP>::iterator end_mitrUptake=secrData.typeIdUptakeDataMap.end();
+        auto end_mitr = secrData.typeIdSecrConstMap.end();
+        std::map<unsigned char,UptakeDataP>::iterator mitrUptakeShared;
+        auto end_mitrUptake = secrData.typeIdUptakeDataMap.end();
 
-
-
-	Field3D<float> & concentrationField=*getConcentrationFieldByName(secrData.fieldName);	
+        Field3D<float> & concentrationField=*getConcentrationFieldByName(secrData.fieldName);	
 
 	//cerr<<"concentrationField="<<getConcentrationFieldByName(secrData.fieldName)<<endl;
 
@@ -461,11 +449,9 @@ void SecretionPlugin::secreteOnContactSingleField(unsigned int idx){
 	SecretionDataP & secrData=secretionDataPVec[idx];
 
 	std::map<unsigned char,SecretionOnContactDataP>::iterator mitrShared;
-	std::map<unsigned char,SecretionOnContactDataP>::iterator end_mitr=secrData.typeIdSecrOnContactDataMap.end();
+        auto end_mitr = secrData.typeIdSecrOnContactDataMap.end();
 
-
-
-	Field3D<float> & concentrationField=*getConcentrationFieldByName(secrData.fieldName);
+        Field3D<float> & concentrationField=*getConcentrationFieldByName(secrData.fieldName);
 	
 	std::map<unsigned char, float> * contactCellMapMediumPtr;
 	std::map<unsigned char, float> * contactCellMapPtr;
@@ -524,8 +510,8 @@ pUtils->prepareParallelRegionFESolvers(secrData.useBoxWatcher);
 		CellG *currentCellPtr;
 		Point3D pt;
 		Neighbor n;
-		CellG *nCell=0;
-		WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+                CellG *nCell = nullptr;
+                WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
 		unsigned char type;
 
 		int threadNumber=pUtils->getCurrentWorkNodeNumber();
@@ -619,10 +605,9 @@ void SecretionPlugin::secreteConstantConcentrationSingleField(unsigned int idx){
 	SecretionDataP & secrData=secretionDataPVec[idx];
 
 	std::map<unsigned char,float>::iterator mitrShared;
-	std::map<unsigned char,float>::iterator end_mitr=secrData.typeIdSecrConstConstantConcentrationMap.end();
+        auto end_mitr = secrData.typeIdSecrConstConstantConcentrationMap.end();
 
-
-	float secrConstMedium=0.0;
+        float secrConstMedium=0.0;
 
 	Field3D<float> & concentrationField=*getConcentrationFieldByName(secrData.fieldName);
 	

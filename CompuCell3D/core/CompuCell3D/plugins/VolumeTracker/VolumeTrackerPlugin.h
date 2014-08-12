@@ -58,17 +58,19 @@ namespace CompuCell3D {
 	void initVec(const Dim3D & _dim);
 
 	// SimObject interface
-	virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
-	
-	virtual void handleEvent(CC3DEvent & _event);
+        virtual void init(Simulator *simulator,
+                          CC3DXMLElement *_xmlData) override;
 
-	// CellChangeWatcher interface
-	virtual void field3DChange(const Point3D &pt, CellG *newCell, CellG *oldCell);
-	bool checkIfOKToResize(Dim3D _newSize,Dim3D _shiftVec);
+        virtual void handleEvent(CC3DEvent &_event) override;
+
+        // CellChangeWatcher interface
+        virtual void field3DChange(const Point3D &pt, CellG *newCell,
+                                   CellG *oldCell) override;
+        bool checkIfOKToResize(Dim3D _newSize,Dim3D _shiftVec);
 	// Stepper interface
-	virtual void step();
-	virtual std::string toString();
-	virtual std::string steerableName();
+        virtual void step() override;
+        virtual std::string toString() override;
+        virtual std::string steerableName() override;
   };
 };
 #endif

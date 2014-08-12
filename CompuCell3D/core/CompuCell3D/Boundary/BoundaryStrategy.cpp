@@ -122,8 +122,7 @@ BoundaryStrategy::~BoundaryStrategy() {
     delete strategy_y;
     delete strategy_z;
 
-	singleton = 0;
-
+    singleton = nullptr;
 }
 
 
@@ -433,8 +432,9 @@ int BoundaryStrategy::getNumPixels(int x, int y, int z) const  {
 //false otherwise
 bool BoundaryStrategy::checkIfOffsetAlreadyStacked(Point3D & _ptToCheck , std::vector<Point3D> & _offsetVec)const{
 
-   for(int i = 0 ; i < _offsetVec.size() ; ++i ){
-      if( _offsetVec[i].x==_ptToCheck.x && _offsetVec[i].y==_ptToCheck.y && _offsetVec[i].z==_ptToCheck.z)
+  for (auto &elem : _offsetVec) {
+    if (elem.x == _ptToCheck.x && elem.y == _ptToCheck.y &&
+        elem.z == _ptToCheck.z)
          return true;
    }
    return false;
@@ -968,10 +968,10 @@ void BoundaryStrategy::getOffsetsAndDistances(
    offsetVecTmp.clear();
    distanceVecTmp.clear(); 
    //Writing sorted  by distance content of offsetVecTmp and distanceVecTmp
-   for (multimap<float,Point3D>::iterator mitr = sortingMap.begin() ; mitr != sortingMap.end() ; ++mitr){
+   for (auto &elem : sortingMap) {
 //       distanceVecTmp.push_back(mitr->first*lmf.lengthMF);
-      distanceVecTmp.push_back(mitr->first);
-      offsetVecTmp.push_back(mitr->second);
+     distanceVecTmp.push_back(elem.first);
+     offsetVecTmp.push_back(elem.second);
    }
 #ifdef _DEBUG
    cerr<<"distanceVecTmp.size()="<<distanceVecTmp.size()<<endl;

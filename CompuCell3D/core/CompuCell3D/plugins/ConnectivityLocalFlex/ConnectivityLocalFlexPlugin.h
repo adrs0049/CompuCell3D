@@ -59,10 +59,10 @@ public:
      virtual ~ConnectivityLocalFlexPlugin();
 
      //EnergyFunction interface
-     virtual double changeEnergy ( const Point3D &pt, const CellG *newCell,
-                                   const CellG *oldCell );
+     virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
+                                 const CellG *oldCell) override;
      //Plugin interface
-     virtual void init ( Simulator *simulator, CC3DXMLElement *_xmlData );
+     virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData) override;
 
      DataAccessor_t * getConnectivityLocalFlexDataPtr() {
           return & connectivityLocalFlexDataAccessor;
@@ -71,9 +71,10 @@ public:
      double getConnectivityStrength ( CellG * _cell );
 
      //Steerable interface
-     virtual void update ( CC3DXMLElement *_xmlData, bool _fullInitFlag=false );
-     virtual std::string steerableName();
-     virtual std::string toString();
+     virtual void update(CC3DXMLElement *_xmlData,
+                         bool _fullInitFlag = false) override;
+     virtual std::string steerableName() override;
+     virtual std::string toString() override;
 
      //EnergyFunction methods
 protected:

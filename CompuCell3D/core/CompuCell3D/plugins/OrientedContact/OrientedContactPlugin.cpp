@@ -35,11 +35,8 @@ using namespace CompuCell3D;
 
 #include "OrientedContactPlugin.h"
 
-
-
-
-OrientedContactPlugin::OrientedContactPlugin() :xmlData(0),depth(1),alpha(1.0),weightDistance(false) {
-}
+OrientedContactPlugin::OrientedContactPlugin()
+    : xmlData(nullptr), depth(1), alpha(1.0), weightDistance(false) {}
 
 OrientedContactPlugin::~OrientedContactPlugin() {
  
@@ -49,9 +46,8 @@ OrientedContactPlugin::~OrientedContactPlugin() {
 double OrientedContactPlugin::getOrientation(const Point3D &pt, const CellG *newCell, const CellG *oldCell) {
    double ecc1, ecc2, v1x, v1y, v2x,v2y, r1x,r1y,r2x,r2y,s01,s02, E1, E2, deltaE;
    double ecc1_before, ecc2_before, v1x_before, v1y_before, v2x_before,v2y_before, s01_before,s02_before;
-    
-   if (newCell != 0)
-   {
+
+   if (newCell != nullptr) {
        // Assumption: COM and Volume has not been updated.
         
       double xPtSum = newCell->xCM;
@@ -126,8 +122,7 @@ double OrientedContactPlugin::getOrientation(const Point3D &pt, const CellG *new
       ecc1 = 0;
       ecc1_before = 0;
    }
-   if (oldCell != 0)
-   {
+   if (oldCell != nullptr) {
       double xPtSum = oldCell->xCM;
       double yPtSum = oldCell->yCM;
       double zPtSum = oldCell->zCM;
@@ -232,10 +227,8 @@ double OrientedContactPlugin::getMediumOrientation(const Point3D &pt, const Cell
 //       cerr << "only medium" << endl;
       return 1.0;
    }
-    
-    
-   if (newCell != 0)
-   {
+
+   if (newCell != nullptr) {
        // Assumption: COM and Volume has not been updated.
         
       double xPtSum = newCell->xCM;
@@ -316,10 +309,9 @@ double OrientedContactPlugin::getMediumOrientation(const Point3D &pt, const Cell
 //       cerr << "NEW CELL GET:  " << theta << "\t " << alpha << endl;
       return E2-E1;
       
-   }   
+   }
 
-   if (oldCell != 0)
-   {
+   if (oldCell != nullptr) {
       double xPtSum = oldCell->xCM;
       double yPtSum = oldCell->yCM;
       double zPtSum = oldCell->zCM;
@@ -411,8 +403,8 @@ double OrientedContactPlugin::changeEnergy(const Point3D &pt,
   unsigned int token = 0;
   double distance = 0;
   Point3D n;
-  
-  CellG *nCell=0;
+
+  CellG *nCell = nullptr;
   WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
   Neighbor neighbor;
   
@@ -469,7 +461,7 @@ void OrientedContactPlugin::setOrientedContactEnergy(const string typeName1,
     
   int index = getIndex(type1, type2);
 
-  orientedContactEnergies_t::iterator it = orientedContactEnergies.find(index);
+  auto it = orientedContactEnergies.find(index);
   ASSERT_OR_THROW(string("OrientedOrientedContact energy for ") + typeName1 + " " + typeName2 +
 		  " already set!", it == orientedContactEnergies.end());
 

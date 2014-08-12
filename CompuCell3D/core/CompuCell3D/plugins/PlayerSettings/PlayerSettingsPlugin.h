@@ -27,15 +27,17 @@ namespace CompuCell3D {
 
     
     ///SimObject interface
-    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-    virtual void extraInit(Simulator *simulator);
-    
+    virtual void init(Simulator *simulator,
+                      CC3DXMLElement *_xmlData = nullptr) override;
+    virtual void extraInit(Simulator *simulator) override;
+
     PlayerSettings getPlayerSettings() const {return *(playerSettingsPtr);} 
 	 
 	//steerable interface
-	virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-	virtual std::string steerableName();
-	virtual std::string toString();    
+    virtual void update(CC3DXMLElement *_xmlData,
+                        bool _fullInitFlag = false) override;
+    virtual std::string steerableName() override;
+    virtual std::string toString() override;
   };
 
 

@@ -34,10 +34,10 @@ namespace CompuCell3D {
 
 
         public:
-        
-          void readFile(const int index, const int size, string inputfile);
-          bool inGrid(const Point3D& pt);
-          int getNumPixels(int x, int y, int z);
+          void readFile(const int index, const int size,
+                        string inputfile) override;
+          bool inGrid(const Point3D &pt) override;
+          int getNumPixels(int x, int y, int z) override;
    }; 
 };
 

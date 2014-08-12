@@ -35,10 +35,11 @@ namespace CompuCell3D {
 
   class  ParserStorage{
       public:
-
-			ParserStorage():pottsCC3DXMLElement(0),updatePottsCC3DXMLElement(0),metadataCC3DXMLElement(0),updateMetadataCC3DXMLElement(0)
-			{}
-			CC3DXMLElementList steppableCC3DXMLElementVector;
+        ParserStorage()
+            : pottsCC3DXMLElement(nullptr), updatePottsCC3DXMLElement(nullptr),
+              metadataCC3DXMLElement(nullptr),
+              updateMetadataCC3DXMLElement(nullptr) {}
+                        CC3DXMLElementList steppableCC3DXMLElementVector;
 			CC3DXMLElementList pluginCC3DXMLElementVector;
 			CC3DXMLElement * pottsCC3DXMLElement;			
 			CC3DXMLElement * metadataCC3DXMLElement;			

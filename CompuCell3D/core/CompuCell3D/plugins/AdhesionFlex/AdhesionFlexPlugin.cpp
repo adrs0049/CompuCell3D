@@ -27,20 +27,16 @@ using namespace CompuCell3D;
 #include <CompuCell3D/plugins/NeighborTracker/NeighborTrackerPlugin.h>
 #include "AdhesionFlexPlugin.h"
 
-AdhesionFlexPlugin::AdhesionFlexPlugin():
-pUtils(0),
-lockPtr(0),
-xmlData(0) ,
-numberOfAdhesionMolecules(0),
-adhesionFlexEnergyPtr(&AdhesionFlexPlugin::adhesionFlexEnergyCustom),
-weightDistance(false),
-adhesionDensityInitialized(false)
-{}
+AdhesionFlexPlugin::AdhesionFlexPlugin()
+    : pUtils(nullptr), lockPtr(nullptr), xmlData(nullptr),
+      numberOfAdhesionMolecules(0),
+      adhesionFlexEnergyPtr(&AdhesionFlexPlugin::adhesionFlexEnergyCustom),
+      weightDistance(false), adhesionDensityInitialized(false) {}
 
 AdhesionFlexPlugin::~AdhesionFlexPlugin() {
 	pUtils->destroyLock(lockPtr);
 	delete lockPtr;
-	lockPtr=0;
+        lockPtr = nullptr;
 }
 
 void AdhesionFlexPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
@@ -99,8 +95,8 @@ double AdhesionFlexPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,c
 	//   Point3D n;
 	Neighbor neighbor;
 
-	CellG *nCell=0;
-	WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+        CellG *nCell = nullptr;
+        WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
 
 	//cerr<<"maxNeighborIndex="<<maxNeighborIndex<<endl;
 
@@ -118,8 +114,8 @@ double AdhesionFlexPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,c
 			nCell = fieldG->get(neighbor.pt);
 
 			if(nCell!=oldCell){
-				if((nCell != 0) && (oldCell != 0)) {
-				   if((nCell->clusterId) != (oldCell->clusterId)) {
+                          if ((nCell != nullptr) && (oldCell != nullptr)) {
+                                   if((nCell->clusterId) != (oldCell->clusterId)) {
 					  energy -= (this->*adhesionFlexEnergyPtr)(oldCell,nCell)/ neighbor.distance;
 				   }
 				}else{
@@ -129,8 +125,8 @@ double AdhesionFlexPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,c
 
 			}
 			if(nCell!=newCell){
-				if((newCell != 0) && (nCell != 0)) {
-				   if((newCell->clusterId) != (nCell->clusterId)) {
+                          if ((newCell != nullptr) && (nCell != nullptr)) {
+                                   if((newCell->clusterId) != (nCell->clusterId)) {
 					  energy += (this->*adhesionFlexEnergyPtr)(newCell,nCell)/ neighbor.distance;
 				   }
 				}
@@ -155,8 +151,8 @@ double AdhesionFlexPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,c
 			//cerr<<" newCell="<<newCell<<endl;
 			//cerr<<" oldCell="<<oldCell<<endl;
 			if(nCell!=oldCell){
-				if((nCell != 0) && (oldCell != 0)) {
-				   if((nCell->clusterId) != (oldCell->clusterId)) {
+                          if ((nCell != nullptr) && (oldCell != nullptr)) {
+                                   if((nCell->clusterId) != (oldCell->clusterId)) {
 					  energy -= (this->*adhesionFlexEnergyPtr)(oldCell,nCell);
 				   }
 				}else{
@@ -165,8 +161,8 @@ double AdhesionFlexPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,c
 				
 			}
 			if(nCell!=newCell){
-			if((newCell != 0) && (nCell != 0)) {
-			   if((newCell->clusterId) != (nCell->clusterId)) {
+                          if ((newCell != nullptr) && (nCell != nullptr)) {
+                           if((newCell->clusterId) != (nCell->clusterId)) {
 				  energy += (this->*adhesionFlexEnergyPtr)(newCell,nCell);
 			   }
 			}
@@ -275,9 +271,9 @@ void AdhesionFlexPlugin::setBindingParameter(const std::string moleculeName1, co
 
 	int index = getIndex(molecule1, molecule2);
 
-	bindingParameters_t::iterator it = bindingParameters.find(index);
+        auto it = bindingParameters.find(index);
 
-	ASSERT_OR_THROW(string("BindingParameter for ") + moleculeName1 + " " + moleculeName2 +
+        ASSERT_OR_THROW(string("BindingParameter for ") + moleculeName1 + " " + moleculeName2 +
 		" already set!", it == bindingParameters.end());
 
 	bindingParameters[index] = parameter;
@@ -493,9 +489,9 @@ void AdhesionFlexPlugin::setAdhesionMoleculeDensity(CellG * _cell, std::string _
 	
 	
 	vector<float> & adhesionMoleculeDensityVec  = adhesionFlexDataAccessor.get(_cell->extraAttribPtr)->adhesionMoleculeDensityVec;
-	map<std::string, int>::iterator mitr=moleculeNameIndexMap.find(_moleculeName);
+        auto mitr = moleculeNameIndexMap.find(_moleculeName);
 
-	//if molecule name does not exist ignore it
+        //if molecule name does not exist ignore it
 	if(mitr!=moleculeNameIndexMap.end()){ 
 		adhesionMoleculeDensityVec[mitr->second]=_density;	
 	}
@@ -537,8 +533,8 @@ void AdhesionFlexPlugin::assignNewAdhesionMoleculeDensityVector(CellG * _cell, s
 
 
 void AdhesionFlexPlugin::setMediumAdhesionMoleculeDensity(std::string _moleculeName, float _density){
-	map<std::string, int>::iterator mitr=moleculeNameIndexMap.find(_moleculeName);
-	//if molecule name does not exist ignore it
+  auto mitr = moleculeNameIndexMap.find(_moleculeName);
+        //if molecule name does not exist ignore it
 	if(mitr!=moleculeNameIndexMap.end()){ 
 		adhesionMoleculeDensityVecMedium[mitr->second]=_density;	
 	}
@@ -573,9 +569,9 @@ float AdhesionFlexPlugin::getAdhesionMoleculeDensity(CellG * _cell, std::string 
 
 	vector<float> & adhesionMoleculeDensityVec  = adhesionFlexDataAccessor.get(_cell->extraAttribPtr)->adhesionMoleculeDensityVec;
 
-	map<std::string, int>::iterator mitr=moleculeNameIndexMap.find(_moleculeName);
+        auto mitr = moleculeNameIndexMap.find(_moleculeName);
 
-	//if molecule name does not exist ignore it
+        //if molecule name does not exist ignore it
 	if(mitr!=moleculeNameIndexMap.end()){ 
 		return adhesionMoleculeDensityVec[mitr->second];	
 	}
@@ -605,8 +601,8 @@ vector<float> AdhesionFlexPlugin::getAdhesionMoleculeDensityVector(CellG * _cell
 
 
 float AdhesionFlexPlugin::getMediumAdhesionMoleculeDensity(std::string _moleculeName){
-	map<std::string, int>::iterator mitr=moleculeNameIndexMap.find(_moleculeName);
-	//if molecule name does not exist ignore it
+  auto mitr = moleculeNameIndexMap.find(_moleculeName);
+        //if molecule name does not exist ignore it
 	if(mitr!=moleculeNameIndexMap.end()){ 
 		return adhesionMoleculeDensityVecMedium[mitr->second];	
 	}

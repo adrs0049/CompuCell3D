@@ -90,14 +90,14 @@ namespace CompuCell3D {
 
         
         //Energy function interface
-        virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);        
-        
-                
-        
-        virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-        virtual void handleEvent(CC3DEvent & _event);
+        virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
+                                    const CellG *oldCell) override;
 
-        virtual void extraInit(Simulator *simulator);
+        virtual void init(Simulator *simulator,
+                          CC3DXMLElement *_xmlData = nullptr) override;
+        virtual void handleEvent(CC3DEvent &_event) override;
+
+        virtual void extraInit(Simulator *simulator) override;
 
         //Accessors - Python Interface
         virtual void setOriantationVector(CellG * _cell,double _x, double _y, double _z);
@@ -106,9 +106,10 @@ namespace CompuCell3D {
         virtual double getAlpha(const CellG * _cell);
 		
         //Steerrable interface
-        virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-        virtual std::string steerableName();
-        virtual std::string toString();
+        virtual void update(CC3DXMLElement *_xmlData,
+                            bool _fullInitFlag = false) override;
+        virtual std::string steerableName() override;
+        virtual std::string toString() override;
 
         double contactEnergy(const CellG *cell1, const CellG *cell2);
         /**

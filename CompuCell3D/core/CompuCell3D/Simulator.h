@@ -139,11 +139,11 @@ namespace CompuCell3D {
 		virtual void serialize();
 
 		// Begin Steppable interface
-		virtual void start();
-		virtual void extraInit();///initialize plugins after all steppables have been initialized
-		virtual void step(const unsigned int currentStep);
-		virtual void finish();
-		// End Steppable interface
+                virtual void start() override;
+                virtual void extraInit();///initialize plugins after all steppables have been initialized
+                virtual void step(const unsigned int currentStep) override;
+                virtual void finish() override;
+                // End Steppable interface
 
 		//these two functions are necessary to implement proper cleanup after the simulation 		
 		//1. First it cleans cell inventory, deallocating all dynamic attributes - this has to be done before unloading modules

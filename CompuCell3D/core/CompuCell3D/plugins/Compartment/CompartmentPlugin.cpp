@@ -37,12 +37,8 @@ using namespace CompuCell3D;
 
 #include "CompartmentPlugin.h"
 
-
-
-
-
-CompartmentPlugin::CompartmentPlugin() : potts(0), depth(1),weightDistance(false) {
-}
+CompartmentPlugin::CompartmentPlugin()
+    : potts(nullptr), depth(1), weightDistance(false) {}
 
 CompartmentPlugin::~CompartmentPlugin() {
   
@@ -72,8 +68,8 @@ double CompartmentPlugin::changeEnergy(const Point3D &pt,
   double distance = 0;
   Point3D n;
   Neighbor neighbor;
-  
-  CellG *nCell=0;
+
+  CellG *nCell = nullptr;
   WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG*>*)potts->getCellFieldG();
 
    if(weightDistance){
@@ -114,7 +110,7 @@ double CompartmentPlugin::changeEnergy(const Point3D &pt,
          nCell = fieldG->get(neighbor.pt);
 
          if(nCell!=oldCell){
-            if((nCell != 0) && (oldCell != 0)) {
+           if ((nCell != nullptr) && (oldCell != nullptr)) {
                if((nCell->clusterId) == (oldCell->clusterId)) {
                   energy -= internalEnergy(oldCell,nCell);
                }
@@ -130,7 +126,7 @@ double CompartmentPlugin::changeEnergy(const Point3D &pt,
 
 
          if(nCell!=newCell){
-            if((newCell != 0) && (nCell != 0)) {
+           if ((newCell != nullptr) && (nCell != nullptr)) {
                if((newCell->clusterId) == (nCell->clusterId)) {
                   energy += internalEnergy(newCell,nCell);
                }
@@ -170,7 +166,8 @@ void CompartmentPlugin::setContactCompartmentEnergy(const string typeName1,
     
   int index = getIndex(type1, type2);
 
-  contactEnergies_t::iterator it = contactEnergies.find(index); //return an iterator for the contact Energy
+  auto it =
+      contactEnergies.find(index); // return an iterator for the contact Energy
   ASSERT_OR_THROW(string("Contact energy for ") + typeName1 + " " + typeName2 +
 		  " already set!", it == contactEnergies.end());
 
@@ -186,7 +183,8 @@ void CompartmentPlugin::setInternalEnergy(const string typeName1,
     
   int index = getIndex(type1, type2);
 
-  contactEnergies_t::iterator it = internalEnergies.find(index); //return an iterator for the contact Energy
+  auto it =
+      internalEnergies.find(index); // return an iterator for the contact Energy
   ASSERT_OR_THROW(string("Internalenergy for ") + typeName1 + " " + typeName2 +
 		  " already set!", it == internalEnergies.end());
 

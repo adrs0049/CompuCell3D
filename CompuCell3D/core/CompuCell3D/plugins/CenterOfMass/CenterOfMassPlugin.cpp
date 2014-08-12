@@ -29,7 +29,7 @@ using namespace std;
 
 #include "CenterOfMassPlugin.h"
 
-CenterOfMassPlugin::CenterOfMassPlugin():boundaryStrategy(0) {}
+CenterOfMassPlugin::CenterOfMassPlugin() : boundaryStrategy(nullptr) {}
 
 CenterOfMassPlugin::~CenterOfMassPlugin() {}
 

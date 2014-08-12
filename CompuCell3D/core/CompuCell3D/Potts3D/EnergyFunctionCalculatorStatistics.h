@@ -12,15 +12,17 @@ class EnergyFunctionCalculatorStatistics:public EnergyFunctionCalculator{
 
    public:
       EnergyFunctionCalculatorStatistics();
-		virtual void init(CC3DXMLElement *_xmlData);
+      virtual void init(CC3DXMLElement *_xmlData) override;
       virtual ~EnergyFunctionCalculatorStatistics();
 //       virtual void registerEnergyFunction(EnergyFunction *_function);
 //       virtual void registerEnergyFunctionWithName(EnergyFunction *_function,std::string _functionName);
 //       virtual void unregisterEnergyFunction(std::string _functionName);
 //       virtual void configureEnergyCalculator(std::vector<std::string> &_configVector){}
-      virtual double changeEnergy(Point3D &pt, const CellG *newCell,const CellG *oldCell,const unsigned int _flipAttempt);
+      virtual double changeEnergy(Point3D &pt, const CellG *newCell,
+                                  const CellG *oldCell,
+                                  const unsigned int _flipAttempt) override;
 
-      virtual void setLastFlipAccepted(bool _accept);
+      virtual void setLastFlipAccepted(bool _accept) override;
       // Begin XMLSerializable interface
       //virtual void readXML(XMLPullParser &in);
       //virtual void writeXML(XMLSerializer &out);

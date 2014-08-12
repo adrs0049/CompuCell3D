@@ -58,11 +58,11 @@ public:
     void addStepper(std::string _type, std::shared_ptr<Steppable> _steppable);
     
 	// Begin Steppable interface
-    virtual void extraInit(Simulator *simulator);
+    virtual void extraInit(Simulator *simulator) override;
 
-    virtual void start();
-    virtual void step(const unsigned int currentStep);
-    virtual void finish();
+    virtual void start() override;
+    virtual void step(const unsigned int currentStep) override;
+    virtual void finish() override;
     // End Steppable interface
 
     virtual void initModules(Simulator *_sim);

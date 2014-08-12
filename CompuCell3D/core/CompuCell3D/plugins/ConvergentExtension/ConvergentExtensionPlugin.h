@@ -61,20 +61,20 @@ namespace CompuCell3D {
 		ConvergentExtensionPlugin();
 		virtual ~ConvergentExtensionPlugin();
 		//Plugin interface
-		virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
-		virtual void extraInit(Simulator *simulator);
-		
-		
+                virtual void init(Simulator *simulator,
+                                  CC3DXMLElement *_xmlData) override;
+                virtual void extraInit(Simulator *simulator) override;
 
-		//EnergyFunction Interface
-		virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
+                //EnergyFunction Interface
+                virtual double changeEnergy(const Point3D &pt,
+                                            const CellG *newCell,
+                                            const CellG *oldCell) override;
 
-		//Steerable interface
-		virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-		virtual std::string steerableName();
-		virtual std::string toString();
-
-
-	};
+                //Steerable interface
+                virtual void update(CC3DXMLElement *_xmlData,
+                                    bool _fullInitFlag = false) override;
+                virtual std::string steerableName() override;
+                virtual std::string toString() override;
+        };
 };
 #endif

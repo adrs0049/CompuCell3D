@@ -8,8 +8,8 @@ void TypeTransition::registerTypeChangeWatcher(TypeChangeWatcher* _watcher){
 }
 
 void TypeTransition::setType(CellG * _cell,CellG::CellType_t _newType){
-   for (int i = 0 ; i < typeChangeWatcherVec.size() ; ++i){
-      typeChangeWatcherVec[i]->typeChange(_cell,_newType);
+  for (auto &elem : typeChangeWatcherVec) {
+    elem->typeChange(_cell, _newType);
    }
 
    if(_cell){

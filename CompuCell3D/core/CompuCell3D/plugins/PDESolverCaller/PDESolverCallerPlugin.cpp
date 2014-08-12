@@ -38,7 +38,8 @@ using namespace std;
 
 #include "PDESolverCallerPlugin.h"
 
-PDESolverCallerPlugin::PDESolverCallerPlugin():sim(0), potts(0), xmlData(0) {}
+PDESolverCallerPlugin::PDESolverCallerPlugin()
+    : sim(nullptr), potts(nullptr), xmlData(nullptr) {}
 
 PDESolverCallerPlugin::~PDESolverCallerPlugin() {}
 

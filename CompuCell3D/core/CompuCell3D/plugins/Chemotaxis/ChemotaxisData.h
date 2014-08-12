@@ -41,12 +41,13 @@ namespace CompuCell3D {
 	
    class CHEMOTAXIS_EXPORT  ChemotaxisData{
       public:
-         ChemotaxisData(float _lambda=0.0 , float _saturationCoef=0.0 , std::string _typeName=""):
-         lambda(_lambda),saturationCoef(_saturationCoef),typeName(_typeName),formulaPtr(0),formulaName("SimpleChemotaxisFormula"),
-	     chemotaxisFormulaDictPtr(0),
-		 automaton(0)
-         {}
-	
+        ChemotaxisData(float _lambda = 0.0, float _saturationCoef = 0.0,
+                       std::string _typeName = "")
+            : lambda(_lambda), saturationCoef(_saturationCoef),
+              typeName(std::move(_typeName)), formulaPtr(nullptr),
+              formulaName("SimpleChemotaxisFormula"),
+              chemotaxisFormulaDictPtr(nullptr), automaton(nullptr) {}
+
          float lambda;
          float saturationCoef;
          std::string formulaName;
@@ -86,26 +87,26 @@ namespace CompuCell3D {
 			std::vector<std::string> vecTypeNamesTmp;
 			parseStringIntoList(_chemotactTowardsTypesString,vecTypeNamesTmp,",");
 
-			for(int idx=0 ; idx < vecTypeNamesTmp.size() ; ++idx){
+                        for (auto &elem : vecTypeNamesTmp) {
 
-				unsigned char typeTmp=automaton->getTypeId(vecTypeNamesTmp[idx]);
-				chemotactTowardsTypesVec.push_back(typeTmp);
+                          unsigned char typeTmp = automaton->getTypeId(elem);
+                                chemotactTowardsTypesVec.push_back(typeTmp);
 			}
 		 }
 
 		 void assignChemotactTowardsVectorTypes(std::vector<int> _chemotactTowardsTypesVec){
 			chemotactTowardsTypesVec.clear();
-			for(int idx=0 ; idx < _chemotactTowardsTypesVec.size() ; ++idx){				
-				chemotactTowardsTypesVec.push_back(_chemotactTowardsTypesVec[idx]);
-			}
+                        for (auto &elem : _chemotactTowardsTypesVec) {
+                          chemotactTowardsTypesVec.push_back(elem);
+                        }
 		 }
 
 		 std::vector<int> getChemotactTowardsVectorTypes(){
 			std::vector<int> chemotactTowardsTypesVecInt;
-			
-			for(int idx=0 ; idx < chemotactTowardsTypesVec.size() ; ++idx){				
-				chemotactTowardsTypesVecInt.push_back(chemotactTowardsTypesVec[idx]);
-			}
+
+                        for (auto &elem : chemotactTowardsTypesVec) {
+                          chemotactTowardsTypesVecInt.push_back(elem);
+                        }
 			return chemotactTowardsTypesVecInt;
 		 }
 
@@ -143,8 +144,8 @@ namespace CompuCell3D {
             cerr<<"lambda="<<lambda<<" saturationCoef="<<saturationCoef<<" typaName="<<typeName<<endl;
             cerr<<"chemotactTowards="<<chemotactTowardsTypesString<<endl;
             cerr<<"Chemotact towards types:"<<endl;
-            for (int i = 0 ; i < chemotactTowardsTypesVec.size() ; ++i){
-               cerr<<"chemotact Towards type id="<<(int)chemotactTowardsTypesVec[i]<<endl;
+            for (auto &elem : chemotactTowardsTypesVec) {
+              cerr << "chemotact Towards type id=" << (int)elem << endl;
             }
             cerr<<"**************ChemotaxisData END**************"<<endl;
          }
@@ -156,9 +157,9 @@ namespace CompuCell3D {
             //will chemotact towards only specified cell types
          
             unsigned char type= (_oldCell?_oldCell->type:0);
-         
-            for(unsigned int i = 0 ; i < chemotactTowardsTypesVec.size() ; ++i){
-               if (type==chemotactTowardsTypesVec[i])
+
+            for (auto &elem : chemotactTowardsTypesVec) {
+              if (type == elem)
                   return true;
             }
          
@@ -186,7 +187,7 @@ namespace CompuCell3D {
          void Name(std::string _chemicalFieldName){chemicalFieldName=_chemicalFieldName;}
          ChemotaxisData * getChemotaxisData(int _index){
             if(_index<0 || _index>vecChemotaxisData.size()-1)
-               return 0;
+              return nullptr;
             return &vecChemotaxisData[_index];
          }
    };

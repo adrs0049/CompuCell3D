@@ -127,25 +127,24 @@ namespace CompuCell3D {
 
 		BasicClassAccessor<AdhesionFlexData> * getAdhesionFlexDataAccessorPtr(){return & adhesionFlexDataAccessor;}
 
+                virtual double changeEnergy(const Point3D &pt,
+                                            const CellG *newCell,
+                                            const CellG *oldCell) override;
 
-		virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
+                virtual void init(Simulator *simulator,
+                                  CC3DXMLElement *_xmlData) override;
 
-		virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
+                virtual void extraInit(Simulator *simulator) override;
 
+                virtual void handleEvent(CC3DEvent &_event) override;
 
-		virtual void extraInit(Simulator *simulator);
-        
-        virtual void handleEvent(CC3DEvent & _event);
+                //Steerrable interface
+                virtual void update(CC3DXMLElement *_xmlData,
+                                    bool _fullInitFlag = false) override;
+                virtual std::string steerableName() override;
+                virtual std::string toString() override;
 
-
-
-
-		//Steerrable interface
-		virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-		virtual std::string steerableName();
-		virtual std::string toString();
-
-		/**
+                /**
 		* @return The contact energy between cell1 and cell2.
 		*/
 		double adhesionFlexEnergyCustom(const CellG *cell1, const CellG *cell2);

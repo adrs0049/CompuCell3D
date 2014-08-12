@@ -73,19 +73,19 @@ namespace CompuCell3D {
 
 
 	 //plugin interface
-    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-	 virtual void extraInit(Simulator *simulator);
+    virtual void init(Simulator *simulator,
+                      CC3DXMLElement *_xmlData = nullptr) override;
+    virtual void extraInit(Simulator *simulator) override;
 
-	 //EnergyFunction interface
+         //EnergyFunction interface
     virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
-                                const CellG *oldCell);
-
+                                const CellG *oldCell) override;
 
     //Steerable interface
-    virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-    virtual std::string steerableName();
-	 virtual std::string toString();
-
+    virtual void update(CC3DXMLElement *_xmlData,
+                        bool _fullInitFlag = false) override;
+    virtual std::string steerableName() override;
+    virtual std::string toString() override;
   };
 };
 #endif

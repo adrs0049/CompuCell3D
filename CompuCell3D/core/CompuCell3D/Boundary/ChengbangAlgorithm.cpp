@@ -205,8 +205,8 @@ int ChengbangAlgorithm::getNumPixels(int x, int y, int z) {
         for (int j=0; j<z; j++) {  // Changed from y to z  TMC
             
             set<float, less<float> > s;
-            for(unsigned int l=0; l<dataStructure[i][j].size();l++) 
-                s.insert(dataStructure[i][j][l]);
+            for (auto &elem : dataStructure[i][j])
+              s.insert(elem);
            /* for(unsigned int m=0; m<dataStructure2[i][j].size(); m++)
                 s.insert(dataStructure2[i][j][m]);*/
 

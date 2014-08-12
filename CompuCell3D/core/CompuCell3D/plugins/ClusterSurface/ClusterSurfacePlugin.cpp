@@ -19,21 +19,15 @@ using namespace CompuCell3D;
 
 #include "ClusterSurfacePlugin.h"
 
-
-ClusterSurfacePlugin::ClusterSurfacePlugin():
-pUtils(0),
-lockPtr(0),
-xmlData(0),
-cellFieldG(0),
-scaleClusterSurface(1.0),
-boundaryStrategy(0),
-changeEnergyFcnPtr(&ClusterSurfacePlugin::changeEnergyByCellId)
-{}
+ClusterSurfacePlugin::ClusterSurfacePlugin()
+    : pUtils(nullptr), lockPtr(nullptr), xmlData(nullptr), cellFieldG(nullptr),
+      scaleClusterSurface(1.0), boundaryStrategy(nullptr),
+      changeEnergyFcnPtr(&ClusterSurfacePlugin::changeEnergyByCellId) {}
 
 ClusterSurfacePlugin::~ClusterSurfacePlugin() {
     pUtils->destroyLock(lockPtr);
     delete lockPtr;
-    lockPtr=0;
+    lockPtr = nullptr;
 }
 
 void ClusterSurfacePlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {

@@ -36,7 +36,7 @@ class CellG;
 class CONTACTLOCALFLEX_EXPORT ContactLocalFlexData{
 
    public:
-      ContactLocalFlexData():neighborAddress(0),J(0){}
+     ContactLocalFlexData() : neighborAddress(nullptr), J(0) {}
       ///have to define < operator if using a class in the set and no < operator is defined for this class
       bool operator<(const ContactLocalFlexData & _rhs) const{
          return neighborAddress < _rhs.neighborAddress;

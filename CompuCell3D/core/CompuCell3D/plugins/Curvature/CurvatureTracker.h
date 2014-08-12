@@ -18,10 +18,16 @@ namespace CompuCell3D {
 
    class CURVATURE_EXPORT CurvatureTrackerData{
       public:
-
-         CurvatureTrackerData(CellG * _neighborAddress=0,float _lambdaCurvature=0.0, float _activationEnergy=0.0,int _maxNumberOfJunctions=100, int _neighborOrder=1)
-         :neighborAddress(_neighborAddress),lambdaCurvature(_lambdaCurvature),activationEnergy(_activationEnergy),maxNumberOfJunctions(_maxNumberOfJunctions),neighborOrder(_neighborOrder)
-          {}
+        CurvatureTrackerData(CellG *_neighborAddress = nullptr,
+                             float _lambdaCurvature = 0.0,
+                             float _activationEnergy = 0.0,
+                             int _maxNumberOfJunctions = 100,
+                             int _neighborOrder = 1)
+            : neighborAddress(_neighborAddress),
+              lambdaCurvature(_lambdaCurvature),
+              activationEnergy(_activationEnergy),
+              maxNumberOfJunctions(_maxNumberOfJunctions),
+              neighborOrder(_neighborOrder) {}
 
          CurvatureTrackerData(const CurvatureTrackerData &ctd) //copy constructor
          {

@@ -19,17 +19,11 @@ using namespace CompuCell3D;
 
 #include "ContactOrientationPlugin.h"
 
-
-ContactOrientationPlugin::ContactOrientationPlugin():
-    pUtils(0),
-    lockPtr(0),
-    xmlData(0) ,
-    angularTermDefined(false),
-    cellFieldG(0),
-    boundaryStrategy(0),
-    automaton(0),
-    angularTermFcnPtr(&ContactOrientationPlugin::singleTermFormula)
-{}
+ContactOrientationPlugin::ContactOrientationPlugin()
+    : pUtils(nullptr), lockPtr(nullptr), xmlData(nullptr),
+      angularTermDefined(false), cellFieldG(nullptr), boundaryStrategy(nullptr),
+      automaton(nullptr),
+      angularTermFcnPtr(&ContactOrientationPlugin::singleTermFormula) {}
 
 ContactOrientationPlugin::~ContactOrientationPlugin() {
     //pUtils->destroyLock(lockPtr);
@@ -92,7 +86,7 @@ double ContactOrientationPlugin::changeEnergy(const Point3D &pt,const CellG *new
     double distance = 0;
     Point3D n;
 
-    CellG *nCell=0;
+    CellG *nCell = nullptr;
     WatchableField3D<CellG *> *fieldG =(WatchableField3D<CellG *> *) potts->getCellFieldG();
     Neighbor neighbor;
 
@@ -139,9 +133,7 @@ double ContactOrientationPlugin::changeEnergy(const Point3D &pt,const CellG *new
 
         if(nCell!=oldCell) {
 
-
-
-            if((nCell != 0) && (oldCell != 0)) {
+          if ((nCell != nullptr) && (oldCell != nullptr)) {
                 double termN=0.0;
                 double termOld=0.0;
 
@@ -220,8 +212,7 @@ double ContactOrientationPlugin::changeEnergy(const Point3D &pt,const CellG *new
         //watch for case nCell=oldCell - use oldCellCOMAfter for calculations
         if(nCell!=newCell) {
 
-            if((newCell != 0) && (nCell != 0)) {
-
+          if ((newCell != nullptr) && (nCell != nullptr)) {
 
                 double termN=0.0;
                 double termNew=0.0;
@@ -435,7 +426,7 @@ void ContactOrientationPlugin::setContactEnergy(const string typeName1,const str
 
     int index = getIndex(type1, type2);
 
-    contactEnergies_t::iterator it = contactEnergies.find(index);
+    auto it = contactEnergies.find(index);
     ASSERT_OR_THROW(string("Contact energy for ") + typeName1 + " " + typeName2 +
                     " already set!", it == contactEnergies.end());
 

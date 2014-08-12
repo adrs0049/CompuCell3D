@@ -1,10 +1,7 @@
 #ifndef PARALLELUTILSOPENMP_H
 #define PARALLELUTILSOPENMP_H
 
-
-// #include <CompuCell3D/FlexibleDiffusionSolverFE.h>
 #include <string>
-
 #include <vector>
 #include <set>
 #include <map>
@@ -17,8 +14,6 @@
 
 #include <CompuCell3D/SteerableObject.h>
 #include <CompuCell3D/CC3DEvents.h>
-
-
 
 namespace CompuCell3D {
     class Dim3D;

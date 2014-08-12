@@ -18,12 +18,11 @@ namespace CompuCell3D {
    //need to be transformed to physical units by multiplying it by surface latticemultiplicative factor 
    class NEIGHBORTRACKER_EXPORT NeighborSurfaceData{
       public:
-         
-         NeighborSurfaceData(CellG * _neighborAddress=0,int _commonSurfaceArea=0)
-         :neighborAddress(_neighborAddress),
-          commonSurfaceArea(_commonSurfaceArea)
-          {}
-         
+        NeighborSurfaceData(CellG *_neighborAddress = nullptr,
+                            int _commonSurfaceArea = 0)
+            : neighborAddress(_neighborAddress),
+              commonSurfaceArea(_commonSurfaceArea) {}
+
          ///have to define < operator if using a class in the set and no < operator is defined for this class
          bool operator<(const NeighborSurfaceData & _rhs) const{
             return neighborAddress < _rhs.neighborAddress;

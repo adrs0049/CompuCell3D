@@ -25,7 +25,8 @@ using namespace std;
 
 #include "FocalPointPlasticityPlugin.h"
 
-FocalPointPlasticityPlugin::FocalPointPlasticityPlugin():pUtils(0),xmlData(0)   {
+FocalPointPlasticityPlugin::FocalPointPlasticityPlugin()
+    : pUtils(nullptr), xmlData(nullptr) {
     lambda=0.0;
     activationEnergy=0.0;
 
@@ -77,8 +78,7 @@ void FocalPointPlasticityPlugin::init(Simulator *simulator, CC3DXMLElement *_xml
     unsigned int maxNumberOfWorkNodes=pUtils->getMaxNumberOfWorkNodesPotts();
     newJunctionInitiatedFlagVec.assign(maxNumberOfWorkNodes,false);
     newJunctionInitiatedFlagWithinClusterVec.assign(maxNumberOfWorkNodes,false);
-    newNeighborVec.assign(maxNumberOfWorkNodes,0);
-
+    newNeighborVec.assign(maxNumberOfWorkNodes, nullptr);
 }
 
 void FocalPointPlasticityPlugin::extraInit(Simulator *simulator) {
@@ -90,7 +90,7 @@ void FocalPointPlasticityPlugin::handleEvent(CC3DEvent & _event) {
         unsigned int maxNumberOfWorkNodes=pUtils->getMaxNumberOfWorkNodesPotts();
         newJunctionInitiatedFlagVec.assign(maxNumberOfWorkNodes,false);
         newJunctionInitiatedFlagWithinClusterVec.assign(maxNumberOfWorkNodes,false);
-        newNeighborVec.assign(maxNumberOfWorkNodes,0);
+        newNeighborVec.assign(maxNumberOfWorkNodes, nullptr);
 
         update(xmlData);
     }
@@ -171,7 +171,7 @@ void FocalPointPlasticityPlugin::update(CC3DXMLElement *_xmlData, bool _fullInit
 
         int index = getIndex(type1, type2);
 
-        plastParams_t::iterator it = plastParams.find(index);
+        auto it = plastParams.find(index);
         ASSERT_OR_THROW(string("Plasticity parameters for ") + type1 + " " + type2 +
                         " already set!", it == plastParams.end());
 
@@ -215,7 +215,7 @@ void FocalPointPlasticityPlugin::update(CC3DXMLElement *_xmlData, bool _fullInit
 
         int index = getIndex(type1, type2);
 
-        plastParams_t::iterator it = internalPlastParams.find(index);
+        auto it = internalPlastParams.find(index);
         ASSERT_OR_THROW(string("Internal plasticity parameters for ") + type1 + " " + type2 +
                         " already set!", it == internalPlastParams.end());
 
@@ -805,8 +805,10 @@ double FocalPointPlasticityPlugin::tryAddingNewJunction(const Point3D &pt,const 
         }
 
         //check if nCell has a junction with newCell
-        set<FocalPointPlasticityTrackerData>::iterator sitr=
-            focalPointPlasticityTrackerAccessor.get(newCell->extraAttribPtr)->focalPointPlasticityNeighbors.find(FocalPointPlasticityTrackerData(nCell));
+        auto sitr =
+            focalPointPlasticityTrackerAccessor.get(newCell->extraAttribPtr)
+                ->focalPointPlasticityNeighbors.find(
+                    FocalPointPlasticityTrackerData(nCell));
         if(sitr==focalPointPlasticityTrackerAccessor.get(newCell->extraAttribPtr)->focalPointPlasticityNeighbors.end()) {
             //new connection allowed
             newJunctionInitiatedFlag=true;
@@ -900,8 +902,10 @@ double FocalPointPlasticityPlugin::tryAddingNewJunctionWithinCluster(const Point
         }
 
         //check if nCell has has a junction with newCell
-        set<FocalPointPlasticityTrackerData>::iterator sitr=
-            focalPointPlasticityTrackerAccessor.get(newCell->extraAttribPtr)->internalFocalPointPlasticityNeighbors.find(FocalPointPlasticityTrackerData(nCell));
+        auto sitr =
+            focalPointPlasticityTrackerAccessor.get(newCell->extraAttribPtr)
+                ->internalFocalPointPlasticityNeighbors.find(
+                    FocalPointPlasticityTrackerData(nCell));
         if(sitr==focalPointPlasticityTrackerAccessor.get(newCell->extraAttribPtr)->internalFocalPointPlasticityNeighbors.end()) {
             //new connection allowed
             newJunctionInitiatedFlagWithinCluster=true;
@@ -951,7 +955,7 @@ double FocalPointPlasticityPlugin::changeEnergy(const Point3D &pt,const CellG *n
     newJunctionInitiatedFlag=false;
     newJunctionInitiatedFlagWithinCluster=false;
 
-    newNeighbor=0;
+    newNeighbor = nullptr;
 
     //check if we need to create new junctions only new cell can initiate junctions
     //cerr<<" ENERGY="<<energy<<endl;
@@ -1394,12 +1398,12 @@ void FocalPointPlasticityPlugin::field3DChange(const Point3D &pt, CellG *newCell
         double xCMNew=newCell->xCM/float(newCell->volume);
         double yCMNew=newCell->yCM/float(newCell->volume);
         double zCMNew=newCell->zCM/float(newCell->volume);
-        CellG * cell2BRemoved=0;
+        CellG *cell2BRemoved = nullptr;
         std::set<FocalPointPlasticityTrackerData>::iterator sitr;
 
 
         std::set<FocalPointPlasticityTrackerData> & plastNeighbors=focalPointPlasticityTrackerAccessor.get(newCell->extraAttribPtr)->focalPointPlasticityNeighbors;
-        std::set<FocalPointPlasticityTrackerData>::iterator sitrErasePos=plastNeighbors.end();
+        auto sitrErasePos = plastNeighbors.end();
 
         //list<CellG *> toBeRemovedNeighborsOfNewCell;
 
@@ -1525,7 +1529,7 @@ void FocalPointPlasticityPlugin::field3DChange(const Point3D &pt, CellG *newCell
         double xCMOld=oldCell->xCM/float(oldCell->volume);
         double yCMOld=oldCell->yCM/float(oldCell->volume);
         double zCMOld=oldCell->zCM/float(oldCell->volume);
-        CellG * cell2BRemoved=0;
+        CellG *cell2BRemoved = nullptr;
         std::set<FocalPointPlasticityTrackerData>::iterator sitr;
 
         std::set<FocalPointPlasticityTrackerData> & plastNeighbors=focalPointPlasticityTrackerAccessor.get(oldCell->extraAttribPtr)->focalPointPlasticityNeighbors;
@@ -1747,7 +1751,9 @@ void FocalPointPlasticityPlugin::setInternalFocalPointPlasticityParameters(CellG
 
 double FocalPointPlasticityPlugin::getPlasticityParametersLambdaDistance(CellG * _cell1,CellG * _cell2) {
 
-    std::set<FocalPointPlasticityTrackerData>::iterator sitr1=focalPointPlasticityTrackerAccessor.get(_cell1->extraAttribPtr)->focalPointPlasticityNeighbors.find(FocalPointPlasticityTrackerData(_cell2));
+  auto sitr1 = focalPointPlasticityTrackerAccessor.get(_cell1->extraAttribPtr)
+                   ->focalPointPlasticityNeighbors.find(
+                       FocalPointPlasticityTrackerData(_cell2));
     if(sitr1!=focalPointPlasticityTrackerAccessor.get(_cell1->extraAttribPtr)->focalPointPlasticityNeighbors.end()) {
         return sitr1->lambdaDistance;
     } else {
@@ -1757,7 +1763,9 @@ double FocalPointPlasticityPlugin::getPlasticityParametersLambdaDistance(CellG *
 
 double FocalPointPlasticityPlugin::getPlasticityParametersTargetDistance(CellG * _cell1,CellG * _cell2) {
 
-    std::set<FocalPointPlasticityTrackerData>::iterator sitr1=focalPointPlasticityTrackerAccessor.get(_cell1->extraAttribPtr)->focalPointPlasticityNeighbors.find(FocalPointPlasticityTrackerData(_cell2));
+  auto sitr1 = focalPointPlasticityTrackerAccessor.get(_cell1->extraAttribPtr)
+                   ->focalPointPlasticityNeighbors.find(
+                       FocalPointPlasticityTrackerData(_cell2));
     if(sitr1!=focalPointPlasticityTrackerAccessor.get(_cell1->extraAttribPtr)->focalPointPlasticityNeighbors.end()) {
         return sitr1->targetDistance;
     } else {
@@ -1767,7 +1775,7 @@ double FocalPointPlasticityPlugin::getPlasticityParametersTargetDistance(CellG *
 
 int FocalPointPlasticityPlugin::createAnchor(CellG * _cell, double _lambda, double _targetDistance,double _maxDistance,float _x, float _y, float _z) {
     std::set<FocalPointPlasticityTrackerData> & anchorsSet=focalPointPlasticityTrackerAccessor.get(_cell->extraAttribPtr)->anchors;
-    std::set<FocalPointPlasticityTrackerData>::iterator sitr=anchorsSet.begin();
+    auto sitr = anchorsSet.begin();
     int newAnchorId=0;
     //cerr<<"anchorsSet.size()="<<anchorsSet.size()<<endl;
 
@@ -1781,7 +1789,8 @@ int FocalPointPlasticityPlugin::createAnchor(CellG * _cell, double _lambda, doub
 
     }
     //cerr<<"newAnchorId="<<newAnchorId<<endl;
-    FocalPointPlasticityTrackerData fpptd(0,_lambda, _targetDistance, _maxDistance);
+    FocalPointPlasticityTrackerData fpptd(nullptr, _lambda, _targetDistance,
+                                          _maxDistance);
     fpptd.anchor=true;
     fpptd.anchorId=newAnchorId;
     fpptd.anchorPoint[0]=_x;
@@ -1796,9 +1805,9 @@ int FocalPointPlasticityPlugin::createAnchor(CellG * _cell, double _lambda, doub
 
 void FocalPointPlasticityPlugin::deleteAnchor(CellG * _cell, int _anchorId) {
     std::set<FocalPointPlasticityTrackerData> & anchorsSet=focalPointPlasticityTrackerAccessor.get(_cell->extraAttribPtr)->anchors;
-    FocalPointPlasticityTrackerData fpptd(0);
+    FocalPointPlasticityTrackerData fpptd(nullptr);
     fpptd.anchorId=_anchorId;
-    std::set<FocalPointPlasticityTrackerData>::iterator sitr=anchorsSet.find(fpptd);
+    auto sitr = anchorsSet.find(fpptd);
     if (sitr!=anchorsSet.end()) {
         anchorsSet.erase(fpptd);
     }
@@ -1807,9 +1816,9 @@ void FocalPointPlasticityPlugin::deleteAnchor(CellG * _cell, int _anchorId) {
 
 void FocalPointPlasticityPlugin::setAnchorParameters(CellG * _cell, int _anchorId,double _lambda, double _targetDistance,double _maxDistance,float _x, float _y, float _z) {
     std::set<FocalPointPlasticityTrackerData> & anchorsSet=focalPointPlasticityTrackerAccessor.get(_cell->extraAttribPtr)->anchors;
-    FocalPointPlasticityTrackerData fpptd(0);
+    FocalPointPlasticityTrackerData fpptd(nullptr);
     fpptd.anchorId=_anchorId;
-    std::set<FocalPointPlasticityTrackerData>::iterator sitr=anchorsSet.find(fpptd);
+    auto sitr = anchorsSet.find(fpptd);
     if (sitr!=anchorsSet.end()) {
         (const_cast<FocalPointPlasticityTrackerData & >(*sitr)).lambdaDistance=_lambda;
         if(_targetDistance!=0.0) {

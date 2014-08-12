@@ -68,7 +68,8 @@ public:
      virtual ~ConnectivityGlobalPlugin();
 
      //Plugin interface
-     virtual void init ( Simulator *simulator, CC3DXMLElement *_xmlData=0 );
+     virtual void init(Simulator *simulator,
+                       CC3DXMLElement *_xmlData = nullptr) override;
 
      DataAccessor_t * getConnectivityGlobalDataPtr() {
           return & connectivityGlobalDataAccessor;
@@ -76,18 +77,17 @@ public:
      void setConnectivityStrength ( CellG * _cell, double _connectivityStrength );
      double getConnectivityStrength ( CellG * _cell );
 
-
-     virtual std::string toString();
+     virtual std::string toString() override;
 
      //EnergyFunction interface
-     virtual double changeEnergy ( const Point3D &pt, const CellG *newCell,
-                                   const CellG *oldCell );
+     virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
+                                 const CellG *oldCell) override;
 
      bool checkIfCellIsFragmented ( const CellG * cell,Point3D cellPixel );
      //SteerableObject interface
-     virtual void update ( CC3DXMLElement *_xmlData, bool _fullInitFlag=false );
-     virtual std::string steerableName();
-
+     virtual void update(CC3DXMLElement *_xmlData,
+                         bool _fullInitFlag = false) override;
+     virtual std::string steerableName() override;
 };
 };
 #endif

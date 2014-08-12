@@ -85,13 +85,12 @@ namespace CompuCell3D {
 
   
     // SimObject interface
-    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-
-	
+    virtual void init(Simulator *simulator,
+                      CC3DXMLElement *_xmlData = nullptr) override;
 
     // BCGChangeWatcher interface
     virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                                CellG *oldCell);
+                               CellG *oldCell) override;
 
     virtual void cellOrientation_xy(const Point3D &pt, CellG *newCell,
                                 CellG *oldCell);
@@ -119,9 +118,7 @@ namespace CompuCell3D {
 	std::vector<double> getSemiaxesYZ(CellG *_cell);
 	std::vector<double> getSemiaxes3D(CellG *_cell);
 
-
-   virtual std::string toString();
-
+        virtual std::string toString() override;
   };
 };
 #endif

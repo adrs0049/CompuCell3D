@@ -31,10 +31,10 @@ using namespace std;
 
 MitosisSimplePlugin::MitosisSimplePlugin() :
     MitosisPlugin()
-{   potts=0;
-    doDirectionalMitosis2DPtr=0;
-    getOrientationVectorsMitosis2DPtr=0;
-
+{
+  potts = nullptr;
+  doDirectionalMitosis2DPtr = nullptr;
+  getOrientationVectorsMitosis2DPtr = nullptr;
 }
 
 MitosisSimplePlugin::~MitosisSimplePlugin() {}
@@ -95,8 +95,8 @@ void MitosisSimplePlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 
     pUtils=simulator->getParallelUtils();
     unsigned int maxNumberOfWorkNodes=pUtils->getMaxNumberOfWorkNodesPotts();
-    childCellVec.assign(maxNumberOfWorkNodes,0);
-    parentCellVec.assign(maxNumberOfWorkNodes,0);
+    childCellVec.assign(maxNumberOfWorkNodes, nullptr);
+    parentCellVec.assign(maxNumberOfWorkNodes, nullptr);
     splitPtVec.assign(maxNumberOfWorkNodes,Point3D());
     splitVec.assign(maxNumberOfWorkNodes,false);
     onVec.assign(maxNumberOfWorkNodes,false);
@@ -117,8 +117,8 @@ void MitosisSimplePlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 void MitosisSimplePlugin::handleEvent(CC3DEvent & _event) {
     if (_event.id==CHANGE_NUMBER_OF_WORK_NODES) {
         unsigned int maxNumberOfWorkNodes=pUtils->getMaxNumberOfWorkNodesPotts();
-        childCellVec.assign(maxNumberOfWorkNodes,0);
-        parentCellVec.assign(maxNumberOfWorkNodes,0);
+        childCellVec.assign(maxNumberOfWorkNodes, nullptr);
+        parentCellVec.assign(maxNumberOfWorkNodes, nullptr);
         splitPtVec.assign(maxNumberOfWorkNodes,Point3D());
         splitVec.assign(maxNumberOfWorkNodes,false);
         onVec.assign(maxNumberOfWorkNodes,false);
@@ -175,9 +175,10 @@ OrientationVectorsMitosis MitosisSimplePlugin::getOrientationVectorsMitosis2D_xy
 
 
     set<PixelTrackerData> cellPixels=pixelTrackerAccessorPtr->get(cell->extraAttribPtr)->pixelSet;
-    for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
+    for (const auto &cellPixel : cellPixels) {
         //cerr<<"point cell="<<sitr->pixel<<endl;
-        Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+      Coordinates3D<double> pixelTrans =
+          boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
         inertiaTensor[0][0]+=(pixelTrans.y-ycm)*(pixelTrans.y-ycm);
         inertiaTensor[0][1]+=-(pixelTrans.x-xcm)*(pixelTrans.y-ycm);
         inertiaTensor[1][1]+=(pixelTrans.x-xcm)*(pixelTrans.x-xcm);
@@ -230,8 +231,8 @@ bool MitosisSimplePlugin::doDirectionalMitosis2D_xy() {
 
         WatchableField3D<CellG *> *cellField =(WatchableField3D<CellG *> *) potts->getCellFieldG();
         //reseting poiters to parent and child cell - neessary otherwise may get some strange side effects when mitisis is aborted
-        childCell=0;
-        parentCell=0;
+        childCell = nullptr;
+        parentCell = nullptr;
 
         CellG *cell = cellField->get(splitPt);//cells that is being divided
         parentCell=cell;
@@ -280,13 +281,14 @@ bool MitosisSimplePlugin::doDirectionalMitosis2D_xy() {
 
         if(a==0.0 && b==0.0) { //division along y axis
 
-            for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
-                Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+          for (const auto &cellPixel : cellPixels) {
+            Coordinates3D<double> pixelTrans =
+                boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
                 if(pixelTrans.x<xcm) {
                     if(!childCell) {
-                        childCell = potts->createCellG(sitr->pixel);
+                      childCell = potts->createCellG(cellPixel.pixel);
                     } else {
-                        cellField->set(sitr->pixel, childCell);
+                      cellField->set(cellPixel.pixel, childCell);
                     }
                 }
             }
@@ -295,18 +297,19 @@ bool MitosisSimplePlugin::doDirectionalMitosis2D_xy() {
             //cerr<<"before iteration"<<endl;
             //cerr<<"cell->volume="<<cell->volume<<endl;
             int parentCellVolume=0;
-            for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
-                Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+            for (const auto &cellPixel : cellPixels) {
+              Coordinates3D<double> pixelTrans =
+                  boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
                 //cerr<<"pt="<<sitr->pixel<<endl;
                 if(pixelTrans.y <= a*pixelTrans.x+b) {
 
                     if(!childCell) {
                         //cerr<<" creating cell and adding pt="<<sitr->pixel<<endl;
-                        childCell = potts->createCellG(sitr->pixel);
+                      childCell = potts->createCellG(cellPixel.pixel);
                         //cerr<<"childCell="<<childCell<<endl;
                     } else {
                         //cerr<<" adding pt="<<sitr->pixel<<endl;
-                        cellField->set(sitr->pixel, childCell);
+                      cellField->set(cellPixel.pixel, childCell);
                     }
                 } else {
 
@@ -339,9 +342,10 @@ OrientationVectorsMitosis MitosisSimplePlugin::getOrientationVectorsMitosis2D_xz
     vector<vector<double> > inertiaTensor(2,vector<double>(2,0.0));
 
     set<PixelTrackerData> cellPixels=pixelTrackerAccessorPtr->get(cell->extraAttribPtr)->pixelSet;
-    for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
+    for (const auto &cellPixel : cellPixels) {
         //cerr<<"point cell="<<sitr->pixel<<endl;
-        Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+      Coordinates3D<double> pixelTrans =
+          boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
         inertiaTensor[0][0]+=(pixelTrans.z-zcm)*(pixelTrans.z-zcm);
         inertiaTensor[0][1]+=-(pixelTrans.x-xcm)*(pixelTrans.z-zcm);
         inertiaTensor[1][1]+=(pixelTrans.x-xcm)*(pixelTrans.x-xcm);
@@ -394,8 +398,8 @@ bool MitosisSimplePlugin::doDirectionalMitosis2D_xz() {
 
         WatchableField3D<CellG *> *cellField =(WatchableField3D<CellG *> *) potts->getCellFieldG();
         //reseting poiters to parent and child cell - neessary otherwise may get some strange side effects when mitisis is aborted
-        childCell=0;
-        parentCell=0;
+        childCell = nullptr;
+        parentCell = nullptr;
 
         CellG *cell = cellField->get(splitPt);//cells that is being divided
         parentCell=cell;
@@ -455,13 +459,14 @@ bool MitosisSimplePlugin::doDirectionalMitosis2D_xz() {
 
         if(a==0.0 && b==0.0) { //division along y axis
 
-            for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
-                Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+          for (const auto &cellPixel : cellPixels) {
+            Coordinates3D<double> pixelTrans =
+                boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
                 if(pixelTrans.x<xcm) {
                     if(!childCell) {
-                        childCell = potts->createCellG(sitr->pixel);
+                      childCell = potts->createCellG(cellPixel.pixel);
                     } else {
-                        cellField->set(sitr->pixel, childCell);
+                      cellField->set(cellPixel.pixel, childCell);
                     }
                 }
             }
@@ -470,18 +475,19 @@ bool MitosisSimplePlugin::doDirectionalMitosis2D_xz() {
             //cerr<<"before iteration"<<endl;
             //cerr<<"cell->volume="<<cell->volume<<endl;
             int parentCellVolume=0;
-            for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
-                Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+            for (const auto &cellPixel : cellPixels) {
+              Coordinates3D<double> pixelTrans =
+                  boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
                 //cerr<<"pt="<<sitr->pixel<<endl;
                 if(pixelTrans.z <= a*pixelTrans.x+b) {
 
                     if(!childCell) {
                         //cerr<<" creating cell and adding pt="<<sitr->pixel<<endl;
-                        childCell = potts->createCellG(sitr->pixel);
+                      childCell = potts->createCellG(cellPixel.pixel);
                         //cerr<<"childCell="<<childCell<<endl;
                     } else {
                         //cerr<<" adding pt="<<sitr->pixel<<endl;
-                        cellField->set(sitr->pixel, childCell);
+                      cellField->set(cellPixel.pixel, childCell);
                     }
                 } else {
 
@@ -509,8 +515,9 @@ OrientationVectorsMitosis MitosisSimplePlugin::getOrientationVectorsMitosis2D_yz
     vector<vector<double> > inertiaTensor(2,vector<double>(2,0.0));
 
     set<PixelTrackerData> cellPixels=pixelTrackerAccessorPtr->get(cell->extraAttribPtr)->pixelSet;
-    for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
-        Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+    for (const auto &cellPixel : cellPixels) {
+      Coordinates3D<double> pixelTrans =
+          boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
         //cerr<<"point cell="<<sitr->pixel<<endl;
         inertiaTensor[0][0]+=(pixelTrans.z-zcm)*(pixelTrans.z-zcm);
         inertiaTensor[0][1]+=-(pixelTrans.y-ycm)*(pixelTrans.z-zcm);
@@ -564,8 +571,8 @@ bool MitosisSimplePlugin::doDirectionalMitosis2D_yz() {
 
         WatchableField3D<CellG *> *cellField =(WatchableField3D<CellG *> *) potts->getCellFieldG();
         //reseting poiters to parent and child cell - neessary otherwise may get some strange side effects when mitisis is aborted
-        childCell=0;
-        parentCell=0;
+        childCell = nullptr;
+        parentCell = nullptr;
 
         CellG *cell = cellField->get(splitPt);//cells that is being divided
         parentCell=cell;
@@ -625,13 +632,14 @@ bool MitosisSimplePlugin::doDirectionalMitosis2D_yz() {
 
         if(a==0.0 && b==0.0) { //division along y axis
 
-            for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
-                Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+          for (const auto &cellPixel : cellPixels) {
+            Coordinates3D<double> pixelTrans =
+                boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
                 if(pixelTrans.y<ycm) {
                     if(!childCell) {
-                        childCell = potts->createCellG(sitr->pixel);
+                      childCell = potts->createCellG(cellPixel.pixel);
                     } else {
-                        cellField->set(sitr->pixel, childCell);
+                      cellField->set(cellPixel.pixel, childCell);
                     }
                 }
             }
@@ -640,18 +648,19 @@ bool MitosisSimplePlugin::doDirectionalMitosis2D_yz() {
             //cerr<<"before iteration"<<endl;
             //cerr<<"cell->volume="<<cell->volume<<endl;
             int parentCellVolume=0;
-            for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
-                Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+            for (const auto &cellPixel : cellPixels) {
+              Coordinates3D<double> pixelTrans =
+                  boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
                 //cerr<<"pt="<<sitr->pixel<<endl;
                 if(pixelTrans.z <= a*pixelTrans.y+b) {
 
                     if(!childCell) {
                         //cerr<<" creating cell and adding pt="<<sitr->pixel<<endl;
-                        childCell = potts->createCellG(sitr->pixel);
+                      childCell = potts->createCellG(cellPixel.pixel);
                         //cerr<<"childCell="<<childCell<<endl;
                     } else {
                         //cerr<<" adding pt="<<sitr->pixel<<endl;
-                        cellField->set(sitr->pixel, childCell);
+                      cellField->set(cellPixel.pixel, childCell);
                     }
                 } else {
 
@@ -680,8 +689,9 @@ OrientationVectorsMitosis MitosisSimplePlugin::getOrientationVectorsMitosis3D(Ce
     vector<vector<double> > inertiaTensor(3,vector<double>(3,0.0));
 
     set<PixelTrackerData> cellPixels=pixelTrackerAccessorPtr->get(cell->extraAttribPtr)->pixelSet;
-    for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
-        Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+    for (const auto &cellPixel : cellPixels) {
+      Coordinates3D<double> pixelTrans =
+          boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
         //cerr<<"point cell="<<sitr->pixel<<endl;
         inertiaTensor[0][0]+=(pixelTrans.y-ycm)*(pixelTrans.y-ycm)+(pixelTrans.z-zcm)*(pixelTrans.z-zcm);
         inertiaTensor[0][1]+=-(pixelTrans.x-xcm)*(pixelTrans.y-ycm);
@@ -777,8 +787,8 @@ bool MitosisSimplePlugin::doDirectionalMitosis3D() {
 
         WatchableField3D<CellG *> *cellField =(WatchableField3D<CellG *> *) potts->getCellFieldG();
         //reseting poiters to parent and child cell - neessary otherwise may get some strange side effects when mitisis is aborted
-        childCell=0;
-        parentCell=0;
+        childCell = nullptr;
+        parentCell = nullptr;
 
         CellG *cell = cellField->get(splitPt);//cells that is being divided
         parentCell=cell;
@@ -829,18 +839,19 @@ bool MitosisSimplePlugin::doDirectionalMitosis3D() {
 
         //cerr<<"cell->volume="<<cell->volume<<endl;
         int parentCellVolume=0;
-        for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
-            Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+        for (const auto &cellPixel : cellPixels) {
+          Coordinates3D<double> pixelTrans =
+              boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
             //cerr<<"pt="<<sitr->pixel<<endl;
             if(nVec.x*pixelTrans.x+nVec.y*pixelTrans.y + nVec.z*pixelTrans.z+d<= 0.0) {
 
                 if(!childCell) {
                     //cerr<<" creating cell and adding pt="<<sitr->pixel<<endl;
-                    childCell = potts->createCellG(sitr->pixel);
+                  childCell = potts->createCellG(cellPixel.pixel);
                     //cerr<<"childCell="<<childCell<<endl;
                 } else {
                     //cerr<<" adding pt="<<sitr->pixel<<endl;
-                    cellField->set(sitr->pixel, childCell);
+                  cellField->set(cellPixel.pixel, childCell);
                 }
             } else {
 
@@ -886,8 +897,8 @@ bool MitosisSimplePlugin::doDirectionalMitosisOrientationVectorBased(double _nx,
 
         WatchableField3D<CellG *> *cellField =(WatchableField3D<CellG *> *) potts->getCellFieldG();
         //reseting poiters to parent and child cell - neessary otherwise may get some strange side effects when mitisis is aborted
-        childCell=0;
-        parentCell=0;
+        childCell = nullptr;
+        parentCell = nullptr;
 
         CellG *cell = cellField->get(splitPt);//cells that is being divided
 
@@ -910,18 +921,19 @@ bool MitosisSimplePlugin::doDirectionalMitosisOrientationVectorBased(double _nx,
 
         //cerr<<"cell->volume="<<cell->volume<<endl;
         int parentCellVolume=0;
-        for(set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end() ; ++sitr) {
-            Coordinates3D<double> pixelTrans= boundaryStrategy->calculatePointCoordinates(sitr->pixel);
+        for (const auto &cellPixel : cellPixels) {
+          Coordinates3D<double> pixelTrans =
+              boundaryStrategy->calculatePointCoordinates(cellPixel.pixel);
             //cerr<<"pt="<<sitr->pixel<<endl;
             if(nVec.x*pixelTrans.x+nVec.y*pixelTrans.y + nVec.z*pixelTrans.z+d<= 0.0) {
 
                 if(!childCell) {
                     //cerr<<" creating cell and adding pt="<<sitr->pixel<<endl;
-                    childCell = potts->createCellG(sitr->pixel);
+                  childCell = potts->createCellG(cellPixel.pixel);
                     //cerr<<"childCell="<<childCell<<endl;
                 } else {
                     //cerr<<" adding pt="<<sitr->pixel<<endl;
-                    cellField->set(sitr->pixel, childCell);
+                  cellField->set(cellPixel.pixel, childCell);
                 }
             } else {
 

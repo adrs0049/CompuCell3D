@@ -28,11 +28,8 @@ using namespace std;
 
 #include "CurvaturePlugin.h"
 
-CurvaturePlugin::CurvaturePlugin():
-pUtils(0),
-xmlData(0)   
-{
-	lambda=0.0;
+CurvaturePlugin::CurvaturePlugin() : pUtils(nullptr), xmlData(nullptr) {
+        lambda=0.0;
 	activationEnergy=0.0;
 
 	targetDistance=0.0;
@@ -85,9 +82,7 @@ void CurvaturePlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 	unsigned int maxNumberOfWorkNodes=pUtils->getMaxNumberOfWorkNodesPotts();        
 
 	newJunctionInitiatedFlagWithinClusterVec.assign(maxNumberOfWorkNodes,false);
-	newNeighborVec.assign(maxNumberOfWorkNodes,0);
-
-
+        newNeighborVec.assign(maxNumberOfWorkNodes, nullptr);
 }
 
 
@@ -103,7 +98,7 @@ void CurvaturePlugin::handleEvent(CC3DEvent & _event){
         unsigned int maxNumberOfWorkNodes=pUtils->getMaxNumberOfWorkNodesPotts();        
 
         newJunctionInitiatedFlagWithinClusterVec.assign(maxNumberOfWorkNodes,false);
-        newNeighborVec.assign(maxNumberOfWorkNodes,0);
+        newNeighborVec.assign(maxNumberOfWorkNodes, nullptr);
     }
     
     
@@ -190,8 +185,8 @@ void CurvaturePlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 
 		int index = getIndex(type1, type2);
 
-		curvatureParams_t::iterator it = internalCurvatureParams.find(index);
-		ASSERT_OR_THROW(string("Internal curvature parameters for ") + type1 + " " + type2 +
+                auto it = internalCurvatureParams.find(index);
+                ASSERT_OR_THROW(string("Internal curvature parameters for ") + type1 + " " + type2 +
 			" already set!", it == internalCurvatureParams.end());
 
 		if(internalCurvatureParamVec[i]->getFirstElement("ActivationEnergy"))
@@ -354,12 +349,11 @@ void CurvaturePlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 		internalTypeSpecificCurvatureParamsVec.clear();
 		internalTypeSpecificCurvatureParamsVec.assign(size,CurvatureTrackerData());
 
-		for(int i = 0 ; i < internalTypeSpecCellTypesVector.size() ; ++i){
+                for (auto &elem : internalTypeSpecCellTypesVector) {
 
-
-			internalTypeSpecificCurvatureParamsVec[internalTypeSpecCellTypesVector[i]]=internalTypeSpecificCurvatureParams[internalTypeSpecCellTypesVector[i]];						
-
-		}
+                  internalTypeSpecificCurvatureParamsVec[elem] =
+                      internalTypeSpecificCurvatureParams[elem];
+                }
 
 		ASSERT_OR_THROW("THE NUMBER TYPE NAMES IN THE INTERNAL TYPE SPECIFIC SECTION DOES NOT MATCH THE NUMBER OF CELL TYPES IN INTERNAL PARAMETERS SECTION",internalTypeSpecificCurvatureParamsVec.size()==internalCurvatureParamsArray.size());
 
@@ -563,10 +557,12 @@ double CurvaturePlugin::tryAddingNewJunctionWithinCluster(const Point3D &pt,cons
 			continue;
 		}
 
-		//check if nCell has has a junction with newCell                
-		set<CurvatureTrackerData>::iterator sitr=
-			curvatureTrackerAccessor.get(newCell->extraAttribPtr)->internalCurvatureNeighbors.find(CurvatureTrackerData(nCell));
-		if(sitr==curvatureTrackerAccessor.get(newCell->extraAttribPtr)->internalCurvatureNeighbors.end()){
+		//check if nCell has has a junction with newCell
+                auto sitr =
+                    curvatureTrackerAccessor.get(newCell->extraAttribPtr)
+                        ->internalCurvatureNeighbors.find(
+                            CurvatureTrackerData(nCell));
+                if(sitr==curvatureTrackerAccessor.get(newCell->extraAttribPtr)->internalCurvatureNeighbors.end()){
 			//new connection allowed
 			newJunctionInitiatedFlagWithinCluster=true;
 			newNeighbor=nCell;
@@ -632,9 +628,9 @@ double CurvaturePlugin::changeEnergy(const Point3D &pt,const CellG *newCell,cons
 	CellG * & newNeighbor=newNeighborVec[currentWorkNodeNumber];
 
 	newJunctionInitiatedFlagWithinCluster=false;
-	newNeighbor=0;
+        newNeighbor = nullptr;
 
-	//check if we need to create new junctions only new cell can initiate junctions
+        //check if we need to create new junctions only new cell can initiate junctions
 	//cerr<<" ENERGY="<<energy<<endl;
 	if(newCell){
 
@@ -720,13 +716,13 @@ double CurvaturePlugin::changeEnergy(const Point3D &pt,const CellG *newCell,cons
 	float newVol;
 	float nCellVol;
 
-	CellG *rightNeighborOfOldCell=0;
-	CellG *leftNeighborOfOldCell=0;
+        CellG *rightNeighborOfOldCell = nullptr;
+        CellG *leftNeighborOfOldCell = nullptr;
 
-	CellG *rightRightNeighborOfOldCell=0;
-	CellG *leftLeftNeighborOfOldCell=0;
+        CellG *rightRightNeighborOfOldCell = nullptr;
+        CellG *leftLeftNeighborOfOldCell = nullptr;
 
-	//cerr<<"energy before old cell section="<<energy<<endl;
+        //cerr<<"energy before old cell section="<<energy<<endl;
 	if(oldCell){
 		//cerr<<"energy for old cell section"<<endl;
 		oldVol=oldCell->volume;
@@ -754,16 +750,15 @@ double CurvaturePlugin::changeEnergy(const Point3D &pt,const CellG *newCell,cons
 
 
 		const CellG * midCell=oldCell;
-		CellG * leftCell=0;
-		CellG * leftLeftCell=0;
-		CellG * leftLeftLeftCell=0;
+                CellG *leftCell = nullptr;
+                CellG *leftLeftCell = nullptr;
+                CellG *leftLeftLeftCell = nullptr;
 
-		CellG * rightCell=0;
-		CellG * rightRightCell=0;
-		CellG * rightRightRightCell=0;
+                CellG *rightCell = nullptr;
+                CellG *rightRightCell = nullptr;
+                CellG *rightRightRightCell = nullptr;
 
-
-		//pick neighbors of the old cell
+                //pick neighbors of the old cell
 		int count=0;
 		curvatureNeighborsTmpPtr=&curvatureTrackerAccessor.get(oldCell->extraAttribPtr)->internalCurvatureNeighbors ;
 		for (sitr=curvatureNeighborsTmpPtr->begin() ; sitr != curvatureNeighborsTmpPtr->end() ;++sitr){
@@ -1024,15 +1019,15 @@ double CurvaturePlugin::changeEnergy(const Point3D &pt,const CellG *newCell,cons
 
 
 		const CellG * midCell=newCell;
-		CellG * leftCell=0;
-		CellG * leftLeftCell=0;
-		CellG * leftLeftLeftCell=0;
+                CellG *leftCell = nullptr;
+                CellG *leftLeftCell = nullptr;
+                CellG *leftLeftLeftCell = nullptr;
 
-		CellG * rightCell=0;
-		CellG * rightRightCell=0;
-		CellG * rightRightRightCell=0;
+                CellG *rightCell = nullptr;
+                CellG *rightRightCell = nullptr;
+                CellG *rightRightRightCell = nullptr;
 
-		//pick neighbors of the new cell
+                //pick neighbors of the new cell
 		int count=0;
 		curvatureNeighborsTmpPtr=&curvatureTrackerAccessor.get(newCell->extraAttribPtr)->internalCurvatureNeighbors ;
 		for (sitr=curvatureNeighborsTmpPtr->begin() ; sitr != curvatureNeighborsTmpPtr->end() ;++sitr){

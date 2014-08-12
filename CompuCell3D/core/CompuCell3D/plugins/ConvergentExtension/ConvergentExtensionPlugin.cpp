@@ -30,8 +30,7 @@ using namespace std;
 
 #define sign(x) (((x>0)-(x<0)))
 
-ConvergentExtensionPlugin::ConvergentExtensionPlugin():xmlData(0)   {
-}
+ConvergentExtensionPlugin::ConvergentExtensionPlugin() : xmlData(nullptr) {}
 
 ConvergentExtensionPlugin::~ConvergentExtensionPlugin() {
 
@@ -86,9 +85,9 @@ void ConvergentExtensionPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitF
 	int index ;
 	alphaConvExtVec.assign(size,0.0);
 	//inserting alpha values to alphaConvExtVec;
-	for(map<std::string , double>::iterator mitr=typeNameAlphaConvExtMap.begin() ; mitr!=typeNameAlphaConvExtMap.end(); ++mitr){
-		alphaConvExtVec[automaton->getTypeId(mitr->first)]=mitr->second;
-	}
+        for (auto &elem : typeNameAlphaConvExtMap) {
+          alphaConvExtVec[automaton->getTypeId(elem.first)] = elem.second;
+        }
 
 	cerr<<"size="<<size<<endl;
 	for(int i = 0 ; i < size ; ++i){
@@ -129,8 +128,8 @@ double ConvergentExtensionPlugin::changeEnergy(const Point3D &pt,const CellG *ne
 	double nCellAlpha,cellAlpha;
 	Point3D n;
 
-	CellG *nCell=0;
-	WatchableField3D<CellG *> *fieldG =(WatchableField3D<CellG *> *) potts->getCellFieldG();
+        CellG *nCell = nullptr;
+        WatchableField3D<CellG *> *fieldG =(WatchableField3D<CellG *> *) potts->getCellFieldG();
 	Neighbor neighbor;
 	Coordinates3D<double> ptTrans=boundaryStrategy->calculatePointCoordinates(pt);
 

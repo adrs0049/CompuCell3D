@@ -170,8 +170,7 @@ void Potts3D::setNeighborOrder(unsigned int _neighborOrder){
 void Potts3D::createCellField(const Dim3D dim) {
 
 	ASSERT_OR_THROW("createCellField() cell field G already created!", !cellFieldG);
-	cellFieldG = new WatchableField3D<CellG *>(dim, 0); //added
-
+        cellFieldG = new WatchableField3D<CellG *>(dim, nullptr); // added
 }
 
 void Potts3D::resizeCellField(const Dim3D dim, Dim3D shiftVec) {
@@ -310,9 +309,9 @@ CellG * Potts3D::createCellG(const Point3D pt,long _clusterId) {
 	return cell;   
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-CellG *Potts3D::createCell(long _clusterId){	
-	CellG * cell = new CellG();
-	cell->extraAttribPtr=cellFactoryGroup.create();
+CellG *Potts3D::createCell(long _clusterId){
+  auto cell = new CellG();
+        cell->extraAttribPtr=cellFactoryGroup.create();
 	cell->id=recentlyCreatedCellId;
 	++recentlyCreatedCellId;
 
@@ -354,8 +353,8 @@ CellG * Potts3D::createCellGSpecifiedIds(const Point3D pt,long _cellId,long _clu
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // this function should be only used from PIF Initializers or when you really understand the way CC3D assigns cell ids
 CellG *Potts3D:: createCellSpecifiedIds(long _cellId,long _clusterId){
-	CellG * cell = new CellG();
-	cell->extraAttribPtr=cellFactoryGroup.create();
+  auto cell = new CellG();
+        cell->extraAttribPtr=cellFactoryGroup.create();
 	cell->id=_cellId;
     
     if (_cellId >= recentlyCreatedCellId){
@@ -391,8 +390,8 @@ CellG *Potts3D:: createCellSpecifiedIds(long _cellId,long _clusterId){
 void Potts3D::destroyCellG(CellG *cell,bool _removeFromInventory) {
 	if(cell->extraAttribPtr){
 		cellFactoryGroup.destroy(cell->extraAttribPtr);
-		cell->extraAttribPtr=0;
-	}
+                cell->extraAttribPtr = nullptr;
+        }
 	if(cell->pyAttrib && attrAdder){
 		attrAdder->destroyAttribute(cell);
 	}
@@ -401,8 +400,8 @@ void Potts3D::destroyCellG(CellG *cell,bool _removeFromInventory) {
 	if(_removeFromInventory){
 		cellInventory.removeFromInventory(cell);
 		delete cell;
-		cell=0;
-	}else{
+                cell = nullptr;
+        }else{
 		delete cell;
 	}
 }
@@ -417,10 +416,10 @@ double Potts3D::totalEnergy() {
 	for (pt.z = 0; pt.z < dim.z; pt.z++)
 		for (pt.y = 0; pt.y < dim.y; pt.y++)
 			for (pt.x = 0; pt.x < dim.x; pt.x++)
-				for (unsigned int i = 0; i < energyFunctions.size(); i++)
-					energy += energyFunctions[i]->localEnergy(pt);
+                          for (auto &elem : energyFunctions)
+                            energy += elem->localEnergy(pt);
 
-	return energy;
+        return energy;
 }
 
 
@@ -428,15 +427,15 @@ double Potts3D::changeEnergy(Point3D pt, const CellG *newCell,
 							 const CellG *oldCell) 
 {
 	double change = 0;
-	for (unsigned int i = 0; i < energyFunctions.size(); i++)
-		change += energyFunctions[i]->changeEnergy(pt, newCell, oldCell);
+        for (auto &elem : energyFunctions)
+          change += elem->changeEnergy(pt, newCell, oldCell);
 
-	return change;
+        return change;
 }
 
 void Potts3D::runSteppers(){
-	for (unsigned int j = 0; j < steppers.size(); j++)
-		steppers[j]->step();
+  for (auto &elem : steppers)
+    elem->step();
 }
 
 unsigned int Potts3D::metropolis(const unsigned int steps, const double temp) {
@@ -460,14 +459,14 @@ unsigned int Potts3D::metropolisList(const unsigned int steps, const double temp
 	if (!randNSVec.size() ||pUtils->getMaxNumberOfWorkNodesPotts() > randNSVec.size()){ //each thread will have different random number ghenerator
 		randNSVec.assign(pUtils->getMaxNumberOfWorkNodesPotts(),BasicRandomNumberGeneratorNonStatic());
 
-		for (unsigned int i=0; i <randNSVec.size() ;++i){
-			if(!sim->ppdCC3DPtr->seed){
-				srand(time(0));
-				unsigned int randomSeed=(unsigned int)rand()*((std::numeric_limits<unsigned int>::max)()-1);                
-				randNSVec[i].setSeed(randomSeed);
-			}else{
-				randNSVec[i].setSeed(sim->ppdCC3DPtr->seed);
-			}            
+                for (auto &elem : randNSVec) {
+                        if(!sim->ppdCC3DPtr->seed){
+                          srand(time(nullptr));
+                                unsigned int randomSeed=(unsigned int)rand()*((std::numeric_limits<unsigned int>::max)()-1);
+                                elem.setSeed(randomSeed);
+                        }else{
+                          elem.setSeed(sim->ppdCC3DPtr->seed);
+                        }            
 		}        
 	}
 	// Note that since user may change number of work nodes we have to monitor if the max number of work threads is greater than size of flipNeighborVec
@@ -494,13 +493,11 @@ unsigned int Potts3D::metropolisList(const unsigned int steps, const double temp
 		for (unsigned int i = 0; i < numberOfAttempts; i++) {
 
 			currentAttempt=i;
-			//run fixed steppers - they are executed regardless whether spin flip take place or not . Note, regular steopers are executed only after spin flip attepmts takes place 
-			for (unsigned int j = 0; j < fixedSteppers.size(); j++)
-				fixedSteppers[j]->step();
+			//run fixed steppers - they are executed regardless whether spin flip take place or not . Note, regular steopers are executed only after spin flip attepmts takes place
+                        for (auto &elem : fixedSteppers)
+                          elem->step();
 
-
-
-			Point3D pt;			
+                        Point3D pt;
 			// Pick a random point
 			pt.x = rand->getInteger(minCoordinates.x, maxCoordinates.x - 1);
 			pt.y = rand->getInteger(minCoordinates.y, maxCoordinates.y - 1);
@@ -597,10 +594,10 @@ unsigned int Potts3D::metropolisList(const unsigned int steps, const double temp
 
 
 			// Run steppers
-			for (unsigned int j = 0; j < steppers.size(); j++)
-				steppers[j]->step();
-		}
-	}//#pragma omp parallel 
+                        for (auto &elem : steppers)
+                          elem->step();
+                }
+	}//#pragma omp parallel
 
 	unsigned int currentStep=sim->getStep();
 	if(debugOutputFrequency && ! (currentStep % debugOutputFrequency) ){
@@ -625,14 +622,14 @@ unsigned int Potts3D::metropolisFast(const unsigned int steps, const double temp
 	if (!randNSVec.size() ||pUtils->getMaxNumberOfWorkNodesPotts() > randNSVec.size()){ //each thread will have different random number ghenerator
 		randNSVec.assign(pUtils->getMaxNumberOfWorkNodesPotts(),BasicRandomNumberGeneratorNonStatic());
 
-		for (unsigned int i=0; i <randNSVec.size() ;++i){			
-			if(!sim->ppdCC3DPtr->seed){
-				srand(time(0));
-				unsigned int randomSeed=(unsigned int)rand()*((std::numeric_limits<unsigned int>::max)()-1);                
-				randNSVec[i].setSeed(randomSeed);			
-			}else{
-				randNSVec[i].setSeed(sim->ppdCC3DPtr->seed);
-			}            
+                for (auto &elem : randNSVec) {
+                        if(!sim->ppdCC3DPtr->seed){
+                          srand(time(nullptr));
+                                unsigned int randomSeed=(unsigned int)rand()*((std::numeric_limits<unsigned int>::max)()-1);
+                                elem.setSeed(randomSeed);
+                        }else{
+                          elem.setSeed(sim->ppdCC3DPtr->seed);
+                        }            
 		}        
 	}
 
@@ -735,18 +732,11 @@ unsigned int Potts3D::metropolisFast(const unsigned int steps, const double temp
 
 				if (fixedSteppers.size()){
 #pragma omp critical
-					{			
-						//IMPORTANT: fixed steppers cause really bad performance with multiple processor runs. Currently only two of them are supported 
-						// PDESolverCaller plugin and Secretion plugin. PDESolverCaller is deprecated and Secretion plugin section that mimics functionality of PDE sovler Secretion data section is depreecated as well
-						// However Secretion plugin can be used to do "per cell" secretion (using python scripting). This will not slow down multicore simulation
+					{
+                                          for (auto &elem : fixedSteppers)
+                                            elem->step();
 
-						//cerr<<"pUtils->getCurrentWorkNodeNumber()="<<pUtils->getCurrentWorkNodeNumber()<<" currentAttempt="<<currentAttempt<<endl;
-						for (unsigned int j = 0; j < fixedSteppers.size(); j++)
-							fixedSteppers[j]->step();
-
-						++currentAttempt; //to be consistent with serial code currentAttampt has to be increamented after fixedSteppers run 
-
-
+                                                ++currentAttempt; //to be consistent with serial code currentAttampt has to be increamented after fixedSteppers run 
 					}
 				}
 
@@ -852,9 +842,9 @@ unsigned int Potts3D::metropolisFast(const unsigned int steps, const double temp
 				// Run steppers
 //#pragma omp single 
 				{
-				for (unsigned int j = 0; j < steppers.size(); j++)
-					steppers[j]->step();
-				}
+                                  for (auto &elem : steppers)
+                                    elem->step();
+                                }
 
 				//     exit(0);
 			}
@@ -907,14 +897,14 @@ unsigned int Potts3D::metropolisBoundaryWalker(const unsigned int steps, const d
 	if (!randNSVec.size() ||pUtils->getMaxNumberOfWorkNodesPotts() > randNSVec.size()){ //each thread will have different random number ghenerator
 		randNSVec.assign(pUtils->getMaxNumberOfWorkNodesPotts(),BasicRandomNumberGeneratorNonStatic());
 
-		for (unsigned int i=0; i <randNSVec.size() ;++i){
-			if(!sim->ppdCC3DPtr->seed){
-				srand(time(0));
-				unsigned int randomSeed=(unsigned int)rand()*((std::numeric_limits<unsigned int>::max)()-1);                
-				randNSVec[i].setSeed(randomSeed);
-			}else{
-				randNSVec[i].setSeed(sim->ppdCC3DPtr->seed);
-			}            
+                for (auto &elem : randNSVec) {
+                        if(!sim->ppdCC3DPtr->seed){
+                          srand(time(nullptr));
+                                unsigned int randomSeed=(unsigned int)rand()*((std::numeric_limits<unsigned int>::max)()-1);
+                                elem.setSeed(randomSeed);
+                        }else{
+                          elem.setSeed(sim->ppdCC3DPtr->seed);
+                        }            
 		}        
 	}
 
@@ -959,13 +949,11 @@ unsigned int Potts3D::metropolisBoundaryWalker(const unsigned int steps, const d
 		for (unsigned int i = 0; i < numberOfAttempts; i++) {
 
 			currentAttempt=i;
-			//run fixed steppers - they are executed regardless whether spin flip take place or not . Note, regular steopers are executed only after spin flip attepmts takes place 
-			for (unsigned int j = 0; j < fixedSteppers.size(); j++)
-				fixedSteppers[j]->step();
+			//run fixed steppers - they are executed regardless whether spin flip take place or not . Note, regular steopers are executed only after spin flip attepmts takes place
+                        for (auto &elem : fixedSteppers)
+                          elem->step();
 
-
-
-			Point3D pt;
+                        Point3D pt;
 
 			// Pick a random integer
 			boundaryPointIndex=rand->getInteger(minCoordinates.x, boundaryPointVector.size()-1);	 
@@ -1079,12 +1067,11 @@ unsigned int Potts3D::metropolisBoundaryWalker(const unsigned int steps, const d
 
 
 			// Run steppers
-			for (unsigned int j = 0; j < steppers.size(); j++)
-				steppers[j]->step();
+                        for (auto &elem : steppers)
+                          elem->step();
+                }
 
-			//     exit(0);
-		}
-	}// #pragma omp parallel
+        }// #pragma omp parallel
 
 	if(debugOutputFrequency && ! (currentStep % debugOutputFrequency) ){
 		cerr<<"Number of Attempted Energy Calculations="<<attemptedEC<<endl;
@@ -1123,25 +1110,25 @@ void Potts3D::initializeCellTypeMotility(std::vector<CellTypeMotilityData> & _ce
 
 	unsigned int typeIdMax=0;
 	//finding max typeId
-	for(int i =0 ; i < _cellTypeMotilityVector.size() ;++i ){
-		//cerr<<"CHECKING "<<_cellTypeMotilityVector[i].typeName<<endl;
-		unsigned int id=automaton->getTypeId(_cellTypeMotilityVector[i].typeName);
-		if(id>typeIdMax)
+        for (auto &elem : _cellTypeMotilityVector) {
+                //cerr<<"CHECKING "<<_cellTypeMotilityVector[i].typeName<<endl;
+          unsigned int id = automaton->getTypeId(elem.typeName);
+                if(id>typeIdMax)
 			typeIdMax=id;
 	}
 
 	cellTypeMotilityVec.assign(typeIdMax+1,0.0);
-	for(int i =0 ; i < _cellTypeMotilityVector.size() ;++i ){
-		unsigned int id = automaton->getTypeId(_cellTypeMotilityVector[i].typeName);
-		cellTypeMotilityVec[id]=_cellTypeMotilityVector[i].motility;
-	}
+        for (auto &elem : _cellTypeMotilityVector) {
+          unsigned int id = automaton->getTypeId(elem.typeName);
+          cellTypeMotilityVec[id] = elem.motility;
+        }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool Potts3D::checkIfFrozen(unsigned char _type){
-	for (unsigned int i = 0 ; i< frozenTypeVec.size(); ++i ){
-		if(frozenTypeVec[i]==_type)
-			return true;
+  for (auto &elem : frozenTypeVec) {
+    if (elem == _type)
+                        return true;
 	}
 	return false;
 }

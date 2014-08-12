@@ -121,8 +121,8 @@ namespace CompuCell3D {
 				shapeReg="";
 				offset=0.;
 				kBoltzman=1.0;
-				energyFcnParseDataPtr=0;
-				neighborOrder=1;
+                                energyFcnParseDataPtr = nullptr;
+                                neighborOrder=1;
 				massUnit=Unit("10^-15*kg");
 				lengthUnit=Unit("10^-6*m");
 				timeUnit=Unit("s");
@@ -130,16 +130,17 @@ namespace CompuCell3D {
 			virtual ~PottsParseData(){
 				if(energyFcnParseDataPtr){
 					delete energyFcnParseDataPtr;
-					energyFcnParseDataPtr=0;
-				}
+                                        energyFcnParseDataPtr = nullptr;
+                                }
 			}
 			EnergyFunctionCalculatorStatisticsParseData *getEnergyFunctionCalculatorStatisticsParseData(){
 				if(energyFcnParseDataPtr){
 					delete energyFcnParseDataPtr;
-					energyFcnParseDataPtr=0;
-				}
-				EnergyFunctionCalculatorStatisticsParseData *efcspdPtr=new EnergyFunctionCalculatorStatisticsParseData();
-				energyFcnParseDataPtr=efcspdPtr;
+                                        energyFcnParseDataPtr = nullptr;
+                                }
+                                auto efcspdPtr =
+                                    new EnergyFunctionCalculatorStatisticsParseData();
+                                energyFcnParseDataPtr=efcspdPtr;
 				return efcspdPtr;
 
 

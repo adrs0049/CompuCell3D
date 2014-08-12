@@ -41,19 +41,11 @@ using namespace std;
 
 #include "CellOrientationPlugin.h"
 
-
-
-
-CellOrientationPlugin::CellOrientationPlugin() :  potts ( 0 ),
-     simulator ( 0 ),
-     cellFieldG ( 0 ),
-     polarizationVectorAccessorPtr ( 0 ),
-     lambdaCellOrientation ( 0.0 ),
-     changeEnergyFcnPtr ( &CellOrientationPlugin::changeEnergyPixelBased ),
-     boundaryStrategy ( 0 ),
-     lambdaFlexFlag ( false )
-{
-}
+CellOrientationPlugin::CellOrientationPlugin()
+    : potts(nullptr), simulator(nullptr), cellFieldG(nullptr),
+      polarizationVectorAccessorPtr(nullptr), lambdaCellOrientation(0.0),
+      changeEnergyFcnPtr(&CellOrientationPlugin::changeEnergyPixelBased),
+      boundaryStrategy(nullptr), lambdaFlexFlag(false) {}
 
 void CellOrientationPlugin::setLambdaCellOrientation ( CellG * _cell, double _lambda )
 {

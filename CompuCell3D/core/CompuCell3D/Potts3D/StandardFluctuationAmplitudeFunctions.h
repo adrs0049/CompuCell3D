@@ -44,10 +44,10 @@ namespace CompuCell3D {
 		* @return fluctuationAmplitude - in case fluctAmpl cell attribute is set to negative number we return global temperatue as a fluctuation Amplitude.
 		*/
 
-		virtual double fluctuationAmplitude(const CellG * newCell, const CellG * oldCell);
-
-
-	};
+                virtual double
+                fluctuationAmplitude(const CellG *newCell,
+                                     const CellG *oldCell) override;
+        };
 
 	class MaxFluctuationAmplitudeFunction:public FluctuationAmplitudeFunction{
 
@@ -65,10 +65,10 @@ namespace CompuCell3D {
 		* @return fluctuationAmplitude - in case fluctAmpl cell attribute is set to negative number we return global temperatue as a fluctuation Amplitude.
 		*/
 
-		virtual double fluctuationAmplitude(const CellG * newCell, const CellG * oldCell);
-
-
-	};
+                virtual double
+                fluctuationAmplitude(const CellG *newCell,
+                                     const CellG *oldCell) override;
+        };
 
 	class ArithmeticAverageFluctuationAmplitudeFunction:public FluctuationAmplitudeFunction{
 
@@ -86,10 +86,10 @@ namespace CompuCell3D {
 		* @return fluctuationAmplitude - in case fluctAmpl cell attribute is set to negative number we return global temperatue as a fluctuation Amplitude.
 		*/
 
-		virtual double fluctuationAmplitude(const CellG * newCell, const CellG * oldCell);
-
-
-	};
+                virtual double
+                fluctuationAmplitude(const CellG *newCell,
+                                     const CellG *oldCell) override;
+        };
 
 
 };

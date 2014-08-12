@@ -18,26 +18,20 @@ using namespace CompuCell3D;
 
 #include "CellTypeMonitorPlugin.h"
 
-
-CellTypeMonitorPlugin::CellTypeMonitorPlugin():
-pUtils(0),
-lockPtr(0),
-xmlData(0) ,
-cellFieldG(0),
-boundaryStrategy(0),
-cellTypeArray(0),
-mediumType(0)
+CellTypeMonitorPlugin::CellTypeMonitorPlugin()
+    : pUtils(nullptr), lockPtr(nullptr), xmlData(nullptr), cellFieldG(nullptr),
+      boundaryStrategy(nullptr), cellTypeArray(nullptr), mediumType(0)
 
 {}
 
 CellTypeMonitorPlugin::~CellTypeMonitorPlugin() {
     pUtils->destroyLock(lockPtr);
     delete lockPtr;
-    lockPtr=0;
-    
+    lockPtr = nullptr;
+
     if (cellTypeArray){
         delete cellTypeArray;
-        cellTypeArray=0;
+        cellTypeArray = nullptr;
     }
 }
 

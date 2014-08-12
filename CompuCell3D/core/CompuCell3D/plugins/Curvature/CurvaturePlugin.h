@@ -116,17 +116,17 @@ public:
 
 
     //Plugin interface
-    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
-    virtual void extraInit(Simulator *simulator);
-    virtual void handleEvent(CC3DEvent & _event);
+    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData) override;
+    virtual void extraInit(Simulator *simulator) override;
+    virtual void handleEvent(CC3DEvent &_event) override;
 
     //EnergyFunction Interface
-    virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
+    virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
+                                const CellG *oldCell) override;
 
     // Field3DChangeWatcher interface
     virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                               CellG *oldCell);
-
+                               CellG *oldCell) override;
 
     //used to manually control parameters plasticity term for pair of cells involved
     void setPlasticityParameters(CellG * _cell1,CellG * _cell2,double _lambda, double targetDistance=0.0);
@@ -134,9 +134,11 @@ public:
     double getPlasticityParametersTargetDistance(CellG * _cell1,CellG * _cell2);
 
     //Steerable interface
-    virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-    virtual std::string steerableName();
-    virtual std::string toString();
+    virtual void update(CC3DXMLElement *_xmlData,
+                        bool _fullInitFlag = false) override;
+    virtual std::string steerableName() override;
+    virtual std::string toString() override;
+
 protected:
     int getIndex(const int type1, const int type2) const ;
 

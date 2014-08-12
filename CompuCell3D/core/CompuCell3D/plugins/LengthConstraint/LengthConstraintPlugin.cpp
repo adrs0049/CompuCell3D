@@ -42,8 +42,8 @@ using namespace std;
 
 #include "LengthConstraintPlugin.h"
 
-LengthConstraintPlugin::LengthConstraintPlugin() : xmlData(0),potts(0),changeEnergyFcnPtr(0) 
-{}
+LengthConstraintPlugin::LengthConstraintPlugin()
+    : xmlData(nullptr), potts(nullptr), changeEnergyFcnPtr(nullptr) {}
 
 LengthConstraintPlugin::~LengthConstraintPlugin() {}
 

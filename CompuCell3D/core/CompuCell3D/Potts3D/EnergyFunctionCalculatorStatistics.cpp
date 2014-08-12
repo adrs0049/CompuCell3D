@@ -27,12 +27,12 @@ EnergyFunctionCalculatorStatistics::EnergyFunctionCalculatorStatistics():EnergyF
 	NAcc=0;
 	NRej=0;
 	lastFlipAttempt=-1;
-	out=0;
-	outAccSpinFlip=0;
-	outRejSpinFlip=0;
-	outTotSpinFlip=0;
+        out = nullptr;
+        outAccSpinFlip = nullptr;
+        outRejSpinFlip = nullptr;
+        outTotSpinFlip = nullptr;
 
-	wroteHeader=false;
+        wroteHeader=false;
 	outputEverySpinFlip=false;
 	gatherResultsSpinFlip=false;
 	outputAcceptedSpinFlip=false;
@@ -56,27 +56,26 @@ EnergyFunctionCalculatorStatistics::~EnergyFunctionCalculatorStatistics(){
 	if(out){
 		out->close();
 		delete out;
-		out=0;
-
-	}
+                out = nullptr;
+        }
 
 	if(outAccSpinFlip){
 		outAccSpinFlip->close();
 		delete outAccSpinFlip;
-		outAccSpinFlip=0;
-	}
+                outAccSpinFlip = nullptr;
+        }
 
 	if(outRejSpinFlip){
 		outRejSpinFlip->close();
 		delete outRejSpinFlip;
-		outRejSpinFlip=0;
-	}
+                outRejSpinFlip = nullptr;
+        }
 
 	if(outTotSpinFlip){
 		outTotSpinFlip->close();
 		delete outTotSpinFlip;
-		outTotSpinFlip=0;
-	}
+                outTotSpinFlip = nullptr;
+        }
 
 }
 
@@ -126,9 +125,9 @@ double EnergyFunctionCalculatorStatistics::changeEnergy(Point3D &pt, const CellG
 		totEnergyDataList.push_back(lastEnergyVec); //inserting lastEnergyVec into  totEnergyVecVec - for later stdDev calculations
 
 	}else{
-		for (unsigned int i = 0; i < energyFunctions.size(); i++){
-			change += energyFunctions[i]->changeEnergy(pt, newCell, oldCell);
-			//cerr<<"CHANGE FROM ACCEPTANCE FUNCTION"<<change<<" FCNNAME="<<energyFunctionsNameVec[i]<<endl;
+          for (auto &elem : energyFunctions) {
+            change += elem->changeEnergy(pt, newCell, oldCell);
+                        //cerr<<"CHANGE FROM ACCEPTANCE FUNCTION"<<change<<" FCNNAME="<<energyFunctionsNameVec[i]<<endl;
 		}
 
 	}
@@ -334,9 +333,9 @@ void EnergyFunctionCalculatorStatistics::writeHeaderFlex(std::ofstream & _out){
 
 void EnergyFunctionCalculatorStatistics::writeDataLineFlex(std::ofstream & _out, std::vector<double> & _energies){
 
-	for(int i = 0 ; i<_energies.size() ; ++i){
-		_out<<setw(fieldWidth)<<_energies[i];
-	}
+  for (auto &_energie : _energies) {
+    _out << setw(fieldWidth) << _energie;
+        }
 	_out<<endl;
 }
 

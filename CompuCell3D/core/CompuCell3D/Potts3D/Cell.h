@@ -43,34 +43,15 @@ namespace CompuCell3D {
    class CellG{
    public:
       typedef unsigned char CellType_t;
-      CellG():
-        volume(0),
-        targetVolume(0.0),
-        lambdaVolume(0.0),
-        surface(0),
-        targetSurface(0.0),
-        lambdaSurface(0.0),
-		clusterSurface(0.0),
-		targetClusterSurface(0.0),
-		lambdaClusterSurface(0.0),
-        type(0),
-        xCM(0),yCM(0),zCM(0),
-		xCOM(0),yCOM(0),zCOM(0),
-		xCOMPrev(0),yCOMPrev(0),zCOMPrev(0),
-        iXX(0), iXY(0), iXZ(0), iYY(0), iYZ(0), iZZ(0),
-        lX(0.0),
-        lY(0.0),
-        lZ(0.0),
-        lambdaVecX(0.0),
-        lambdaVecY(0.0),
-        lambdaVecZ(0.0),
-        flag(0),
-        id(0),
-        clusterId(0),
-		fluctAmpl(-1.0),
-        extraAttribPtr(nullptr),
-        pyAttrib(0)
-      {}
+      CellG()
+          : volume(0), targetVolume(0.0), lambdaVolume(0.0), surface(0),
+            targetSurface(0.0), lambdaSurface(0.0), clusterSurface(0.0),
+            targetClusterSurface(0.0), lambdaClusterSurface(0.0), type(0),
+            xCM(0), yCM(0), zCM(0), xCOM(0), yCOM(0), zCOM(0), xCOMPrev(0),
+            yCOMPrev(0), zCOMPrev(0), iXX(0), iXY(0), iXZ(0), iYY(0), iYZ(0),
+            iZZ(0), lX(0.0), lY(0.0), lZ(0.0), lambdaVecX(0.0), lambdaVecY(0.0),
+            lambdaVecZ(0.0), flag(0), id(0), clusterId(0), fluctAmpl(-1.0),
+            extraAttribPtr(nullptr), pyAttrib(nullptr) {}
       long volume;
       float targetVolume;
       float lambdaVolume;

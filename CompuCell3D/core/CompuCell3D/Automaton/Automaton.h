@@ -59,9 +59,7 @@ namespace CompuCell3D {
     virtual void updateVariables(CellG* newCell) {}
 
     virtual void field3DChange(const Point3D &pt, CellG *newCell,
-			       CellG *oldCell);
-
-
+                               CellG *oldCell) override;
 
     virtual unsigned char getCellType(const CellG*) const =0;
     virtual std::string getTypeName(const char type) const =0;

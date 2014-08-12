@@ -19,12 +19,21 @@ namespace CompuCell3D {
 
    class FOCALPOINTPLASTICITY_EXPORT FocalPointPlasticityTrackerData{
       public:
+        FocalPointPlasticityTrackerData(CellG *_neighborAddress = nullptr,
+                                        float _lambdaDistance = 0.0,
+                                        float _targetDistance = 0.0,
+                                        float _maxDistance = 100000.0,
+                                        int _maxNumberOfJunctions = 0,
+                                        float _activationEnergy = 0.0,
+                                        int _neighborOrder = 1)
+            : neighborAddress(_neighborAddress),
+              lambdaDistance(_lambdaDistance), targetDistance(_targetDistance),
+              maxDistance(_maxDistance),
+              maxNumberOfJunctions(_maxNumberOfJunctions),
+              activationEnergy(_activationEnergy),
+              neighborOrder(_neighborOrder), anchor(false), anchorId(0) {
 
-         FocalPointPlasticityTrackerData(CellG * _neighborAddress=0,float _lambdaDistance=0.0, float _targetDistance=0.0, float _maxDistance=100000.0,int _maxNumberOfJunctions=0, float _activationEnergy=0.0,int _neighborOrder=1)
-         :neighborAddress(_neighborAddress),lambdaDistance(_lambdaDistance),targetDistance(_targetDistance),maxDistance(_maxDistance),maxNumberOfJunctions(_maxNumberOfJunctions),activationEnergy(_activationEnergy),neighborOrder(_neighborOrder),anchor(false),anchorId(0)
-          {
-			  
-			  anchorPoint=std::vector<float>(3,0.);
+                          anchorPoint=std::vector<float>(3,0.);
 		 }
 
          FocalPointPlasticityTrackerData(const FocalPointPlasticityTrackerData &fpptd) //copy constructor

@@ -65,20 +65,16 @@ namespace CompuCell3D {
 		ContactPlugin();
 		virtual ~ContactPlugin();
 		//Plugin interface
-		virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
-		virtual void extraInit(Simulator *simulator);
-		
-		
+                virtual void init(Simulator *simulator,
+                                  CC3DXMLElement *_xmlData) override;
+                virtual void extraInit(Simulator *simulator) override;
 
-		//EnergyFunction Interface
-		virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
+                //EnergyFunction Interface
+                virtual double changeEnergy(const Point3D &pt,
+                                            const CellG *newCell,
+                                            const CellG *oldCell) override;
 
-
-
-
-
-
-		double contactEnergy(const CellG *cell1, const CellG *cell2);
+                double contactEnergy(const CellG *cell1, const CellG *cell2);
 
 		/**
 		* Sets the contact energy for two cell types.  A -1 type is interpreted
@@ -89,10 +85,12 @@ namespace CompuCell3D {
 
 
 		//Steerable interface
-		virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-		virtual std::string steerableName();
-		virtual std::string toString();
-	protected:
+                virtual void update(CC3DXMLElement *_xmlData,
+                                    bool _fullInitFlag = false) override;
+                virtual std::string steerableName() override;
+                virtual std::string toString() override;
+
+        protected:
 		/**
 		* @return The index used for ordering contact energies in the map.
 		*/

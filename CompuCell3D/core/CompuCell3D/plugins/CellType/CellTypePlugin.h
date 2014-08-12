@@ -65,29 +65,28 @@ namespace CompuCell3D {
     virtual ~CellTypePlugin();
 
     ///SimObject interface
-    virtual void init(Simulator *simulator, ParseData *_pd=0);
+    virtual void init(Simulator *simulator, ParseData *_pd = nullptr);
 
-	 virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
-	 virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-   
+    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData) override;
+    virtual void update(CC3DXMLElement *_xmlData,
+                        bool _fullInitFlag = false) override;
+
     std::map<unsigned char,std::string> & getTypeNameMap(){return typeNameMap;}
     
     ///Automaton Interface
-    virtual unsigned char getCellType(const CellG*) const;
-    virtual std::string getTypeName(const char type) const;
-    virtual unsigned char getTypeId(const std::string typeName) const;
-	virtual unsigned char getMaxTypeId() const;
-    
-
+    virtual unsigned char getCellType(const CellG *) const override;
+    virtual std::string getTypeName(const char type) const override;
+    virtual unsigned char getTypeId(const std::string typeName) const override;
+    virtual unsigned char getMaxTypeId() const override;
 
     ///Begin XMLSerializable interface
     //virtual void readXML(XMLPullParser &in);
     //virtual void writeXML(XMLSerializer &out);
-    virtual std::string toString();
+    virtual std::string toString() override;
     ///End XMLSerializable interface
 
     //Steerable object interface
-    virtual std::string steerableName();
+    virtual std::string steerableName() override;
     virtual void update(ParseData *_pd, bool _fullInitFlag=false);
 
 	 

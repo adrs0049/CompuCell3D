@@ -8,7 +8,7 @@ using namespace std;
 #include "SecretionPlugin.h"
 #include "SecretionDataP.h"
 
-
+#include <string>
 
 
 std::string SecretionDataP::steerableName(){
@@ -52,13 +52,16 @@ void SecretionDataP::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 	secretionTypeNames.clear();
 	secretionOnContactTypeNames.clear();
 	constantConcentrationTypeNames.clear();
+	variableConcentrationTypeNames.clear();
 	secretionTypeIds.clear();
 	secretionOnContactTypeIds.clear();
 	constantConcentrationTypeIds.clear();
+	variableConcentrationTypeIds.clear();
 	typeIdSecrOnContactDataMap.clear();
 	typeNameSecrConstMap.clear();
 	typeNameSecrOnContactDataMap.clear();
-
+	//additionalTerm.clear();
+	typeNameSecrVarConcentrationMap.clear();
 
 	fieldName=_xmlData->getAttribute("Name");
 	if (_xmlData->findAttribute("ExtraTimesPerMC")){
@@ -158,6 +161,25 @@ void SecretionDataP::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 
 	}
 
+	CC3DXMLElementList secrVariableConcentrationXMLVec=_xmlData->getElements("VariableConcentration");
+	for(unsigned int i = 0 ; i < secrVariableConcentrationXMLVec.size() ; ++i){
+		string secreteType;
+		string secrVarExpr;
+		unsigned char typeId;
+		
+		secreteType = secrVariableConcentrationXMLVec[i]->getAttribute("Type");
+		variableConcentrationTypeNames.insert(secreteType);
+		
+		secrVarExpr = secrVariableConcentrationXMLVec[i]->getText();
+	
+		//typeNameSecrConstMap.insert(make_pair(secreteType,secrConst));
+		typeNameSecrVarConcentrationMap.insert(make_pair(secreteType,secrVarExpr));
+		additionalTerm=secrVarExpr;
+		//secretionName="Secretion";
+		secrTypesNameSet.insert("VariableConcentration");
+
+		//break; //only one secretion Data allowed
+	}	
 
 	CC3DXMLElementList uptakeXMLVec=_xmlData->getElements("Uptake");
 	for(unsigned int i = 0 ; i < uptakeXMLVec.size() ; ++i){
@@ -182,25 +204,20 @@ void SecretionDataP::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 		secrTypesNameSet.insert("Secretion");
 	}
 
-
-
-
 	active=true;
 
-	secretionFcnPtrVec.assign(secrTypesNameSet.size(),0);
-	unsigned int j=0;
-	for(set<string>::iterator sitr=secrTypesNameSet.begin() ; sitr != secrTypesNameSet.end()  ; ++sitr){
+        secretionFcnPtrVec.assign(secrTypesNameSet.size(), nullptr);
+        unsigned int j=0;
+        for (const auto &elem : secrTypesNameSet) {
 
-		if((*sitr)=="Secretion"){
-			secretionFcnPtrVec[j]=&SecretionPlugin::secreteSingleField;
+          if ((elem) == "Secretion") {
+                        secretionFcnPtrVec[j]=&SecretionPlugin::secreteSingleField;
 			++j;
-		}
-		else if((*sitr)=="SecretionOnContact"){
-			secretionFcnPtrVec[j]=&SecretionPlugin::secreteOnContactSingleField;
+          } else if ((elem) == "SecretionOnContact") {
+                        secretionFcnPtrVec[j]=&SecretionPlugin::secreteOnContactSingleField;
 			++j;
-		}
-		else if((*sitr)=="ConstantConcentration"){
-			secretionFcnPtrVec[j]=&SecretionPlugin::secreteConstantConcentrationSingleField;
+          } else if ((elem) == "ConstantConcentration") {
+                        secretionFcnPtrVec[j]=&SecretionPlugin::secreteConstantConcentrationSingleField;
 			++j;
 		}
 	}
@@ -268,3 +285,80 @@ void SecretionDataP::initialize(Automaton *_automaton){
 
 }
 
+=======
+          } else if ((elem) == "VariableConcentration") {
+                        secretionFcnPtrVec[j]=&SecretionPlugin::secreteVariableConcentrationSingleField;
+			++j;
+		}
+	}
+}
+
+void SecretionDataP::initialize(Automaton *_automaton){
+
+	typeIdSecrConstMap.clear();
+        for (auto &elem : typeNameSecrConstMap) {
+          unsigned char typeId = _automaton->getTypeId(elem.first);
+
+          typeIdSecrConstMap.insert(make_pair(typeId, elem.second));
+        }
+
+	typeIdSecrConstConstantConcentrationMap.clear();
+
+        for (auto &elem : typeNameSecrConstConstantConcentrationMap) {
+          unsigned char typeId = _automaton->getTypeId(elem.first);
+
+          typeIdSecrConstConstantConcentrationMap.insert(
+              make_pair(typeId, elem.second));
+        }
+
+	typeIdSecrVarConcentrationMap.clear();
+
+        for (auto &elem : typeNameSecrVarConcentrationMap) {
+          unsigned char typeId = _automaton->getTypeId(elem.first);
+          typeIdSecrVarConcentrationMap.insert(make_pair(typeId, elem.second));
+        }	
+	
+	typeIdSecrOnContactDataMap.clear();
+
+        for (auto &elem : typeNameSecrOnContactDataMap) {
+          unsigned char typeId = _automaton->getTypeId(elem.first);
+          SecretionOnContactDataP &secretionOnContactData = elem.second;
+
+                //translating type name to typeId in SecretionOnContactData
+          for (auto mitrSF =
+                   secretionOnContactData.contactCellMapTypeNames.begin();
+               mitrSF != secretionOnContactData.contactCellMapTypeNames.end();
+               ++mitrSF) {
+                        unsigned char typeIdSOCD=_automaton->getTypeId(mitrSF->first);
+			secretionOnContactData.contactCellMap.insert(make_pair(typeIdSOCD,mitrSF->second));
+		}
+
+		typeIdSecrOnContactDataMap.insert(make_pair(typeId,secretionOnContactData));
+
+	}
+
+        for (const auto &elem : secretionTypeNames) {
+          secretionTypeIds.insert(_automaton->getTypeId(elem));
+        }
+
+        for (const auto &elem : secretionOnContactTypeNames) {
+          secretionOnContactTypeIds.insert(_automaton->getTypeId(elem));
+        }
+
+        for (const auto &elem : constantConcentrationTypeNames) {
+          constantConcentrationTypeIds.insert(_automaton->getTypeId(elem));
+        }   
+
+
+	//uptake
+        for (const auto &elem : uptakeDataSet) {
+                // 			  (const_cast<UptakeData>(*sitr)).typeId=_automaton->getTypeId(sitr->typeName);
+          UptakeDataP ud = elem;
+          ud.typeId = _automaton->getTypeId(elem.typeName);
+
+                typeIdUptakeDataMap.insert(make_pair(ud.typeId,ud));
+	}
+
+}
+
+>>>>>>> fe1f361... run clang-modernize

@@ -58,27 +58,25 @@ namespace CompuCell3D {
   
 
     // SimObject interface
-	 virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
+    virtual void init(Simulator *simulator,
+                      CC3DXMLElement *_xmlData = nullptr) override;
 
     const LatticeMultiplicativeFactors & getLatticeMultiplicativeFactors() const {return lmf;}
     unsigned int getMaxNeighborIndex(){return maxNeighborIndex;}
 
     virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                               CellG *oldCell);
-			       
-			       
+                               CellG *oldCell) override;
+
     // Begin XMLSerializable interface
     //virtual void readXML(XMLPullParser &in);
     //virtual void writeXML(XMLSerializer &out);
     // End XMLSerializable interface
     //SteerableObject interface
-	 virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
+    virtual void update(CC3DXMLElement *_xmlData,
+                        bool _fullInitFlag = false) override;
 
-	 
-
-    virtual std::string steerableName();
-	 virtual std::string toString();
-
+    virtual std::string steerableName() override;
+    virtual std::string toString() override;
   };
 };
 #endif

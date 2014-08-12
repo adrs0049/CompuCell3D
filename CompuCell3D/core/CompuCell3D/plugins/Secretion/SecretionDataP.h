@@ -78,13 +78,10 @@ class SECRETION_EXPORT SecretionDataP: public SteerableObject{
 	  
 	  typedef void (SecretionPlugin::*secrSingleFieldFcnPtr_t)(unsigned int idx);
 
-      SecretionDataP():
-      automaton(0),
-      active(false),
-      timesPerMCS(1),
-	  useBoxWatcher(false)
-      {}
-      enum SecretionMode{SECRETION=10001,SECRETION_ON_CONTACT=10002,CONSTANT_CONCENTRATION=10003};
+          SecretionDataP()
+              : automaton(nullptr), active(false), timesPerMCS(1),
+                useBoxWatcher(false) {}
+      enum SecretionMode{SECRETION=10001,SECRETION_ON_CONTACT=10002,CONSTANT_CONCENTRATION=10003,VARIABLE_CONCENTRATION=10004};
 
 		//SecretionMode secrMode;
       void setAutomaton(Automaton * _automaton){automaton=_automaton;}
@@ -119,7 +116,7 @@ class SECRETION_EXPORT SecretionDataP: public SteerableObject{
       std::map<std::string,SecretionOnContactDataP> typeNameSecrOnContactDataMap;
       
       float getSimpleSecretionConstByTypeName(std::string _typeName){
-         std::map<std::string,float>::iterator mitr=typeNameSecrConstMap.find(_typeName);
+        auto mitr = typeNameSecrConstMap.find(_typeName);
          if(mitr!=typeNameSecrConstMap.end()){
             return mitr->second;
          }
@@ -127,7 +124,7 @@ class SECRETION_EXPORT SecretionDataP: public SteerableObject{
       }
 
       void setSimpleSecretionConstByTypeName(std::string _typeName,float _const){
-         std::map<std::string,float>::iterator mitr=typeNameSecrConstMap.find(_typeName);
+        auto mitr = typeNameSecrConstMap.find(_typeName);
          if(mitr!=typeNameSecrConstMap.end()){
             mitr->second=_const;
          }else{
@@ -142,8 +139,9 @@ class SECRETION_EXPORT SecretionDataP: public SteerableObject{
       void SecretionOnContact(std::string _secretingTypeName, std::string _onContactWithTypeName,float _secretionConst);
 
 		//steerable interface
-		virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-		virtual std::string steerableName();
+      virtual void update(CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false) override;
+      virtual std::string steerableName() override;
 
       void initialize(Automaton *_automaton);
       

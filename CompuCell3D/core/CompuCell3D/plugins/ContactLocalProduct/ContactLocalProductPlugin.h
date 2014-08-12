@@ -109,22 +109,21 @@ namespace CompuCell3D {
     DataAccessor_t * getContactProductDataAccessorPtr(){return & contactProductDataAccessor;}
 
 		//EnergyFunction Interface
-		virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
+    virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
+                                const CellG *oldCell) override;
 
-		virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
-		
+    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData) override;
 
-		virtual void extraInit(Simulator *simulator);
-        
-        virtual void handleEvent(CC3DEvent & _event);
+    virtual void extraInit(Simulator *simulator) override;
 
-
+    virtual void handleEvent(CC3DEvent &_event) override;
 
     //Steerrable interface
-	 virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-	 virtual std::string steerableName();
+    virtual void update(CC3DXMLElement *_xmlData,
+                        bool _fullInitFlag = false) override;
+    virtual std::string steerableName() override;
 
-	 virtual std::string toString();
+    virtual std::string toString() override;
 
     void setJVecValue(CellG * _cell, unsigned int _index,float _value);
     float getJVecValue(CellG * _cell, unsigned int _index);

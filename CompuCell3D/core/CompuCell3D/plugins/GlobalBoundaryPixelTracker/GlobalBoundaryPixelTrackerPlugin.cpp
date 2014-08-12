@@ -27,14 +27,15 @@ using namespace std;
 
 #include "GlobalBoundaryPixelTrackerPlugin.h"
 
-GlobalBoundaryPixelTrackerPlugin::GlobalBoundaryPixelTrackerPlugin():
-pUtils(0),lockPtr(0),simulator(0),potts(0),boundaryStrategy(0),xmlData(0),boundaryPixelSetPtr(0)    
-{}
+GlobalBoundaryPixelTrackerPlugin::GlobalBoundaryPixelTrackerPlugin()
+    : pUtils(nullptr), lockPtr(nullptr), simulator(nullptr), potts(nullptr),
+      boundaryStrategy(nullptr), xmlData(nullptr),
+      boundaryPixelSetPtr(nullptr) {}
 
 GlobalBoundaryPixelTrackerPlugin::~GlobalBoundaryPixelTrackerPlugin() {
 	pUtils->destroyLock(lockPtr);
 	delete lockPtr;
-	lockPtr=0;
+        lockPtr = nullptr;
 }
 
 
@@ -97,10 +98,9 @@ void GlobalBoundaryPixelTrackerPlugin::handleEvent(CC3DEvent & _event){
 	Dim3D oldDim = ev.oldDim;
 	Dim3D shiftVec = ev.shiftVec;
 
-	
-	for(std::set<Point3D>::iterator sitr =  boundaryPixelSetPtr->begin() ; sitr != boundaryPixelSetPtr->end() ; ++sitr){
-            
-                Point3D & pixel=const_cast<Point3D&>(*sitr);
+        for (const auto &elem : *boundaryPixelSetPtr) {
+
+          Point3D &pixel = const_cast<Point3D &>(elem);
                 pixel.x+=shiftVec.x;
                 pixel.y+=shiftVec.y;
                 pixel.z+=shiftVec.z;
@@ -161,9 +161,9 @@ void GlobalBoundaryPixelTrackerPlugin::field3DChange(const Point3D &pt, CellG *n
 			}
 		}
 		if(!keepNeighborInBoundary){
-			//handling global boundary pixel set					
-			std::set<Point3D>::iterator sitr_pt=boundaryPixelSetPtr->find(neighbor.pt);
-			ASSERT_OR_THROW("Could not find point:"+neighbor.pt+" in the set of all boundary pixels stored in Potts3D.cpp",sitr_pt!=boundaryPixelSetPtr->end());
+			//handling global boundary pixel set
+                  auto sitr_pt = boundaryPixelSetPtr->find(neighbor.pt);
+                        ASSERT_OR_THROW("Could not find point:"+neighbor.pt+" in the set of all boundary pixels stored in Potts3D.cpp",sitr_pt!=boundaryPixelSetPtr->end());
             
 			boundaryPixelSetPtr->erase(sitr_pt);
 		}

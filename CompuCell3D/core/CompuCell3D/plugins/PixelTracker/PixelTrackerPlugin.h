@@ -55,12 +55,13 @@ public:
 
     // Field3DChangeWatcher interface
     virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                               CellG *oldCell);
+                               CellG *oldCell) override;
 
     //Plugin interface
-    virtual void init(Simulator *_simulator, CC3DXMLElement *_xmlData=0);
-    virtual std::string toString();
-    virtual void handleEvent(CC3DEvent & _event);
+    virtual void init(Simulator *_simulator,
+                      CC3DXMLElement *_xmlData = nullptr) override;
+    virtual std::string toString() override;
+    virtual void handleEvent(CC3DEvent &_event) override;
 
     pixelTrackerAccessor_t * getPixelTrackerAccessorPtr() {
         return & pixelTrackerAccessor;

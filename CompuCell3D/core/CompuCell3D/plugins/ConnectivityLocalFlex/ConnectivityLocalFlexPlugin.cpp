@@ -26,8 +26,8 @@
 using namespace CompuCell3D;
 #include "ConnectivityLocalFlexPlugin.h"
 
-ConnectivityLocalFlexPlugin::ConnectivityLocalFlexPlugin() : potts ( 0 ) ,numberOfNeighbors ( 8 )
-{
+ConnectivityLocalFlexPlugin::ConnectivityLocalFlexPlugin()
+    : potts(nullptr), numberOfNeighbors(8) {
      //n.assign(numberOfNeighbors,Point3D(0,0,0)); //allocates memory for vector of neighbors points
      offsetsIndex.assign ( numberOfNeighbors,0 ); //allocates memory for vector of offsetsIndexes
 }
@@ -72,8 +72,8 @@ void ConnectivityLocalFlexPlugin::addUnique ( CellG* cell,std::vector<CellG*> & 
      // if (!cell) mediumFlag = true;
      //if (!cell) return;
      // Medium does not count
-     for ( unsigned int i = 0; i < _uniqueCells.size(); i++ ) {
-          if ( _uniqueCells[i] == cell )
+  for (auto &_uniqueCell : _uniqueCells) {
+    if (_uniqueCell == cell)
                return;
      }
      _uniqueCells.push_back ( cell );

@@ -358,9 +358,10 @@ namespace CompuCell3D {
     virtual Field3DImpl<CellG *> *getCellFieldGImpl () {return (Field3DImpl<CellG *> *)cellFieldG;}
 
     //SteerableObject interface
-    virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-    virtual std::string steerableName();
-	virtual void runSteppers();
+    virtual void update(CC3DXMLElement *_xmlData,
+                        bool _fullInitFlag = false) override;
+    virtual std::string steerableName() override;
+        virtual void runSteppers();
 	long getRecentlyCreatedClusterId(){return recentlyCreatedClusterId;}
 	long getRecentlyCreatedCellId(){return recentlyCreatedCellId;}
   };

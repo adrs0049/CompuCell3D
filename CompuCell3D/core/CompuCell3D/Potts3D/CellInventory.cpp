@@ -19,9 +19,7 @@ namespace CompuCell3D {
 	CC3DCellList::~CC3DCellList(){}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	CellInventory::CellInventory():potts(0)
-	{
-	}
+        CellInventory::CellInventory() : potts(nullptr) {}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void CellInventory::setPotts3DPtr(Potts3D *_potts){
 		potts=_potts;
@@ -90,8 +88,8 @@ namespace CompuCell3D {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// when changing  cluster id one needs to reposition the cell in the inventory - erasing previous entry for a given cell 
 	bool CellInventory::reassignClusterId(CellG * _cell, long _newClusterId){
-		cellInventoryIterator mitr = inventory.find(CellIdentifier(_cell->id,_newClusterId));
-		if(mitr==inventory.end()){ //entry with cell->id,_newClusterId does not exist
+          auto mitr = inventory.find(CellIdentifier(_cell->id, _newClusterId));
+                if(mitr==inventory.end()){ //entry with cell->id,_newClusterId does not exist
 			//////inventory.erase(CellIdentifier(_cell->id,_cell->clusterId));
 			removeFromInventory(_cell);
 			_cell->clusterId=_newClusterId;
@@ -140,8 +138,8 @@ namespace CompuCell3D {
 			if(cInvItr!=inventory.end()){
 				return cInvItr->second;
 			}else{
-				return 0;
-			}
+                          return nullptr;
+                        }
 	}
 
 	CellG * CellInventory::getCellByIds(long _id,long _clusterId){
@@ -152,15 +150,18 @@ namespace CompuCell3D {
 		if(cInvItr!=inventory.end()){
 			return cInvItr->second;
 		}else{
-			return 0;
-		}
+                  return nullptr;
+                }
 
 	}
 
 CellG * CellInventory::attemptFetchingCellById(long _id){
 
-	cellInventoryIterator upperMitr=inventory.upper_bound(CellIdentifier(_id,std::numeric_limits<long>::max())); //upperMitr will point to location whose key is 'greater' than searched key
-	if (upperMitr!=inventory.begin()){
+  auto upperMitr = inventory.upper_bound(CellIdentifier(
+      _id, std::numeric_limits<long>::max())); // upperMitr will point to
+                                               // location whose key is
+                                               // 'greater' than searched key
+        if (upperMitr!=inventory.begin()){
 		--upperMitr;
 	}
 	//cerr<<"trying to get id="<<_id<<endl;
@@ -169,8 +170,8 @@ CellG * CellInventory::attemptFetchingCellById(long _id){
 	if (upperMitr->first.cellId==_id){
 		return upperMitr->second;
 	}else{
-		return 0;
-		//--upperMitr;
+          return nullptr;
+                //--upperMitr;
 		//if (upperMitr->first.cellId==_id){
 		//	return upperMitr->second;
 		//}else{
@@ -210,9 +211,9 @@ CC3DCellList CellInventory::getClusterCells(long _clusterId){
 		vector<int> & typeVec=*_typeVecPtr;
 		for( cInvItr = cellInventoryBegin() ; cInvItr !=cellInventoryEnd() ; ++cInvItr ){
 			cell=getCell(cInvItr);
-			for (unsigned int i = 0 ; i < typeVec.size(); ++i){
-				if (cell->type==typeVec[i]){
-					_inventoryByTypePtr->insert(make_pair(cell->id,cell));
+                        for (auto &elem : typeVec) {
+                          if (cell->type == elem) {
+                                        _inventoryByTypePtr->insert(make_pair(cell->id,cell));
 					break;
 				}
 
@@ -224,14 +225,8 @@ CC3DCellList CellInventory::getClusterCells(long _clusterId){
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
 
-
-	CompartmentInventory::CompartmentInventory():
-	potts(0)
-	{
-		
-	}
+        CompartmentInventory::CompartmentInventory() : potts(nullptr) {}
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -247,10 +242,16 @@ CC3DCellList CellInventory::getClusterCells(long _clusterId){
 	void CompartmentInventory::addToInventory(CellG * _cell){
 		if (!_cell)
 			return;
-		compartmentInventoryIterator mitr=inventory.find(_cell->clusterId); //see if we have this clusterId in inventory already
-		if(mitr!=inventory.end()){//cluster already exists
-			compartmentListIterator msitr=mitr->second.find(_cell->id);//see if for this cluster id list of cells contains current cell id
-			if (msitr!=mitr->second.end()){ //cell of this id already belongs to a cluster - no need to reinsert it
+                auto mitr = inventory.find(_cell->clusterId); // see if we have
+                                                              // this clusterId
+                                                              // in inventory
+                                                              // already
+                if(mitr!=inventory.end()){//cluster already exists
+                  auto msitr =
+                      mitr->second.find(_cell->id); // see if for this cluster
+                                                    // id list of cells contains
+                                                    // current cell id
+                        if (msitr!=mitr->second.end()){ //cell of this id already belongs to a cluster - no need to reinsert it
 				return;
 			}else{//have to insert new cell id to the list of cells of the cluster
 				mitr->second.insert(make_pair(_cell->id,_cell));
@@ -271,10 +272,16 @@ CC3DCellList CellInventory::getClusterCells(long _clusterId){
 	void CompartmentInventory::removeFromInventory(CellG * _cell){
 		if (!_cell)
 			return;
-		compartmentInventoryIterator mitr=inventory.find(_cell->clusterId); //see if we have this clusterId in inventory already
-		if(mitr!=inventory.end()){//cluster already exists
-			compartmentListIterator msitr=mitr->second.find(_cell->id);//see if for this cluster id list of cells contains current cell id
-			if (msitr!=mitr->second.end()){ //cell of this id  belongs to a cluster - will erase it 
+                auto mitr = inventory.find(_cell->clusterId); // see if we have
+                                                              // this clusterId
+                                                              // in inventory
+                                                              // already
+                if(mitr!=inventory.end()){//cluster already exists
+                  auto msitr =
+                      mitr->second.find(_cell->id); // see if for this cluster
+                                                    // id list of cells contains
+                                                    // current cell id
+                        if (msitr!=mitr->second.end()){ //cell of this id  belongs to a cluster - will erase it 
 				mitr->second.erase(_cell->id);
 				if(!mitr->second.size()){//if there is no more cells in the cluster remove the reference to cluster too
 					inventory.erase(mitr);
@@ -303,12 +310,12 @@ CC3DCellList CellInventory::getClusterCells(long _clusterId){
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	CC3DCellList CompartmentInventory::getClusterCells(long _clusterId){
 		using namespace std;
-		compartmentInventoryIterator mitr=inventory.find(_clusterId);
-		if(mitr!=inventory.end()){
+                auto mitr = inventory.find(_clusterId);
+                if(mitr!=inventory.end()){
 			CC3DCellList _cellVec;
-			for(compartmentListIterator msitr=mitr->second.begin() ; msitr!=mitr->second.end() ; ++msitr){
-				_cellVec.push_back(msitr->second);
-			}
+                        for (auto &elem : mitr->second) {
+                          _cellVec.push_back(elem.second);
+                        }
 			return _cellVec;
 		}
 		return CC3DCellList ();

@@ -32,17 +32,12 @@ using namespace std;
 
 #include "ElasticityPlugin.h"
 
-ElasticityPlugin::ElasticityPlugin() : 
-cellFieldG(0), 
-pluginName("Elasticity"),
-targetLengthElasticity(0.0),
-lambdaElasticity(0.0),
-maxLengthElasticity(100000000000.0),
-diffEnergyFcnPtr(&ElasticityPlugin::diffEnergyGlobal),
-boundaryStrategy(0),
-simulator(0),
-potts(0)
-{}
+ElasticityPlugin::ElasticityPlugin()
+    : cellFieldG(nullptr), pluginName("Elasticity"),
+      targetLengthElasticity(0.0), lambdaElasticity(0.0),
+      maxLengthElasticity(100000000000.0),
+      diffEnergyFcnPtr(&ElasticityPlugin::diffEnergyGlobal),
+      boundaryStrategy(nullptr), simulator(nullptr), potts(nullptr) {}
 
 ElasticityPlugin::~ElasticityPlugin() {
 

@@ -34,7 +34,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <omp.h>
+// #include <omp.h>
 //#define NUMBER_OF_THREADS 4
 
 

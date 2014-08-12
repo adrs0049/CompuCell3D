@@ -20,19 +20,14 @@ using namespace CompuCell3D;
 #include "CompuCell3D/plugins/PixelTracker/PixelTrackerPlugin.h"
 #include "CompuCell3D/plugins/PixelTracker/PixelTracker.h"
 
-
-ClusterSurfaceTrackerPlugin::ClusterSurfaceTrackerPlugin():
-pUtils(0),
-lockPtr(0),
-xmlData(0),
-cellFieldG(0),
-maxNeighborIndex(0)
-{}
+ClusterSurfaceTrackerPlugin::ClusterSurfaceTrackerPlugin()
+    : pUtils(nullptr), lockPtr(nullptr), xmlData(nullptr), cellFieldG(nullptr),
+      maxNeighborIndex(0) {}
 
 ClusterSurfaceTrackerPlugin::~ClusterSurfaceTrackerPlugin() {
     pUtils->destroyLock(lockPtr);
     delete lockPtr;
-    lockPtr=0;
+    lockPtr = nullptr;
 }
 
 void ClusterSurfaceTrackerPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
@@ -83,7 +78,7 @@ void ClusterSurfaceTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCel
     double distance;
     double oldDiff = 0.;
     double newDiff = 0.;
-    CellG *nCell = 0;
+    CellG *nCell = nullptr;
     Neighbor neighbor; 
 
    for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx )
@@ -179,14 +174,14 @@ void ClusterSurfaceTrackerPlugin::updateClusterSurface(long _clusterId){
     for (int i =0 ; i< compartments.size() ; ++i){
 		CellG *cell=compartments[i];
 		
-		set<PixelTrackerData> & cellPixels=pixelTrackerAccessorPtr->get(cell->extraAttribPtr)->pixelSet;		
-		for (set<PixelTrackerData>::iterator sitr=cellPixels.begin() ; sitr != cellPixels.end(); ++sitr){
+		set<PixelTrackerData> & cellPixels=pixelTrackerAccessorPtr->get(cell->extraAttribPtr)->pixelSet;
+                for (const auto &cellPixel : cellPixels) {
 
-
-		   Neighbor neighbor;
+                   Neighbor neighbor;
 		   for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
-			  neighbor=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(sitr->pixel),nIdx);
-			  if(!neighbor.distance){
+                     neighbor = boundaryStrategy->getNeighborDirect(
+                         const_cast<Point3D &>(cellPixel.pixel), nIdx);
+                          if(!neighbor.distance){
 			  //if distance is 0 then the neighbor returned is invalid
 			  continue;
 			  }

@@ -25,14 +25,14 @@
 
 
 #include <string>
-
+#include <utility>
 
 namespace CompuCell3D {
 
   class ParseData{
       public:
-         ParseData(std::string _moduleName=""):moduleName(_moduleName),frequency(1)
-         {}
+        ParseData(std::string _moduleName = "")
+            : moduleName(std::move(_moduleName)), frequency(1) {}
          std::string moduleName;
          unsigned int frequency;
          void Frequency(unsigned int _frequency){frequency=_frequency;}

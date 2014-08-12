@@ -47,15 +47,14 @@ namespace CompuCell3D {
 	ParallelUtilsOpenMP * pUtils;
 	
   public:
-	CustomAcceptanceFunction():simulator(0),pUtils(0) {}
-	//AcceptanceFunction interface
-    virtual double accept(const double temp, const double change);
+    CustomAcceptanceFunction() : simulator(nullptr), pUtils(nullptr) {}
+        //AcceptanceFunction interface
+        virtual double accept(const double temp, const double change) override;
 
-    
-	virtual void setOffset(double _offset){};
-	virtual void setK(double _k){};
+        virtual void setOffset(double _offset) override{};
+        virtual void setK(double _k) override{};
 
-	void initialize(Simulator *_sim);
+        void initialize(Simulator *_sim);
 	void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
 	
 	

@@ -68,17 +68,20 @@ namespace CompuCell3D {
 		virtual ~OrientedContactPlugin();
 
 		//EnergyFunction interface
-		virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
-			const CellG *oldCell);
-		//Plugin interface 
-		virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-		virtual void extraInit(Simulator *simulator);
-		virtual std::string toString();
+                virtual double changeEnergy(const Point3D &pt,
+                                            const CellG *newCell,
+                                            const CellG *oldCell) override;
+                //Plugin interface
+                virtual void init(Simulator *simulator,
+                                  CC3DXMLElement *_xmlData = nullptr) override;
+                virtual void extraInit(Simulator *simulator) override;
+                virtual std::string toString() override;
 
-		//Steerrable interface
-		virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-		virtual std::string steerableName();
-		//Energy Function Methods
+                //Steerrable interface
+                virtual void update(CC3DXMLElement *_xmlData,
+                                    bool _fullInitFlag = false) override;
+                virtual std::string steerableName() override;
+                //Energy Function Methods
 
 		double getOrientation(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
 		double getMediumOrientation(const Point3D &pt, const CellG *newCell, const CellG *oldCell);

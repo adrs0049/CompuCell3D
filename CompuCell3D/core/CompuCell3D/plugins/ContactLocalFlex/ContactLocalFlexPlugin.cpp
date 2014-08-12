@@ -30,21 +30,16 @@ using namespace std;
 
 #include "ContactLocalFlexPlugin.h"
 
-ContactLocalFlexPlugin::ContactLocalFlexPlugin():
-    pUtils(0),
-    lockPtr(0),
-    depth(1),
-    weightDistance(false),
-    boundaryStrategy(0),
-    xmlData(0)
-{
+ContactLocalFlexPlugin::ContactLocalFlexPlugin()
+    : pUtils(nullptr), lockPtr(nullptr), depth(1), weightDistance(false),
+      boundaryStrategy(nullptr), xmlData(nullptr) {
     initializadContactData=false;
 }
 
 ContactLocalFlexPlugin::~ContactLocalFlexPlugin() {
     pUtils->destroyLock(lockPtr);
     delete lockPtr;
-    lockPtr=0;
+    lockPtr = nullptr;
 }
 
 void ContactLocalFlexPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
@@ -82,7 +77,7 @@ double ContactLocalFlexPlugin::changeEnergy(const Point3D &pt,
     double energy = 0;
     Point3D n;
 
-    CellG *nCell=0;
+    CellG *nCell = nullptr;
     WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
     Neighbor neighbor;
 
@@ -96,7 +91,7 @@ double ContactLocalFlexPlugin::changeEnergy(const Point3D &pt,
             }
             nCell = fieldG->get(neighbor.pt);
             if(nCell!=oldCell) {
-                if((nCell != 0) && (oldCell != 0)) {
+              if ((nCell != nullptr) && (oldCell != nullptr)) {
                     if((nCell->clusterId) != (oldCell->clusterId)) {
                         energy -= contactEnergy(oldCell,nCell)/ neighbor.distance;
                     }
@@ -105,7 +100,7 @@ double ContactLocalFlexPlugin::changeEnergy(const Point3D &pt,
                 }
             }
             if(nCell!=newCell) {
-                if((newCell != 0) && (nCell != 0)) {
+              if ((newCell != nullptr) && (nCell != nullptr)) {
                     if((newCell->clusterId) != (nCell->clusterId)) {
                         energy += contactEnergy(newCell,nCell)/ neighbor.distance;
                     }
@@ -130,7 +125,7 @@ double ContactLocalFlexPlugin::changeEnergy(const Point3D &pt,
 
             nCell = fieldG->get(neighbor.pt);
             if(nCell!=oldCell) {
-                if((nCell != 0) && (oldCell != 0)) {
+              if ((nCell != nullptr) && (oldCell != nullptr)) {
                     if((nCell->clusterId) != (oldCell->clusterId)) {
                         energy -= contactEnergy(oldCell,nCell);
                     }
@@ -142,7 +137,7 @@ double ContactLocalFlexPlugin::changeEnergy(const Point3D &pt,
             }
 
             if(nCell!=newCell) {
-                if((newCell != 0) && (nCell != 0)) {
+              if ((newCell != nullptr) && (nCell != nullptr)) {
                     if((newCell->clusterId) != (nCell->clusterId)) {
                         energy += contactEnergy(newCell,nCell);
                     }
@@ -175,7 +170,7 @@ void ContactLocalFlexPlugin::setContactEnergy(const string typeName1,
 
     int index = getIndex(type1, type2);
 
-    contactEnergies_t::iterator it = contactEnergies.find(index);
+    auto it = contactEnergies.find(index);
     ASSERT_OR_THROW(string("Contact energy for ") + typeName1 + " " + typeName2 +
                     " already set!", it == contactEnergies.end());
 
@@ -207,7 +202,7 @@ double ContactLocalFlexPlugin::contactEnergy(const CellG *cell1, const CellG *ce
 
     clfdObj.neighborAddress=neighbor;
 
-    set<ContactLocalFlexData>::iterator sitrCD=clfdSet.find(clfdObj);
+    auto sitrCD = clfdSet.find(clfdObj);
 
     if( sitrCD != clfdSet.end() ) {
         //cerr<<"\t retrieving cell->type="<<(int)cell->type<<" neighbor->type="<<(neighbor? (int)neighbor->type:0)<<" energy="<<sitrCD->J<<endl;

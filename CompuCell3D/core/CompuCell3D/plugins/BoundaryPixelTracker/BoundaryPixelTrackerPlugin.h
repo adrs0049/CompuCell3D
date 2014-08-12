@@ -68,21 +68,21 @@ class BOUNDARYPIXELTRACKER_EXPORT BoundaryPixelTrackerPlugin : public Plugin, pu
       
       // Field3DChangeWatcher interface
       virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                                 CellG *oldCell);
+                                 CellG *oldCell) override;
 
-      
-		//Plugin interface 
-		virtual void init(Simulator *_simulator, CC3DXMLElement *_xmlData=0);
-		virtual void extraInit(Simulator *_simulators);
-		virtual void handleEvent(CC3DEvent & _event);
+                //Plugin interface
+      virtual void init(Simulator *_simulator,
+                        CC3DXMLElement *_xmlData = nullptr) override;
+      virtual void extraInit(Simulator *_simulators) override;
+      virtual void handleEvent(CC3DEvent &_event) override;
 
-		//Steerable interface
-		virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-		virtual std::string steerableName();
-		virtual std::string toString();
+                //Steerable interface
+      virtual void update(CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false) override;
+      virtual std::string steerableName() override;
+      virtual std::string toString() override;
 
-
-		TrackerAccessor_t * getBoundaryPixelTrackerAccessorPtr(){return & boundaryPixelTrackerAccessor;}
+                TrackerAccessor_t * getBoundaryPixelTrackerAccessorPtr(){return & boundaryPixelTrackerAccessor;}
 		//had to include this function to get set inereation working properly with Python , and Player that has restart capabilities
 		BoundaryPixelTrackerData * getBoundaryPixelTrackerData(BoundaryPixelTrackerData * _psd){return _psd;}
 

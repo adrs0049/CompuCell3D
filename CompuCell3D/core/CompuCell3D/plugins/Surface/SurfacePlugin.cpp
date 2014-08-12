@@ -149,8 +149,9 @@ void SurfacePlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 
 					surfaceEnergyParamVectorTmp.push_back(surParam);				
 				}
-				vector<int>::iterator pos=max_element(typeIdVec.begin(),typeIdVec.end());
-				int maxTypeId=*pos;
+                                auto pos = max_element(typeIdVec.begin(),
+                                                       typeIdVec.end());
+                                int maxTypeId=*pos;
 				surfaceEnergyParamVector.assign(maxTypeId+1,SurfaceEnergyParam());
 				for (int i = 0 ; i < surfaceEnergyParamVectorTmp.size() ; ++i){
 					surfaceEnergyParamVector[typeIdVec[i]]=surfaceEnergyParamVectorTmp[i];

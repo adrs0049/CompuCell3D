@@ -26,15 +26,10 @@ using namespace std;
 
 #include "ElasticityTrackerPlugin.h"
 
-ElasticityTrackerPlugin::ElasticityTrackerPlugin() :
-     pUtils ( 0 ),
-     lockPtr ( 0 ),
-     cellFieldG ( 0 ),
-     initialized ( false ),
-     maxNeighborIndex ( 0 ),
-     boundaryStrategy ( 0 ),
-     manualInit ( false ),
-     xmlData ( 0 )
+ElasticityTrackerPlugin::ElasticityTrackerPlugin()
+    : pUtils(nullptr), lockPtr(nullptr), cellFieldG(nullptr),
+      initialized(false), maxNeighborIndex(0), boundaryStrategy(nullptr),
+      manualInit(false), xmlData(nullptr)
 
 {}
 
@@ -42,7 +37,7 @@ ElasticityTrackerPlugin::~ElasticityTrackerPlugin()
 {
      pUtils->destroyLock ( lockPtr );
      delete lockPtr;
-     lockPtr=0;
+     lockPtr = nullptr;
 }
 
 
@@ -92,8 +87,8 @@ void ElasticityTrackerPlugin::extraInit ( Simulator *_simulator )
 
      Automaton * automaton=simulator->getPotts()->getAutomaton();
      // Initializing set of elasticitytypes
-     for ( set<string>::iterator sitr = elasticityTypesNames.begin() ; sitr != elasticityTypesNames.end() ; ++sitr ) {
-          elasticityTypes.insert ( automaton->getTypeId ( *sitr ) );
+     for (const auto &elem : elasticityTypesNames) {
+       elasticityTypes.insert(automaton->getTypeId(elem));
      }
 
      if ( xmlData->getFirstElement ( "ManualInitialization" ) ) {
@@ -152,7 +147,7 @@ void ElasticityTrackerPlugin::initializeElasticityNeighborList()
      CellG* nCell;
      Neighbor neighbor;
      set<ElasticityTrackerData> * elasticityNeighborsTmpPtr;
-     set<unsigned char>::iterator endSitr=elasticityTypes.end();
+     auto endSitr = elasticityTypes.end();
 
      for ( unsigned int x =0 ; x< fieldDim.x ; ++x )
           for ( unsigned int y =0 ; y< fieldDim.y ; ++y )
@@ -240,7 +235,7 @@ ElasticityTrackerData * ElasticityTrackerPlugin::findTrackerData ( CellG * _cell
           if ( sitr!=elasticityNeighborsTmpPtr1->end() ) {
                return const_cast<ElasticityTrackerData *> ( & ( *sitr ) );
           } else {
-               return 0;
+            return nullptr;
           }
 
      }

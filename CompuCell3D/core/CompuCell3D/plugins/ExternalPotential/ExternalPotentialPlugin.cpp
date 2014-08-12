@@ -20,8 +20,9 @@ using namespace std;
 namespace CompuCell3D {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	ExternalPotentialPlugin::ExternalPotentialPlugin():lambdaVec(Coordinates3D<float>(0.,0.,0.)),xmlData(0),boundaryStrategy(0)
-{}
+ExternalPotentialPlugin::ExternalPotentialPlugin()
+    : lambdaVec(Coordinates3D<float>(0., 0., 0.)), xmlData(nullptr),
+      boundaryStrategy(nullptr) {}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ExternalPotentialPlugin::~ExternalPotentialPlugin()
 {
@@ -165,8 +166,9 @@ void ExternalPotentialPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFla
 
 					externalPotentialParamVectorTmp.push_back(extPotentialParam);				
 				}
-				vector<int>::iterator pos=max_element(typeIdVec.begin(),typeIdVec.end());
-				int maxTypeId=*pos;
+                                auto pos = max_element(typeIdVec.begin(),
+                                                       typeIdVec.end());
+                                int maxTypeId=*pos;
 				externalPotentialParamVector.assign(maxTypeId+1,ExternalPotentialParam());
 				for (int i = 0 ; i < externalPotentialParamVectorTmp.size() ; ++i){
 					externalPotentialParamVector[typeIdVec[i]]=externalPotentialParamVectorTmp[i];

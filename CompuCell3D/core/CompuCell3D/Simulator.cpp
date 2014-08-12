@@ -138,9 +138,9 @@ void Simulator::setOutputRedirectionTarget(long  _ptr)
 		return;
 	}
 
-	if (!_ptr){ //do not output anything at all		
-		cerr.rdbuf(0);	
-		return;
+	if (!_ptr){ //do not output anything at all
+          cerr.rdbuf(nullptr);
+                return;
 	}
 
 	qStreambufPtr = new QTextEditBuffer;
@@ -533,8 +533,8 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
 	if (!ppdCC3DPtr)
 	{
 		delete ppdCC3DPtr;
-		ppdCC3DPtr=0;
-	}
+                ppdCC3DPtr = nullptr;
+        }
 
 	ppdCC3DPtr= new PottsParseData();
 
@@ -623,8 +623,8 @@ void Simulator::initializePottsCC3D(CC3DXMLElement * _xmlData)
 
 	if(!_xmlData->getFirstElement("RandomSeed"))
 	{
-		srand((unsigned int)time(0));
-		unsigned int randomSeed=(unsigned int)rand()*((std::numeric_limits<unsigned int>::max)()-1);
+          srand((unsigned int)time(nullptr));
+                unsigned int randomSeed=(unsigned int)rand()*((std::numeric_limits<unsigned int>::max)()-1);
 
 		BasicRandomNumberGenerator *rand = BasicRandomNumberGenerator::getInstance();
 		rand->setSeed(randomSeed);

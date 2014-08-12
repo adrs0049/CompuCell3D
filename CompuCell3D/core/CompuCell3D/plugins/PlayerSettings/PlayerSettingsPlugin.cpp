@@ -28,8 +28,9 @@ std::string PlayerSettingsPlugin::steerableName(){
   return toString();
 }
 
-PlayerSettingsPlugin::PlayerSettingsPlugin():xmlData(0), playerSettingsPtr(0) {
-	playerSettingsPtr=&playerSettings;
+PlayerSettingsPlugin::PlayerSettingsPlugin()
+    : xmlData(nullptr), playerSettingsPtr(nullptr) {
+        playerSettingsPtr=&playerSettings;
 }
 
 PlayerSettingsPlugin::~PlayerSettingsPlugin() {}
@@ -429,8 +430,9 @@ void PlayerSettingsPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
       vector<string> typesInvisiblein3DVector; 
       parseStringIntoList(typesInvisibleIn3DString,typesInvisiblein3DVector,",");
 
-      for(unsigned int i = 0 ; i < typesInvisiblein3DVector.size() ; ++i){
-         playerSettings.types3DInvisible.push_back((unsigned short)BasicString::parseUInteger(typesInvisiblein3DVector[i]));
+      for (auto &elem : typesInvisiblein3DVector) {
+        playerSettings.types3DInvisible.push_back(
+            (unsigned short)BasicString::parseUInteger(elem));
       }
 
       playerSettings.types3DInvisibleFlag=true;

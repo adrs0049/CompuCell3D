@@ -39,11 +39,13 @@ namespace CompuCell3D {
     Simulator * simulator;
     ParseData * pd;
   public:
-    SimObject() : simulator(0),pd(0) {}
+    SimObject() : simulator(nullptr), pd(nullptr) {}
     virtual ~SimObject() {}
 
-    
-    virtual void init(Simulator *simulator,  CC3DXMLElement * _xmlData=0) {this->simulator = simulator;}
+    virtual void init(Simulator *simulator,
+                      CC3DXMLElement *_xmlData = nullptr) {
+      this->simulator = simulator;
+    }
     virtual void extraInit(Simulator *simulator){this->simulator = simulator;}
     virtual std::string toString(){return "SimObject";}
     virtual ParseData * getParseData(){return pd;}

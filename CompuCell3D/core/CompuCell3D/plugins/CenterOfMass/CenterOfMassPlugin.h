@@ -98,19 +98,20 @@ namespace CompuCell3D {
     // BCGChangeWatcher interface
      void field3DCheck(const Point3D &pt, CellG *newCell,
                                 CellG *oldCell);
-	 virtual void handleEvent(CC3DEvent & _event);
+     virtual void handleEvent(CC3DEvent &_event) override;
 
-	//void updateCOMsAfterLatticeShift(Dim3D _shiftVec);
+        //void updateCOMsAfterLatticeShift(Dim3D _shiftVec);
     // SimObject interface
     //virtual void init(Simulator *simulator, ParseData *_pd=0);
-	 virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
+     virtual void init(Simulator *simulator,
+                       CC3DXMLElement *_xmlData = nullptr) override;
 
     // BCGChangeWatcher interface
-    virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                                CellG *oldCell);
+     virtual void field3DChange(const Point3D &pt, CellG *newCell,
+                                CellG *oldCell) override;
 
-   virtual std::string toString();
-	virtual std::string steerableName();
+     virtual std::string toString() override;
+     virtual std::string steerableName() override;
   };
 };
 #endif

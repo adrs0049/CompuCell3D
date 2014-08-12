@@ -16,14 +16,10 @@ using namespace std;
 
 #include "FieldSecretor.h"
 
-FieldSecretor::FieldSecretor():
-concentrationFieldPtr(0),
-boundaryPixelTrackerPlugin(0),
-pixelTrackerPlugin(0),
-boundaryStrategy(0),
-maxNeighborIndex(0),
-cellFieldG(0)
-{}
+FieldSecretor::FieldSecretor()
+    : concentrationFieldPtr(nullptr), boundaryPixelTrackerPlugin(nullptr),
+      pixelTrackerPlugin(nullptr), boundaryStrategy(nullptr),
+      maxNeighborIndex(0), cellFieldG(nullptr) {}
 
 FieldSecretor::~FieldSecretor()
 {}
@@ -39,11 +35,11 @@ bool FieldSecretor::_secreteInsideCell(CellG * _cell, float _amount){
 	}
 	BasicClassAccessor<PixelTracker> *pixelTrackerAccessorPtr=pixelTrackerPlugin->getPixelTrackerAccessorPtr();
 	set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessorPtr->get(_cell->extraAttribPtr)->pixelSet;
-	for (set<PixelTrackerData>::iterator sitr=pixelSetRef.begin() ; sitr!=pixelSetRef.end(); ++sitr){		
+        for (const auto &elem : pixelSetRef) {
 
-		concentrationFieldPtr->set(sitr->pixel,concentrationFieldPtr->get(sitr->pixel)+_amount);
-
-	}
+          concentrationFieldPtr->set(
+              elem.pixel, concentrationFieldPtr->get(elem.pixel) + _amount);
+        }
 
 	return true;
 }
@@ -58,12 +54,11 @@ bool FieldSecretor::_secreteInsideCellAtBoundary(CellG * _cell, float _amount){
 
 	std::set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessorPtr->get(_cell->extraAttribPtr)->pixelSet;
 
+        for (const auto &elem : pixelSetRef) {
 
-	for (set<BoundaryPixelTrackerData>::iterator sitr=pixelSetRef.begin() ; sitr!=pixelSetRef.end(); ++sitr){		
-
-		concentrationFieldPtr->set(sitr->pixel,concentrationFieldPtr->get(sitr->pixel)+_amount);
-
-	}
+          concentrationFieldPtr->set(
+              elem.pixel, concentrationFieldPtr->get(elem.pixel) + _amount);
+        }
 
 	return true;
 
@@ -83,15 +78,16 @@ bool FieldSecretor::_secreteInsideCellAtBoundaryOnContactWith(CellG * _cell, flo
 
 	Point3D nPt;
 
-	CellG *nCell=0;
+        CellG *nCell = nullptr;
 
-	Neighbor neighbor;
+        Neighbor neighbor;
 
-	for (set<BoundaryPixelTrackerData>::iterator sitr=pixelSetRef.begin() ; sitr!=pixelSetRef.end(); ++sitr){	
-		
-		for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
-			neighbor=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(sitr->pixel),nIdx);
-			if(!neighbor.distance){
+        for (const auto &elem : pixelSetRef) {
+
+                for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
+                  neighbor = boundaryStrategy->getNeighborDirect(
+                      const_cast<Point3D &>(elem.pixel), nIdx);
+                        if(!neighbor.distance){
 				//if distance is 0 then the neighbor returned is invalid
 				continue;
 			}
@@ -100,15 +96,19 @@ bool FieldSecretor::_secreteInsideCellAtBoundaryOnContactWith(CellG * _cell, flo
 			nCell = cellFieldG->get(neighbor.pt);
 			if(nCell!=_cell && !nCell && onContactSet.find(0)!=onContactSet.end()){
 				//user requested secrete on contact with medium and we found medium pixel
-				concentrationFieldPtr->set(sitr->pixel,concentrationFieldPtr->get(sitr->pixel)+_amount);
-				break; //after secreting do not try to secrete more
+                          concentrationFieldPtr->set(
+                              elem.pixel,
+                              concentrationFieldPtr->get(elem.pixel) + _amount);
+                                break; //after secreting do not try to secrete more
 			}
 			
 			if (nCell!=_cell && nCell && onContactSet.find(nCell->type)!=onContactSet.end() )
 			{
-				//user requested secretion on contact with cell type whose pixel we have just found 
-				concentrationFieldPtr->set(sitr->pixel,concentrationFieldPtr->get(sitr->pixel)+_amount);
-				break;//after secreting do not try to secrete more
+				//user requested secretion on contact with cell type whose pixel we have just found
+                          concentrationFieldPtr->set(
+                              elem.pixel,
+                              concentrationFieldPtr->get(elem.pixel) + _amount);
+                                break;//after secreting do not try to secrete more
 			}
 
 		}
@@ -132,18 +132,18 @@ bool FieldSecretor::_secreteOutsideCellAtBoundary(CellG * _cell, float _amount){
 
 	Point3D nPt;
 
-	CellG *nCell=0;
+        CellG *nCell = nullptr;
 
-	Neighbor neighbor;
+        Neighbor neighbor;
 
 	set<FieldSecretorPixelData> visitedPixels;
 
-	for (set<BoundaryPixelTrackerData>::iterator sitr=pixelSetRef.begin() ; sitr!=pixelSetRef.end(); ++sitr){		
+        for (const auto &elem : pixelSetRef) {
 
-
-		for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
-			neighbor=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(sitr->pixel),nIdx);
-			if(!neighbor.distance){
+                for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
+                  neighbor = boundaryStrategy->getNeighborDirect(
+                      const_cast<Point3D &>(elem.pixel), nIdx);
+                        if(!neighbor.distance){
 				//if distance is 0 then the neighbor returned is invalid
 				continue;
 			}
@@ -180,18 +180,18 @@ bool FieldSecretor::_secreteOutsideCellAtBoundaryOnContactWith(CellG * _cell, fl
 
 	Point3D nPt;
 
-	CellG *nCell=0;
+        CellG *nCell = nullptr;
 
-	Neighbor neighbor;
+        Neighbor neighbor;
 
 	set<FieldSecretorPixelData> visitedPixels;
 
-	for (set<BoundaryPixelTrackerData>::iterator sitr=pixelSetRef.begin() ; sitr!=pixelSetRef.end(); ++sitr){		
+        for (const auto &elem : pixelSetRef) {
 
-
-		for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
-			neighbor=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(sitr->pixel),nIdx);
-			if(!neighbor.distance){
+                for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
+                  neighbor = boundaryStrategy->getNeighborDirect(
+                      const_cast<Point3D &>(elem.pixel), nIdx);
+                        if(!neighbor.distance){
 				//if distance is 0 then the neighbor returned is invalid
 				continue;
 			}
@@ -241,13 +241,16 @@ bool FieldSecretor::_uptakeInsideCell(CellG * _cell, float _maxUptake, float _re
 	std::set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessorPtr->get(_cell->extraAttribPtr)->pixelSet;
 
 	float currentConcentration;
-	for (set<BoundaryPixelTrackerData>::iterator sitr=pixelSetRef.begin() ; sitr!=pixelSetRef.end(); ++sitr){		
-		currentConcentration=concentrationFieldPtr->get(sitr->pixel);
-		if(currentConcentration*_relativeUptake>_maxUptake){
-			concentrationFieldPtr->set(sitr->pixel,currentConcentration-_maxUptake);
-		}else{
-			concentrationFieldPtr->set(sitr->pixel,currentConcentration-currentConcentration*_relativeUptake);
-		}				
+        for (const auto &elem : pixelSetRef) {
+          currentConcentration = concentrationFieldPtr->get(elem.pixel);
+                if(currentConcentration*_relativeUptake>_maxUptake){
+                  concentrationFieldPtr->set(elem.pixel,
+                                             currentConcentration - _maxUptake);
+                }else{
+                  concentrationFieldPtr->set(
+                      elem.pixel, currentConcentration -
+                                      currentConcentration * _relativeUptake);
+                }				
 
 	}
 
@@ -267,14 +270,17 @@ bool FieldSecretor::_uptakeInsideCellAtBoundary(CellG * _cell, float _maxUptake,
 	std::set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessorPtr->get(_cell->extraAttribPtr)->pixelSet;
 
 	float currentConcentration;
-	for (set<BoundaryPixelTrackerData>::iterator sitr=pixelSetRef.begin() ; sitr!=pixelSetRef.end(); ++sitr){		
+        for (const auto &elem : pixelSetRef) {
 
-		currentConcentration=concentrationFieldPtr->get(sitr->pixel);
-		if(currentConcentration*_relativeUptake>_maxUptake){
-			concentrationFieldPtr->set(sitr->pixel,currentConcentration-_maxUptake);
-		}else{
-			concentrationFieldPtr->set(sitr->pixel,currentConcentration-currentConcentration*_relativeUptake);
-		}				
+          currentConcentration = concentrationFieldPtr->get(elem.pixel);
+                if(currentConcentration*_relativeUptake>_maxUptake){
+                  concentrationFieldPtr->set(elem.pixel,
+                                             currentConcentration - _maxUptake);
+                }else{
+                  concentrationFieldPtr->set(
+                      elem.pixel, currentConcentration -
+                                      currentConcentration * _relativeUptake);
+                }				
 
 	}
 
@@ -295,17 +301,17 @@ bool FieldSecretor::_uptakeInsideCellAtBoundaryOnContactWith(CellG * _cell, floa
 
 	Point3D nPt;
 
-	CellG *nCell=0;
+        CellG *nCell = nullptr;
 
-	Neighbor neighbor;
+        Neighbor neighbor;
 
 	float currentConcentration;
-	for (set<BoundaryPixelTrackerData>::iterator sitr=pixelSetRef.begin() ; sitr!=pixelSetRef.end(); ++sitr){		
+        for (const auto &elem : pixelSetRef) {
 
-
-		for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
-			neighbor=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(sitr->pixel),nIdx);
-			if(!neighbor.distance){
+                for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
+                  neighbor = boundaryStrategy->getNeighborDirect(
+                      const_cast<Point3D &>(elem.pixel), nIdx);
+                        if(!neighbor.distance){
 				//if distance is 0 then the neighbor returned is invalid
 				continue;
 			}
@@ -314,24 +320,36 @@ bool FieldSecretor::_uptakeInsideCellAtBoundaryOnContactWith(CellG * _cell, floa
 			nCell = cellFieldG->get(neighbor.pt);
 			if(nCell!=_cell && !nCell && onContactSet.find(0)!=onContactSet.end()){
 				//user requested secrete on contact with medium and we found medium pixel
-				currentConcentration=concentrationFieldPtr->get(sitr->pixel);
-				if(currentConcentration*_relativeUptake>_maxUptake){
-					concentrationFieldPtr->set(sitr->pixel,currentConcentration-_maxUptake);
-				}else{
-					concentrationFieldPtr->set(sitr->pixel,currentConcentration-currentConcentration*_relativeUptake);
-				}
+                          currentConcentration =
+                              concentrationFieldPtr->get(elem.pixel);
+                                if(currentConcentration*_relativeUptake>_maxUptake){
+                                  concentrationFieldPtr->set(
+                                      elem.pixel,
+                                      currentConcentration - _maxUptake);
+                                }else{
+                                  concentrationFieldPtr->set(
+                                      elem.pixel, currentConcentration -
+                                                      currentConcentration *
+                                                          _relativeUptake);
+                                }
 				break; //after secreting do not try to secrete more
 			}
 			
 			if (nCell!=_cell && nCell && onContactSet.find(nCell->type)!=onContactSet.end() )
 			{
-				//user requested secretion on contact with cell type whose pixel we have just found 
-				currentConcentration=concentrationFieldPtr->get(sitr->pixel);
-				if(currentConcentration*_relativeUptake>_maxUptake){
-					concentrationFieldPtr->set(sitr->pixel,currentConcentration-_maxUptake);
-				}else{
-					concentrationFieldPtr->set(sitr->pixel,currentConcentration-currentConcentration*_relativeUptake);
-				}
+				//user requested secretion on contact with cell type whose pixel we have just found
+                          currentConcentration =
+                              concentrationFieldPtr->get(elem.pixel);
+                                if(currentConcentration*_relativeUptake>_maxUptake){
+                                  concentrationFieldPtr->set(
+                                      elem.pixel,
+                                      currentConcentration - _maxUptake);
+                                }else{
+                                  concentrationFieldPtr->set(
+                                      elem.pixel, currentConcentration -
+                                                      currentConcentration *
+                                                          _relativeUptake);
+                                }
 
 				break;//after secreting do not try to secrete more
 			}
@@ -357,20 +375,20 @@ bool FieldSecretor::_uptakeOutsideCellAtBoundary(CellG * _cell, float _maxUptake
 
 	Point3D nPt;
 
-	CellG *nCell=0;
+        CellG *nCell = nullptr;
 
-	Neighbor neighbor;
+        Neighbor neighbor;
 
 	set<FieldSecretorPixelData> visitedPixels;
 
 	float currentConcentration;
 
-	for (set<BoundaryPixelTrackerData>::iterator sitr=pixelSetRef.begin() ; sitr!=pixelSetRef.end(); ++sitr){		
+        for (const auto &elem : pixelSetRef) {
 
-
-		for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
-			neighbor=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(sitr->pixel),nIdx);
-			if(!neighbor.distance){
+                for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
+                  neighbor = boundaryStrategy->getNeighborDirect(
+                      const_cast<Point3D &>(elem.pixel), nIdx);
+                        if(!neighbor.distance){
 				//if distance is 0 then the neighbor returned is invalid
 				continue;
 			}
@@ -412,20 +430,20 @@ bool FieldSecretor::_uptakeOutsideCellAtBoundaryOnContactWith(CellG * _cell, flo
 
 	Point3D nPt;
 
-	CellG *nCell=0;
+        CellG *nCell = nullptr;
 
-	Neighbor neighbor;
+        Neighbor neighbor;
 
 	set<FieldSecretorPixelData> visitedPixels;
 
 	float currentConcentration;
 
-	for (set<BoundaryPixelTrackerData>::iterator sitr=pixelSetRef.begin() ; sitr!=pixelSetRef.end(); ++sitr){		
+        for (const auto &elem : pixelSetRef) {
 
-
-		for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
-			neighbor=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(sitr->pixel),nIdx);
-			if(!neighbor.distance){
+                for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
+                  neighbor = boundaryStrategy->getNeighborDirect(
+                      const_cast<Point3D &>(elem.pixel), nIdx);
+                        if(!neighbor.distance){
 				//if distance is 0 then the neighbor returned is invalid
 				continue;
 			}
@@ -480,4 +498,71 @@ bool FieldSecretor::uptakeInsideCellAtCOM(CellG * _cell, float _maxUptake, float
 
 	return true;
 
+}
+
+float FieldSecretor::getConcentrationOutsideCellAtBoundary(CellG * _cell)
+{
+ 	if (!boundaryPixelTrackerPlugin){
+		cerr<<"BoundaryPixelTrackerPlugin not loaded!!"<<endl;
+ 		ASSERT_OR_THROW("ERROR: boundaryPixelTrackerPlugin is required by this", 0);
+ 	}
+
+	BasicClassAccessor<BoundaryPixelTracker> *boundaryPixelTrackerAccessorPtr=boundaryPixelTrackerPlugin->getBoundaryPixelTrackerAccessorPtr();
+
+	std::set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessorPtr->get(_cell->extraAttribPtr)->pixelSet;
+
+	Point3D nPt;
+
+        CellG *nCell = nullptr;
+
+        Neighbor neighbor;
+
+	set<FieldSecretorPixelData> visitedPixels;
+
+	float totalConcentration(0);
+
+        for (const auto &elem : pixelSetRef) {
+
+                for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
+                  neighbor = boundaryStrategy->getNeighborDirect(
+                      const_cast<Point3D &>(elem.pixel), nIdx);
+                        if(!neighbor.distance){
+				//if distance is 0 then the neighbor returned is invalid
+				continue;
+			}
+			nPt=neighbor.pt;
+			nCell = cellFieldG->get(neighbor.pt);
+			if (nCell!=_cell && visitedPixels.find(FieldSecretorPixelData(neighbor.pt))==visitedPixels.end()){
+	
+				totalConcentration+=concentrationFieldPtr->get(nPt);
+				
+				visitedPixels.insert(FieldSecretorPixelData(nPt));
+
+			}
+
+		}		
+
+	}
+
+	return totalConcentration;
+}
+
+float FieldSecretor::getConcentrationInsideCellAtBoundary(CellG * _cell)
+{
+ 	if (!boundaryPixelTrackerPlugin){
+		cerr<<"BoundaryPixelTrackerPlugin not loaded!!"<<endl;
+ 		ASSERT_OR_THROW("ERROR: boundaryPixelTrackerPlugin is required by this", 0);
+ 	}
+
+	BasicClassAccessor<BoundaryPixelTracker> *boundaryPixelTrackerAccessorPtr=boundaryPixelTrackerPlugin->getBoundaryPixelTrackerAccessorPtr();
+
+	std::set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessorPtr->get(_cell->extraAttribPtr)->pixelSet;
+
+	float totalConcentration(0);
+
+        for (const auto &elem : pixelSetRef) {
+          totalConcentration += concentrationFieldPtr->get(elem.pixel);
+        }
+
+	return totalConcentration;
 }

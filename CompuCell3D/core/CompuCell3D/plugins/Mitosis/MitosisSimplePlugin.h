@@ -69,11 +69,12 @@ namespace CompuCell3D {
 	 BasicClassAccessor<PixelTracker> *pixelTrackerAccessorPtr;
 	 std::shared_ptr<PixelTrackerPlugin> pixelTrackerPlugin;
 
-     virtual void handleEvent(CC3DEvent & _event);
-     
+         virtual void handleEvent(CC3DEvent &_event) override;
+
     // SimObject interface
-    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-	 void setDivideAlongMinorAxis();
+         virtual void init(Simulator *simulator,
+                           CC3DXMLElement *_xmlData = nullptr) override;
+         void setDivideAlongMinorAxis();
 	 void setDivideAlongMajorAxis();
 	 
 

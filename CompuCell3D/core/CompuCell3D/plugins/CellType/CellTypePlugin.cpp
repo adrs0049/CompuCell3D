@@ -64,7 +64,7 @@ CellTypePlugin::CellTypePlugin() {classType = new CellType();}
 CellTypePlugin::~CellTypePlugin() {
    if (classType){
       delete classType;
-      classType=0;
+      classType = nullptr;
    }
 }
 
@@ -144,10 +144,8 @@ unsigned char CellTypePlugin::getCellType(const CellG *cell) const {
 
 string CellTypePlugin::getTypeName(const char type) const {
 
+  auto typeNameMapItr = typeNameMap.find((const unsigned char)type);
 
-  std::map<unsigned char,std::string>::const_iterator typeNameMapItr=typeNameMap.find((const unsigned char)type);
-
-  
   if(typeNameMapItr!=typeNameMap.end()){
       return typeNameMapItr->second;
   }else{
@@ -159,10 +157,8 @@ string CellTypePlugin::getTypeName(const char type) const {
 
 unsigned char CellTypePlugin::getTypeId(const string typeName) const {
 
+  auto nameTypeMapItr = nameTypeMap.find(typeName);
 
-  std::map<std::string,unsigned char>::const_iterator nameTypeMapItr=nameTypeMap.find(typeName);
-  
-  
   if(nameTypeMapItr!=nameTypeMap.end()){
       return nameTypeMapItr->second;
   }else{

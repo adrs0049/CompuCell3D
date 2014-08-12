@@ -41,11 +41,7 @@ using namespace std;
 
 #include "ContactPlugin.h"
 
-
-
-
-ContactPlugin::ContactPlugin():xmlData(0),weightDistance(false)   {
-}
+ContactPlugin::ContactPlugin() : xmlData(nullptr), weightDistance(false) {}
 
 ContactPlugin::~ContactPlugin() {
 
@@ -167,8 +163,8 @@ double ContactPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,const 
 	double distance = 0;
 	Point3D n;
 
-	CellG *nCell=0;
-	WatchableField3D<CellG *> *fieldG =(WatchableField3D<CellG *> *) potts->getCellFieldG();
+        CellG *nCell = nullptr;
+        WatchableField3D<CellG *> *fieldG =(WatchableField3D<CellG *> *) potts->getCellFieldG();
 	Neighbor neighbor;
 
 
@@ -182,8 +178,8 @@ double ContactPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,const 
 			}
 			nCell = fieldG->get(neighbor.pt);
 			if(nCell!=oldCell){
-				if((nCell != 0) && (oldCell != 0)) {
-				   if((nCell->clusterId) != (oldCell->clusterId)) {
+                          if ((nCell != nullptr) && (oldCell != nullptr)) {
+                                   if((nCell->clusterId) != (oldCell->clusterId)) {
 					  energy -= contactEnergy(oldCell,nCell)/ neighbor.distance;
 				   }
 				}else{
@@ -192,8 +188,8 @@ double ContactPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,const 
 				
 			}
 			if(nCell!=newCell){
-				if((newCell != 0) && (nCell != 0)) {
-				   if((newCell->clusterId) != (nCell->clusterId)) {
+                          if ((newCell != nullptr) && (nCell != nullptr)) {
+                                   if((newCell->clusterId) != (nCell->clusterId)) {
 					  energy += contactEnergy(newCell,nCell)/ neighbor.distance;
 				   }
 				}
@@ -216,8 +212,8 @@ double ContactPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,const 
 
 			nCell = fieldG->get(neighbor.pt);
 			if(nCell!=oldCell){
-				if((nCell != 0) && (oldCell != 0)) {
-				   if((nCell->clusterId) != (oldCell->clusterId)) {
+                          if ((nCell != nullptr) && (oldCell != nullptr)) {
+                                   if((nCell->clusterId) != (oldCell->clusterId)) {
 					  energy -= contactEnergy(oldCell,nCell);
 				   }
 				}else{
@@ -229,8 +225,8 @@ double ContactPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,const 
 			}
 			if(nCell!=newCell){
 
-				if((newCell != 0) && (nCell != 0)) {
-				   if((newCell->clusterId) != (nCell->clusterId)) {
+                          if ((newCell != nullptr) && (nCell != nullptr)) {
+                                   if((newCell->clusterId) != (nCell->clusterId)) {
 					  energy += contactEnergy(newCell,nCell);
 				   }
 				}
@@ -272,8 +268,8 @@ void ContactPlugin::setContactEnergy(const string typeName1,const string typeNam
 
 	int index = getIndex(type1, type2);
 
-	contactEnergies_t::iterator it = contactEnergies.find(index);
-	ASSERT_OR_THROW(string("Contact energy for ") + typeName1 + " " + typeName2 +
+        auto it = contactEnergies.find(index);
+        ASSERT_OR_THROW(string("Contact energy for ") + typeName1 + " " + typeName2 +
 		" already set!", it == contactEnergies.end());
 
 	contactEnergies[index] = energy;

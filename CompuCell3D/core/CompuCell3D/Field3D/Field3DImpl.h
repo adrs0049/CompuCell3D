@@ -55,8 +55,8 @@ public:
      * @param dim The field dimensions
      * @param initialValue The initial value of all data elements in the field.
      */
-    Field3DImpl(const Dim3D dim, const T &initialValue) :
-      dim(dim),field(0), initialValue(initialValue) {
+  Field3DImpl(const Dim3D dim, const T &initialValue)
+      : dim(dim), field(nullptr), initialValue(initialValue) {
 
       ASSERT_OR_THROW("Field3D cannot have a 0 dimension!!!",
 		      dim.x != 0 && dim.y != 0 && dim.z != 0);
@@ -76,7 +76,7 @@ public:
     virtual ~Field3DImpl() {
         if(field){
             delete field;
-            field=0;
+            field = nullptr;
         }
             
     }
@@ -87,7 +87,7 @@ public:
     }
 
 	virtual void resizeAndShift(const Dim3D theDim,  Dim3D shiftVec=Dim3D()){
-       T* field2 = new T[theDim.x*theDim.y*theDim.z];
+          auto field2 = new T[theDim.x * theDim.y * theDim.z];
        //first initialize the lattice with initial value 
        for(long int i = 0 ; i <  theDim.x*theDim.y*theDim.z ; ++i) 
             field2[i]=initialValue;

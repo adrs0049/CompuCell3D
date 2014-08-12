@@ -108,23 +108,20 @@ namespace CompuCell3D {
 
     DataAccessor_t * getContactMultiCadDataAccessorPtr(){return & contactMultiCadDataAccessor;}
 
+    virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
+                                const CellG *oldCell) override;
 
-		virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
+    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData) override;
 
-		virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
-		
-
-		virtual void extraInit(Simulator *simulator);
-    
-
-
+    virtual void extraInit(Simulator *simulator) override;
 
     //Steerrable interface
-	 virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-	 virtual std::string steerableName();
-	 virtual std::string toString();
+    virtual void update(CC3DXMLElement *_xmlData,
+                        bool _fullInitFlag = false) override;
+    virtual std::string steerableName() override;
+    virtual std::string toString() override;
 
-	//Energy Function fcns
+        //Energy Function fcns
   	double contactEnergy(const CellG *cell1, const CellG *cell2);
 	    /**
      * @return The contact energy between cell1 and cell2.

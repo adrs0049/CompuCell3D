@@ -145,8 +145,9 @@ void VolumePlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 
 					volumeEnergyParamVectorTmp.push_back(volParam);				
 				}
-				vector<int>::iterator pos=max_element(typeIdVec.begin(),typeIdVec.end());
-				int maxTypeId=*pos;
+                                auto pos = max_element(typeIdVec.begin(),
+                                                       typeIdVec.end());
+                                int maxTypeId=*pos;
 				volumeEnergyParamVector.assign(maxTypeId+1,VolumeEnergyParam());
 				for (int i = 0 ; i < volumeEnergyParamVectorTmp.size() ; ++i){
 					volumeEnergyParamVector[typeIdVec[i]]=volumeEnergyParamVectorTmp[i];

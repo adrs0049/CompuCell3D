@@ -35,12 +35,8 @@ using namespace CompuCell3D;
 
 #include "ConnectivityGlobalPlugin.h"
 
-
-
-
-ConnectivityGlobalPlugin::ConnectivityGlobalPlugin() : potts(0),doNotPrecheckConnectivity(false) 
-{
-}
+ConnectivityGlobalPlugin::ConnectivityGlobalPlugin()
+    : potts(nullptr), doNotPrecheckConnectivity(false) {}
 
 ConnectivityGlobalPlugin::~ConnectivityGlobalPlugin() {
 }
@@ -132,9 +128,9 @@ void ConnectivityGlobalPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFl
 	int index ;
 	penaltyVec.assign(size,0.0);
 	//inserting connectivity penalty values to penaltyVec;
-	for(map<unsigned char , double>::iterator mitr=typeIdConnectivityPenaltyMap.begin() ; mitr!=typeIdConnectivityPenaltyMap.end(); ++mitr){
-		penaltyVec[mitr->first]=fabs(mitr->second);
-	}
+        for (auto &elem : typeIdConnectivityPenaltyMap) {
+          penaltyVec[elem.first] = fabs(elem.second);
+        }
 
 	cerr<<"size="<<size<<endl;
 	for(int i = 0 ; i < size ; ++i){
@@ -191,10 +187,8 @@ bool ConnectivityGlobalPlugin::checkIfCellIsFragmented(const CellG * cell,Point3
 		Point3D currentPoint=fpbRef_0->front();
 		fpbRef_0->pop_front();
 
-
-
-		CellG *nCell=0;
-		WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+                CellG *nCell = nullptr;
+                WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
 		Neighbor neighbor;
 
 
@@ -367,10 +361,8 @@ double ConnectivityGlobalPlugin::changeEnergy(const Point3D &pt,const CellG *new
 			Point3D currentPoint=fpbRef_0->front();
 			fpbRef_0->pop_front();
 
-
-
-			CellG *nCell=0;
-			WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+                        CellG *nCell = nullptr;
+                        WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
 			Neighbor neighbor;
 
 
@@ -468,9 +460,8 @@ double ConnectivityGlobalPlugin::changeEnergy(const Point3D &pt,const CellG *new
 			oldPenalty=penaltyVec[oldCell->type];
 		}
 
-
-		CellG *nCell=0;
-		WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+                CellG *nCell = nullptr;
+                WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
 		Neighbor neighbor;
 		bool possibleHole=true;
 
@@ -516,9 +507,8 @@ double ConnectivityGlobalPlugin::changeEnergy(const Point3D &pt,const CellG *new
 			oldPenalty=penaltyVec[oldCell->type];
 		}
 
-
-		CellG *nCell=0;
-		WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+                CellG *nCell = nullptr;
+                WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
 		Neighbor neighbor;
 
 		int visitedPixCounter=0;

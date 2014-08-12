@@ -5,24 +5,18 @@ using namespace CompuCell3D;
 
 #include "BoundaryMonitorPlugin.h"
 
-
-BoundaryMonitorPlugin::BoundaryMonitorPlugin():
-pUtils(0),
-lockPtr(0),
-xmlData(0) ,
-cellFieldG(0),
-boundaryStrategy(0),
-maxNeighborIndex(0)
-{}
+BoundaryMonitorPlugin::BoundaryMonitorPlugin()
+    : pUtils(nullptr), lockPtr(nullptr), xmlData(nullptr), cellFieldG(nullptr),
+      boundaryStrategy(nullptr), maxNeighborIndex(0) {}
 
 BoundaryMonitorPlugin::~BoundaryMonitorPlugin() {
     pUtils->destroyLock(lockPtr);
     delete lockPtr;
-    lockPtr=0;
-    
+    lockPtr = nullptr;
+
     if (boundaryArray){
         delete boundaryArray;
-        boundaryArray=0;
+        boundaryArray = nullptr;
     }    
     
 }
@@ -168,9 +162,10 @@ void BoundaryMonitorPlugin::handleEvent(CC3DEvent & _event){
 	Dim3D shiftVec = ev.shiftVec;
 
 	unsigned char initVal=0;
-    Array3DCUDA<unsigned char> * newBoundaryArray=new Array3DCUDA<unsigned char>(newDim,initVal); // 0 indicates pixels is not a boundary pixel
-	
-	Point3D pt;
+        auto newBoundaryArray = new Array3DCUDA<unsigned char>(
+            newDim, initVal); // 0 indicates pixels is not a boundary pixel
+
+        Point3D pt;
 	Point3D ptShift;
 
 	//when lattice is growing or shrinking

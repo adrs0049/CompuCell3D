@@ -40,10 +40,9 @@ namespace CompuCell3D {
    class PDESOLVERCALLER_EXPORT SolverData{
       public:
          SolverData():extraTimesPerMC(0){}
-         SolverData(std::string _solverName,unsigned int _extraTimesPerMC):
-         solverName(_solverName),
-         extraTimesPerMC(_extraTimesPerMC)
-         {}
+         SolverData(std::string _solverName, unsigned int _extraTimesPerMC)
+             : solverName(std::move(_solverName)),
+               extraTimesPerMC(_extraTimesPerMC) {}
 
          std::string solverName;
          unsigned int extraTimesPerMC;
@@ -65,19 +64,18 @@ namespace CompuCell3D {
     virtual ~PDESolverCallerPlugin();
 
     ///SimObject interface
-    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-   virtual void  extraInit(Simulator *simulator);
+    virtual void init(Simulator *simulator,
+                      CC3DXMLElement *_xmlData = nullptr) override;
+    virtual void extraInit(Simulator *simulator) override;
 
     // Stepper interface
-    virtual void step();
-    
-
+    virtual void step() override;
 
     //SteerableObject interface
-    virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-    virtual std::string steerableName();
-    virtual std::string toString();
-    
+    virtual void update(CC3DXMLElement *_xmlData,
+                        bool _fullInitFlag = false) override;
+    virtual std::string steerableName() override;
+    virtual std::string toString() override;
   };
 };
 #endif

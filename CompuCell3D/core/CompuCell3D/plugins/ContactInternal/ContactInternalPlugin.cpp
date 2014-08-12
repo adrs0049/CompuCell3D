@@ -37,12 +37,8 @@ using namespace CompuCell3D;
 
 #include "ContactInternalPlugin.h"
 
-
-
-
-
-ContactInternalPlugin::ContactInternalPlugin() : potts(0), depth(1),weightDistance(false) {
-}
+ContactInternalPlugin::ContactInternalPlugin()
+    : potts(nullptr), depth(1), weightDistance(false) {}
 
 ContactInternalPlugin::~ContactInternalPlugin() {
   
@@ -79,8 +75,8 @@ double ContactInternalPlugin::changeEnergy(const Point3D &pt,
   double distance = 0;
   Point3D n;
   Neighbor neighbor;
-  
-  CellG *nCell=0;
+
+  CellG *nCell = nullptr;
   WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG*>*)potts->getCellFieldG();
 
    if(weightDistance){
@@ -99,7 +95,7 @@ double ContactInternalPlugin::changeEnergy(const Point3D &pt,
          nCell = fieldG->get(neighbor.pt);
 
          if(nCell!=oldCell){
-            if((nCell != 0) && (oldCell != 0)) {
+           if ((nCell != nullptr) && (oldCell != nullptr)) {
                if((nCell->clusterId) == (oldCell->clusterId)) {
                   energy -= internalEnergy(oldCell,nCell)/neighbor.distance;
                }
@@ -107,7 +103,7 @@ double ContactInternalPlugin::changeEnergy(const Point3D &pt,
             
          }
          if(nCell!=newCell){
-            if((newCell != 0) && (nCell != 0)) {
+           if ((newCell != nullptr) && (nCell != nullptr)) {
                if((newCell->clusterId) == (nCell->clusterId)) {
                   energy += internalEnergy(newCell,nCell)/neighbor.distance;
                }
@@ -130,7 +126,7 @@ double ContactInternalPlugin::changeEnergy(const Point3D &pt,
          nCell = fieldG->get(neighbor.pt);
 
          if(nCell!=oldCell){
-            if((nCell != 0) && (oldCell != 0)) {
+           if ((nCell != nullptr) && (oldCell != nullptr)) {
                if((nCell->clusterId) == (oldCell->clusterId)) {
                   energy -= internalEnergy(oldCell,nCell);
                }
@@ -140,7 +136,7 @@ double ContactInternalPlugin::changeEnergy(const Point3D &pt,
 
 
          if(nCell!=newCell){
-            if((newCell != 0) && (nCell != 0)) {
+           if ((newCell != nullptr) && (nCell != nullptr)) {
                if((newCell->clusterId) == (nCell->clusterId)) {
                   energy += internalEnergy(newCell,nCell);
                }
@@ -167,7 +163,8 @@ void ContactInternalPlugin::setContactInternalEnergy(const string typeName1,
     
   int index = getIndex(type1, type2);
 
-  contactEnergies_t::iterator it = internalEnergies.find(index); //return an iterator for the contact Energy
+  auto it =
+      internalEnergies.find(index); // return an iterator for the contact Energy
   ASSERT_OR_THROW(string("Internalenergy for ") + typeName1 + " " + typeName2 +
 		  " already set!", it == internalEnergies.end());
 

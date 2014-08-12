@@ -35,11 +35,8 @@ using namespace CompuCell3D;
 
 #include "ConnectivityPlugin.h"
 
-
-
-
-ConnectivityPlugin::ConnectivityPlugin() : penalty(0.0) ,potts(0) ,numberOfNeighbors(8)
-{
+ConnectivityPlugin::ConnectivityPlugin()
+    : penalty(0.0), potts(nullptr), numberOfNeighbors(8) {
    //n.assign(numberOfNeighbors,Point3D(0,0,0)); //allocates memory for vector of neighbors points
    offsetsIndex.assign(numberOfNeighbors,0);//allocates memory for vector of offsetsIndexes
 }
@@ -88,9 +85,8 @@ void ConnectivityPlugin::addUnique(CellG* cell,std::vector<CellG*> & _uniqueCell
    // if (!cell) mediumFlag = true;
    //if (!cell) return;  
    // Medium does not count
-   for (unsigned int i = 0; i < _uniqueCells.size(); i++)
-   {
-      if (_uniqueCells[i] == cell)
+  for (auto &_uniqueCell : _uniqueCells) {
+    if (_uniqueCell == cell)
           return;
    }
    _uniqueCells.push_back(cell);

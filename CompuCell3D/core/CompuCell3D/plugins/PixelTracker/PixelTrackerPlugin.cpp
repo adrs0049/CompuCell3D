@@ -28,9 +28,7 @@ using namespace std;
 
 #include "PixelTrackerPlugin.h"
 
-PixelTrackerPlugin::PixelTrackerPlugin():
-    simulator(0),potts(0)
-{}
+PixelTrackerPlugin::PixelTrackerPlugin() : simulator(nullptr), potts(nullptr) {}
 
 PixelTrackerPlugin::~PixelTrackerPlugin() {}
 
@@ -53,7 +51,7 @@ void PixelTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCell,CellG *
 
     if(newCell) {
         std::set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessor.get(newCell->extraAttribPtr)->pixelSet;
-        std::set<PixelTrackerData >::iterator sitr=pixelSetRef.find(PixelTrackerData(pt));
+        auto sitr = pixelSetRef.find(PixelTrackerData(pt));
         pixelSetRef.insert(PixelTrackerData(pt));
     }
 
@@ -87,8 +85,8 @@ void PixelTrackerPlugin::handleEvent(CC3DEvent & _event) {
     {
         cell=cInvItr->second;
         std::set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessor.get(cell->extraAttribPtr)->pixelSet;
-        for (set<PixelTrackerData >::iterator sitr=pixelSetRef.begin() ; sitr != pixelSetRef.end() ; ++sitr ) {
-            Point3D & pixel=const_cast<Point3D&>(sitr->pixel);
+        for (const auto &elem : pixelSetRef) {
+          Point3D &pixel = const_cast<Point3D &>(elem.pixel);
             pixel.x+=shiftVec.x;
             pixel.y+=shiftVec.y;
             pixel.z+=shiftVec.z;

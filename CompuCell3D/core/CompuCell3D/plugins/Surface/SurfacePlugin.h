@@ -103,26 +103,31 @@ namespace CompuCell3D {
 
 
 	public:
-		SurfacePlugin():potts(0),energyExpressionDefined(false),pUtils(0),pluginName("Surface"),scaleSurface(1.0),boundaryStrategy(0){};
-		virtual ~SurfacePlugin();
+          SurfacePlugin()
+              : potts(nullptr), energyExpressionDefined(false), pUtils(nullptr),
+                pluginName("Surface"), scaleSurface(1.0),
+                boundaryStrategy(nullptr){};
+                virtual ~SurfacePlugin();
 
 
 
 		// SimObject interface
-		virtual void extraInit(Simulator *simulator);
-		virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData);
-		virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
+                virtual void extraInit(Simulator *simulator) override;
+                virtual void init(Simulator *simulator,
+                                  CC3DXMLElement *_xmlData) override;
+                virtual void update(CC3DXMLElement *_xmlData,
+                                    bool _fullInitFlag = false) override;
 
-        virtual void handleEvent(CC3DEvent & _event);        
-        
-		//EnergyFunction interface
+                virtual void handleEvent(CC3DEvent &_event) override;
+
+                //EnergyFunction interface
 		//virtual double localEnergy(const Point3D &pt);
-		virtual double changeEnergy(const Point3D &pt, const CellG *newCell,const CellG *oldCell);
+                virtual double changeEnergy(const Point3D &pt,
+                                            const CellG *newCell,
+                                            const CellG *oldCell) override;
 
-
-
-		virtual std::string steerableName();
-		virtual std::string toString();
-	};
+                virtual std::string steerableName() override;
+                virtual std::string toString() override;
+        };
 };
 #endif

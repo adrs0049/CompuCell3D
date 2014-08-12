@@ -27,8 +27,7 @@
 using namespace CompuCell3D;
 #include "NeighborStickPlugin.h"
 
-NeighborStickPlugin::NeighborStickPlugin() : thresh(0),xmlData(0) {
-}
+NeighborStickPlugin::NeighborStickPlugin() : thresh(0), xmlData(nullptr) {}
 
 NeighborStickPlugin::~NeighborStickPlugin() {
   
@@ -68,18 +67,17 @@ void NeighborStickPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 
    std::vector<std::string> temp;
 
-   
-   for(int i = 0; i < typeNames.size(); i++) {
-      temp.push_back(typeNames[i]); 
-		cerr<<"typeNames[i]="<<typeNames[i]<<endl;
+   for (auto &elem : typeNames) {
+     temp.push_back(elem);
+     cerr << "typeNames[i]=" << elem << endl;
    }
    //typeNames.clear();
    //typeNames=temp;
    //typeNames.pop_back(); //delete empyt element
-   for(int i = 0; i < typeNames.size(); i++) {
-      idNames.push_back(automaton->getTypeId(typeNames[i])); 
+   for (auto &elem : typeNames) {
+     idNames.push_back(automaton->getTypeId(elem));
 
-		cerr<<"adding type ID = "<<automaton->getTypeId(typeNames[i])<<endl;
+     cerr << "adding type ID = " << automaton->getTypeId(elem) << endl;
    }   
 
 
@@ -97,7 +95,7 @@ double NeighborStickPlugin::changeEnergy(const Point3D &pt,
   double distance = 0;
   Point3D n;
   int totalArea = 0;
-  CellG *nCell=0;
+  CellG *nCell = nullptr;
   WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
   Neighbor neighbor;
   
@@ -124,8 +122,8 @@ double NeighborStickPlugin::changeEnergy(const Point3D &pt,
          if(nCell){
             int nType = (int)nCell->type;
 //             cerr << "Neighbor Type: " << nType << endl;
-            for(int i = 0; i < idNames.size() ; i++) {
-               if(nType==idNames[i]) {
+            for (auto &elem : idNames) {
+              if (nType == elem) {
                   //cerr << "SAME TYPE step: " << i << endl;
                   //cerr << "Common Surface Area: " << (int)sitr->commonSurfaceArea << endl;
                   
