@@ -18,6 +18,8 @@ public:
         cld ( _n,_t )
     {}
     
+    ~cldeque() {}
+    
     void setSize ( size_type _n ) ///it will resize deque
     {
         if ( cld.size() >_n )
@@ -32,7 +34,13 @@ public:
         }
     }
     
-    void push_front ( const T & _t )
+    void push_front ( const T &_t )
+    {
+        cld.pop_back();
+        cld.push_front ( _t );
+    }
+    
+    void push_front ( T &&_t )
     {
         cld.pop_back();
         cld.push_front ( _t );
