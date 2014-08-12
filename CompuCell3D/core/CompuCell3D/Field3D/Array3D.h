@@ -3,21 +3,9 @@
 
 #include <vector>
 #include <set>
-/*
-#include <python2.7/Python.h>
-
-#include <numpy/numpyconfig.h>
-#include <numpy/npy_common.h>
-#include <numpy/arrayobject.h>
-#include <numpy/arrayscalars.h>
-#include <numpy/ndarraytypes.h>
-#include <numpy/ndarrayobject.h>
-#include <numpy/old_defines.h>
-#include <numpy/npy_math.h>*/
 #include "Dim3D.h"
 #include "Field3DImpl.h"
 #include <iostream>
-
 
 namespace CompuCell3D {
 
@@ -26,34 +14,16 @@ class Array3D{
    public:
       typedef std::vector<std::vector<std::vector<T> > > ContainerType;
       void allocateArray(const Dim3D & _dim , T & val=T());
-//       operator Type&();
       ContainerType & getContainer(){return array;}
       
    private:
      std::vector<std::vector<std::vector<T> > >  array;
-
 };
 
 template <typename T>
 void Array3D<T>::allocateArray(const Dim3D & _dim , T & val){
-   using namespace std;
-//    vector<vector<T> > vec;
-//    vec.assign(_dim.x,vector<T>(_dim.y,val));
-   array.assign(_dim.x, vector<vector< T > >(_dim.y,vector< T >(_dim.z,val)));
+   array.assign(_dim.x, std::vector<vector< T > >(_dim.y,std::vector< T >(_dim.z,val)));
 }
-
-// template <typename T>
-// Array3D<T>::operator Array3D<T>::Type&(){
-//    return  array;
-// }
-
-
-
-// template <typename T>
-// Array3D<T>::operator Array3D<T>::Type&(){
-//    return  array;
-// }
-
 
 //Adapter is necessary to keep current API of the Field3D . These fields are registered in Simulator and 
 template <typename T>
@@ -128,9 +98,8 @@ class Array3DField3DAdapter:public Field3DImpl<T>{
 
 class Array3DLinearFortranField3DAdapter:public Field3DImpl<float>{
    public:
-	  //typedef float precision_t;
 
-      Array3DLinearFortranField3DAdapter() : Field3DImpl<float>(Dim3D(1,1,1),float()){};
+	  Array3DLinearFortranField3DAdapter() : Field3DImpl<float>(Dim3D(1,1,1),float()){};
 
       Array3DLinearFortranField3DAdapter(Dim3D & _dim,float & _initVal):Field3DImpl<float>(Dim3D(1,1,1),float()){
          allocateMemory(_dim,_initVal);         
@@ -143,10 +112,6 @@ class Array3DLinearFortranField3DAdapter:public Field3DImpl<float>{
          internalDim.x=theDim.x+1;
          internalDim.y=theDim.y+1;
          internalDim.z=theDim.z+1;
-
-         //internalDim.x=theDim.x;
-         //internalDim.y=theDim.y;
-         //internalDim.z=theDim.z;
 
          dim=theDim;
          
@@ -168,8 +133,6 @@ class Array3DLinearFortranField3DAdapter:public Field3DImpl<float>{
 		internalDim.x=newDim.x+1;
 		internalDim.y=newDim.y+1;
 		internalDim.z=newDim.z+1;
-
-
 
 		container.assign((internalDim.x)*(internalDim.y)*(internalDim.z),0.0) ; //resize container and initialize it
 
@@ -1299,15 +1262,11 @@ void Array2DContiguous<T>::setDim(const Dim3D newDim){
 	this->resizeAndShift(newDim);
 }
 
-
-
 template <typename T>
 class Array3DFiPy:public Field3DImpl<T>{
 public:
 	std::vector<std::vector<float> > secData;
 	std::vector<std::vector<int> > doNotDiffuseData;
-// 	std::set<std::vector<float> > secData;
-// 	std::set<std::vector<float> >::iterator secDataIT;
 	typedef T* ContainerType;
 	Array3DFiPy():
 		Field3DImpl<T>(Dim3D(1,1,1),T()),
@@ -1362,9 +1321,6 @@ public:
 	  }
 	 */ 
 	 doNotDiffuseData = _doNotDiffuseData;
-// 	  for(int i = 0; i < doNotDiffuseData.size(); i++) {
-// 	    cout << "In Pointer Array 3D X: " << doNotDiffuseData[i][0] << " Y: " << doNotDiffuseData[i][1] << " Z: " << doNotDiffuseData[i][2] << endl;
-// 	  }
 	}
 	
 	std::vector<std::vector<int> > &  getDoNotDiffuseVec() {
@@ -1388,106 +1344,7 @@ public:
 	void clearSecData(){
 	  secData.clear();
 	}
-	
-/*	PyObject* getDoNotDiffuse(){
-	  
-	  cout << "Here 1\n";
-	  /*
-	  int length = doNotDiffuseData.size();
-	  
-	  PyObject *lst = PyList_New(length);
-	  
-	  cout << "Here 2\n";
-	  if (!lst)
-	    return NULL;
-	  for (int i = 0; i < length; i++) {
-	    PyObject *num = PyFloat_FromDouble(doNotDiffuseData[i][0]);
-	    if (!num) {
-	      Py_DECREF(lst);
-	      return NULL;    
-	    }
-	    PyList_SET_ITEM(lst, i, num);   // reference to num stolen
-	  }
-	  return lst;
-	  
-	}*/
-	
-
-      
-/*        virtual void fillSecretion(PyObject * _NumpyArray) {
-	  
-// 	  for(secDataIT = secData.begin(); secDataIT != secData.end(); secDataIT++) {
-// 	      cout << "X: " << (*secDataIT)[0] << " Y: " << (*secDataIT)[1] << " Z: " << (*secDataIT)[2] 
-// 		   << " t: " << (*secDataIT)[3] << endl;
-// 	  }
-
-	  double *dptr = (double *)PyArray_DATA(_NumpyArray);
-	  int row = getDim().x;
-	  
-	  for(int i = 0; i < secData.size(); i++) {
-// 	      cout << "X: " << secData[i][0] << " Y: " << secData[i][1] << " Z: " << secData[i][2] 
-// 		   << " t: " << secData[i][3] << " Dim.X: " << row << endl;
-	      dptr[(int)secData[i][0]*row+(int)secData[i][1]] += secData[i][3];
-	  }
-	  
-	  for(cInvItr=cellInventoryPtr->cellInventoryBegin() ; cInvItr !=cellInventoryPtr->cellInventoryEnd() ;++cInvItr ) {
-		cell=cellInventoryPtr->getCell(cInvItr);
-		cout << "Cell Volume: " << cell->volume << endl;
-	    
-	  }
-	  
-	  secData.clear();
-	  
-      }*/
-
-      /*virtual void setPython3(PyObject * _NumpyArray) {
-
-	PyArrayObject * test;
-	
-	cout << "in Array3D.h  Contiguous" << endl;
-	cout << "NumpyArray3 is the size of: " << PyArray_DIM(_NumpyArray,0) << endl;
-	
-	if (!PyArray_ISCARRAY(_NumpyArray)) {
-		cout << "NumPy array is not 'well behaved' and writable!" << '\n';
-		return;
-	}
-	
-	cout << "Data is Float: " << PyArray_ISFLOAT(_NumpyArray) << endl;
-	cout << "Data is STRING: " << PyArray_ISSTRING(_NumpyArray) << endl;
-	cout << "Contiguous: " << PyArray_ISCONTIGUOUS(_NumpyArray) << endl;
-	cout << "Output FiPy Array\n";
-
-	test = (PyArrayObject *) _NumpyArray;
-	cout << "Item 2: " << (float)(*test->data) << endl;
-	
-	npy_intp size;
-	double *dptr;  /* could make this any variable type 
-	cout << "Output FiPy Array1\n";
-// 	size = PyArray_SIZE(test);
-	cout << "Output FiPy Array2\n";
-	dptr = (double *)PyArray_DATA(test);
-	cout << "Output FiPy Array3\n";
-	int SIZEOFARRAY = PyArray_DIM(_NumpyArray,0);	
-	
-	for(int i = 0; i < SIZEOFARRAY; i++) {
-// 	/* do something with the data at dptr 
-	  int x = i/100;
-	  int y = (i%100);
-	  int z = 0;
-	  float value = (float)(*dptr);
-	  
-// 	  cout << "X: " << x<< " Y: " << y << " Value: " << value << endl;
-	  set(x,y,z,value);
-	  dptr++;
-	}
-	
-// 	test = PyArray_ToList(_NumpyArray);
-// 	cout << "Item 2: " << PyList_GetItem(test,2) << endl;
-    // 	PyArrayIterObject *pyIter;
-// 	PyArray_INCREF(PyArrayObject* op
-// 	PyArrayIterObject* pyIter = (PyArrayIterObject*)PyArray_IterNew((PyObject*)test);
-      }*/
-      
+	      
 	//Field3D interface
       virtual bool isValid(const Point3D &pt) const {      
          return (0 <= pt.x && pt.x < internalDim.x &&
@@ -1575,8 +1432,6 @@ void Array3DFiPy<T>::swapArrays(){
 
 	}
 }
-
-
 
 };
 
