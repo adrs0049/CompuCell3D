@@ -17,7 +17,6 @@ MinFluctuationAmplitudeFunction::MinFluctuationAmplitudeFunction ( const Potts3D
 double MinFluctuationAmplitudeFunction::fluctuationAmplitude ( const CellG * newCell, const CellG * oldCell )
 {
     std::vector<double> fluctAmplVec ( 2,0.0 );
-    double fluctAmpl=potts->getTemperature();
 
     //first we check if users defined fluctuation by cell type
     const std::vector<float> & cellTypeMotilityVec=potts->getCellTypeMotilityVec();
@@ -109,11 +108,9 @@ MaxFluctuationAmplitudeFunction::MaxFluctuationAmplitudeFunction ( const Potts3D
 double MaxFluctuationAmplitudeFunction::fluctuationAmplitude ( const CellG * newCell, const CellG * oldCell )
 {
     std::vector<double> fluctAmplVec ( 2,0.0 );
-    double fluctAmpl=potts->getTemperature();
 
     //first we check if users defined fluctuation by cell type
     const std::vector<float> & cellTypeMotilityVec=potts->getCellTypeMotilityVec();
-
 
     if ( cellTypeMotilityVec.size() )
     {
@@ -121,28 +118,21 @@ double MaxFluctuationAmplitudeFunction::fluctuationAmplitude ( const CellG * new
         unsigned int oldCellTypeId= ( oldCell? ( unsigned int ) oldCell->type :0 );
         if ( newCellTypeId && oldCellTypeId )
         {
-
             fluctAmplVec[0]= ( newCell->fluctAmpl<0.0 ? cellTypeMotilityVec[newCellTypeId] : newCell->fluctAmpl );
             fluctAmplVec[1]= ( oldCell->fluctAmpl<0.0 ? cellTypeMotilityVec[oldCellTypeId] : oldCell->fluctAmpl );
-
         }
         else if ( newCellTypeId )
         {
-
             fluctAmplVec[0]= ( newCell->fluctAmpl<0.0 ? cellTypeMotilityVec[newCellTypeId] : newCell->fluctAmpl );
             fluctAmplVec[1]= ( std::numeric_limits<double>::min ) ();
-
         }
         else if ( oldCellTypeId )
         {
-
             fluctAmplVec[0]= ( std::numeric_limits<double>::min ) ();
             fluctAmplVec[1]= ( oldCell->fluctAmpl<0.0 ? cellTypeMotilityVec[oldCellTypeId] : oldCell->fluctAmpl );
-
         }
 
         return *max_element ( fluctAmplVec.begin(),fluctAmplVec.end() );
-
     }
 
     //check if user modified fluctAmpl attribute
@@ -175,7 +165,6 @@ double MaxFluctuationAmplitudeFunction::fluctuationAmplitude ( const CellG * new
         }
         else
         {
-
             fluctAmplVec[0]= ( std::numeric_limits<double>::min ) ();
         }
 
@@ -209,7 +198,6 @@ ArithmeticAverageFluctuationAmplitudeFunction::ArithmeticAverageFluctuationAmpli
 double ArithmeticAverageFluctuationAmplitudeFunction::fluctuationAmplitude ( const CellG * newCell, const CellG * oldCell )
 {
     std::vector<double> fluctAmplVec ( 2,0.0 );
-    double fluctAmpl=potts->getTemperature();
 
     //first we check if users defined fluctuation by cell type
     const std::vector<float> & cellTypeMotilityVec=potts->getCellTypeMotilityVec();
