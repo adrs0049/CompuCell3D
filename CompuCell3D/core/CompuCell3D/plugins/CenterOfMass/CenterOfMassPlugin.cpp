@@ -39,7 +39,7 @@ void CenterOfMassPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 	cerr<<"\n\n\n  \t\t\t CenterOfMassPlugin::init() - CALLING INIT OF CENTER OF MASS PLUGIN\n\n\n"<<endl;
 	potts = simulator->getPotts();
 	bool pluginAlreadyRegisteredFlag;
-	Plugin *plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+	auto plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
 	if(!pluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
 
