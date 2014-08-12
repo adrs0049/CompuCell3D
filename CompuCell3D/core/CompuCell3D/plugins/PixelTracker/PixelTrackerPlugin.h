@@ -31,40 +31,46 @@
 class CC3DXMLElement;
 namespace CompuCell3D {
 
-  class Cell;
-  class Field3DIndex;
-  template <class T> class Field3D;
-  template <class T> class WatchableField3D;
+class Cell;
+class Field3DIndex;
+template <class T> class Field3D;
+template <class T> class WatchableField3D;
 
 
-  
+
 class PIXELTRACKER_EXPORT PixelTrackerPlugin : public Plugin, public CellGChangeWatcher {
 
-      //WatchableField3D<CellG *> *cellFieldG;
-      Dim3D fieldDim;
-      BasicClassAccessor<PixelTracker> pixelTrackerAccessor;
-      Simulator *simulator;
-	  Potts3D *potts;		
-    
-   public:
-      PixelTrackerPlugin();
-      virtual ~PixelTrackerPlugin();
-      
-      
-      // Field3DChangeWatcher interface
-      virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                                 CellG *oldCell);
-      
-		//Plugin interface 
-		virtual void init(Simulator *_simulator, CC3DXMLElement *_xmlData=0);
-		virtual std::string toString();
-		virtual void handleEvent(CC3DEvent & _event);		
+	using pixelTrackerAccessor_t = BasicClassAccessor<PixelTracker>;
+	
+    //WatchableField3D<CellG *> *cellFieldG;
+    Dim3D fieldDim;
+    pixelTrackerAccessor_t pixelTrackerAccessor;
+    Simulator *simulator;
+    Potts3D *potts;
 
-		BasicClassAccessor<PixelTracker> * getPixelTrackerAccessorPtr(){return & pixelTrackerAccessor;}
-		//had to include this function to get set itereation working properly with Python , and Player that has restart capabilities
-		PixelTrackerData * getPixelTrackerData(PixelTrackerData * _psd){return _psd;}
+public:
+    PixelTrackerPlugin();
+    virtual ~PixelTrackerPlugin();
 
-      
-  };
+
+    // Field3DChangeWatcher interface
+    virtual void field3DChange(const Point3D &pt, CellG *newCell,
+                               CellG *oldCell);
+
+    //Plugin interface
+    virtual void init(Simulator *_simulator, CC3DXMLElement *_xmlData=0);
+    virtual std::string toString();
+    virtual void handleEvent(CC3DEvent & _event);
+
+    pixelTrackerAccessor_t * getPixelTrackerAccessorPtr() {
+        return & pixelTrackerAccessor;
+    }
+    //had to include this function to get set itereation working properly with Python , and Player that has restart capabilities
+    PixelTrackerData * getPixelTrackerData(PixelTrackerData * _psd) {
+        return _psd;
+    }
+
+
+};
 };
 #endif
