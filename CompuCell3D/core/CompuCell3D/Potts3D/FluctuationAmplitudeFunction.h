@@ -28,7 +28,7 @@ public:
 
     virtual double fluctuationAmplitude ( const CellG * newCell, const CellG * oldCell ) = 0;
 
-	~FluctuationAmplitudeFunction() {}
+	virtual ~FluctuationAmplitudeFunction() {}
 	
 protected:
     const Potts3D *potts;
