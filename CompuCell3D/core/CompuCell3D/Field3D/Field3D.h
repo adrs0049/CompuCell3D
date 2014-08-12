@@ -204,7 +204,7 @@ namespace CompuCell3D {
 //     friend std::ifstream &operator>> <>(std::ifstream &, Field3D<T> &);
   };
     
-  template<class T> const char Field3D<T>::typeStr[3] ="c3d";
+  template<class T> const char Field3D<T>::typeStr[3] ="c3";
   
 };
 #endif
