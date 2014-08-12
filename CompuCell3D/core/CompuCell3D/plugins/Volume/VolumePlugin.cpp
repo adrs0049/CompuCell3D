@@ -22,24 +22,17 @@
 
 #include <CompuCell3D/CC3D.h>
 
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
 using namespace CompuCell3D;
-
 using namespace std;
 
 #include "VolumePlugin.h"
-
-
-// VolumePlugin::VolumePlugin() : potts(0) {}
 
 VolumePlugin::~VolumePlugin() {}
 
 void VolumePlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData){
 	potts = simulator->getPotts();
 	bool pluginAlreadyRegisteredFlag;
-	Plugin *plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+	auto plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
 
 
 	pUtils=simulator->getParallelUtils();
