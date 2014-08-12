@@ -55,7 +55,9 @@ namespace CompuCell3D {
 
 
    private:
-    BasicClassAccessor<ContactMultiCadData> contactMultiCadDataAccessor;
+	using DataAccessor_t = BasicClassAccessor<ContactMultiCadData>;
+	   
+    DataAccessor_t contactMultiCadDataAccessor;
 	 CC3DXMLElement *xmlData;
     Potts3D *potts;
     Simulator *sim;
@@ -85,7 +87,7 @@ namespace CompuCell3D {
     
     std::list<CadherinData> cadherinDataList;
 
-    BasicClassAccessor<ContactMultiCadData> * contactMultiCadDataAccessorPtr;
+    DataAccessor_t * contactMultiCadDataAccessorPtr;
 
     Automaton *automaton;
     bool weightDistance;
@@ -104,7 +106,7 @@ namespace CompuCell3D {
     ContactMultiCadPlugin();
     virtual ~ContactMultiCadPlugin();
 
-    BasicClassAccessor<ContactMultiCadData> * getContactMultiCadDataAccessorPtr(){return & contactMultiCadDataAccessor;}
+    DataAccessor_t * getContactMultiCadDataAccessorPtr(){return & contactMultiCadDataAccessor;}
 
 
 		virtual double changeEnergy(const Point3D &pt, const CellG *newCell, const CellG *oldCell);

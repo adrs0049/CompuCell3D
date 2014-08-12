@@ -60,7 +60,7 @@ void ContactMultiCadPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 	sim=simulator;
    potts=simulator->getPotts();
 
-  potts->getCellFactoryGroupPtr()->registerClass(&contactMultiCadDataAccessor);
+  potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<DataAccessor_t>(contactMultiCadDataAccessor));
   
   potts->registerEnergyFunctionWithName(this,"ContactMultiCad");
   simulator->registerSteerableObject(this);
@@ -69,6 +69,7 @@ void ContactMultiCadPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 
 void ContactMultiCadPlugin::extraInit(Simulator *simulator){
    update(xmlData,true);
+	
 }
 
 
