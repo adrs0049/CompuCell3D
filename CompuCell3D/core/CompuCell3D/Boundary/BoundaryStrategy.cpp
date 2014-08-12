@@ -798,7 +798,7 @@ void BoundaryStrategy::getOffsetsAndDistances(
    //at this point we have all the offsets for the given simulation but they are unsorted.
    //Sorting  neighbors
    multimap<float,Point3D> sortingMap;
-   for( int i = 0 ; i < offsetVecTmp.size() ; ++i){
+   for( unsigned int i = 0 ; i < offsetVecTmp.size() ; ++i){
       sortingMap.insert(make_pair(distanceVecTmp[i],offsetVecTmp[i]));
    }
    //clearing offsetVecTmp and distanceVecTmp
@@ -818,7 +818,7 @@ void BoundaryStrategy::getOffsetsAndDistances(
    //given neighbor order
    float currentDistance=1.0;
 
-   for( int i = 0 ; i < distanceVecTmp.size() ; ++i){
+   for( unsigned int i = 0 ; i < distanceVecTmp.size() ; ++i){
       if(currentDistance<distanceVecTmp[i]){
          neighborOrderIndexVecTmp.push_back(i-i);
          currentDistance=distanceVecTmp[i];
@@ -827,16 +827,15 @@ void BoundaryStrategy::getOffsetsAndDistances(
 
 }
 
-void BoundaryStrategy::prepareNeighborListsSquare(float _maxDistance){
-   
+void BoundaryStrategy::prepareNeighborListsSquare(float _maxDistance)
+{
    char a='0';
    Field3DImpl<char> tempField(dim,a);
-   int margin=2*fabs(_maxDistance)+1;
    Point3D ctPt(dim.x/2,dim.y/2,dim.z/2);
    getOffsetsAndDistances(ctPt,_maxDistance,tempField,offsetVec,distanceVec,neighborOrderIndexVec);
 
 #ifdef _DEBUG
-    for( int i = 0 ; i < offsetVec.size() ; ++i){
+    for( unsigned int i = 0 ; i < offsetVec.size() ; ++i){
       cerr<<" This is offset["<<i<<"]="<<offsetVec[i]<<" distance="<<distanceVec[i]<<endl;
     }
 #endif
@@ -894,7 +893,7 @@ unsigned int BoundaryStrategy::getMaxNeighborIndexFromNeighborOrder(unsigned int
 	  unsigned int indexHex=0;     
       double currentDepth=hexDistanceArray[indexHex][0];
 
-      for(int i = 0 ; i < hexDistanceArray[indexHex].size() ; ++i){
+      for(unsigned int i = 0 ; i < hexDistanceArray[indexHex].size() ; ++i){
 
          ++maxNeighborIndex;
          if(hexDistanceArray[indexHex][i]>(currentDepth+0.005)){//0.005 is to account for possible numerical approximations in double or float numbers
@@ -913,7 +912,7 @@ unsigned int BoundaryStrategy::getMaxNeighborIndexFromNeighborOrder(unsigned int
 
       double currentDepth=distanceVec[0];
 
-      for(int i = 0 ; i < distanceVec.size() ; ++i){
+      for(unsigned int i = 0 ; i < distanceVec.size() ; ++i){
          if(distanceVec[i]>(currentDepth+0.005)){//0.005 is to account for possible numerical approximations in double or float numbers
             currentDepth=distanceVec[i];
             ++orderCounter;
@@ -937,7 +936,7 @@ unsigned int BoundaryStrategy::getMaxNeighborIndexFromDepth(float depth)const{
       //unsigned int indexHex=Y_EVEN|Z_EVEN;
       unsigned int indexHex=0;
 
-      for(int i = 0 ; i < hexDistanceArray[indexHex].size() ;++i){
+      for(unsigned int i = 0 ; i < hexDistanceArray[indexHex].size() ;++i){
          maxNeighborIndex=i;
          if(hexDistanceArray[indexHex][i]>depth){
             maxNeighborIndex=i-1;
@@ -949,7 +948,7 @@ unsigned int BoundaryStrategy::getMaxNeighborIndexFromDepth(float depth)const{
    }
    else{
 
-      for(int i = 0 ; i < distanceVec.size() ;++i){
+      for(unsigned int i = 0 ; i < distanceVec.size() ;++i){
          maxNeighborIndex=i;
          if(distanceVec[i]>depth){
             maxNeighborIndex=i-1;
@@ -960,20 +959,15 @@ unsigned int BoundaryStrategy::getMaxNeighborIndexFromDepth(float depth)const{
    }
 }
 
-Neighbor BoundaryStrategy::getNeighborDirect(Point3D & pt,unsigned int idx, bool checkBounds,bool calculatePtTrans )const {
+Neighbor BoundaryStrategy::getNeighborDirect(Point3D & pt,unsigned int idx, bool checkBounds,bool calculatePtTrans )const 
+{
    Neighbor n;
-//    n.pt=pt+offsetVec[idx];
 
-   unsigned int indexHex;
+   unsigned int indexHex = 0;
 
    if(latticeType==HEXAGONAL_LATTICE){
-
-      //indexHex=((pt.z%2)<<1)|(pt.y%2);
 	  indexHex=(pt.z%3)*2+(pt.y%2);
-      
-//       cerr<<"idx="<<idx<<" hexOffsetArray[indexHex][idx]="<<hexOffsetArray[indexHex][idx]<<endl;
       n.pt=pt+hexOffsetArray[indexHex][idx];
-//       cerr<<"point pt="<<pt<<" offset="<<hexOffsetArray[indexHex][idx]<<" indexHex="<<indexHex<<endl;
    }else{
       n.pt=pt+offsetVec[idx];
    }
@@ -1021,10 +1015,8 @@ Neighbor BoundaryStrategy::getNeighborDirect(Point3D & pt,unsigned int idx, bool
               n.ptTrans=calculatePointCoordinates(n.pt);
               if(latticeType==HEXAGONAL_LATTICE){
                   n.distance=hexDistanceArray[indexHex][idx];
-//                   n.ptTrans=HexCoord(n.pt);
               }else{
                   n.distance= distanceVec[idx]*lmf.lengthMF;
-//                   n.ptTrans=Coordinates3D<double>(pt.x,pt.y,pt.z);
               }
               return n;
 
@@ -1034,8 +1026,10 @@ Neighbor BoundaryStrategy::getNeighborDirect(Point3D & pt,unsigned int idx, bool
                return n;
             }
             
-          } 
-          
+          } else { // can reach no return type of non-void function
+			  n.distance = 0.0;
+			  return n;
+		  }
         }
 
 
