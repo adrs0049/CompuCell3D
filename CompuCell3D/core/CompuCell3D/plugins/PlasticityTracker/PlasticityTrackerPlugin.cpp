@@ -20,22 +20,12 @@
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
 #include <CompuCell3D/CC3D.h>
-
-// // // #include <CompuCell3D/Automaton/Automaton.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // //#include <CompuCell3D/plugins/Volume/VolumePlugin.h>
-// // // //#include <CompuCell3D/plugins/Volume/VolumeEnergy.h>
-// // // #include <CompuCell3D/Potts3D/CellInventory.h>
+#include <CompuCell3D/helpers.h>
 #include <CompuCell3D/plugins/NeighborTracker/NeighborTrackerPlugin.h>
 #include <ctime>
+
 using namespace CompuCell3D;
-
-
 using namespace std;
-
 
 #include "PlasticityTrackerPlugin.h"
 
@@ -71,15 +61,10 @@ void PlasticityTrackerPlugin::init(Simulator *_simulator, CC3DXMLElement *_xmlDa
   ///getting cell inventory
   cellInventoryPtr=& potts->getCellInventory(); 
 
-
-
-  ///will register PlasticityTracker here
-  BasicClassAccessorBase * plasticityTrackerAccessorPtr=&plasticityTrackerAccessor;
    ///************************************************************************************************  
   ///REMARK. HAVE TO USE THE SAME BASIC CLASS ACCESSOR INSTANCE THAT WAS USED TO REGISTER WITH FACTORY
    ///************************************************************************************************  
-  potts->getCellFactoryGroupPtr()->registerClass(plasticityTrackerAccessorPtr);
-
+	registerClassOnCell<PlasticityTrackerAccessor_t>(potts, plasticityTrackerAccessor);
   
   
   fieldDim=cellFieldG->getDim();
@@ -88,7 +73,7 @@ void PlasticityTrackerPlugin::init(Simulator *_simulator, CC3DXMLElement *_xmlDa
   maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromNeighborOrder(1);//1st nearest neighbor
 
    bool pluginAlreadyRegisteredFlag;
-   Plugin *plugin=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag); //this will load COM plugin if it is not already loaded
+   auto plugin=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag); //this will load COM plugin if it is not already loaded
   if(!pluginAlreadyRegisteredFlag)
       plugin->init(simulator);
    
@@ -161,7 +146,7 @@ void PlasticityTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCell,
    std::set<NeighborSurfaceData >::iterator sitr;
    CellG* nCell;
    bool pluginAlreadyRegisteredFlag;
-   NeighborTrackerPlugin * neighborTrackerPluginPtr=(NeighborTrackerPlugin*)(Simulator::pluginManager.get("NeighborTracker",&pluginAlreadyRegisteredFlag));
+   auto neighborTrackerPluginPtr = get_plugin<NeighborTrackerPlugin>("NeighborTracker", &pluginAlreadyRegisteredFlag);
    neighborTrackerAccessorPtr=neighborTrackerPluginPtr->getNeighborTrackerAccessorPtr();
 
    if(oldCell){

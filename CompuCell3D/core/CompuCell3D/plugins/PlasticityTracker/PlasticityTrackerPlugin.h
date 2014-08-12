@@ -30,8 +30,12 @@ class PLASTICITYTRACKER_EXPORT PlasticityTrackerPlugin : public Plugin, public C
       ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
       WatchableField3D<CellG *> *cellFieldG;
       Dim3D fieldDim;
-      BasicClassAccessor<PlasticityTracker> plasticityTrackerAccessor;
-      BasicClassAccessor<NeighborTracker> * neighborTrackerAccessorPtr;
+	  
+	  using PlasticityTrackerAccessor_t = BasicClassAccessor<PlasticityTracker>;
+	  using NeightborTrackerAccessor_t = BasicClassAccessor<NeighborTracker>;
+	  
+      PlasticityTrackerAccessor_t plasticityTrackerAccessor;
+      NeightborTrackerAccessor_t * neighborTrackerAccessorPtr;
       
       Simulator *simulator;
       CellInventory * cellInventoryPtr;
@@ -52,7 +56,7 @@ class PLASTICITYTRACKER_EXPORT PlasticityTrackerPlugin : public Plugin, public C
       virtual void field3DChange(const Point3D &pt, CellG *newCell,
                                  CellG *oldCell);
       
-      BasicClassAccessor<PlasticityTracker> * getPlasticityTrackerAccessorPtr(){return & plasticityTrackerAccessor;}
+      PlasticityTrackerAccessor_t * getPlasticityTrackerAccessorPtr(){return & plasticityTrackerAccessor;}
 		//had to include this function to get set inereation working properly with Python , and Player that has restart capabilities 
       PlasticityTrackerData * getPlasticityTrackerData(PlasticityTrackerData * _psd){return _psd;}
       void initializePlasticityNeighborList();
