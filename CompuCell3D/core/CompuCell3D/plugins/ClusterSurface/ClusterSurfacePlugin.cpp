@@ -49,7 +49,7 @@ void ClusterSurfacePlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) 
     
     //This code is usually called from   init finction      
     bool pluginAlreadyRegisteredFlag;
-    cstPlugin=(ClusterSurfaceTrackerPlugin*)Simulator::pluginManager.get("ClusterSurfaceTracker",&pluginAlreadyRegisteredFlag); //this will load PLUGIN_NAME plugin if it is not already loaded
+    cstPlugin=std::static_pointer_cast<ClusterSurfaceTrackerPlugin>(Simulator::pluginManager.get("ClusterSurfaceTracker",&pluginAlreadyRegisteredFlag)); //this will load PLUGIN_NAME plugin if it is not already loaded
     if(!pluginAlreadyRegisteredFlag)
         cstPlugin->init(simulator);
     

@@ -2,30 +2,10 @@
 #ifndef CLUSTERSURFACEPLUGIN_H
 #define CLUSTERSURFACEPLUGIN_H
 
- #include <CompuCell3D/CC3D.h>
-
-// // // // #include <CompuCell3D/Plugin.h>
-
-// // // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-
-
-// // // // #include <PublicUtilities/ParallelUtilsOpenMP.h>
-
-// // // // #include <CompuCell3D/Potts3D/Cell.h>
-
-// // // // #include <muParser/muParser.h>
-
-// // // // basic STL includes
-// // // #include <vector>
-// // // #include <list>
-// // // #include <map>
-// // // #include <set>
-// // // #include <string>
-
-// // // #include <CompuCell3D/Boundary/BoundaryTypeDefinitions.h>
-
+#include <CompuCell3D/CC3D.h>
 
 #include "ClusterSurfaceDLLSpecifier.h"
+#include <BasicUtils/memory_include.h>
 
 class CC3DXMLElement;
 
@@ -74,7 +54,7 @@ namespace CompuCell3D {
     
         typedef double (ClusterSurfacePlugin::*changeEnergy_t)(const Point3D &pt, const CellG *newCell,const CellG *oldCell);
 
-		ClusterSurfaceTrackerPlugin *cstPlugin;
+		std::shared_ptr<ClusterSurfaceTrackerPlugin> cstPlugin;
 
         ClusterSurfacePlugin::changeEnergy_t changeEnergyFcnPtr;
         
