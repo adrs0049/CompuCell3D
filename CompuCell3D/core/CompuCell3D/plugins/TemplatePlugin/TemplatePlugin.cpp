@@ -111,7 +111,7 @@ void TemplatePlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag) {
         }
 
 
-        ClassRegistry *classRegistry=sim->getClassRegistry();
+        auto& classRegistry=sim->getClassRegistry();
         Steppable * steppable;
         fieldVec.clear();
         cerr << "Finished Setting Up\n";
