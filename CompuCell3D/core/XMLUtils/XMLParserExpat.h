@@ -12,15 +12,12 @@ class XMLPARSEREXPATLIB_EXPORT XMLParserExpat {
 public:
 	XMLParserExpat();
 	virtual ~XMLParserExpat();
-	void setFileName(const std::string &);
-
-
+	void setFileName(std::string);
 
 	// Tag we're currently working on 
 	std::string tag;
 	std::string fileName;
 	//Number of nested XML tags so far 
-	
 
 	int parse();
 

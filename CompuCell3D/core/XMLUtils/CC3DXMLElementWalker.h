@@ -1,7 +1,6 @@
 #ifndef CC3DXMLELEMENTWALKER_H
 #define CC3DXMLELEMENTWALKER_H
 
-
 class CC3DXMLElement;
 
 #include "XMLUtilsDLLSpecifier.h"
