@@ -59,7 +59,7 @@ private:
 
     void writeHeader();
     void writeHeaderFlex ( std::ofstream & _out );
-    void writeDataLineFlex ( std::ofstream & _out, std::vector<double> & _energies );
+    void writeDataLineFlex ( std::ofstream & _out, const std::vector<double> & _energies );
     void initialize();
     void prepareNextStep();
     void calculateStatData();

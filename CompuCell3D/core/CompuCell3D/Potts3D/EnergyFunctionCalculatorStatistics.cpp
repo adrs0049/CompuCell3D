@@ -155,7 +155,7 @@ void EnergyFunctionCalculatorStatistics::writeHeader()
 
     ( *out ) <<setw ( fieldWidth ) <<"1.STEP"<<setw ( fieldWidth ) <<"2.NAcc"<<setw ( fieldWidth ) <<"3.NRej"<<setw ( fieldWidth ) <<"4.NTot";
     int n=5;
-    for ( int i = 0 ; i < energyFunctions.size() ; ++i )
+    for ( unsigned int i = 0 ; i < energyFunctions.size() ; ++i )
     {
         ostringstream str1;
         ostringstream str2;
@@ -165,7 +165,7 @@ void EnergyFunctionCalculatorStatistics::writeHeader()
         n+=2;
     }
 
-    for ( int i = 0 ; i < energyFunctions.size() ; ++i )
+    for ( unsigned int i = 0 ; i < energyFunctions.size() ; ++i )
     {
         ostringstream str1;
         ostringstream str2;
@@ -175,7 +175,7 @@ void EnergyFunctionCalculatorStatistics::writeHeader()
         n+=2;
     }
 
-    for ( int i = 0 ; i < energyFunctions.size() ; ++i )
+    for ( unsigned int i = 0 ; i < energyFunctions.size() ; ++i )
     {
         ostringstream str1;
         ostringstream str2;
@@ -187,8 +187,6 @@ void EnergyFunctionCalculatorStatistics::writeHeader()
 
     ( *out ) <<endl;
 }
-
-
 
 void EnergyFunctionCalculatorStatistics::initialize()
 {
@@ -220,7 +218,7 @@ void EnergyFunctionCalculatorStatistics::prepareNextStep()
 
 void EnergyFunctionCalculatorStatistics::calculateStatData()
 {
-    unsigned int energyFunctionCount=energyFunctions.size();
+    const unsigned int energyFunctionCount=energyFunctions.size();
 
     avgEnergyVectorTot.assign ( energyFunctionCount,0.0 );
     stdDevEnergyVectorTot.assign ( energyFunctionCount,0.0 );
@@ -231,38 +229,33 @@ void EnergyFunctionCalculatorStatistics::calculateStatData()
     avgEnergyVectorRej.assign ( energyFunctionCount,0.0 );
     stdDevEnergyVectorRej.assign ( energyFunctionCount,0.0 );
 
-    //calculating averages
-    std::list<std::vector<double> >::iterator lVecItr;
-    std::list<bool>::iterator lItr;
-
     NTot=0;
     NAcc=0;
     NRej=0;
 
     //calculating averages
-    lItr=accNotAccList.begin();
-    for ( lVecItr=totEnergyDataList.begin() ; lVecItr != totEnergyDataList.end() ; ++lVecItr )
-    {
+    auto lItr=accNotAccList.begin();
+	for (const auto& EnergyData : totEnergyDataList)
+	{
         ++NTot;
-        vector<double> & energyData=*lVecItr;
-        for ( int i = 0 ; i < energyFunctionCount ; ++i )
+        for ( unsigned int i = 0 ; i < energyFunctionCount ; ++i )
         {
-            avgEnergyVectorTot[i]+=energyData[i];
+            avgEnergyVectorTot[i]+=EnergyData[i];
         }
         if ( *lItr ) //accepted flip
         {
             ++NAcc;
-            for ( int i = 0 ; i < energyFunctionCount ; ++i )
+            for ( unsigned int i = 0 ; i < energyFunctionCount ; ++i )
             {
-                avgEnergyVectorAcc[i]+=energyData[i];
+                avgEnergyVectorAcc[i]+=EnergyData[i];
             }
         }
         else  //rejected flip
         {
             ++NRej;
-            for ( int i = 0 ; i < energyFunctionCount ; ++i )
+            for ( unsigned int i = 0 ; i < energyFunctionCount ; ++i )
             {
-                avgEnergyVectorRej[i]+=energyData[i];
+                avgEnergyVectorRej[i]+=EnergyData[i];
             }
         }
         ++lItr;
@@ -284,32 +277,31 @@ void EnergyFunctionCalculatorStatistics::calculateStatData()
     stdDevEnergyVectorRej.assign ( energyFunctionCount,0. );
 
     lItr=accNotAccList.begin();
-    for ( lVecItr=totEnergyDataList.begin() ; lVecItr != totEnergyDataList.end() ; ++lVecItr )
-    {
-        vector<double> & energyData=*lVecItr;
-        for ( int i = 0 ; i < energyFunctionCount ; ++i )
+	for (const auto& EnergyData : totEnergyDataList)
+	{
+        for ( unsigned int i = 0 ; i < energyFunctionCount ; ++i )
         {
-            stdDevEnergyVectorTot[i]+= ( energyData[i]-avgEnergyVectorTot[i] ) * ( energyData[i]-avgEnergyVectorTot[i] );
+            stdDevEnergyVectorTot[i]+= ( EnergyData[i]-avgEnergyVectorTot[i] ) * ( EnergyData[i]-avgEnergyVectorTot[i] );
         }
         if ( *lItr ) //accepted flip
         {
-            for ( int i = 0 ; i < energyFunctionCount ; ++i )
+            for ( unsigned int i = 0 ; i < energyFunctionCount ; ++i )
             {
-                stdDevEnergyVectorAcc[i]+= ( energyData[i]-avgEnergyVectorAcc[i] ) * ( energyData[i]-avgEnergyVectorAcc[i] );
+                stdDevEnergyVectorAcc[i]+= ( EnergyData[i]-avgEnergyVectorAcc[i] ) * ( EnergyData[i]-avgEnergyVectorAcc[i] );
             }
         }
         else  //rejected flip
         {
-            for ( int i = 0 ; i < energyFunctionCount ; ++i )
+            for ( unsigned int i = 0 ; i < energyFunctionCount ; ++i )
             {
-                stdDevEnergyVectorRej[i]+= ( energyData[i]-avgEnergyVectorRej[i] ) * ( energyData[i]-avgEnergyVectorRej[i] );
+                stdDevEnergyVectorRej[i]+= ( EnergyData[i]-avgEnergyVectorRej[i] ) * ( EnergyData[i]-avgEnergyVectorRej[i] );
             }
         }
         ++lItr;
     }
 
     // "Normalizing" stdDev
-    for ( int j = 0 ; j < energyFunctions.size() ; ++j )
+    for ( unsigned int j = 0 ; j < energyFunctions.size() ; ++j )
     {
         if ( NTot )
             stdDevEnergyVectorTot[j]=sqrt ( stdDevEnergyVectorTot[j] ) /NTot;
@@ -335,9 +327,11 @@ void EnergyFunctionCalculatorStatistics::writeHeaderFlex ( std::ofstream & _out 
     _out<<endl;
 }
 
-void EnergyFunctionCalculatorStatistics::writeDataLineFlex ( std::ofstream & _out, std::vector<double> & _energies )
+void 
+EnergyFunctionCalculatorStatistics::writeDataLineFlex 
+( std::ofstream & _out, const std::vector<double> & _energies )
 {
-    for ( auto &_energie : _energies )
+    for ( const auto &_energie : _energies )
     {
         _out << setw ( fieldWidth ) << _energie;
     }
@@ -441,7 +435,7 @@ void EnergyFunctionCalculatorStatistics::outputResults()
 
     calculateStatData(); //this actually calculates stat data and allocates all necessary vectors
 
-    for ( int i = 0 ; i < energyFunctions.size() ; ++i )
+    for ( unsigned int i = 0 ; i < energyFunctions.size() ; ++i )
     {
         cerr<<"TOT "<<energyFunctionsNameVec[i]<<" "<<avgEnergyVectorTot[i]*NTot<<" avg: "<<avgEnergyVectorTot[i]<<" stdDev: "<<stdDevEnergyVectorTot[i]<<endl;
         cerr<<"ACC "<<energyFunctionsNameVec[i]<<" "<<avgEnergyVectorAcc[i]*NAcc<<" avg: "<<avgEnergyVectorAcc[i]<<" stdDev: "<<stdDevEnergyVectorAcc[i]<<endl;
@@ -453,15 +447,15 @@ void EnergyFunctionCalculatorStatistics::outputResults()
     if ( out )
     {
         ( *out ) <<setw ( fieldWidth ) <<mcs<<setw ( fieldWidth ) <<NAcc<<setw ( fieldWidth ) <<NRej<<setw ( fieldWidth ) <<NTot;
-        for ( int i = 0 ; i < energyFunctions.size() ; ++i )
+        for ( unsigned int i = 0 ; i < energyFunctions.size() ; ++i )
         {
             ( *out ) <<setw ( fieldWidth ) <<avgEnergyVectorAcc[i]<<setw ( fieldWidth ) <<stdDevEnergyVectorAcc[i];
         }
-        for ( int i = 0 ; i < energyFunctions.size() ; ++i )
+        for ( unsigned int i = 0 ; i < energyFunctions.size() ; ++i )
         {
             ( *out ) <<setw ( fieldWidth ) <<avgEnergyVectorRej[i]<<setw ( fieldWidth ) <<stdDevEnergyVectorRej[i];
         }
-        for ( int i = 0 ; i < energyFunctions.size() ; ++i )
+        for ( unsigned int i = 0 ; i < energyFunctions.size() ; ++i )
         {
             ( *out ) <<setw ( fieldWidth ) <<avgEnergyVectorTot[i]<<setw ( fieldWidth ) <<stdDevEnergyVectorTot[i];
         }
