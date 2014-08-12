@@ -24,45 +24,33 @@
 #define BOUNDARYFACTORY_H
 
 #include <string>
-#include <iostream>
+#include <BasicUtils/memory_include.h>
 #include "Boundary.h"
 #include "NoFluxBoundary.h"
 #include "PeriodicBoundary.h"
 
-//using namespace std;
-
 namespace CompuCell3D {
+/*
+ * Factory class for instantiating  boundary conditions for each axis
+ */
+class BoundaryFactory {
+public:
+     static const std::string no_flux;
+     static const std::string periodic;
 
+     static std::unique_ptr<Boundary> createBoundary ( std::string boundary ) {
+          if ( boundary == periodic ) {
+               return std::make_unique<PeriodicBoundary>();
 
-   /*
-    * Factory class for instantiating  boundary conditions for each axis
-    */
-    class BoundaryFactory {
+          } else {
+               return std::make_unique<NoFluxBoundary>();
+          }
+     }
+};
 
+const std::string BoundaryFactory::no_flux ( "NoFlux" );
+const std::string BoundaryFactory::periodic ( "Periodic" );
 
-       public:
-
-             static const std::string no_flux;
-             static const std::string periodic;
-
-             static Boundary *createBoundary(std::string boundary) {
-                  
-                  if(boundary == periodic) {
-                         return new PeriodicBoundary();
-
-                   } else {
-
-                         return new NoFluxBoundary();
-        
-                   }
-
-             }
-
-   }; 
-
-   const std::string BoundaryFactory::no_flux("NoFlux");
-   const std::string BoundaryFactory::periodic("Periodic");
-   
 };
 
 #endif

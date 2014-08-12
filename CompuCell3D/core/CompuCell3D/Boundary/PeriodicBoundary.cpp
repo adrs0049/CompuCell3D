@@ -20,17 +20,12 @@
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
 
-
 #include "Boundary.h"
 #include "PeriodicBoundary.h"
 #include <cmath>
-#include <iostream>
 
 using namespace std;
-
 using namespace CompuCell3D;
-
-
 /*
  * Apply PeriodicBoundary to the given coordinate. 
  * If the coordinate lies outside the max value take a mod and return it/
@@ -47,23 +42,13 @@ using namespace CompuCell3D;
       short val;
       
       if(coordinate < 0 ) {
-
-
-          val = abs((float)(coordinate % max_value));
+          val = std::abs((float)(coordinate % max_value));
           coordinate = max_value - val;
           return true;
-
-
      } else if (coordinate >= max_value) {
-
-          
           coordinate = coordinate % max_value;
           return true;
-
      }
-      
       return false;
-
-
   }
 

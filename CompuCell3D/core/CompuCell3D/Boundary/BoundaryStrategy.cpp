@@ -20,50 +20,26 @@
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
 
-
-//#include "BoundaryStrategy.h"
-//
-//#include "Boundary.h"
-//#include "BoundaryFactory.h"
-//
-//#include "AlgorithmFactory.h"
-//#include "Algorithm.h"
-//#include <CompuCell3D/Field3D/Field3DImpl.h>
-//#include <CompuCell3D/Field3D/Dim3D.h>
-//#include <CompuCell3D/Field3D/Point3D.h>
-//#include <CompuCell3D/Field3D/Neighbor.h>
-//#include <CompuCell3D/Field3D/NeighborFinder.h>
-//#include <map>
-
-
 #include <CompuCell3D/Field3D/Point3D.h>
 #include <CompuCell3D/Field3D/Dim3D.h>
-
 #include <CompuCell3D/Field3D/Neighbor.h>
 #include <CompuCell3D/Field3D/NeighborFinder.h>
 #include <map>
 #include <Utils/Coordinates3D.h>
-
-
 #include "BoundaryStrategy.h"
 #include <CompuCell3D/Field3D/Field3DImpl.h> //Field3DImpl.h includes boundary Strategy and for this reason has to be listed after #define EXP_STL
-
 #include "Boundary.h"
 #include "BoundaryFactory.h"
-
 #include "AlgorithmFactory.h"
 #include "Algorithm.h"
 
 #define roundf(a) ((fmod(a,1)<0.5)?floor(a):ceil(a))
-
-//#define _DEBUG
 
 using namespace std;
 using namespace CompuCell3D;
 
 // Singleton
 BoundaryStrategy* BoundaryStrategy::singleton;
-
 
 // Default constructor
 BoundaryStrategy::BoundaryStrategy(){
@@ -77,11 +53,8 @@ BoundaryStrategy::BoundaryStrategy(){
    neighborListsInitializedFlag=false;
    latticeType=SQUARE_LATTICE;
 
-   //unsigned int maxHexArraySize=(Y_ODD|Z_ODD|X_ODD|Y_EVEN|Z_EVEN|X_EVEN)+1;
-
-   unsigned int maxHexArraySize=6;
-
 #ifdef _DEBUG
+   const unsigned int maxHexArraySize=6;
    cerr<<"maxHexArraySize="<<maxHexArraySize<<endl;
 
    cerr<<"\t\t\t\t\t\t\t CALLING DEFAULT CONSTRUCTOR FOR BOUNDARY STRATEGY"<<endl;
@@ -104,10 +77,8 @@ BoundaryStrategy::BoundaryStrategy(string boundary_x, string boundary_y,
    neighborListsInitializedFlag=false;
    this->latticeType=latticeType;
    
-   //unsigned int maxHexArraySize=(Y_ODD|Z_ODD|X_ODD|Y_EVEN|Z_EVEN|X_EVEN)+1;
-   unsigned int maxHexArraySize=6;
 #ifdef _DEBUG
-
+   const unsigned int maxHexArraySize=6;
    cerr<<"\t\t\t\t\t\t\t CALLING SPECILIZED CONSTRUCTOR FOR BOUNDARY STRATEGY"<<endl;
    cerr<<"maxHexArraySize="<<maxHexArraySize<<endl;
 
@@ -117,14 +88,8 @@ BoundaryStrategy::BoundaryStrategy(string boundary_x, string boundary_y,
 
 // Destructor
 BoundaryStrategy::~BoundaryStrategy() {
-
-    delete strategy_x;
-    delete strategy_y;
-    delete strategy_z;
-
     singleton = nullptr;
 }
-
 
 LatticeMultiplicativeFactors BoundaryStrategy::generateLatticeMultiplicativeFactors(LatticeType _latticeType,Dim3D dim){
    LatticeMultiplicativeFactors lFactors;
@@ -166,10 +131,6 @@ bool BoundaryStrategy::isValid(const Point3D &pt) const {
     // check to see if the point lies in the dimensions before applying the
     // shape algorithm
 
-//  return (0 <= pt.x && pt.x < dim.x &&
-//                    0 <= pt.y && pt.y < dim.y &&
-//                    0 <= pt.z && pt.z < dim.z );
-
  if (0 <= pt.x && pt.x < dim.x &&
                    0 <= pt.y && pt.y < dim.y &&
                    0 <= pt.z && pt.z < dim.z ) {
@@ -177,7 +138,7 @@ bool BoundaryStrategy::isValid(const Point3D &pt) const {
  }
 
      return false;
-}
+ }
 
 /*
  * Check to see if the given point lies inside the field dimensions
@@ -191,8 +152,6 @@ bool BoundaryStrategy::isValidCustomDim(const Point3D &pt, const Dim3D & customD
 {
     // check to see if the point lies in the dimensions before applying the
     // shape algorithm
-
-
 
  if (0 <= pt.x && pt.x < customDim.x &&
                    0 <= pt.y && pt.y < customDim.y &&
@@ -253,13 +212,6 @@ void BoundaryStrategy::setDim(const Dim3D theDim) {
 		latticeSpanVector.y=dim.y-1;
 		latticeSpanVector.z=dim.z-1;
 	}
-
-//    if(!(oldDim==theDim) && generateCheckField){
-////       cerr<<"initializeQuickCheckField fcn call"<<endl;
-//      initializeQuickCheckField(theDim);
-//    }
-
-
 }
 
 /*
@@ -459,21 +411,8 @@ bool BoundaryStrategy::precisionCompare(float _x,float _y,float _prec){
 }
 
 
-Coordinates3D<double> BoundaryStrategy::HexCoord(const Point3D & _pt)const{
-   //the transformations formulas for hex latice are written in such a way that distance between pixels is set to 1
-   //if(_pt.z%2){//odd z
-   //   if(_pt.y%2)//odd
-   //      return Coordinates3D<double>(_pt.x , sqrt(3.0)/2.0*(_pt.y+2.0/3.0), _pt.z*sqrt(6.0)/3.0 );
-   //   else//#even
-   //      return Coordinates3D<double>( _pt.x+0.5 ,  sqrt(3.0)/2.0*(_pt.y+2.0/3.0) , _pt.z*sqrt(6.0)/3.0);
-   //}
-   //else{
-   //   if(_pt.y%2)//#odd
-   //      return Coordinates3D<double>(_pt.x , sqrt(3.0)/2.0*_pt.y, _pt.z*sqrt(6.0)/3.0);
-   //   else//even
-   //      return Coordinates3D<double>( _pt.x+0.5 ,  sqrt(3.0)/2.0*_pt.y , _pt.z*sqrt(6.0)/3.0);
-   //}
-   
+Coordinates3D<double> BoundaryStrategy::HexCoord(const Point3D & _pt)const
+{
    if((_pt.z%3)==1){//odd z e.g. z=1
 	  //(-0.5,+sqrt(3)/6) 		
       if(_pt.y%2)
@@ -481,26 +420,12 @@ Coordinates3D<double> BoundaryStrategy::HexCoord(const Point3D & _pt)const{
       else//even
          return Coordinates3D<double>( _pt.x ,  sqrt(3.0)/2.0*(_pt.y+2.0/6.0) , _pt.z*sqrt(6.0)/3.0);
 
-      //if(_pt.y%2)//odd e.g. y=1
-      //   return Coordinates3D<double>(_pt.x+0.5 , sqrt(3.0)/2.0*(_pt.y+2.0/3.0), _pt.z*sqrt(6.0)/3.0 );
-      //else//#even e.g. y=0
-      //   return Coordinates3D<double>( _pt.x ,  sqrt(3.0)/2.0*(_pt.y-2.0/6.0) , _pt.z*sqrt(6.0)/3.0);
-
    }else if((_pt.z%3)==2){ //e.g. z=2
 
-	  //(-0.5,-	sqrt(3)/6)
-      //if(_pt.y%2)
-      //   return Coordinates3D<double>(_pt.x-0.5 , sqrt(3.0)/2.0*(_pt.y-2.0/6.0), _pt.z*sqrt(6.0)/3.0);
-      //else//even
-      //   return Coordinates3D<double>( _pt.x ,  sqrt(3.0)/2.0*(_pt.y-2.0/6.0) , _pt.z*sqrt(6.0)/3.0);
       if(_pt.y%2)
          return Coordinates3D<double>(_pt.x+0.5 , sqrt(3.0)/2.0*(_pt.y-2.0/6.0), _pt.z*sqrt(6.0)/3.0);
       else//even
          return Coordinates3D<double>( _pt.x ,  sqrt(3.0)/2.0*(_pt.y-2.0/6.0) , _pt.z*sqrt(6.0)/3.0);
-
-
-
-
    }
    else{//z divible by 3 - includes z=0
       if(_pt.y%2)
@@ -508,7 +433,6 @@ Coordinates3D<double> BoundaryStrategy::HexCoord(const Point3D & _pt)const{
       else//even
          return Coordinates3D<double>( _pt.x+0.5 ,  sqrt(3.0)/2.0*_pt.y , _pt.z*sqrt(6.0)/3.0);
    }
-
 }
 
 Point3D BoundaryStrategy::Hex2Cartesian(const Coordinates3D<double> & _coord)const{
@@ -555,28 +479,20 @@ Point3D BoundaryStrategy::Hex2Cartesian(const Coordinates3D<double> & _coord)con
     }   
 }
 
-
-
 Coordinates3D<double> BoundaryStrategy::calculatePointCoordinates(const Point3D & _pt)const{
    if(latticeType==HEXAGONAL_LATTICE){
       Coordinates3D<double> hexCoord=HexCoord(_pt);
-      //hexCoord.x*=lmf.lengthMF;
-      //hexCoord.y*=lmf.lengthMF;
-      //hexCoord.z*=lmf.lengthMF;
       return hexCoord;
    }else{
       return Coordinates3D<double>(_pt.x,_pt.y,_pt.z);
    }
-   
 }
 
 void BoundaryStrategy::prepareNeighborListsHex(float _maxDistance){
 #ifdef _DEBUG
 	cerr<<"INSIDE prepareNeighborListsHex"<<endl;
 #endif
-   //unsigned int maxHexArraySize=(Y_ODD|Z_ODD|X_ODD|Y_EVEN|Z_EVEN|X_EVEN)+1;
-
-   unsigned int maxHexArraySize=6;
+   const unsigned int maxHexArraySize=6;
 
    hexOffsetArray.assign(maxHexArraySize,vector<Point3D>());
    hexDistanceArray.assign(maxHexArraySize,vector<float>());
@@ -600,10 +516,6 @@ void BoundaryStrategy::prepareNeighborListsHex(float _maxDistance){
    if (dim.x !=1 && tmpFieldDim.x<10){  // to generate coorect offsets we need to have tmpField which is large enouigh for our algorithm in non-flad z dimension
         tmpFieldDim.x=10;
    }
-   
-   
-   // Field3DImpl<char> tempField(dim,a);
-   // Point3D ctPt(dim.x/2,dim.y/2,dim.z/2);
    
    Field3DImpl<char> tempField(tmpFieldDim,a);
    Point3D ctPt(tmpFieldDim.x/2 , tmpFieldDim.y/2 , tmpFieldDim.z/2);   
@@ -641,8 +553,6 @@ void BoundaryStrategy::prepareNeighborListsHex(float _maxDistance){
 	  ctPtTmp.y+=ctPtTmp.y % 2; //make it even	
 	  ctPtTmp.z+=0;// make it divisible by 3 in case it is not
 
-
-
 #ifdef _DEBUG
       cerr<<"even even ctPtTmp="<<ctPtTmp<<endl;
 #endif
@@ -660,12 +570,6 @@ void BoundaryStrategy::prepareNeighborListsHex(float _maxDistance){
 	  ctPtTmp.y+=(ctPtTmp.y % 2-1); //make it odd	
 	  ctPtTmp.z+=3-ctPtTmp.z % 3;// make it divisible by 3 in case it is not
 
-
-	  //if( !(ctPtTmp.y % 2) ){//is even
-   //      ctPtTmp.y+=1;//make it odd
-   //   }
-   //   if( ctPtTmp.z % 3 ) // is odd
-   //      ctPtTmp.z+=ctPtTmp.z % 3; //make it divisible by 3
 #ifdef _DEBUG
 		cerr<<"ctPtTmp.y % 2 ="<<ctPtTmp.y % 2 << " !ctPtTmp.y % 2="<<!(ctPtTmp.y % 2)<<endl;
 
@@ -688,10 +592,7 @@ void BoundaryStrategy::prepareNeighborListsHex(float _maxDistance){
       
    }
 
-      
    ctPtTmp=ctPt;
-
-   
    indexHex=2;// e.g. z=22 y=20
    
    if(dim.z > 1){//make sure not 2D with z direction flat
@@ -710,34 +611,23 @@ void BoundaryStrategy::prepareNeighborListsHex(float _maxDistance){
    ctPtTmp=ctPt;
 
    indexHex=3;
-
-   
    
    if(dim.z > 1){//make sure not 2D with z direction flat
 
 	  ctPtTmp.y+=(ctPtTmp.y % 2-1); //make it odd
 	  ctPtTmp.z+=3-ctPtTmp.z % 3-2;// make it divisible by 3 with z%3=1 in case it is not
-
-
       getOffsetsAndDistances(ctPtTmp,_maxDistance,tempField,hexOffsetArray[indexHex],hexDistanceArray[indexHex],hexNeighborOrderIndexArray[indexHex]);
-
    }else{//2D case
       //ignore this case      
    }
 
-
    ctPtTmp=ctPt;
-
    indexHex=4;
-
-   
    
    if(dim.z > 1){//make sure not 2D with z direction flat
 
 	  ctPtTmp.y+=ctPtTmp.y % 2; //make it even
 	  ctPtTmp.z+=3-ctPtTmp.z % 3-1;// make it divisible by 3 with z%3=2 in case it is not
-
-
       getOffsetsAndDistances(ctPtTmp,_maxDistance,tempField,hexOffsetArray[indexHex],hexDistanceArray[indexHex],hexNeighborOrderIndexArray[indexHex]);
 
    }else{//2D case
@@ -745,9 +635,8 @@ void BoundaryStrategy::prepareNeighborListsHex(float _maxDistance){
    }
 
    ctPtTmp=ctPt;
-
    indexHex=5;
-      
+
    if(dim.z > 1){//make sure not 2D with z direction flat
 
 	  ctPtTmp.y+=(ctPtTmp.y % 2-1); //make it odd
@@ -783,39 +672,7 @@ void BoundaryStrategy::prepareNeighborListsHex(float _maxDistance){
 	   }else{
 			maxOffset=12;
 	   }
-
-	//cerr<<" *******************************INDEX 0"<<endl;
-	//for(int i = 0 ; i < maxOffset ; ++i){
-	//	cerr<<"hexOffsetArray[0]["<<i<<"]="<<hexOffsetArray[0][i]<<endl;
-	//}
-	//cerr<<" *******************************INDEX 1"<<endl;
-	//for(int i = 0 ; i < maxOffset ; ++i){
-	//	cerr<<"hexOffsetArray[1]["<<i<<"]="<<hexOffsetArray[1][i]<<endl;
-	//}
-
-	//cerr<<" *******************************INDEX 2"<<endl;
-	//for(int i = 0 ; i < maxOffset ; ++i){
-	//	cerr<<"hexOffsetArray[2]["<<i<<"]="<<hexOffsetArray[2][i]<<endl;
-	//}
-
-	//cerr<<" *******************************INDEX 3"<<endl;
-	//for(int i = 0 ; i < maxOffset ; ++i){
-	//	cerr<<"hexOffsetArray[3]["<<i<<"]="<<hexOffsetArray[3][i]<<endl;
-	//}
-
-	//cerr<<" *******************************INDEX 4"<<endl;
-	//for(int i = 0 ; i < maxOffset ; ++i){
-	//	cerr<<"hexOffsetArray[4]["<<i<<"]="<<hexOffsetArray[4][i]<<endl;
-	//}
-
-	//cerr<<" *******************************INDEX 5"<<endl;
-	//for(int i = 0 ; i < maxOffset ; ++i){
-	//	cerr<<"hexOffsetArray[5]["<<i<<"]="<<hexOffsetArray[5][i]<<endl;
-	//}
-
-
    }
-
 
 #ifdef _DEBUG
 
@@ -828,8 +685,6 @@ void BoundaryStrategy::prepareNeighborListsHex(float _maxDistance){
       cerr<<" This is offset["<<i<<"]="<<hexOffsetArray[indexHex][i]<<" distance="<<hexDistanceArray[indexHex][i]<<endl;
       }
    }
-
-
 
    Neighbor n;
    Point3D testPt(10,10,0);
@@ -870,7 +725,6 @@ void BoundaryStrategy::prepareNeighborListsHex(float _maxDistance){
       }
    }
 
-
    for (int i =1 ; i<=11 ; ++i){
       unsigned int maxIdx=getMaxNeighborIndexFromNeighborOrder(i);
       cerr<<"NEIGHBOR ORDER ="<<i<<" maxIdx="<<maxIdx<<endl;
@@ -878,13 +732,7 @@ void BoundaryStrategy::prepareNeighborListsHex(float _maxDistance){
    }
    
 #endif
-
-//    prepareNeighborListsBasedOnNeighborOrder(12);
-
-   //exit(0);
-
 }
-
 
 void BoundaryStrategy::getOffsetsAndDistances(
                                                 Point3D ctPt,
@@ -914,11 +762,6 @@ void BoundaryStrategy::getOffsetsAndDistances(
       ctPtTrans=Coordinates3D<double>(ctPt.x,ctPt.y,ctPt.z);
    }
    
-   // cerr<<"getOffsetsAndDistances"<<endl;
-   // cerr<<"ctPt="<<ctPt<<endl;
-   // cerr<<"dim="<<dim<<endl;
-   // cerr<<"tempField.getDim()="<<tempField.getDim()<<endl;
-
    Dim3D tmpFieldDim = tempField.getDim();
    
    while (true) {
@@ -929,10 +772,7 @@ void BoundaryStrategy::getOffsetsAndDistances(
       // n = getNeighbor(ctPt, token, distance, true);
       // cerr<<"distance="<<distance<<endl;
       if (distance > maxDistance*2.0) break; //2.0 factor is to ensure you visit enough neighbors for different kind of lattices
-                                             //This factor is purly heuristic and may need to be increased in certain cases
-      
-//       offset=ctPt-n;
-      
+           
       offset=n-ctPt;
 
       if (latticeType==HEXAGONAL_LATTICE){
@@ -962,8 +802,6 @@ void BoundaryStrategy::getOffsetsAndDistances(
       sortingMap.insert(make_pair(distanceVecTmp[i],offsetVecTmp[i]));
    }
    //clearing offsetVecTmp and distanceVecTmp
-   
-
 
    offsetVecTmp.clear();
    distanceVecTmp.clear(); 
@@ -980,15 +818,12 @@ void BoundaryStrategy::getOffsetsAndDistances(
    //given neighbor order
    float currentDistance=1.0;
 
-
    for( int i = 0 ; i < distanceVecTmp.size() ; ++i){
       if(currentDistance<distanceVecTmp[i]){
          neighborOrderIndexVecTmp.push_back(i-i);
          currentDistance=distanceVecTmp[i];
       }
    }
-
-
 
 }
 
@@ -1006,55 +841,16 @@ void BoundaryStrategy::prepareNeighborListsSquare(float _maxDistance){
     }
 #endif
 
-
-//    ctPt=Point3D(0,0,0);
-//    Neighbor neighbor;
-//    int maxNeighborIndex=3;
-//       for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
-//          neighbor=this->getNeighborDirect(const_cast<Point3D&>(ctPt),nIdx);
-//          if(!neighbor.distance){
-//             //if distance is 0 then the neighbor returned is invalid
-//             cerr<<" GOT DISTANCE SQUARE 0"<<endl;
-//             cerr<<"neighbor.pt="<<neighbor.pt<<" offset="<<offsetVec[nIdx]<<endl;
-//             continue;
-//          }
-//          cerr<<"neighbor.pt="<<neighbor.pt<<" offset="<<offsetVec[nIdx]<<endl;
-//       }
-
-
-   
-
-
-
 }
-
-
 
 void BoundaryStrategy::prepareNeighborLists(float _maxDistance){
    maxDistance=_maxDistance;
-
-	//cerr<<"generateLatticeMultiplicativeFactors"<<endl;
-
    lmf=generateLatticeMultiplicativeFactors(latticeType,dim);
-
-	//cerr<<"generateLatticeMultiplicativeFactors 1"<<endl;
-
    if(latticeType==HEXAGONAL_LATTICE){
-
-		//cerr<<"generateLatticeMultiplicativeFactors 2"<<endl;
       prepareNeighborListsHex(_maxDistance);
-		//cerr<<"generateLatticeMultiplicativeFactors 3"<<endl;
-      
    }else{
       prepareNeighborListsSquare(_maxDistance);
    }
-
-//    exit(0);
-
-//    prepareNeighborListsSquare(_maxDistance);
-   return ;
-
-
 }
 
 unsigned int  BoundaryStrategy::getMaxNeighborOrder()const{
@@ -1063,7 +859,6 @@ unsigned int  BoundaryStrategy::getMaxNeighborOrder()const{
    unsigned int maxNeighborOrder=1;
    unsigned int previousMaxIdx=0;
    unsigned int currentMaxIdx=0;
-
 
    while(true){
       currentMaxIdx=getMaxNeighborIndexFromNeighborOrder(maxNeighborOrder);
@@ -1082,29 +877,12 @@ unsigned int  BoundaryStrategy::getMaxNeighborOrder()const{
 void BoundaryStrategy::prepareNeighborListsBasedOnNeighborOrder(unsigned int _neighborOrder){
 
    unsigned int maxNeighborOrder=getMaxNeighborOrder();
-   //cerr<<"maxNeighborOrder="<<maxNeighborOrder<<endl;
 
    while((maxNeighborOrder-4)<_neighborOrder){ //making sure there is enough higher order neighbors in the list
-      //cerr<<"RECALCULATING NEIGHBOR LIST"<<endl;
       prepareNeighborLists(2.0*maxDistance);
       maxNeighborOrder=getMaxNeighborOrder();
-      //cerr<<"current maxNeighborOrder="<<maxNeighborOrder<<endl;
    }
-
 }
-
-
-//bool BoundaryStrategy::isValidDirect(const Point3D &pt) const{
-////    cerr<<"xsize="<<checkField.size()<<endl;
-////    cerr<<"ysize="<<checkField[0].size()<<endl;
-////    cerr<<"zsize="<<checkField[0][0].size()<<endl;
-//
-//   if(!checkField[pt.x][pt.y][pt.z])
-//      return true;
-//   else
-//      return false;
-//
-//}
 
 unsigned int BoundaryStrategy::getMaxNeighborIndexFromNeighborOrder(unsigned int _neighborOrder)const{
    //Now determine max neighbor index from a list of neighbor offsets
@@ -1116,9 +894,6 @@ unsigned int BoundaryStrategy::getMaxNeighborIndexFromNeighborOrder(unsigned int
 	  unsigned int indexHex=0;     
       double currentDepth=hexDistanceArray[indexHex][0];
 
-
-
-      
       for(int i = 0 ; i < hexDistanceArray[indexHex].size() ; ++i){
 
          ++maxNeighborIndex;
@@ -1185,8 +960,6 @@ unsigned int BoundaryStrategy::getMaxNeighborIndexFromDepth(float depth)const{
    }
 }
 
-
-
 Neighbor BoundaryStrategy::getNeighborDirect(Point3D & pt,unsigned int idx, bool checkBounds,bool calculatePtTrans )const {
    Neighbor n;
 //    n.pt=pt+offsetVec[idx];
@@ -1204,12 +977,6 @@ Neighbor BoundaryStrategy::getNeighborDirect(Point3D & pt,unsigned int idx, bool
    }else{
       n.pt=pt+offsetVec[idx];
    }
-
-
-//    if(!isValidDirect(pt)){//here I check whether point, not its neighbor, requires some more checks. If not I return
-//       n.distance=distanceVec[idx];
-//       return n;
-//    }
 
    //Here I will add condition  if (flagField[pt] ) ...
 
@@ -1273,39 +1040,3 @@ Neighbor BoundaryStrategy::getNeighborDirect(Point3D & pt,unsigned int idx, bool
 
 
 }
-
-
-//void BoundaryStrategy::initializeQuickCheckField(Dim3D _dim){
-//   //this function will initialize a field of unsigned char with special values:
-//   //if the value is 0 then no checks whether neighbor belongs to the field will be done
-//   // other values indicate that further checks are necessary 
-//   checkField.assign(dim.x, vector<vector< unsigned char > >(dim.y,vector<unsigned char>(dim.z,0)));
-//   Point3D pt;
-//
-//   //Now will check initialize 3D array taking into account whether we have 2D or 3D simulation
-//
-//      for (int x = 0  ; x < dim.x ; ++x)
-//         for (int y = 0  ; y < dim.y ; ++y)
-//            for (int z = 0  ; z < dim.z ; ++z){
-//               //will do case by case initialization - i.e. when field is "flat" in x ,y or z direction
-//               //Although this is not pretty solution I will leave it for now
-//               if(x < maxDistance || fabs((float)dim.x-x)<maxDistance ){
-//                  if(dim.x != 1){//if dim.x is 1 we do not mark this pixel for extra checks
-//                     checkField[x][y][z]=1;
-//                  } 
-//               }
-//               if(y < maxDistance || fabs((float)dim.y-y)<maxDistance ){
-//                  if(dim.y != 1){//if dim.y is 1 we do not mark this pixel for extra checks
-//                     checkField[x][y][z]=1;
-//                  } 
-//               }
-//
-//               if(z < maxDistance || fabs((float)dim.z-z)<maxDistance ){
-//                  if(dim.z != 1){//if dim.y is 1 we do not mark this pixel for extra checks
-//                     checkField[x][y][z]=1;
-//                  } 
-//               }
-//
-//            }
-//
-//}
