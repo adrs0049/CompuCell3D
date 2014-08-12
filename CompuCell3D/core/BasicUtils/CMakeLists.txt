@@ -34,7 +34,7 @@ SET(SRCS
         BasicDynamicClassNodeBase.cpp
         BasicClassGroupFactory.cpp
         BasicPluginInfo.cpp
-        BasicClassRegistry.cpp
+        #BasicClassRegistry.cpp
         BasicStringTable.cpp
         ${ADDITIONAL_BASIC_UTILS_FILES}
 )

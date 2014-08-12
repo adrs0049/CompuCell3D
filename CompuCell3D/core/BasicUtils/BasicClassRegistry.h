@@ -34,40 +34,37 @@
 
 template <class T>
 class BasicClassRegistry {
-  using factoryMap_t = std::map<std::string, BasicClassFactoryBase<T> *>;
-  factoryMap_t factoryMap;
+     using factoryMap_t = std::map<std::string, std::unique_ptr<BasicClassFactoryBase<T> > >;
+     factoryMap_t factoryMap;
 
 public:
-  BasicClassRegistry() {}
+     BasicClassRegistry() {}
 
-  ~BasicClassRegistry() {
-    typename factoryMap_t::iterator it;
-    for (it = factoryMap.begin(); it != factoryMap.end(); it++)
-      delete it->second;
-  }
+     ~BasicClassRegistry() {}
 
-  BasicClassFactoryBase<T> *unregisterFactory(const std::string id) {
-    BasicClassFactoryBase<T> *factory = factoryMap[id];
-    factoryMap.erase(id);
-    return factory;
-  }
+     std::unique_ptr<BasicClassFactoryBase<T>> unregisterFactory ( const std::string id ) 
+	 {
+          auto factory = std::move(factoryMap[id]);
+          factoryMap.erase ( id );
+          return factory;
+     }
 
-  void registerFactory(BasicClassFactoryBase<T> *factory,
-		       const std::string id) {
-    ASSERT_OR_THROW(std::string("registerFactory() Factory with id '") +
-		    id + "' already registered",
-		    factoryMap.find(id) == factoryMap.end());
-    
-    factoryMap[id] = factory;
-  }
+     void registerFactory ( std::unique_ptr<BasicClassFactoryBase<T> > factory,
+                            const std::string id ) {
+          ASSERT_OR_THROW ( std::string ( "registerFactory() Factory with id '" ) +
+                            id + "' already registered",
+                            factoryMap.find ( id ) == factoryMap.end() );
 
-  std::unique_ptr<T> create(const std::string id) {
-    BasicClassFactoryBase<T> *factory = factoryMap[id];
-    ASSERT_OR_THROW(std::string("create() Factory '") + id + "' not found!",
-		    factory);
-    
-    return std::make_unique<T>(factory->create());
-  }
+          factoryMap[id] = std::move(factory);
+     }
+
+     std::unique_ptr<T> create ( const std::string id ) {
+          auto factory = factoryMap[id];
+          ASSERT_OR_THROW ( std::string ( "create() Factory '" ) + id + "' not found!",
+                            factory );
+
+          return std::make_unique<T> ( factory->create() );
+     }
 };
 
 #endif

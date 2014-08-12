@@ -63,7 +63,8 @@ protected:
   std::shared_ptr<void> getClass(const std::unique_ptr<BasicClassGroup>& group) const {
     return group->getClass(id);
   }
-  virtual void deallocateClass(std::unique_ptr<BasicClassGroup>& group) const {}
+  
+  virtual void deallocateClass(std::unique_ptr<BasicClassGroup>& group) const = 0;
   friend class BasicClassGroupFactory;
 };
 

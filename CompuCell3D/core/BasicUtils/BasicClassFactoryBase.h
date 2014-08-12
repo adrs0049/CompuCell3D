@@ -35,7 +35,7 @@ class BasicClassFactoryBase
 {
 public:
   virtual std::unique_ptr<T> create() = 0;
-  virtual void destroy(std::unique_ptr<T>& classNode) = 0;
+//   virtual void destroy(std::unique_ptr<T>& classNode) = 0;
 };
 
 template <>
@@ -43,7 +43,7 @@ class BasicClassFactoryBase<void>
 {
 public:
 	virtual std::shared_ptr<void> create() = 0;
-	virtual void destroy(std::shared_ptr<void>& classNode) = 0;
+// 	virtual void destroy(std::shared_ptr<void>& classNode) = 0;
 };
 
 #endif

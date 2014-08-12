@@ -36,8 +36,8 @@
 BasicClassGroupFactory::~BasicClassGroupFactory()
 {
 	// DO I EVEN NEED THIS??
- 	for (auto& factory : classFactories)
- 		factory.reset(nullptr);
+//  	for (auto& factory : classFactories)
+//  		factory.reset(nullptr);
 }
 
 void BasicClassGroupFactory::registerClass(std::shared_ptr<BasicClassAccessorBase> accessor)

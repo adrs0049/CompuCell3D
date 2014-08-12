@@ -44,7 +44,7 @@ public:
   /** 
    * @param classNode A pointer to the instance of class T to deallocate.
    */
-  virtual void destroy(std::unique_ptr<BaseType>& classNode) { classNode.reset(nullptr); }
+//   virtual void destroy(std::unique_ptr<BaseType>& classNode) { classNode.reset(nullptr); }
 };
 
 template <class DerivedType>
@@ -59,7 +59,7 @@ public:
   /** 
    * @param classNode A pointer to the instance of class T to deallocate.
    */
-  virtual void destroy(std::shared_ptr<void>& classNode) { classNode.reset(); }
+//   virtual void destroy(std::shared_ptr<void>& classNode) { classNode.reset(); }
 };
 
 #endif
