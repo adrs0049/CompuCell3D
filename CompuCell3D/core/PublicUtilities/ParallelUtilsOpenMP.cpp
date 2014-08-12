@@ -255,7 +255,6 @@ unsigned int ParallelUtilsOpenMP::getCurrentWorkNodeNumber(){
 void ParallelUtilsOpenMP::calculateFESolverPartitionWithBoxWatcher(const Dim3D & _boxMin,const Dim3D & _boxMax){
 	//unsigned int numProcs=(numberOfWorkNodes ? numberOfWorkNodes:getNumberOfProcessors());
 	unsigned int numProcs=(numberOfWorkNodes ? numberOfWorkNodes:1); //by default we will use 1 thread. Users have to explicitely request more processors
-
 	unsigned int optimalNumberOfThreads=(numProcs==1 ? 1:threadsPerWorkNode*numProcs);
 
 	//this is inefficient implementation butbulk of the computatioanl time is spen elswhere so it is not a big deal. 
@@ -265,13 +264,12 @@ void ParallelUtilsOpenMP::calculateFESolverPartitionWithBoxWatcher(const Dim3D &
 			unsigned int wL=(_boxMax.y-_boxMin.y)/(threadNum); //base workload for single processor
 			unsigned int extraWL=(_boxMax.y-_boxMin.y) % threadNum ; //extra workload - will be distributed evenly among first processes
 
-
 			feSolverPartitionWithBoxWatcherVec.clear();
 
 			Dim3D minDim(_boxMin);
 			Dim3D maxDim;
 
-			for (int i  = 0 ; i < threadNum ; ++i){
+			for (unsigned int i  = 0 ; i < threadNum ; ++i){
 				maxDim=Dim3D(_boxMax.x, minDim.y+wL,_boxMax.z);
 				if(extraWL>0){
 					maxDim.y++;
@@ -282,42 +280,34 @@ void ParallelUtilsOpenMP::calculateFESolverPartitionWithBoxWatcher(const Dim3D &
 			}
 		}else{
 			unsigned int threadNum=(_boxMax.y-_boxMin.y); // number of threads in this case is the same as the box dimension in the y direction
-
 			unsigned int wL=1; //base workload for single processor
-
-
 
 			feSolverPartitionWithBoxWatcherVec.clear();
 
 			Dim3D minDim(_boxMin);
 			Dim3D maxDim;
 
-			for (int i  = 0 ; i < threadNum ; ++i){
+			for (unsigned int i  = 0 ; i < threadNum ; ++i){
 				maxDim=Dim3D(_boxMax.x, minDim.y+wL,_boxMax.z);
 				feSolverPartitionWithBoxWatcherVec.push_back(make_pair(minDim,maxDim));
 				minDim.y=maxDim.y;
 			}
-
-
 		}
 		return ;
-
 	}
 
 	if((_boxMax.z-_boxMin.z)>=optimalNumberOfThreads){//z dimension is large enough so that we can divide lattice using optimal division scheme
 
-
 		unsigned int threadNum=optimalNumberOfThreads;
 		unsigned int wL=(_boxMax.z-_boxMin.z)/(threadNum); //base workload for single processor
 		unsigned int extraWL=(_boxMax.z-_boxMin.z) % threadNum ; //extra workload - will be distributed evenly among first processes
-
 
 		feSolverPartitionWithBoxWatcherVec.clear();
 
 		Dim3D minDim(_boxMin);
 		Dim3D maxDim;
 
-		for (int i  = 0 ; i < threadNum ; ++i){
+		for (unsigned int i  = 0 ; i < threadNum ; ++i){
 			maxDim=Dim3D(_boxMax.x,_boxMax.y, minDim.z+wL);
 			if(extraWL>0){
 				maxDim.z++;
@@ -329,15 +319,11 @@ void ParallelUtilsOpenMP::calculateFESolverPartitionWithBoxWatcher(const Dim3D &
 
 		return;
 	}
-
-
-
 }
 
 std::pair<Dim3D,Dim3D> ParallelUtilsOpenMP::getFESolverPartition(unsigned int _workNodeNum){
 	return feSolverPartitionVec[_workNodeNum];
 }
-
 
 void ParallelUtilsOpenMP::calculateFESolverPartition(){
 	//unsigned int numProcs=(numberOfWorkNodes ? numberOfWorkNodes:getNumberOfProcessors());
@@ -357,7 +343,7 @@ void ParallelUtilsOpenMP::calculateFESolverPartition(){
 			Dim3D minDim(1,1,1);
 			Dim3D maxDim;
 
-			for (int i  = 0 ; i < threadNum ; ++i){
+			for (unsigned int i  = 0 ; i < threadNum ; ++i){
 				maxDim=Dim3D(fieldDim.x+1, minDim.y+wL,fieldDim.z+1);
 				if(extraWL>0){
 					maxDim.y++;
@@ -378,7 +364,7 @@ void ParallelUtilsOpenMP::calculateFESolverPartition(){
 			Dim3D minDim(1,1,1);
 			Dim3D maxDim;
 
-			for (int i  = 0 ; i < threadNum ; ++i){
+			for (unsigned int i  = 0 ; i < threadNum ; ++i){
 				maxDim=Dim3D(fieldDim.x+1, minDim.y+wL,fieldDim.z+1);
 				feSolverPartitionVec.push_back(make_pair(minDim,maxDim));
 				minDim.y=maxDim.y;
@@ -388,28 +374,7 @@ void ParallelUtilsOpenMP::calculateFESolverPartition(){
 		}
 		return ;
 	}
-	//if(fieldDim.z<threadsPerWorkNode*availProcs){//in this case we will set number of working threads according to fieldDim.z dimension
-	//	
-	//	unsigned int threadNum=fieldDim.z; // number of threads in this case is the same as the dimension in the z direction
-
-	//	unsigned int wL=1; //base workload for single processor
-	//	
-
-	//	
-	//	feSolverPartitionVec.clear();
-
-	//	Dim3D minDim(1,1,1);
-	//	Dim3D maxDim;
-
-	//	for (int i  = 0 ; i < threadNum ; ++i){
-	//		maxDim=Dim3D(fieldDim.x+1, fieldDim.y+1 , minDim.z+wL);
-	//		feSolverPartitionVec.push_back(make_pair(minDim,maxDim));
-	//		minDim.z=maxDim.z;
-	//	}		
-	//	return;
-	//}
-
-
+	
 	if(fieldDim.z>=optimalNumberOfThreads){//z dimension is large enough so that we can divide lattice using optimal division scheme
 
 
@@ -423,7 +388,7 @@ void ParallelUtilsOpenMP::calculateFESolverPartition(){
 		Dim3D minDim(1,1,1);
 		Dim3D maxDim;
 
-		for (int i  = 0 ; i < threadNum ; ++i){
+		for (unsigned int i  = 0 ; i < threadNum ; ++i){
 			maxDim=Dim3D(fieldDim.x+1,fieldDim.y+1, minDim.z+wL);
 			if(extraWL>0){
 				maxDim.z++;
@@ -435,24 +400,7 @@ void ParallelUtilsOpenMP::calculateFESolverPartition(){
 
 		return;
 	}
-
-	//// in any reasonable CC3D simulation this case should never occur this is essentially 1D/quasi-1D simulation
-	//if((fieldDim.z==1 || fieldDim.z<threadsPerWorkNode*availProcs) && (fieldDim.y==1 || fieldDim.y<threadsPerWorkNode*availProcs) ){
-	//	//in this case we will use single thread only
-
-	//		feSolverPartitionVec.clear();
-
-	//		Dim3D minDim(1,1,1);
-	//		Dim3D maxDim(fieldDim.x+1,fieldDim.y+1,fieldDim.z+1);
-	//		feSolverPartitionVec.push_back(make_pair(minDim,maxDim));
-	//	
-	//}
-
-
-
-
 }
-
 
 void ParallelUtilsOpenMP::calculateKernelSolverPartition(const Dim3D & _boxMin,const Dim3D & _boxMax){
 	calculateFESolverPartitionWithBoxWatcher(_boxMin,_boxMax);
@@ -541,20 +489,18 @@ unsigned int primeFactorsSize=primeFactors.size();
 //this way we guarantee that max dimension will have most partitions
 //however this method is not the most optimal. I can do some tweaks but for now it shuold be OO to have something at least
 if (_quasi2DFlag){
-	for(int i  = 0 ;i < primeFactorsSize ; ++i ){
+	for(unsigned int i  = 0 ;i < primeFactorsSize ; ++i ){
 		partitionVec[2-i%2]*=primeFactors[primeFactorsSize-i-1]	;
 	}
 
 }else{
-	for(int i  = 0 ;i < primeFactorsSize ; ++i ){
+	for(unsigned int i  = 0 ;i < primeFactorsSize ; ++i ){
 		partitionVec[2-i%3]*=primeFactors[primeFactorsSize-i-1]	;
 	}
 
 }
     
 return partitionVec;
-
-
 }
 
 void ParallelUtilsOpenMP::generateLatticePartition(unsigned int _numberOfProcessors,bool _quasi2DFlag,std::vector<unsigned int> _dimIndexOrderedVec){
@@ -571,8 +517,6 @@ void ParallelUtilsOpenMP::generateLatticePartition(unsigned int _numberOfProcess
 	}else{//requested more processors than we expect - using algorothmic partitioning
 
 	}
-
-
 
 	if (_quasi2DFlag){
 		vector<unsigned int> partitionVec(3,1);
@@ -616,7 +560,6 @@ void ParallelUtilsOpenMP::calculatePottsPartition(){
 	dimVec.push_back(fieldDim.y);
 	dimVec.push_back(fieldDim.z);
 
-
 	vector<unsigned short> dimVecTmp=dimVec; //have to make a copy because dimVecTmp will be altered
 
 	//first we determine minimum dimension and its position in the vector
@@ -626,20 +569,14 @@ void ParallelUtilsOpenMP::calculatePottsPartition(){
 	//to ensure that max_element does not pick the same position for the max dimension as it did for the minimum element 
 	//in case all 3 dimensions are the same
 
-
-
 	unsigned short maxDimCoord=*max_element(dimVecTmp.begin(),dimVecTmp.end());
 	unsigned int indexMax=distance(dimVecTmp.begin(),max_element(dimVecTmp.begin(),dimVecTmp.end()));
 
-
-
 	//finding index of "middle" dimension
-	unsigned int indexMiddle;
-	unsigned short middleDimCoord;
-	for(int i = 0 ; i < 3; ++i){
+	unsigned int indexMiddle = 0;
+	for(unsigned int i = 0 ; i < 3; ++i){
 		if(i!=indexMin && i!=indexMax){
 			indexMiddle=i;
-			middleDimCoord=dimVecTmp[indexMiddle];
 			break;
 		}
 	}
@@ -664,105 +601,7 @@ void ParallelUtilsOpenMP::calculatePottsPartition(){
 	//cerr<<"minDimCoord="<<minDimCoord<<" indexMin="<<indexMin<<" maxDimCoord="<<maxDimCoord<<" indexMax="<<indexMax<<" middleDimCoord="<<middleDimCoord<<" indexMiddle="<<indexMiddle<<endl;
 
 	generateLatticePartition(optimalNumberOfThreads,quasi2D,dimIndexOrderedVec);
-
-	//switch (optimalNumberOfThreads){
-	//	case 4: //2 CPU
-	//		{
-	//			partitionLattice(1,2, 2,dimIndexOrderedVec);
-	//		}
-	//		break;
-	//	case 6://3 CPU
-	//		{
-	//			partitionLattice(1,2, 3,dimIndexOrderedVec);
-	//		}
-	//		break;
-
-	//	case 8:// 4 CPU
-	//		{
-	//			
-	//			if (quasi2D)
-	//				partitionLattice(1,2, 4,dimIndexOrderedVec);
-	//			else
-	//				partitionLattice(2,2, 2,dimIndexOrderedVec);
-	//		}
-	//		break;
-
-	//	case 10:// 5 CPU
-	//		{
-	//			partitionLattice(1,2, 5,dimIndexOrderedVec);
-	//		}
-	//		break;
-
-	//	case 12:// 6 CPU
-	//		{
-	//			
-	//			if (quasi2D)
-	//				partitionLattice(1,3, 4,dimIndexOrderedVec);
-	//			else
-	//				partitionLattice(2,2, 3,dimIndexOrderedVec);
-	//		}
-	//		break;
-
-	//	case 14:// 7 CPU
-	//		{				
-	//			partitionLattice(1,2, 7,dimIndexOrderedVec);
-	//		}
-	//		break;
-
-	//	case 16:// 8 CPU
-	//		{
-	//			if (quasi2D)
-	//				partitionLattice(1,4, 4,dimIndexOrderedVec);
-	//			else
-	//				partitionLattice(2,2, 4,dimIndexOrderedVec);
-	//		}
-	//		break;
-
-	//	case 18:// 9 CPU
-	//		{
-	//			if (quasi2D)
-	//				partitionLattice(1,3, 6,dimIndexOrderedVec);
-	//			else
-	//				partitionLattice(2,3, 3,dimIndexOrderedVec);
-	//		}
-	//		break;
-
-	//	case 20:// 10 CPU
-	//		{
-	//			if (quasi2D)
-	//				partitionLattice(1,4, 5,dimIndexOrderedVec);
-	//			else
-	//				partitionLattice(2,2, 5,dimIndexOrderedVec);
-	//		}
-	//		break;
-
-	//	default:
-	//		{
-	//			pottsPartitionVec.clear();
-	//			Dim3D minDim(0,0,0);
-	//			Dim3D maxDim=fieldDim;		
-	//			pottsPartitionVec.assign(1,vector<pair<Dim3D,Dim3D> >(1,make_pair(minDim,maxDim)));
-	//			pottsDimensionsToDivide.clear() ; //no dimension will be divided - single core simulation
-	//			cerr<<"SINGLE PROCESSOR RUN minDim="<<minDim<<" maxDim="<<maxDim<<endl;
-	//		}
-
-	//}
-
-	//if (optimalNumberOfThreads==1){
-	//	pottsPartitionVec.clear();
-	//	Dim3D minDim(0,0,0);
-	//	Dim3D maxDim=fieldDim;		
-	//	pottsPartitionVec.assign(1,vector<pair<Dim3D,Dim3D> >(1,make_pair(minDim,maxDim)));
-	//	pottsDimensionsToDivide.clear() ; //no dimension will be divided - single core simulation
-	//	cerr<<"SINGLE PROCESSOR RUN minDim="<<minDim<<" maxDim="<<maxDim<<endl;
-
-	//}else if (optimalNumberOfThreads==4){
-	//	partitionLattice(1,2, 2,dimIndexOrderedVec);
-
-	//}
-
 }
-
 
 void ParallelUtilsOpenMP::partitionLattice(unsigned int minDimGridPoints,unsigned int middleDimGridPoints, unsigned int maxDimGridPoints,std::vector<unsigned int> _dimIndexOrderedVec)
 {
@@ -794,15 +633,15 @@ void ParallelUtilsOpenMP::partitionLattice(unsigned int minDimGridPoints,unsigne
 	}
 
 
-	for (int i  = 0 ; i < minDimGridPoints ; ++i){
+	for (unsigned int i  = 0 ; i < minDimGridPoints ; ++i){
 		minDimDivisionVec.push_back(i*(minDimCoord/minDimGridPoints));
 	}
 
-	for (int i  = 0 ; i < middleDimGridPoints ; ++i){
+	for (unsigned int i  = 0 ; i < middleDimGridPoints ; ++i){
 		middleDimDivisionVec.push_back(i*(middleDimCoord/middleDimGridPoints));
 	}
 
-	for (int i  = 0 ; i < maxDimGridPoints ; ++i){
+	for (unsigned int i  = 0 ; i < maxDimGridPoints ; ++i){
 		maxDimDivisionVec.push_back(i*(maxDimCoord/maxDimGridPoints));
 	}
 
@@ -814,10 +653,10 @@ void ParallelUtilsOpenMP::partitionLattice(unsigned int minDimGridPoints,unsigne
 		pottsPartitionVec.assign(minDimDivisionVec.size()*middleDimDivisionVec.size()*maxDimDivisionVec.size(),vector<pair<Dim3D,Dim3D> >(8,make_pair(Dim3D(),Dim3D())));
 	}
 
-	int gridId=0;
-	for (int i = 0  ; i < minDimDivisionVec.size() ; ++i)
-		for (int j = 0  ; j < middleDimDivisionVec.size() ; ++j)
-			for (int k = 0  ; k < maxDimDivisionVec.size() ; ++k){
+	unsigned int gridId=0;
+	for (std::size_t i = 0  ; i < minDimDivisionVec.size() ; ++i)
+		for (std::size_t j = 0  ; j < middleDimDivisionVec.size() ; ++j)
+			for (std::size_t k = 0  ; k < maxDimDivisionVec.size() ; ++k){
 
 				Dim3D minDim;
 				Dim3D maxDim;
@@ -836,13 +675,12 @@ void ParallelUtilsOpenMP::partitionLattice(unsigned int minDimGridPoints,unsigne
 
 				++gridId;
 			}
-			int gridIdMax=gridId;
+			unsigned int gridIdMax=gridId;
 
-			for (int gid=0 ; gid<gridIdMax ; ++gid){
+			for (unsigned int gid=0 ; gid<gridIdMax ; ++gid){
 				//Grid boundaries
 				Dim3D minDim=pottsPartitionVec[gid][0].first;
 				Dim3D maxDim=pottsPartitionVec[gid][0].second;
-
 
 				//Each grid will be partitioned into 4 subgrids (or 8 if more threads are used in 3D)
 				Dim3D minSubDim;
@@ -852,9 +690,9 @@ void ParallelUtilsOpenMP::partitionLattice(unsigned int minDimGridPoints,unsigne
 
 				unsigned minIndexSubgrids=(minDimGridPoints==1 ? 1 : 2 ); //to differentiate between quasi2D and 3D cases
 
-				for (int i = 0 ; i < minIndexSubgrids ; ++i)//minIndex
-					for (int j = 0 ; j < 2 ; ++j) //middleIndex
-						for (int k = 0 ; k < 2 ; ++k){//maxIndex
+				for (unsigned int i = 0 ; i < minIndexSubgrids ; ++i)//minIndex
+					for (unsigned int j = 0 ; j < 2 ; ++j) //middleIndex
+						for (unsigned int k = 0 ; k < 2 ; ++k){//maxIndex
 
 							//partitioning along min Dimension
 							if(minIndexSubgrids==1){
@@ -888,112 +726,6 @@ void ParallelUtilsOpenMP::partitionLattice(unsigned int minDimGridPoints,unsigne
 							pottsPartitionVec[gid][subgridId]=make_pair(minSubDim,maxSubDim);
 							cerr<<" GID="<<gid<<" subgridId="<<subgridId<<" minSubDim="<<minSubDim<<" maxSubDim="<<maxSubDim<<endl;
 							++subgridId;
-
 						}
-
 			}
-
 }
-
-
-//void ParallelUtilsOpenMP::partitionLatticeQuasi2D(unsigned int middleDimGridPoints, unsigned int maxDimGridPoints,vector<unsigned int> _dimIndexOrderedVec)
-//{
-//
-//
-//	unsigned int indexMin=_dimIndexOrderedVec[0];
-//	unsigned int indexMiddle=_dimIndexOrderedVec[1];
-//	unsigned int indexMax=_dimIndexOrderedVec[2];
-//
-//	unsigned short minDimCoord=fieldDim[indexMin];
-//	unsigned short middleDimCoord=fieldDim[indexMiddle];
-//	unsigned short maxDimCoord=fieldDim[indexMax];
-//
-//	//lattice is divided into middleDimGridPoints x maxDimGridPoints quadrants with division lines passing through max and middleDimension axes
-//
-//	pottsPartitionVec.clear();
-//
-//	
-//	vector<short> middleDimDivisionVec;
-//	vector<short> maxDimDivisionVec;
-//
-//
-//	for (int i  = 0 ; i < middleDimGridPoints ; ++i){
-//		middleDimDivisionVec.push_back(i*(middleDimCoord/middleDimGridPoints));
-//	}
-//
-//	for (int i  = 0 ; i < maxDimGridPoints ; ++i){
-//		maxDimDivisionVec.push_back(i*(maxDimCoord/maxDimGridPoints));
-//	}
-//
-//	//each grid will be divided into 4 subgrids in quasi-2D lattice division
-//	pottsPartitionVec.assign(middleDimDivisionVec.size()*maxDimDivisionVec.size(),vector<pair<Dim3D,Dim3D> >(4,make_pair(Dim3D(),Dim3D())));
-//
-//	int gridId=0;
-//	for (int i = 0  ; i < middleDimDivisionVec.size() ; ++i)
-//		for (int j = 0  ; j < maxDimDivisionVec.size() ; ++j){
-//			Dim3D minDim;
-//			Dim3D maxDim;
-//
-//			minDim[indexMiddle]=middleDimDivisionVec[i];
-//			minDim[indexMax]=maxDimDivisionVec[j];
-//			minDim[indexMin]=0;
-//
-//			maxDim[indexMiddle]=(i<middleDimDivisionVec.size()-1 ?  middleDimDivisionVec[i+1]: fieldDim[indexMiddle] );
-//			maxDim[indexMax]=(j<maxDimDivisionVec.size()-1 ?  maxDimDivisionVec[j+1]: fieldDim[indexMax] );
-//			maxDim[indexMin]=fieldDim[indexMin];
-//
-//
-//
-//			pottsPartitionVec[gridId][0]=make_pair(minDim,maxDim);
-//			cerr<<"gridId="<<gridId<<" minDim="<<minDim<<" maxDim="<<maxDim<<endl;
-//
-//			++gridId;
-//		}
-//		int gridIdMax=gridId;
-//		//subgrids willl be subdivided along axes correcponding to indexMax and indexMiddle
-//		//pottsDimensionsToDivide.clear() ;
-//		//pottsDimensionsToDivide.push_back(indexMax); 
-//		//pottsDimensionsToDivide.push_back(indexMiddle);
-//
-//		for (int gid=0 ; gid<gridIdMax ; ++gid){
-//			//Grid boundaries
-//			Dim3D minDim=pottsPartitionVec[gid][0].first;
-//			Dim3D maxDim=pottsPartitionVec[gid][0].second;
-//
-//
-//			//Each grid will be partitioned into 4 subgrids (or 8 if more threads are used in 3D)
-//			Dim3D minSubDim;
-//			Dim3D maxSubDim;
-//
-//
-//
-//			unsigned int subgridId=0;
-//
-//			for (int i = 0 ; i < 2 ; ++i)//middleIndex
-//				for (int j = 0 ; j < 2 ; ++j){ //maxIndex
-//
-//					minSubDim[indexMin]=minDim[indexMin];
-//					minSubDim[indexMiddle]=minDim[indexMiddle]+i*((maxDim[indexMiddle]-minDim[indexMiddle])/2);
-//					minSubDim[indexMax]=minDim[indexMax]+j*((maxDim[indexMax]-minDim[indexMax])/2);
-//
-//					maxSubDim[indexMin]=maxDim[indexMin];
-//					if(i<1){
-//						maxSubDim[indexMiddle]=minDim[indexMiddle]+(i+1)*((maxDim[indexMiddle]-minDim[indexMiddle])/2);
-//					}else{
-//						maxSubDim[indexMiddle]=maxDim[indexMiddle];
-//					}
-//					if(j<1){
-//						maxSubDim[indexMax]=minDim[indexMax]+(j+1)*((maxDim[indexMax]-minDim[indexMax])/2);
-//					}else{
-//						maxSubDim[indexMax]=maxDim[indexMax];
-//					}
-//
-//					pottsPartitionVec[gid][subgridId]=make_pair(minSubDim,maxSubDim);
-//					cerr<<" GID="<<gid<<" subgridId="<<subgridId<<" minSubDim="<<minSubDim<<" maxSubDim="<<maxSubDim<<endl;
-//					++subgridId;
-//
-//				}
-//
-//		}
-//
-//}
