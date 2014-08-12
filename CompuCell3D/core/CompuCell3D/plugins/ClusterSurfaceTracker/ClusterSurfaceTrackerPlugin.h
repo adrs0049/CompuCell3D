@@ -2,29 +2,10 @@
 #ifndef CLUSTERSURFACETRACKERPLUGIN_H
 #define CLUSTERSURFACETRACKERPLUGIN_H
 
- #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Plugin.h>
-
-
-// // // #include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
-
-// // // #include <PublicUtilities/ParallelUtilsOpenMP.h>
-
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-
-// // // #include <muParser/muParser.h>
-// // // #include <BasicUtils/BasicClassAccessor.h>
-
-// // // // basic STL includes
-// // // #include <vector>
-// // // #include <list>
-// // // #include <map>
-// // // #include <set>
-// // // #include <string>
-// // // #include <CompuCell3D/Boundary/BoundaryTypeDefinitions.h>
+#include <CompuCell3D/CC3D.h>
 
 #include "ClusterSurfaceTrackerDLLSpecifier.h"
-
+#include <BasicUtils/memory_include.h>
 
 class CC3DXMLElement;
 
@@ -67,7 +48,7 @@ namespace CompuCell3D {
         WatchableField3D<CellG *> *cellFieldG;
         unsigned int maxNeighborIndex;
 
-		PixelTrackerPlugin * pixelTrackerPlugin;
+		std::shared_ptr<PixelTrackerPlugin> pixelTrackerPlugin;
 		BasicClassAccessor<PixelTracker> *pixelTrackerAccessorPtr;
         
     public:

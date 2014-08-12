@@ -42,7 +42,7 @@ void ClusterSurfaceTrackerPlugin::init(Simulator *simulator, CC3DXMLElement *_xm
     cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
 
     bool pluginAlreadyRegisteredFlag;
-	pixelTrackerPlugin=(PixelTrackerPlugin*)Simulator::pluginManager.get("PixelTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+	pixelTrackerPlugin=std::static_pointer_cast<PixelTrackerPlugin>(Simulator::pluginManager.get("PixelTracker",&pluginAlreadyRegisteredFlag)); //this will load VolumeTracker plugin if it is not already loaded
 	if(!pluginAlreadyRegisteredFlag)
 		pixelTrackerPlugin->init(simulator);
 
