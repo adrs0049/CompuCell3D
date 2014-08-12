@@ -44,122 +44,183 @@
 class CC3DXMLElement;
 class CustomStreamBufferBase;
 
-namespace CompuCell3D {
-	class ClassRegistry;
-	class BoundaryStrategy;
+namespace CompuCell3D
+{
 
-	template <typename Y> class Field3DImpl;
-	class Serializer;
-	class PottsParseData;
-	class ParallelUtilsOpenMP;
+class ClassRegistry;
+class BoundaryStrategy;
 
-	class COMPUCELLLIB_EXPORT Simulator : public Steppable, public std::enable_shared_from_this<Simulator>
-	{
-		std::unique_ptr<ClassRegistry> classRegistry;
+template <typename Y> class Field3DImpl;
+class Serializer;
+class PottsParseData;
+class ParallelUtilsOpenMP;
 
-		Potts3D potts;
+class COMPUCELLLIB_EXPORT Simulator : public std::enable_shared_from_this<Simulator>
+{
+    std::unique_ptr<ClassRegistry> classRegistry;
 
-		int currstep;
-		bool simulatorIsStepping;
-		bool readPottsSectionFromXML;
-		std::map<std::string,Field3D<float>*> concentrationFieldNameMap;
-		//map of steerable objects
-		std::map<std::string,SteerableObject *> steerableObjectMap;
+    Potts3D potts;
 
-		std::vector<Serializer*> serializerVec;
-		std::string recentErrorMessage;
-		bool newPlayerFlag;
+    int currstep;
+    bool simulatorIsStepping;
+    bool readPottsSectionFromXML;
+    std::map<std::string,Field3D<float>*> concentrationFieldNameMap;
+    //map of steerable objects
+    std::map<std::string,SteerableObject *> steerableObjectMap;
 
-		std::streambuf * cerrStreamBufOrig;
-		std::streambuf * coutStreamBufOrig;
-		CustomStreamBufferBase * qStreambufPtr;
+    std::vector<Serializer*> serializerVec;
+    std::string recentErrorMessage;
+    bool newPlayerFlag;
 
-		std::string basePath;
-		bool restartEnabled;
+    std::streambuf * cerrStreamBufOrig;
+    std::streambuf * coutStreamBufOrig;
+    CustomStreamBufferBase * qStreambufPtr;
 
-	public:
+    std::string basePath;
+    bool restartEnabled;
 
-		ParserStorage ps;
-		PottsParseData * ppdCC3DPtr;
-		PottsParseData ppd;
-		PottsParseData *ppdPtr;
-		ParallelUtilsOpenMP *pUtils;
-        ParallelUtilsOpenMP *pUtilsSingle; // stores same information as pUtils but assumes that we use only single CPU - used in modules for which user requests single CPU runs e.g. Potts with large cells
-        
-		double simValue;
-		
-		void setOutputRedirectionTarget(long  _ptr);
-		long getCerrStreamBufOrig();
-		void restoreCerrStreamBufOrig(long _ptr);
+public:
 
-		void setRestartEnabled(bool _restartEnabled){restartEnabled=_restartEnabled;}
-		bool getRestartEnabled(){return restartEnabled;}
+    ParserStorage ps;
+    PottsParseData * ppdCC3DPtr;
+    PottsParseData ppd;
+    PottsParseData *ppdPtr;
+    ParallelUtilsOpenMP *pUtils;
+    ParallelUtilsOpenMP *pUtilsSingle; // stores same information as pUtils but assumes that we use only single CPU - used in modules for which user requests single CPU runs e.g. Potts with large cells
 
-		static PluginManager<Plugin> pluginManager;
-		static PluginManager<Steppable> steppableManager;
-		static BasicPluginManager<PluginBase> pluginBaseManager;
-		Simulator();
-		virtual ~Simulator();
+    double simValue;
 
-		//Error handling functions
-		std::string getRecentErrorMessage(){return recentErrorMessage;}
-		void setNewPlayerFlag(bool _flag){newPlayerFlag=_flag;}
-		bool getNewPlayerFlag(){return newPlayerFlag;}
+    void setOutputRedirectionTarget ( long  _ptr );
+    long getCerrStreamBufOrig();
+    void restoreCerrStreamBufOrig ( long _ptr );
 
-		std::string getBasePath(){return basePath;}
-		void setBasePath(std::string _bp){basePath=_bp;}
+    void setRestartEnabled ( bool _restartEnabled )
+    {
+        restartEnabled=_restartEnabled;
+    }
+    bool getRestartEnabled()
+    {
+        return restartEnabled;
+    }
 
-		ParallelUtilsOpenMP * getParallelUtils(){return pUtils;}
-        ParallelUtilsOpenMP * getParallelUtilsSingleThread(){return pUtilsSingle;}
+    static PluginManager<Plugin> pluginManager;
+    static PluginManager<Steppable> steppableManager;
+    static BasicPluginManager<PluginBase> pluginBaseManager;
+    Simulator();
+    virtual ~Simulator();
 
-		BoundaryStrategy * getBoundaryStrategy();
-		void registerSteerableObject(SteerableObject *);
-		void unregisterSteerableObject(const std::string & );
-		SteerableObject * getSteerableObject(const std::string & _objectName);
-		
-		void setNumSteps(unsigned int _numSteps){ppdCC3DPtr->numSteps=_numSteps;}
-		unsigned int getNumSteps() {return ppdCC3DPtr->numSteps;}
-		int getStep() {return currstep;}
-		bool isStepping(){return simulatorIsStepping;}
-		double getFlip2DimRatio(){return ppdCC3DPtr->flip2DimRatio;}
-		Potts3D* getPotts() {return &potts;}
-		std::shared_ptr<Simulator> getSimulatorPtr(){return shared_from_this();}
-		std::unique_ptr<ClassRegistry>& getClassRegistry() {return classRegistry;}
+    //Error handling functions
+    std::string getRecentErrorMessage()
+    {
+        return recentErrorMessage;
+    }
+    void setNewPlayerFlag ( bool _flag )
+    {
+        newPlayerFlag=_flag;
+    }
+    bool getNewPlayerFlag()
+    {
+        return newPlayerFlag;
+    }
 
-		void registerConcentrationField(std::string _name,Field3D<float>* _fieldPtr);
-		std::map<std::string,Field3D<float>*> & getConcentrationFieldNameMap(){
-			return concentrationFieldNameMap;
-		}
-		void postEvent(CC3DEvent & _ev);
+    std::string getBasePath()
+    {
+        return basePath;
+    }
+    void setBasePath ( std::string _bp )
+    {
+        basePath=_bp;
+    }
 
-		std::vector<std::string> getConcentrationFieldNameVector();
-		Field3D<float>* getConcentrationFieldByName(std::string _fieldName);
-		
-		void registerSerializer(Serializer * _serializerPtr){serializerVec.push_back(_serializerPtr);}
-		virtual void serialize();
+    ParallelUtilsOpenMP * getParallelUtils()
+    {
+        return pUtils;
+    }
+    ParallelUtilsOpenMP * getParallelUtilsSingleThread()
+    {
+        return pUtilsSingle;
+    }
 
-		// Begin Steppable interface
-                virtual void start() override;
-                virtual void extraInit();///initialize plugins after all steppables have been initialized
-                virtual void step(const unsigned int currentStep) override;
-                virtual void finish() override;
-                // End Steppable interface
+    BoundaryStrategy * getBoundaryStrategy();
+    void registerSteerableObject ( SteerableObject * );
+    void unregisterSteerableObject ( const std::string & );
+    SteerableObject * getSteerableObject ( const std::string & _objectName );
 
-		//these two functions are necessary to implement proper cleanup after the simulation 		
-		//1. First it cleans cell inventory, deallocating all dynamic attributes - this has to be done before unloading modules
-		//2. It unloads dynamic CC3D modules - pluginsd and steppables
-		void cleanAfterSimulation(); 
-		//unloads all the plugins - plugin destructors are called
-		void unloadModules();
-	
-		void initializePottsCC3D(CC3DXMLElement * _xmlData);
-		void processMetadataCC3D(CC3DXMLElement * _xmlData);
+    void setNumSteps ( unsigned int _numSteps )
+    {
+        ppdCC3DPtr->numSteps=_numSteps;
+    }
+    unsigned int getNumSteps()
+    {
+        return ppdCC3DPtr->numSteps;
+    }
+    int getStep()
+    {
+        return currstep;
+    }
+    bool isStepping()
+    {
+        return simulatorIsStepping;
+    }
+    double getFlip2DimRatio()
+    {
+        return ppdCC3DPtr->flip2DimRatio;
+    }
+    Potts3D* getPotts()
+    {
+        return &potts;
+    }
+    std::shared_ptr<Simulator> getSimulatorPtr()
+    {
+        return shared_from_this();
+    }
+    std::unique_ptr<ClassRegistry>& getClassRegistry()
+    {
+        return classRegistry;
+    }
 
-		void initializeCC3D();
-		void setPottsParseData(PottsParseData * _ppdPtr){ppdPtr=_ppdPtr;}
-		CC3DXMLElement * getCC3DModuleData(std::string _moduleType,std::string _moduleName="");
-		void updateCC3DModule(CC3DXMLElement *_element);
-		void steer();
-	};
+    void registerConcentrationField ( std::string _name,Field3D<float>* _fieldPtr );
+    std::map<std::string,Field3D<float>*> & getConcentrationFieldNameMap()
+    {
+        return concentrationFieldNameMap;
+    }
+    void postEvent ( CC3DEvent & _ev );
+
+    std::vector<std::string> getConcentrationFieldNameVector();
+    Field3D<float>* getConcentrationFieldByName ( std::string _fieldName );
+
+    void registerSerializer ( Serializer * _serializerPtr )
+    {
+        serializerVec.push_back ( _serializerPtr );
+    }
+    virtual void serialize();
+
+    // Begin Steppable interface
+    void start();
+    void extraInit(); ///initialize plugins after all steppables have been initialized
+    void step ( const unsigned int currentStep );
+    void finish();
+    // End Steppable interface
+
+    //these two functions are necessary to implement proper cleanup after the simulation
+    //1. First it cleans cell inventory, deallocating all dynamic attributes - this has to be done before unloading modules
+    //2. It unloads dynamic CC3D modules - pluginsd and steppables
+    void cleanAfterSimulation();
+    //unloads all the plugins - plugin destructors are called
+    void unloadModules();
+
+    void initializePottsCC3D ( CC3DXMLElement * _xmlData );
+    void processMetadataCC3D ( CC3DXMLElement * _xmlData );
+
+    void initializeCC3D();
+    void setPottsParseData ( PottsParseData * _ppdPtr )
+    {
+        ppdPtr=_ppdPtr;
+    }
+    CC3DXMLElement * getCC3DModuleData ( std::string _moduleType,std::string _moduleName="" );
+    void updateCC3DModule ( CC3DXMLElement *_element );
+    void steer();
 };
+
+} // end namespace
 #endif
