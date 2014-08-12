@@ -22,34 +22,10 @@
 
 #include <CompuCell3D/CC3D.h>
 #include <CompuCell3D/plugins/CellType/CellTypePlugin.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Field3D/Point3D.h>
-// // // #include <CompuCell3D/Field3D/Dim3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
+#include <CompuCell3D/helpers.h>
+
 using namespace CompuCell3D;
-
-//#include <XMLCereal/XMLPullParser.h>
-//#include <XMLCereal/XMLSerializer.h>
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-
-// // // #include <BasicUtils/BasicClassGroup.h>
-// // // #include <BasicUtils/BasicRandomNumberGenerator.h>
-// // // #include <CompuCell3D/Potts3D/CellInventory.h>
-// // // #include <CompuCell3D/plugins/CellType/CellTypePlugin.h>
-// // // #include <PublicUtilities/StringUtils.h>
-// // // #include <XMLUtils/CC3DXMLElement.h>
-
-// // // #include <string>
-
-// // // #include <math.h>
-
-// // // #include <iostream>
 using namespace std;
-
 
 #include "BlobFieldInitializer.h"
 
@@ -76,7 +52,7 @@ void BlobFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlData
 
 
 	bool pluginAlreadyRegisteredFlag;
-	Plugin *plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+	auto plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
 	if(!pluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
 
@@ -331,7 +307,7 @@ Dim3D BlobFieldInitializer::getBlobDimensions(const Dim3D & dim,int size){
 void BlobFieldInitializer::initializeEngulfment(){
 
 	unsigned char topId,bottomId;
-	CellTypePlugin * cellTypePluginPtr=(CellTypePlugin*)(Simulator::pluginManager.get("CellType"));
+	auto cellTypePluginPtr = get_plugin<CellTypePlugin>("CellType");
 	ASSERT_OR_THROW("CellType plugin not initialized!", cellTypePluginPtr);
 
 	EngulfmentData &enData=engulfmentData;
@@ -401,7 +377,6 @@ void BlobFieldInitializer::initializeEngulfment(){
 
 }
 
-
 void BlobFieldInitializer::initializeCellTypesCellSort(){
 	//Note that because cells are ordered by physical address in the memory you get additional 
 	//randomization of the cell types assignment. Assuming that randiom number generator is fixed i.e. it produces
@@ -431,96 +406,3 @@ void BlobFieldInitializer::initializeCellTypesCellSort(){
 	}
 
 }
-
-
-//void BlobFieldInitializer::readXML(XMLPullParser &in) {
-//  in.skip(TEXT);
-//  
-//   
-//   string cellSortOpt;
-//
-//   pd=&bipd;
-//   
-//  while (in.check(START_ELEMENT)) {
-//    if (in.getName() == "Region"){
-//      cerr<<"Inside Region Definition"<<endl;
-//      in.match(START_ELEMENT);
-//      in.skip(TEXT);
-//
-//      BlobFieldInitializerData initData;
-//
-//      while (in.check(START_ELEMENT)){
-//         
-//         if (in.getName() == "Radius"){
-//            initData.radius=BasicString::parseUInteger(in.matchSimple());;
-//         }else if (in.getName() == "Center"){
-//            initData.center.readXML(in);
-//            in.matchSimple();
-//         }else if (in.getName() == "Types"){
-//            initData.typeNamesString=in.matchSimple();
-//         }else if (in.getName() == "Width"){
-//            initData.width = BasicString::parseUInteger(in.matchSimple());
-//            cerr<<"width="<<initData.width <<endl;
-//         }else if (in.getName() == "Gap"){
-//            initData.gap = BasicString::parseUInteger(in.matchSimple());
-//         }else {
-//            throw BasicException(string("Unexpected element '") + in.getName() + 
-//			   "'!", in.getLocation());
-//         }
-//         
-//         in.skip(TEXT);
-//      }
-//      in.match(END_ELEMENT);
-//      //Checking whether input values are sane
-//      //apending to the init data vector
-//      bipd.initDataVec.push_back(initData);
-////       exit(0);
-//    }
-//    else if (in.getName() == "Gap") {
-//      bipd.gap = BasicString::parseUInteger(in.matchSimple());
-//
-//    } else if (in.getName() == "Width") {
-//      bipd.width = BasicString::parseUInteger(in.matchSimple());
-//
-//    } else if (in.getName() == "CellSortInit") {
-//
-//      bipd.cellSortOpt=in.matchSimple();
-//      
-//
-//    }
-//    else if(in.getName()=="Engulfment"){
-//      bipd.engulfmentData.engulfment=true;
-//
-//      if(in.findAttribute("BottomType")>=0){
-//            bipd.engulfmentData.bottomType=in.getAttribute("BottomType").value;
-//      }
-//      if(in.findAttribute("TopType")>=0){
-//            bipd.engulfmentData.topType=in.getAttribute("TopType").value;
-//      }
-//
-//      if(in.findAttribute("EngulfmentCutoff")>=0){
-//            bipd.engulfmentData.engulfmentCutoff=BasicString::parseUInteger(in.getAttribute("EngulfmentCutoff").value);
-//      }
-//
-//
-//      if(in.findAttribute("EngulfmentCoordinate")>=0){
-//            bipd.engulfmentData.engulfmentCoordinate=in.getAttribute("EngulfmentCoordinate").value;
-//      }
-//
-//      in.matchSimple();
-//    }
-//    else if (in.getName() == "Radius") {
-//      bipd.radius = BasicString::parseUInteger(in.matchSimple());
-//    }
-//    else {
-//      throw BasicException(string("Unexpected element '") + in.getName() + 
-//			   "'!", in.getLocation());
-//    }
-//    
-//
-//    in.skip(TEXT);
-//  }
-//}
-//
-//void BlobFieldInitializer::writeXML(XMLSerializer &out) {
-//}

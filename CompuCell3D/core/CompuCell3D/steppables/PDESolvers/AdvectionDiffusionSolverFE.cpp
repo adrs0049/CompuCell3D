@@ -11,7 +11,7 @@
 #include <BasicUtils/BasicClassGroup.h>
 
 #include <CompuCell3D/plugins/NeighborTracker/NeighborTrackerPlugin.h>
-
+#include <CompuCell3D/helpers.h>
 
 
 #include <BasicUtils/BasicString.h>
@@ -58,7 +58,7 @@ void AdvectionDiffusionSolverFE::init(Simulator *simulator, CC3DXMLElement *_xml
 
   update(_xmlData,true);
   
-  NeighborTrackerPlugin * neighborTrackerPlugin=(NeighborTrackerPlugin*)(Simulator::pluginManager.get("NeighborTracker"));
+  auto neighborTrackerPlugin=get_plugin<NeighborTrackerPlugin>("NeighborTracker");
   neighborTrackerAccessorPtr= neighborTrackerPlugin->getNeighborTrackerAccessorPtr();
   
   ///setting member function pointers
@@ -378,7 +378,7 @@ void AdvectionDiffusionSolverFE::secreteOnContactSingleField(unsigned int idx){
    std::map<unsigned char, float>::iterator mitrTypeConst;
    
    set<NeighborSurfaceData>::iterator neighborItr;
-   NeighborTracker * neighborTracker;
+//    NeighborTracker * neighborTracker;
    
    
    float currentConcentration;
@@ -403,7 +403,7 @@ void AdvectionDiffusionSolverFE::secreteOnContactSingleField(unsigned int idx){
 
          if(mitr!=end_mitr){
             contactCellMapPtr = &(mitr->second.contactCellMap);
-            neighborTracker = neighborTrackerAccessorPtr->get(cell->extraAttribPtr);
+            auto neighborTracker = neighborTrackerAccessorPtr->get(cell->extraAttribPtr);
             for(
                   neighborItr = neighborTracker->cellNeighbors.begin() ;
                   neighborItr != neighborTracker->cellNeighbors.end() ;
@@ -444,7 +444,7 @@ void AdvectionDiffusionSolverFE::diffuseSingleField(unsigned int idx){
    set<unsigned char>::iterator end_sitr=diffDataVec[idx].avoidTypeIdSet.end();
 
    
-   NeighborTracker * neighborTracker;
+//    NeighborTracker * neighborTracker;
    set<NeighborSurfaceData>::iterator neighborItr;
    
    DiffusionData & diffData = diffSecrFieldTuppleVec[idx].diffData;
@@ -484,7 +484,7 @@ void AdvectionDiffusionSolverFE::diffuseSingleField(unsigned int idx){
 
 
             
-      neighborTracker = neighborTrackerAccessorPtr->get(currentCellPtr->extraAttribPtr);
+      auto neighborTracker = neighborTrackerAccessorPtr->get(currentCellPtr->extraAttribPtr);
             
       for(neighborItr = neighborTracker->cellNeighbors.begin() ; neighborItr != neighborTracker->cellNeighbors.end() ; ++neighborItr){
 

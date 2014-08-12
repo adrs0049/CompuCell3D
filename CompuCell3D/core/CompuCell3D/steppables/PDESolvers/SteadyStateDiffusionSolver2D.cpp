@@ -255,7 +255,7 @@ void SteadyStateDiffusionSolver2D::extraInit(Simulator *simulator){
 
 	bool pluginAlreadyRegisteredFlag;
 
-	Plugin * centerOfMassPlugin=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag);
+	auto centerOfMassPlugin=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag);
 	if(!pluginAlreadyRegisteredFlag)
 		centerOfMassPlugin->init(simulator);
 

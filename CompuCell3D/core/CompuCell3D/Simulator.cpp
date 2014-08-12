@@ -64,27 +64,27 @@ Simulator::Simulator() :
 cerrStreamBufOrig(nullptr),
 coutStreamBufOrig(nullptr),
 qStreambufPtr(nullptr),
-restartEnabled(false)
+restartEnabled(false),
+currstep(-1),
+newPlayerFlag(false),
+ppdPtr(nullptr),
+ppdCC3DPtr(nullptr),
+readPottsSectionFromXML(false),
+simValue(20.5),
+simulatorIsStepping(false)
 {
-	newPlayerFlag=false;
-	ppdPtr=nullptr;
-	ppdCC3DPtr=nullptr;
-	readPottsSectionFromXML=false;
-	simValue=20.5;
 	pluginManager.setSimulator(this);
 	steppableManager.setSimulator(this);
-	currstep=-1;
+	
 	classRegistry = make_unique<ClassRegistry>(this);
 	pUtils=new ParallelUtilsOpenMP();
     pUtilsSingle=new ParallelUtilsOpenMP();
 
-	simulatorIsStepping=false;
 	potts.setSimulator(this);
 	cerrStreamBufOrig=cerr.rdbuf();
 	coutStreamBufOrig=cout.rdbuf();
 
 	//qStreambufPtr=getQTextEditBuffer();
-
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Simulator::~Simulator() {

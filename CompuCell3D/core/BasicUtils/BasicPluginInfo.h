@@ -52,10 +52,12 @@ public:
      * @param numDeps Number of dependencies in the array.
      * @param deps A constant array of dependency names.
      */
-    BasicPluginInfo(std::string name, std::string description,
-                    const unsigned int numDeps, const char *deps[]) :
-        name(name), description(description), numDeps(numDeps) {
-        dependencies = new char *[numDeps];
+    BasicPluginInfo(std::string _name, std::string _description,
+                    const unsigned int _numDeps, const char *deps[]) :
+        name(_name), description(_description), numDeps(_numDeps), 
+		dependencies{new char * [numDeps]}
+		{
+//         dependencies = new char *[numDeps];
 
         for (unsigned int i = 0; i < numDeps; i++)
             dependencies[i] = strdup(deps[i]);

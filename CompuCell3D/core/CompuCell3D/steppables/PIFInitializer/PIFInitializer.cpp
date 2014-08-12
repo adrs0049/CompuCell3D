@@ -21,29 +21,8 @@
 *************************************************************************/
 #include <CompuCell3D/CC3D.h>
 
-// // // #include <CompuCell3D/Automaton/Automaton.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Potts3D/TypeTransition.h>
-// // // #include <CompuCell3D/Field3D/Point3D.h>
-// // // #include <CompuCell3D/Field3D/Dim3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-
 using namespace CompuCell3D;
-
-
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-
-// // // #include <string>
-// // // #include <map>
-// // // #include <sstream>
-// // // #include <iostream>
-
 using namespace std;
-
 
 #include "PIFInitializer.h"
 
@@ -58,7 +37,7 @@ void PIFInitializer::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
    sim=simulator;
 
    bool pluginAlreadyRegisteredFlag;
-   Plugin *plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+   auto plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
   if(!pluginAlreadyRegisteredFlag)
       plugin->init(simulator);
 

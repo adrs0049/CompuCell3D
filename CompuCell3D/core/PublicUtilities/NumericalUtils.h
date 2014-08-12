@@ -5,6 +5,7 @@
 #include <CompuCell3D/Potts3D/Cell.h>
 #include <CompuCell3D/Field3D/Point3D.h>
 #include <vector>
+#include <cmath>
 #include <complex>
 
 float findMin( float _d , int _dim );
@@ -19,7 +20,7 @@ template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
-double round(double number);
+using std::round;
 
 namespace CompuCell3D {
 

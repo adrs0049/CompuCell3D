@@ -23,27 +23,9 @@
 //Author: Margriet Palm CWI, Netherlands
 
 #include <CompuCell3D/CC3D.h>
-
-// // // #include <CompuCell3D/Automaton/Automaton.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Field3D/Point3D.h>
-// // // #include <CompuCell3D/Field3D/Dim3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-
 using namespace CompuCell3D;
-
-// // // #include <BasicUtils/BasicRandomNumberGenerator.h>
-// // // #include <PublicUtilities/StringUtils.h>
-
-// // // #include <string>
-// // // #include <map>
-// // // #include <cmath>
-// // // #include <vector>
-// // // #include <algorithm>
-
 #include "RandomBlobInitializer.h"
+#include <CompuCell3D/helpers.h>
 
 using namespace std;
 
@@ -160,7 +142,7 @@ void RandomBlobInitializer::setParameters(Simulator *_simulator, CC3DXMLElement 
 void RandomBlobInitializer::extraInit(Simulator *simulator){
 //	cout << "EXTRA INIT BLOBINITIALIZER\n";
 	bool pluginAlreadyRegisteredFlag;
-	mit = (MitosisSteppable*)(Simulator::steppableManager.get("Mitosis",&pluginAlreadyRegisteredFlag));
+	mit = get_steppable<MitosisSteppable>("Mitosis", &pluginAlreadyRegisteredFlag);
 	if (!pluginAlreadyRegisteredFlag){
 		mit->init(simulator);
 	}

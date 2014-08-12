@@ -43,7 +43,7 @@ using namespace std;
 #include "MitosisSteppable.h"
 #include "CompuCell3D/plugins/PixelTracker/PixelTrackerPlugin.h"
 #include "CompuCell3D/plugins/PixelTracker/PixelTracker.h"
-
+#include <CompuCell3D/helpers.h>
 
 MitosisSteppable::MitosisSteppable()
 {
@@ -71,18 +71,17 @@ void MitosisSteppable::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 
 	potts = simulator->getPotts();
 	bool pluginAlreadyRegisteredFlag;
-	Plugin *plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+	auto plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
 	cerr<<"GOT HERE BEFORE CALLING INIT"<<endl;
 	if(!pluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
 
-	Plugin *pluginCOM=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag); //this will load CenterOfMass plugin if it is not already loaded
+	auto pluginCOM=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag); //this will load CenterOfMass plugin if it is not already loaded
 	cerr<<"GOT HERE BEFORE CALLING INIT"<<endl;
 	if(!pluginAlreadyRegisteredFlag)
 		pluginCOM->init(simulator);
 
-
-	pixelTrackerPlugin=(PixelTrackerPlugin*)Simulator::pluginManager.get("PixelTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+	pixelTrackerPlugin=get_plugin<PixelTrackerPlugin>("PixelTracker", &pluginAlreadyRegisteredFlag);
 	if(!pluginAlreadyRegisteredFlag)
 		pixelTrackerPlugin->init(simulator);
 

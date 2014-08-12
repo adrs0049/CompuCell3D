@@ -17,7 +17,7 @@
 #include <set>
 #include <map>
 #include <iostream>
-
+#include <memory>
 #include "PDESolversDLLSpecifier.h"
 
 namespace CompuCell3D {
@@ -76,7 +76,7 @@ class PDESOLVERS_EXPORT FastDiffusionSolver2DFE :public DiffusableVector2D<float
 
 
 
-    BoxWatcher *boxWatcherSteppable;
+    std::shared_ptr<BoxWatcher> boxWatcherSteppable;
 
 protected:
 

@@ -25,11 +25,7 @@
 
 
 #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Steppable.h>
-
-// // // #include <string>
-
-
+#include <memory>
 #include "PIFDumperDLLSpecifier.h"
 
 namespace CompuCell3D {
@@ -41,7 +37,7 @@ namespace CompuCell3D {
     std::string pifname;
     int numDigits;
     std::string pifFileExtension;
-    CellTypePlugin * typePlug;
+    std::shared_ptr<CellTypePlugin> typePlug;
 
   public:
 

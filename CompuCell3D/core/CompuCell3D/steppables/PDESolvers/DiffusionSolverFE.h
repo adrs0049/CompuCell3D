@@ -21,6 +21,7 @@
 #include <set>
 #include <map>
 #include <iostream>
+#include <memory>
 
 #include "PDESolversDLLSpecifier.h"
 
@@ -90,7 +91,7 @@ class PDESOLVERS_EXPORT DiffusionSolverFE : public Steppable
  //  typedef typename Cruncher::Array_t ConcentrationField_t;
 //     typedef typename Cruncher::qq_t ConcentrationField_t;
 
-	BoxWatcher *boxWatcherSteppable;
+	std::shared_ptr<BoxWatcher> boxWatcherSteppable;
 	
 	float diffusionLatticeScalingFactor; // for hex in 2Dlattice it is 2/3.0 , for 3D is 1/2.0, for cartesian lattice it is 1
 	bool autoscaleDiffusion;
@@ -185,7 +186,7 @@ protected:
    std::vector<float> diffConstVec; 
    std::vector<float> decayConstVec; 
 
-   CellTypeMonitorPlugin *cellTypeMonitorPlugin;
+   std::shared_ptr<CellTypeMonitorPlugin> cellTypeMonitorPlugin;
    Array3DCUDA<unsigned char> * h_celltype_field;
    Array3DCUDA<float> * h_cellid_field;
 

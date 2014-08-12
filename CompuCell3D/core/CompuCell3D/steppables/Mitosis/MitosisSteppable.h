@@ -62,6 +62,7 @@ namespace CompuCell3D {
 	//	}
 	//};
 
+
   class MITOSISSTEPPABLE_EXPORT SteppableOrientationVectorsMitosis{
   public:
 	  SteppableOrientationVectorsMitosis(){}
@@ -112,7 +113,7 @@ namespace CompuCell3D {
 	 int getParentChildPositionFlag();
 
 	 BasicClassAccessor<PixelTracker> *pixelTrackerAccessorPtr;
-	 PixelTrackerPlugin * pixelTrackerPlugin;
+	 std::shared_ptr<PixelTrackerPlugin> pixelTrackerPlugin;
 	 //comaprtment mitosis members
 	 std::vector<CompartmentMitosisData> parentBeforeMitosis;
 	 std::vector<CompartmentMitosisData> comOffsetsMitosis;

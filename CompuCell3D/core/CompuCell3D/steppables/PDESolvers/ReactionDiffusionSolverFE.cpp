@@ -11,6 +11,7 @@
 #include <BasicUtils/BasicClassGroup.h>
 #include <CompuCell3D/steppables/BoxWatcher/BoxWatcher.h>
 #include <CompuCell3D/plugins/CellTypeMonitor/CellTypeMonitorPlugin.h>
+#include <CompuCell3D/helpers.h>
 
 #include <BasicUtils/BasicString.h>
 #include <BasicUtils/BasicException.h>
@@ -358,7 +359,7 @@ void ReactionDiffusionSolverFE::init(Simulator *_simulator, CC3DXMLElement *_xml
 
 
 	bool pluginAlreadyRegisteredFlag;
-	cellTypeMonitorPlugin=(CellTypeMonitorPlugin*)Simulator::pluginManager.get("CellTypeMonitor",&pluginAlreadyRegisteredFlag);
+	cellTypeMonitorPlugin=get_plugin<CellTypeMonitorPlugin>("CellTypeMonitor", &pluginAlreadyRegisteredFlag);
 	if(!pluginAlreadyRegisteredFlag){
 		cellTypeMonitorPlugin->init(simulator);	
 		h_celltype_field=cellTypeMonitorPlugin->getCellTypeArray();
@@ -482,7 +483,7 @@ void ReactionDiffusionSolverFE::extraInit(Simulator *simulator){
 
 	bool steppableAlreadyRegisteredFlag;
 	if(useBoxWatcher){
-		boxWatcherSteppable=(BoxWatcher*)Simulator::steppableManager.get("BoxWatcher",&steppableAlreadyRegisteredFlag);
+		boxWatcherSteppable=get_steppable<BoxWatcher>("BoxWatcher", &steppableAlreadyRegisteredFlag);
 		if(!steppableAlreadyRegisteredFlag)
 			boxWatcherSteppable->init(simulator);
 	}

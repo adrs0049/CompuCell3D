@@ -11,6 +11,7 @@
 #include <CompuCell3D/Field3D/Field3DIO.h>
 #include <BasicUtils/BasicClassGroup.h>
 #include <CompuCell3D/steppables/BoxWatcher/BoxWatcher.h>
+#include <CompuCell3D/helpers.h>
 
 #include <BasicUtils/BasicString.h>
 #include <BasicUtils/BasicException.h>
@@ -258,7 +259,7 @@ void FlexibleDiffusionSolverFE::extraInit(Simulator *simulator){
 	}
 	bool steppableAlreadyRegisteredFlag;
 	if(useBoxWatcher){
-		boxWatcherSteppable=(BoxWatcher*)Simulator::steppableManager.get("BoxWatcher",&steppableAlreadyRegisteredFlag);
+		boxWatcherSteppable=get_steppable<BoxWatcher>("BoxWatcher", &steppableAlreadyRegisteredFlag);
 		if(!steppableAlreadyRegisteredFlag)
 			boxWatcherSteppable->init(simulator);
 	}

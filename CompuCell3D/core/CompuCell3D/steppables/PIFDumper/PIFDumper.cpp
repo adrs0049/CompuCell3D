@@ -21,29 +21,11 @@
  *************************************************************************/
 
 #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Field3D/Point3D.h>
-// // // #include <CompuCell3D/Field3D/Dim3D.h>
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
 #include <CompuCell3D/plugins/CellType/CellTypePlugin.h>
+#include <CompuCell3D/helpers.h>
 
 using namespace CompuCell3D;
-
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-
-
-// // // #include <string>
-// // // #include <sstream>
-// // // #include <iostream>
-// // // #include <map>
 using namespace std;
-
 
 #include "PIFDumper.h"
 
@@ -69,7 +51,7 @@ void PIFDumper::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
    numString=numStream.str();
    
    numDigits=numString.size();
-   typePlug = (CellTypePlugin*)(Simulator::pluginManager.get("CellType"));
+   typePlug = get_plugin<CellTypePlugin>("CellType");
 
    simulator->registerSteerableObject(this);
 

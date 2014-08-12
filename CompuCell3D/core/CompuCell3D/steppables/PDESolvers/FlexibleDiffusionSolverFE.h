@@ -18,6 +18,7 @@
 #include <set>
 #include <map>
 #include <iostream>
+#include <memory>
 
 #include "PDESolversDLLSpecifier.h"
 
@@ -78,7 +79,7 @@ class PDESOLVERS_EXPORT FlexibleDiffusionSolverFE :public DiffusableVectorCommon
    //typedef Array3DBorders<precision_t>::ContainerType Array3D_t;
    typedef Array3DContiguous<precision_t> ConcentrationField_t;
 
-	BoxWatcher *boxWatcherSteppable;
+	std::shared_ptr<BoxWatcher> boxWatcherSteppable;
 	
 	float diffusionLatticeScalingFactor; // for hex in 2Dlattice it is 2/3.0 , for 3D is 1/2.0, for cartesian lattice it is 1
 	bool autoscaleDiffusion;

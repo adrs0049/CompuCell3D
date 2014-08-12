@@ -26,18 +26,9 @@
 #define RANDOMBLOBINITIALIZER_H
 
 #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Steppable.h>
-// // // #include <CompuCell3D/Field3D/Dim3D.h>
-// // // #include <BasicUtils/BasicRandomNumberGenerator.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
 #include <CompuCell3D/plugins/PixelTracker/PixelTracker.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
 #include <CompuCell3D/steppables/Mitosis/MitosisSteppable.h>
-
-// // // #include <string>
-// // // #include <vector>
-// // // #include <map>
-
+#include <memory>
 #include "FieldBuilder.h"
 
 #include "RandomFieldInitializerDLLSpecifier.h"
@@ -48,7 +39,7 @@ namespace CompuCell3D {
   class RANDOMINITIALIZERS_EXPORT RandomBlobInitializer : public Steppable {
     void setParameters(Simulator *_simulator, CC3DXMLElement *_xmlData);
     void divide();
-    MitosisSteppable * mit;
+    std::shared_ptr<MitosisSteppable>  mit;
     Potts3D *potts;
     Simulator *simulator;
     BasicRandomNumberGenerator * rand;
