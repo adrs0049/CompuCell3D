@@ -70,7 +70,7 @@ public:
      * @param accessor The accessor for the class.
      */
     void registerClass(std::shared_ptr<BasicClassAccessorBase> accessor);
-
+	
     /**
      * The constructors of each of the classes in the group will be called in
      * the order they where registered with the factory.
