@@ -40,6 +40,6 @@ SimpleClockPlugin::~SimpleClockPlugin() {}
 void SimpleClockPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
    
    potts = simulator->getPotts(); 
-   potts->getCellFactoryGroupPtr()->registerClass(&simpleClockAccessor);
+   potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<Accessor_t>(simpleClockAccessor));
 }
 
