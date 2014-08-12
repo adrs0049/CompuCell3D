@@ -23,21 +23,8 @@
 
 #include <CompuCell3D/CC3D.h>
 
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // //#include <CompuCell3D/plugins/Volume/VolumePlugin.h>
-// // // //#include <CompuCell3D/plugins/Volume/VolumeEnergy.h>
-// // // #include <CompuCell3D/Potts3D/CellInventory.h>
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
-
 using namespace CompuCell3D;
-
-// // // #include <iostream>
-// // // #include <cmath>
 using namespace std;
-
 
 #include "NeighborTrackerPlugin.h"
 
@@ -53,10 +40,7 @@ periodicZ(false),
 
 maxNeighborIndex(0),
 boundaryStrategy(0)
-
-{
-
-}
+{}
 
 NeighborTrackerPlugin::~NeighborTrackerPlugin() {
 	pUtils->destroyLock(lockPtr);
@@ -86,12 +70,10 @@ void NeighborTrackerPlugin::init(Simulator *_simulator, CC3DXMLElement *_xmlData
 
 
 
-	///will register NeighborTracker here
-	BasicClassAccessorBase * cellBTAPtr=&neighborTrackerAccessor;
 	///************************************************************************************************  
 	///REMARK. HAVE TO USE THE SAME BASIC CLASS ACCESSOR INSTANCE THAT WAS USED TO REGISTER WITH FACTORY
 	///************************************************************************************************  
-	potts->getCellFactoryGroupPtr()->registerClass(cellBTAPtr);
+	potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<NeighborTracker_t>(neighborTrackerAccessor));
 
 	potts->registerCellGChangeWatcher(this);
 
