@@ -63,7 +63,7 @@ void RearrangementPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
   cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
 
   bool pluginAlreadyRegisteredFlag;
-  NeighborTrackerPlugin * nTracker =(NeighborTrackerPlugin *) Simulator::pluginManager.get("NeighborTracker",&pluginAlreadyRegisteredFlag); //this will load NeighborTracker plugin if it si not already loaded 
+  auto nTracker =std::static_pointer_cast<NeighborTrackerPlugin>(Simulator::pluginManager.get("NeighborTracker",&pluginAlreadyRegisteredFlag)); //this will load NeighborTracker plugin if it si not already loaded 
    if(!pluginAlreadyRegisteredFlag)
       nTracker->init(simulator,0);
   neighborTrackerAccessorPtr = nTracker->getNeighborTrackerAccessorPtr();
