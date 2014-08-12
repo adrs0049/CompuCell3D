@@ -261,7 +261,7 @@ void EnergyFunctionCalculatorStatistics::calculateStatData()
         ++lItr;
     }
 
-    for ( int i = 0 ; i < energyFunctions.size() ; ++i )
+    for ( unsigned int i = 0 ; i < energyFunctions.size() ; ++i )
     {
         if ( NTot )
             avgEnergyVectorTot[i]/=NTot;
