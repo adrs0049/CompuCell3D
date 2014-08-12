@@ -21,31 +21,11 @@
  *************************************************************************/
 
 #include <CompuCell3D/CC3D.h>
-
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
 #include <CompuCell3D/plugins/NeighborTracker/NeighborTrackerPlugin.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
-// // // #include <PublicUtilities/StringUtils.h>
-// // // #include <algorithm>
-// // // #include <string>
+#include <CompuCell3D/helpers.h>
 #include <limits>
 using namespace CompuCell3D;
-
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-
-
-
-
 #include "NeighborStickPlugin.h"
-
-
-
 
 NeighborStickPlugin::NeighborStickPlugin() : thresh(0),xmlData(0) {
 }
@@ -62,7 +42,7 @@ void NeighborStickPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
   simulator->registerSteerableObject(this);
 
    bool pluginAlreadyRegisteredFlag;
-   NeighborTrackerPlugin * neighborTrackerPluginPtr=(NeighborTrackerPlugin*)(Simulator::pluginManager.get("NeighborTracker",&pluginAlreadyRegisteredFlag));
+   auto neighborTrackerPluginPtr = get_plugin<NeighborTrackerPlugin>("NeighborTracker", &pluginAlreadyRegisteredFlag);
    if (!pluginAlreadyRegisteredFlag){
       neighborTrackerPluginPtr->init(simulator);
       ASSERT_OR_THROW("NeighborTracker plugin not initialized!", neighborTrackerPluginPtr);
