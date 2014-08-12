@@ -20,7 +20,7 @@
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
 
-#ifndef ALGROITHMFACTORY_H
+#ifndef ALGORITHMFACTORY_H
 #define ALGORITHMFACTORY_H
 
 #include <string>
