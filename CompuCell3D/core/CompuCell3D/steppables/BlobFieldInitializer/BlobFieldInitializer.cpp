@@ -98,7 +98,8 @@ void BlobFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlData
 	CC3DXMLElementList regionVec=_xmlData->getElements("Region");
 	
 
-	for (int i = 0 ; i<regionVec.size(); ++i){
+	for (const auto& elem : regionVec)
+	{
 		BlobFieldInitializerData initData;
 		ASSERT_OR_THROW("BlobInitializer requires Radius element inside Region section.See manual for details.",regionVec[i]->getFirstElement("Radius"));
 		initData.radius=regionVec[i]->getFirstElement("Radius")->getUInt();
@@ -111,7 +112,7 @@ void BlobFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlData
 		}
 
 		ASSERT_OR_THROW("BlobInitializer requires Types element inside Region section.See manual for details.",regionVec[i]->getFirstElement("Types"));
-		initData.typeNamesString=regionVec[i]->getFirstElement("Types")->cdata;
+		initData.typeNamesString=regionVec[i]->getFirstElement("Types")->getData();
 
 		parseStringIntoList(initData.typeNamesString , initData.typeNames , ",");
 
@@ -124,22 +125,10 @@ void BlobFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlData
 		cerr<<"radius="<<initData.radius<<" gap="<<initData.gap<<" types="<<initData.typeNamesString<<endl;
 		blobInitializerData.push_back(initData);
 	}
-
-
-
-
-
-
 	cerr<<"GOT HERE BEFORE EXIT"<<endl;
-
 }
 
-
-
 double BlobFieldInitializer::distance(double ax, double ay, double az, double bx, double by, double bz) {
-	//   printf("%f\n",sqrt((double)(ax - bx) * (ax - bx) + 
-	//               (double)(ay - by) * (ay - by) + 
-	//                      (double)(az - bz) * (az - bz)));
 	return sqrt((double)(ax - bx) * (ax - bx) + 
 		(double)(ay - by) * (ay - by) + 
 		(double)(az - bz) * (az - bz));
@@ -157,27 +146,8 @@ void BlobFieldInitializer::layOutCells(const BlobFieldInitializerData & _initDat
 
 	ASSERT_OR_THROW("Radius has to be greater than 0 and 2*radius cannot be bigger than lattice dimension x", _initData.radius>0 && 2*_initData.radius<(dim.x-2));
 
-
-
-	//  CenterOfMassPlugin * comPlugin=(CenterOfMassPlugin*)(Simulator::pluginManager.get("CenterOfMass"));
-	//  Cell *c;
-
-	//  comPlugin->getCenterOfMass(c);
-
-	//   Dim3D itDim;
-	// 
-	//   itDim.x = boxDim.x / size;
-	//   if (boxDim.x % size) itDim.x += 1;
-	//   itDim.y = boxDim.y / size;
-	//   if (boxDim.y % size) itDim.y += 1;
-	//   itDim.z = boxDim.z / size;
-	//   if (boxDim.z % size) itDim.z += 1;
-
-
-
 	Dim3D itDim=getBlobDimensions(dim,size);
 	cerr<<"itDim="<<itDim<<endl;
-
 
 	Point3D pt;
 	Point3D cellPt;
@@ -202,8 +172,6 @@ void BlobFieldInitializer::layOutCells(const BlobFieldInitializerData & _initDat
 					//It is necessary to do it this way because steppers are called only when we are performing pixel copies
 					// but if we initialize steppers are not called thus is you overwrite a cell here it will not get removed from
 					//inventory unless you call steppers(VolumeTrackerPlugin) explicitely
-
-					
 				}
 				else{
 					continue;
@@ -224,11 +192,7 @@ void BlobFieldInitializer::layOutCells(const BlobFieldInitializerData & _initDat
 						//It is necessary to do it this way because steppers are called only when we are performing pixel copies
 						// but if we initialize steppers are not called thus is you overwrite a cell here it will not get removed from
 						//inventory unless you call steppers(VolumeTrackerPlugin) explicitely
-
 			}
-
-
-
 }
 
 unsigned char BlobFieldInitializer::initCellType(const BlobFieldInitializerData & _initData){
@@ -282,9 +246,6 @@ void BlobFieldInitializer::start() {
 		}
 	}
 
-
-
-
 }
 
 Dim3D BlobFieldInitializer::getBlobDimensions(const Dim3D & dim,int size){
@@ -300,7 +261,6 @@ Dim3D BlobFieldInitializer::getBlobDimensions(const Dim3D & dim,int size){
 	blobDim=itDim;
 
 	return itDim; 
-
 }
 
 
@@ -316,9 +276,6 @@ void BlobFieldInitializer::initializeEngulfment(){
 	bottomId=cellTypePluginPtr->getTypeId(enData.bottomType);
 
 	cerr<<"topId="<<(int)topId<<" bottomId="<<(int)bottomId<<" enData.engulfmentCutoff="<<enData.engulfmentCutoff<<" enData.engulfmentCoordinate="<<enData.engulfmentCoordinate<<endl;
-
-
-
 
 	WatchableField3D<CellG *> *cellFieldG =(WatchableField3D<CellG *> *) potts->getCellFieldG();
 	Dim3D dim = cellFieldG->getDim();
@@ -373,8 +330,6 @@ void BlobFieldInitializer::initializeEngulfment(){
 
 		}
 	}
-
-
 }
 
 void BlobFieldInitializer::initializeCellTypesCellSort(){
@@ -402,7 +357,5 @@ void BlobFieldInitializer::initializeCellTypesCellSort(){
 		}else{
 			cell->type=2;
 		}
-
 	}
-
 }
