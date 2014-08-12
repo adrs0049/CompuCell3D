@@ -31,7 +31,7 @@ namespace CompuCell3D {
    class Boundary {
        public:
            virtual bool applyCondition(int& coordinate, const int& max_value)=0;
-           virtual ~Boundary() = 0;
+           virtual ~Boundary() {}
    }; 
 };
 
