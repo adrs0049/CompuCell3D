@@ -37,8 +37,6 @@ class Simulator;
 
 class COMPUCELLLIB_EXPORT ClassRegistry : public Steppable 
 {
-    BasicClassRegistry<Steppable> steppableRegistry;
-
     using ActiveSteppers_t = std::list<std::shared_ptr<Steppable> >;
     ActiveSteppers_t activeSteppers;
 
