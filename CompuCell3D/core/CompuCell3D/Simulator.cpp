@@ -74,7 +74,7 @@ restartEnabled(false)
 	pluginManager.setSimulator(this);
 	steppableManager.setSimulator(this);
 	currstep=-1;
-	classRegistry = new ClassRegistry(this);
+	classRegistry = make_unique<ClassRegistry>(this);
 	pUtils=new ParallelUtilsOpenMP();
     pUtilsSingle=new ParallelUtilsOpenMP();
 
@@ -94,7 +94,7 @@ Simulator::~Simulator() {
 	
 	cleanAfterSimulation();
 	
-	delete classRegistry;
+	classRegistry.reset(nullptr);
 	delete pUtils;
     delete pUtilsSingle;
     
@@ -109,15 +109,16 @@ Simulator::~Simulator() {
 
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+// ATTENTION FIXME
 long Simulator::getCerrStreamBufOrig()
 {
-	return static_cast<long>(cerrStreamBufOrig);
+	return 1;
+// 	return static_cast<long>(cerrStreamBufOrig);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Simulator::restoreCerrStreamBufOrig(long _ptr)
 {
-	cerr.rdbuf(static_cast<streambuf *>(_ptr));
+// 	cerr.rdbuf(static_cast<streambuf *>(_ptr));
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Simulator::setOutputRedirectionTarget(long  _ptr)
@@ -229,30 +230,28 @@ void Simulator::postEvent(CC3DEvent & _ev)
     pUtils->handleEvent(_ev); //let parallel utils konw about all events
 
     string pluginName;
-    BasicPluginManager<Plugin>::infos_t *infos = &pluginManager.getPluginInfos();
+    BasicPluginManager<Plugin>::infos_t& infos = pluginManager.getPluginInfos();
 
-    for (auto& it : *infos)
+    for (auto& info : infos)
     {
-        pluginName=it->getName();
-        if (pluginManager.isLoaded(it->getName()))
+        pluginName=info->getName();
+        if (pluginManager.isLoaded(info->getName()))
         {
-            Plugin *plugin = pluginManager.get(it->getName());
+            auto plugin = pluginManager.get(info->getName());
             plugin->handleEvent(_ev);
         }
     }
 
     string steppableName;
-    BasicPluginManager<Steppable>::infos_t *infos_step = &steppableManager.getPluginInfos();
+    BasicPluginManager<Steppable>::infos_t& infos_step = steppableManager.getPluginInfos();
 
-    for (auto& it_step : *infos_step)
+    for (auto& info : infos_step)
     {
-        steppableName=it_step->getName();
-        // cerr<<"processign steppable="<<steppableName<<endl;
+        steppableName=info->getName();
 
         if (steppableManager.isLoaded(steppableName))
         {
-            // cerr<<"SENDING EVENT TO THE STEPPABLE "<<steppableName<<endl;
-            Steppable * steppable= steppableManager.get(steppableName);
+            auto steppable= steppableManager.get(steppableName);
             steppable->handleEvent(_ev);
         }
     }
@@ -470,14 +469,12 @@ void Simulator::initializeCC3D()
 		processMetadataCC3D(ps.metadataCC3DXMLElement);
 
 		cerr<<"Initialising Plugins and Steppables..."<<endl;
-		std::set<std::string> initializedPlugins;
-		std::set<std::string> initializedSteppables;
 
 		for (const auto& elem : ps.pluginCC3DXMLElementVector)
 		{
 			std::string pluginName {elem->getAttribute("Name")};
 			bool pluginAlreadyRegisteredFlag=false;
-			Plugin *plugin = pluginManager.get(pluginName,&pluginAlreadyRegisteredFlag);
+			auto plugin = pluginManager.get(pluginName,&pluginAlreadyRegisteredFlag);
 			if(!pluginAlreadyRegisteredFlag){
 				//Will only process first occurence of a given plugin
 				cerr<<"INITIALIZING "<<pluginName<<endl;
@@ -489,7 +486,7 @@ void Simulator::initializeCC3D()
 		{
 			std::string steppableName {elem->getAttribute("Type")};
 			bool steppableAlreadyRegisteredFlag=false;
-			Steppable *steppable = steppableManager.get(steppableName,&steppableAlreadyRegisteredFlag);
+			auto steppable = steppableManager.get(steppableName,&steppableAlreadyRegisteredFlag);
 
 			if(!steppableAlreadyRegisteredFlag)
 			{

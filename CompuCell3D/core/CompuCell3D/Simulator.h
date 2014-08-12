@@ -34,6 +34,8 @@
 #include <string>
 #include <CompuCell3D/Potts3D/Potts3D.h>
 
+#include <BasicUtils/memory_include.h>
+
 #include <CompuCell3D/ParseData.h>
 #include <CompuCell3D/PottsParseData.h>
 #include <CompuCell3D/ParserStorage.h>
@@ -51,9 +53,9 @@ namespace CompuCell3D {
 	class PottsParseData;
 	class ParallelUtilsOpenMP;
 
-	class COMPUCELLLIB_EXPORT Simulator : public Steppable
+	class COMPUCELLLIB_EXPORT Simulator : public Steppable, public std::enable_shared_from_this<Simulator>
 	{
-		ClassRegistry *classRegistry;
+		std::unique_ptr<ClassRegistry> classRegistry;
 
 		Potts3D potts;
 
@@ -120,9 +122,9 @@ namespace CompuCell3D {
 		int getStep() {return currstep;}
 		bool isStepping(){return simulatorIsStepping;}
 		double getFlip2DimRatio(){return ppdCC3DPtr->flip2DimRatio;}
-		Potts3D *getPotts() {return &potts;}
-		Simulator *getSimulatorPtr(){return this;}
-		ClassRegistry *getClassRegistry() {return classRegistry;}
+		Potts3D* getPotts() {return &potts;}
+		std::shared_ptr<Simulator> getSimulatorPtr(){return shared_from_this();}
+		std::unique_ptr<ClassRegistry>& getClassRegistry() {return classRegistry;}
 
 		void registerConcentrationField(std::string _name,Field3D<float>* _fieldPtr);
 		std::map<std::string,Field3D<float>*> & getConcentrationFieldNameMap(){
