@@ -21,32 +21,13 @@
  *************************************************************************/
 #include <CompuCell3D/CC3D.h>
 #include <CompuCell3D/plugins/PlasticityTracker/PlasticityTrackerPlugin.h>
-
-
-
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/Point3D.h>
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-// // // #include <PublicUtilities/NumericalUtils.h>
 #include <CompuCell3D/plugins/PlasticityTracker/PlasticityTracker.h>
-// // // #include <BasicUtils/BasicClassAccessor.h>
-// // // #include <BasicUtils/BasicClassGroup.h>
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
+#include <CompuCell3D/helpers.h>
 
-
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
 using namespace CompuCell3D;
-
-
 using namespace std;
 
-
 #include "PlasticityPlugin.h"
-
-
-
 
 PlasticityPlugin::PlasticityPlugin() : 
 cellFieldG(0), 
@@ -85,7 +66,7 @@ void PlasticityPlugin::extraInit(Simulator *simulator) {
   
 
    bool pluginAlreadyRegisteredFlag;
-   PlasticityTrackerPlugin * trackerPlugin = (PlasticityTrackerPlugin *) Simulator::pluginManager.get("PlasticityTracker",&pluginAlreadyRegisteredFlag); //this will load PlasticityTracker plugin if it is not already loaded  
+   auto trackerPlugin = get_plugin<PlasticityTrackerPlugin>("PlasticityTracker", &pluginAlreadyRegisteredFlag);
    if(!pluginAlreadyRegisteredFlag)
       trackerPlugin->init(simulator);
    plasticityTrackerAccessorPtr=trackerPlugin->getPlasticityTrackerAccessorPtr() ;
