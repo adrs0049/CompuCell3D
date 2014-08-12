@@ -20,11 +20,10 @@
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
 
- #include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D.h>
 #include <CompuCell3D/plugins/ElasticityTracker/ElasticityTrackerPlugin.h>
-
-
 #include <CompuCell3D/plugins/ElasticityTracker/ElasticityTracker.h>
+#include <CompuCell3D/helpers.h>
 
 using namespace CompuCell3D;
 
@@ -32,9 +31,6 @@ using namespace CompuCell3D;
 using namespace std;
 
 #include "ElasticityPlugin.h"
-
-
-
 
 ElasticityPlugin::ElasticityPlugin() : 
 cellFieldG(0), 
@@ -75,7 +71,8 @@ void ElasticityPlugin::extraInit(Simulator *simulator) {
   
 
    bool pluginAlreadyRegisteredFlag;
-   ElasticityTrackerPlugin * trackerPlugin = (ElasticityTrackerPlugin *) Simulator::pluginManager.get("ElasticityTracker",&pluginAlreadyRegisteredFlag); //this will load ElasticityTracker plugin if it is not already loaded  
+   
+  auto trackerPlugin = get_plugin<ElasticityTrackerPlugin>("ElasticityTracker", &pluginAlreadyRegisteredFlag);
    if(!pluginAlreadyRegisteredFlag)
       trackerPlugin->init(simulator);
    elasticityTrackerAccessorPtr=trackerPlugin->getElasticityTrackerAccessorPtr() ;
