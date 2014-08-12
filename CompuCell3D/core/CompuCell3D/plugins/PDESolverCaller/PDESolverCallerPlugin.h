@@ -24,13 +24,7 @@
 #ifndef PDESOLVERCALLERPLUGIN_H
 #define PDESOLVERCALLERPLUGIN_H
 #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Plugin.h>
-// // // #include <CompuCell3D/Potts3D/FixedStepper.h>
-
-// // // #include <string>
-// // // #include <vector>
-
-
+#include <BasicUtils/memory_include.h>
 
 #include "PDESolverCallerDLLSpecifier.h"
 
@@ -64,7 +58,7 @@ namespace CompuCell3D {
 	 std::vector<SolverData> solverDataVec;
 
     
-    std::vector<Steppable *> solverPtrVec;
+    std::vector<std::shared_ptr<Steppable> > solverPtrVec;
     
   public:
     PDESolverCallerPlugin();

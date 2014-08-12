@@ -101,16 +101,14 @@ void PDESolverCallerPlugin::step(){
 void PDESolverCallerPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 
 	solverPtrVec.clear();
-	ClassRegistry *classRegistry=sim->getClassRegistry();
-	Steppable * steppable;
-
+	auto& classRegistry=sim->getClassRegistry();
 
 	CC3DXMLElementList pdeSolversXMLList=_xmlData->getElements("CallPDE");
 	for(unsigned int i=0; i < pdeSolversXMLList.size() ; ++i ){
 		solverDataVec.push_back(SolverData(pdeSolversXMLList[i]->getAttribute("PDESolverName"),pdeSolversXMLList[i]->getAttributeAsUInt("ExtraTimesPerMC")));
 		SolverData & sd=solverDataVec[solverDataVec.size()-1];
 
-		steppable=classRegistry->getStepper(sd.solverName);
+		auto steppable=classRegistry->getStepper(sd.solverName);
 		solverPtrVec.push_back(steppable);
 
 	}
