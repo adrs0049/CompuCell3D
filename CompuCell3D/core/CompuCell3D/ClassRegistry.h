@@ -23,16 +23,9 @@
 #ifndef CLASSREGISTRY_H
 #define CLASSREGISTRY_H
 
-//#include <CompuCell3D/dllDeclarationSpecifier.h>
 #include <CompuCell3D/CompuCellLibDLLSpecifier.h>
 #include "Steppable.h"
-
-
-
-
-
 #include <BasicUtils/BasicClassRegistry.h>
-#include <BasicUtils/BasicSmartPointer.h>
 
 #include <map>
 #include <list>
@@ -40,47 +33,40 @@
 #include <vector>
 
 namespace CompuCell3D {
-  class Simulator;
-  
+class Simulator;
 
-  class COMPUCELLLIB_EXPORT ClassRegistry : public Steppable {
+class COMPUCELLLIB_EXPORT ClassRegistry : public Steppable 
+{
     BasicClassRegistry<Steppable> steppableRegistry;
 
-//     typedef std::list<BasicSmartPointer<Steppable> > ActiveSteppers_t;
-    typedef std::list<Steppable *> ActiveSteppers_t;
+    using ActiveSteppers_t = std::list<std::shared_ptr<Steppable> >;
     ActiveSteppers_t activeSteppers;
 
-//     typedef std::map<std::string, BasicSmartPointer<Steppable> > ActiveSteppersMap_t;
-    typedef std::map<std::string, Steppable *> ActiveSteppersMap_t;
+    using ActiveSteppersMap_t = std::map<std::string, std::shared_ptr<Steppable> >;
     ActiveSteppersMap_t activeSteppersMap;
-
 
     Simulator *simulator;
 
     std::vector<ParseData *> steppableParseDataVector;
 
-
-  public:
+public:
     ClassRegistry(Simulator *simulator);
     virtual ~ClassRegistry() {}
 
-//     void registerSteppable(std::string id,
-// 			  BasicClassFactoryBase<SteppableG> *steppable)
-//     {steppableRegistry.registerFactory(steppable, id);}
+    std::shared_ptr<Steppable> getStepper(std::string id);
 
+    void addStepper(std::string _type, std::shared_ptr<Steppable> _steppable);
     
-    Steppable *getStepper(std::string id);
-    
-     void addStepper(std::string _type, Steppable *_steppable);
-    // Begin Steppable interface
+	// Begin Steppable interface
     virtual void extraInit(Simulator *simulator);
-    
+
     virtual void start();
     virtual void step(const unsigned int currentStep);
-    virtual void finish();    
+    virtual void finish();
     // End Steppable interface
 
     virtual void initModules(Simulator *_sim);
-  };
 };
+
+}; // end namespace CompuCell3D
 #endif
