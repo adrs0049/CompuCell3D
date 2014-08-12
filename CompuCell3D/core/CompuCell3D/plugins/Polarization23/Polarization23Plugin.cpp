@@ -49,7 +49,7 @@ void Polarization23Plugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) 
    
     update(xmlData,true);
    
-    potts->getCellFactoryGroupPtr()->registerClass(&polarization23DataAccessor);
+    potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<BasicClassAccessor<Polarization23Data>>(polarization23DataAccessor));
     potts->registerEnergyFunctionWithName(this,"Polarization23");
         
     
