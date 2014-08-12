@@ -58,7 +58,8 @@ namespace CompuCell3D {
 
 
 	private:
-		BasicClassAccessor<AdhesionFlexData> adhesionFlexDataAccessor;
+		using AdhesionAccessor = BasicClassAccessor<AdhesionFlexData>;
+		AdhesionAccessor adhesionFlexDataAccessor;
 		CC3DXMLElement *xmlData;
 		Potts3D *potts;
 		Simulator *sim;
@@ -82,7 +83,7 @@ namespace CompuCell3D {
 
 		
 
-		BasicClassAccessor<AdhesionFlexData> * adhesionFlexDataAccessorPtr;
+		AdhesionAccessor * adhesionFlexDataAccessorPtr;
 
 		Automaton *automaton;
 		bool weightDistance;

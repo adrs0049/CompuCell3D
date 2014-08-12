@@ -22,30 +22,10 @@
 
 #include <CompuCell3D/CC3D.h>
 
-// // // #include <CompuCell3D/Potts3D/CellInventory.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
-
-// // // #include <CompuCell3D/Potts3D/CellInventory.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
 using namespace CompuCell3D;
 
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-// #include <PublicUtilities/StringUtils.h>
 #include <CompuCell3D/plugins/NeighborTracker/NeighborTrackerPlugin.h>
-// // // #include <algorithm>
-
-
 #include "AdhesionFlexPlugin.h"
-
-
-
 
 AdhesionFlexPlugin::AdhesionFlexPlugin():
 pUtils(0),
@@ -68,13 +48,11 @@ void AdhesionFlexPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 	sim=simulator;
 	potts=simulator->getPotts();
     
-   pUtils=sim->getParallelUtils();
-   lockPtr=new ParallelUtilsOpenMP::OpenMPLock_t;
-   pUtils->initLock(lockPtr); 
-
-   
-   
-	potts->getCellFactoryGroupPtr()->registerClass(&adhesionFlexDataAccessor);
+    pUtils=sim->getParallelUtils();
+    lockPtr=new ParallelUtilsOpenMP::OpenMPLock_t;
+    pUtils->initLock(lockPtr); 
+ 
+	potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<AdhesionAccessor>(adhesionFlexDataAccessor));
 
 	potts->registerEnergyFunctionWithName(this,"AdhesionFlex");
 	simulator->registerSteerableObject(this);
@@ -321,7 +299,6 @@ void AdhesionFlexPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 	ASSERT_OR_THROW("CELL TYPE PLUGIN WAS NOT PROPERLY INITIALIZED YET. MAKE SURE THIS IS THE FIRST PLUGIN THAT YOU SET", automaton)
 		set<unsigned char> cellTypesSet;
 
-
 	//scanning Adhesion Molecule names
 
 	CC3DXMLElementList adhesionMoleculeNameXMLVec=_xmlData->getElements("AdhesionMolecule");
@@ -443,11 +420,12 @@ void AdhesionFlexPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 	//initializing binding parameter array
 	int sizeBindingArray=moleculeNameIndexMap.size();
 
+
 	int indexBindingArray ;
 	bindingParameterArray.clear();
 	bindingParameterArray.assign(sizeBindingArray,vector<double>(sizeBindingArray,0.0));
 	bindingParameters_t::iterator bmitr;
-	
+
 	for(int i = 0 ; i < sizeBindingArray ; ++i)
 		for(int j = 0 ; j < sizeBindingArray ; ++j){
 
@@ -468,12 +446,7 @@ void AdhesionFlexPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 				cerr<<"bindingParameterArray["<<i<<"]["<<j<<"]="<<bindingParameterArray[i][j]<<endl;
 
 			}    
-
-			
-
-
 }
-
 
 void AdhesionFlexPlugin::initializeAdhesionMoleculeDensityVector(){
 	//cerr<<"initializeAdhesionMoleculeDensityVector adhesionDensityInitialized="<<adhesionDensityInitialized<<endl;
