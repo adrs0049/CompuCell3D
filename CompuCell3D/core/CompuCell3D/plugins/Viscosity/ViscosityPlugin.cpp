@@ -23,22 +23,10 @@
 #include <CompuCell3D/CC3D.h>
 
 #include "ViscosityPlugin.h"
-
-
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <PublicUtilities/NumericalUtils.h>
 using namespace CompuCell3D;
 
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-// #include <CompuCell3D/plugins/CellVelocity/CellVelocityPlugin.h>
 #include <CompuCell3D/plugins/NeighborTracker/NeighborTrackerPlugin.h>
-
-
-
+#include <CompuCell3D/helpers.h>
 
 ViscosityPlugin::ViscosityPlugin():potts(0),sim(0),neighborTrackerAccessorPtr(0),lambdaViscosity(0),maxNeighborIndex(0)   {
 }
@@ -55,13 +43,10 @@ void ViscosityPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData){
 	sim=simulator;
 
 	bool pluginAlreadyRegisteredFlagCOM;
-	Plugin *pluginCOM=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlagCOM); //this will load CenterOFMass plugin if it is not already loaded
+	auto pluginCOM=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlagCOM); //this will load CenterOFMass plugin if it is not already loaded
 
 	bool pluginAlreadyRegisteredFlag;
-	Plugin *plugin=Simulator::pluginManager.get("NeighborTracker",&pluginAlreadyRegisteredFlag); //this will load NeighborTracker plugin if it is not already loaded
-
-
-
+	auto plugin=Simulator::pluginManager.get("NeighborTracker",&pluginAlreadyRegisteredFlag); //this will load NeighborTracker plugin if it is not already loaded
 
 	pluginName=_xmlData->getAttribute("Name");
 
@@ -75,11 +60,6 @@ void ViscosityPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData){
 
 	simulator->registerSteerableObject(this);
 
-	//potts->registerCellGChangeWatcher(this);
-
-
-
-
 	boundaryStrategy=BoundaryStrategy::getInstance();    
 	potts->getBoundaryXName()=="Periodic" ? boundaryConditionIndicator.x=1 : boundaryConditionIndicator.x=0 ;
 	potts->getBoundaryYName()=="Periodic" ? boundaryConditionIndicator.y=1 : boundaryConditionIndicator.y=0;
@@ -91,42 +71,14 @@ void ViscosityPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData){
 }
 
 void ViscosityPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
-
 	lambdaViscosity=_xmlData->getFirstElement("LambdaViscosity")->getDouble();
-	//cerr<<"lambdaViscosity="<<lambdaViscosity<<endl;
-	//exit(0);
-
 }
 
-// void CompuCell3D::ViscosityPlugin::field3DChange(const Point3D &pt, CellG *newCell,CellG * oldCell){
-// //COM field3DChange is called after this function so we copy COM  befiore it gets updated...
-// }
-
 void ViscosityPlugin::extraInit(Simulator *simulator) {
-	// CellVelocityPlugin * cellVelocityPluginPtr=(CellVelocityPlugin*)(Simulator::pluginManager.get("CellInstantVelocity"));
-	// ASSERT_OR_THROW("CellVelocity plugin not initialized!", cellVelocityPluginPtr);
-	// ASSERT_OR_THROW("CellVelocityAccessorPtr  not initialized!", cellVelocityPluginPtr->getCellVelocityDataAccessorPtr());
-	// ASSERT_OR_THROW("CellVelocityData: cldeque tas too small size - size=2 or greater needed!",
-	// cellVelocityPluginPtr->getCldequeCapacity()>=2);
-
-	// viscosityEnergy->setCellVelocityDataAccessorPtr(cellVelocityPluginPtr->getCellVelocityDataAccessorPtr());
-
-	// CenterOfMassPlugin * centerOfMassPluginPtr=(CenterOfMassPlugin*)(Simulator::pluginManager.get("CenterOfMass"));
-	// ASSERT_OR_THROW("CenterOfMass plugin not initialized!", centerOfMassPluginPtr);
-
-
-	// viscosityEnergy->setCOMPtr(centerOfMassPluginPtr);
-
-	// NeighborTrackerPlugin * neighborTrackerPluginPtr=(NeighborTrackerPlugin*)(Simulator::pluginManager.get("NeighborTracker"));
-	// ASSERT_OR_THROW("NeighborTracker plugin not initialized!", neighborTrackerPluginPtr);
-	// ASSERT_OR_THROW("neighborAccessorPtr  not initialized!", neighborTrackerPluginPtr->getNeighborTrackerAccessorPtr());
 	update(xmlData);
 	bool pluginAlreadyRegisteredFlag;
-	NeighborTrackerPlugin *nTrackerPlugin=(NeighborTrackerPlugin*)Simulator::pluginManager.get("NeighborTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
-
+	auto nTrackerPlugin = get_plugin<NeighborTrackerPlugin>("NeighborTracker", &pluginAlreadyRegisteredFlag);
 	neighborTrackerAccessorPtr=nTrackerPlugin->getNeighborTrackerAccessorPtr();
-
-	//viscosityEnergy->initializeViscosityEnergy();
 }
 
 double ViscosityPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,const CellG *oldCell) {
