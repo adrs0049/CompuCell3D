@@ -51,8 +51,9 @@ namespace CompuCell3D {
 
 	class FOCALPOINTPLASTICITY_EXPORT FocalPointPlasticityPlugin : public Plugin,public EnergyFunction, public CellGChangeWatcher  {
 
+		using TrackerAccessor_t = BasicClassAccessor<FocalPointPlasticityTracker>;
       
-      BasicClassAccessor<FocalPointPlasticityTracker> focalPointPlasticityTrackerAccessor;
+      TrackerAccessor_t focalPointPlasticityTrackerAccessor;
       
 		Potts3D *potts;
 
@@ -187,7 +188,7 @@ namespace CompuCell3D {
 		void setAnchorParameters(CellG * _cell, int _anchorId,double _lambda, double _targetDistance=0.0,double _maxDistance=100000.0,float _x=-1, float _y=-1, float _z=-1);
 
 
-		BasicClassAccessor<FocalPointPlasticityTracker> * getFocalPointPlasticityTrackerAccessorPtr(){return &focalPointPlasticityTrackerAccessor;}
+		TrackerAccessor_t * getFocalPointPlasticityTrackerAccessorPtr(){return &focalPointPlasticityTrackerAccessor;}
 		//had to include this function to get set inereation working properly with Python , and Player that has restart capabilities 
         FocalPointPlasticityTrackerData * getFocalPointPlasticityTrackerData(FocalPointPlasticityTrackerData * _fpsd){return _fpsd;}
 		
