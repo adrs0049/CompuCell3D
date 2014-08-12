@@ -20,42 +20,14 @@
 *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
 *************************************************************************/
 
-
-
 #include "CellMomentOfInertia.h"
-
 #include <CompuCell3D/CC3D.h>
 
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/ClassRegistry.h>
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-// // // #include <PublicUtilities/NumericalUtils.h>
-// // // #include <complex>
-// // // #include <algorithm>
-
-// // // #include <CompuCell3D/Potts3D/CellInventory.h>
-
-
 using namespace CompuCell3D;
-
-
-
-// // // #include <cmath>
-
-// // // #include <iostream>
-
 
 #include "MomentOfInertiaPlugin.h"
 
 using namespace std;
-
-
-
 
 MomentOfInertiaPlugin::MomentOfInertiaPlugin():potts(0),simulator(0),boundaryStrategy(0),lastMCSPrintedWarning(-1),cellOrientationFcnPtr(0) {}
 
@@ -66,7 +38,7 @@ void MomentOfInertiaPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 	this->simulator=simulator;
 	potts = simulator->getPotts();
 	bool pluginAlreadyRegisteredFlag;
-	Plugin *plugin=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+	auto plugin=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
 	if(!pluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
 
