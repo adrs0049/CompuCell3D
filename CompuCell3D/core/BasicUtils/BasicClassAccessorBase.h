@@ -57,7 +57,10 @@ protected:
    * Called by BasicClassAccessor to get a pointer to this accessors class in 
    * the group.
    */
-  std::shared_ptr<void> getClass(std::unique_ptr<BasicClassGroup>& group) const {
+  std::shared_ptr<void> getClass(std::unique_ptr<BasicClassGroup>& group) {
+    return group->getClass(id);
+  }
+  std::shared_ptr<void> getClass(const std::unique_ptr<BasicClassGroup>& group) const {
     return group->getClass(id);
   }
   virtual void deallocateClass(std::unique_ptr<BasicClassGroup>& group) const {}
