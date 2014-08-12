@@ -21,28 +21,14 @@
 *************************************************************************/
 
 #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
 
-
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
 using namespace CompuCell3D;
-
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-// // // #include <iostream>
-// // // #include <algorithm>
 
 using namespace std;
 
 #include "ConvergentExtensionPlugin.h"
 
 #define sign(x) (((x>0)-(x<0)))
-
 
 ConvergentExtensionPlugin::ConvergentExtensionPlugin():xmlData(0)   {
 }
@@ -58,7 +44,7 @@ void ConvergentExtensionPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlD
 	simulator->registerSteerableObject(this);
 
 	bool pluginAlreadyRegisteredFlag;
-	Plugin *plugin=Simulator::pluginManager.get("MomentOfInertia",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
+	auto plugin=Simulator::pluginManager.get("MomentOfInertia",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
 	if(!pluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
 }
