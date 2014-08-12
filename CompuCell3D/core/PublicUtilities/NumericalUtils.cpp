@@ -67,14 +67,13 @@ std::vector<std::complex<double> > solveCubicEquationRealCoeeficients(std::vecto
         roots[0]=polar(pow(bAbs,1/3.0),bArg/3.0)+d;
         roots[1]=polar(pow(bAbs,1/3.0),bArg/3.0+2*PI/3)+d;
         roots[2]=polar(pow(bAbs,1/3.0),bArg/3.0+4*PI/3)+d;
-        return roots;
-    } else {
+		
+	} else {
         complex<double> lambda=sqrt(-aComplex/3.0);
         complex<double> beta=pow(lambda,-3.0)*b;
 
         //now solve for roots of p^6+beta*p^3+1=0
         complex<double> p1=(-beta-sqrt(beta*beta-complex<double>(4.0,0)))/(2.0);
-        complex<double> p2=(-beta+sqrt(beta*beta-complex<double>(4.0,0)))/(2.0);
 
         double p1Abs=abs(p1);
         double p1Arg=arg(p1);
@@ -85,8 +84,6 @@ std::vector<std::complex<double> > solveCubicEquationRealCoeeficients(std::vecto
         roots[0]=lambda*q0+d;
         roots[1]=lambda*q1+d;
         roots[2]=lambda*q2+d;
-
-        return roots;
     }
 
     return roots;
@@ -455,21 +452,8 @@ CenterOfMassPair_t precalculateAfterFlipCM(
     Point3D shiftedPt;
     int xCM,yCM,zCM; //temp centroids
 
-    int x,y,z;
-    int xo,yo,zo;
-
     if (oldCell) 
 	{
-        xo=oldCell->xCM;
-        yo=oldCell->yCM;
-        zo=oldCell->zCM;
-
-        x=oldCell->xCM-pt.x;
-        y=oldCell->yCM-pt.y;
-        z=oldCell->zCM-pt.z;
-        //calculating shiftVec - to translate CM
-
-
         //shift is defined to be zero vector for non-periodic b.c. - everything reduces to naive calculations then
         shiftVec.x= (short)((oldCell->xCM/(float)(oldCell->volume)-fieldDim.x/2)*boundaryConditionIndicator.x);
         shiftVec.y= (short)((oldCell->yCM/(float)(oldCell->volume)-fieldDim.y/2)*boundaryConditionIndicator.y);
@@ -531,13 +515,11 @@ CenterOfMassPair_t precalculateAfterFlipCM(
             zCM -= fieldDim.z*(oldCell->volume-1);
         }
 
-
         if(oldCell->volume>1) {
             oldCellCM.XRef()=xCM/((float)oldCell->volume-1);
             oldCellCM.YRef()=yCM/((float)oldCell->volume-1);
             oldCellCM.ZRef()=zCM/((float)oldCell->volume-1);
         } else {
-
             oldCellCM.XRef()=zCM;
             oldCellCM.YRef()=yCM;
             oldCellCM.ZRef()=zCM;
@@ -546,15 +528,6 @@ CenterOfMassPair_t precalculateAfterFlipCM(
 
     if (newCell) 
 	{
-        xo=newCell->xCM;
-        yo=newCell->yCM;
-        zo=newCell->zCM;
-
-        x=newCell->xCM+pt.x;
-        y=newCell->yCM+pt.y;
-        z=newCell->zCM+pt.z;
-
-
         if(newCell->volume==1) {
             shiftVec.x=0;
             shiftVec.y=0;
@@ -625,9 +598,9 @@ CenterOfMassPair_t precalculateAfterFlipCM(
         newCellCM.XRef()=xCM/((float)newCell->volume+1);
         newCellCM.YRef()=yCM/((float)newCell->volume+1);
         newCellCM.ZRef()=zCM/((float)newCell->volume+1);
-
-        return centerOfMassPair;
     }
+
+    return centerOfMassPair;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -638,7 +611,6 @@ std::pair<InertiaTensorComponents,InertiaTensorComponents>precalculateInertiaTen
 
     if (newCell != 0)
     {
-
         double xcmOld,ycmOld,zcmOld,xcm,ycm,zcm;
 
         if(newCell->volume>0) {
@@ -665,12 +637,10 @@ std::pair<InertiaTensorComponents,InertiaTensorComponents>precalculateInertiaTen
         newCellInertiaTensor.iXY=newCell->iXY-(newCell->volume )*xcmOld*ycmOld+(newCell->volume+1)*xcm*ycm-ptTrans.x*ptTrans.y;
         newCellInertiaTensor.iXZ=newCell->iXZ-(newCell->volume )*xcmOld*zcmOld+(newCell->volume+1)*xcm*zcm-ptTrans.x*ptTrans.z;
         newCellInertiaTensor.iYZ=newCell->iYZ-(newCell->volume )*ycmOld*zcmOld+(newCell->volume+1)*ycm*zcm-ptTrans.y*ptTrans.z;
-
     }
 
     if (oldCell != 0)
     {
-
         double xcmOld,ycmOld,zcmOld,xcm,ycm,zcm;
 
         if(oldCell->volume>1) {
@@ -698,7 +668,6 @@ std::pair<InertiaTensorComponents,InertiaTensorComponents>precalculateInertiaTen
         oldCellInertiaTensor.iXY = oldCell->iXY-(oldCell->volume )*xcmOld*ycmOld+(oldCell->volume-1)*xcm*ycm+ptTrans.x*ptTrans.y;
         oldCellInertiaTensor.iXZ = oldCell->iXZ-(oldCell->volume )*xcmOld*zcmOld+(oldCell->volume-1)*xcm*zcm+ptTrans.x*ptTrans.z;
         oldCellInertiaTensor.iYZ = oldCell->iYZ-(oldCell->volume )*ycmOld*zcmOld+(oldCell->volume-1)*ycm*zcm+ptTrans.y*ptTrans.z;
-
     }
     return make_pair(newCellInertiaTensor,oldCellInertiaTensor);
 }
