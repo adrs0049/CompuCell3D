@@ -34,7 +34,7 @@ namespace CompuCell3D {
    class PeriodicBoundary : public Boundary {
        public:
          bool applyCondition(int &coordinate, const int &max_value) override;
-		 ~PeriodicBoundary() override {}
+		 ~PeriodicBoundary() override;
    };
 };
 

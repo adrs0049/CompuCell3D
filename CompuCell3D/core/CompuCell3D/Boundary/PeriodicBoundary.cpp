@@ -52,3 +52,5 @@ using namespace CompuCell3D;
       return false;
   }
 
+PeriodicBoundary::~PeriodicBoundary()
+{}

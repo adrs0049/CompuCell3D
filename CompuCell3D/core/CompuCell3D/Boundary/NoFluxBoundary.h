@@ -32,7 +32,7 @@ namespace CompuCell3D {
    class NoFluxBoundary : public Boundary {
         public:
           bool applyCondition(int &coordinate, const int &max_value) override;
-          ~NoFluxBoundary() override {}
+          ~NoFluxBoundary() override;
    };
 };
 

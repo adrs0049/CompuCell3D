@@ -36,5 +36,6 @@ using namespace CompuCell3D;
 bool NoFluxBoundary::applyCondition(int& coordinate, const int& max_value) {
     return false;
 }
- 
 
+NoFluxBoundary::~NoFluxBoundary()
+{}
