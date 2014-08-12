@@ -34,6 +34,7 @@
 #include "BasicPluginInfo.h"
 #include "BasicException.h"
 #include "BasicClassFactory.h"
+#include "memory_include.h"
 
 template <class B, class T>
 class BasicPluginProxy {
@@ -41,19 +42,19 @@ public:
     BasicPluginProxy(const std::string name, const std::string description,
                      BasicPluginManager<B> *manager)
     {
-        init(new BasicPluginInfo(name, description), manager);
+        init(std::make_shared<BasicPluginInfo>(name, description), manager);
     }
 
     BasicPluginProxy(const std::string name, const std::string description,
                      const unsigned int numDeps, const char *deps[],
                      BasicPluginManager<B> *manager)
     {
-        init(new BasicPluginInfo(name, description, numDeps, deps), manager);
+        init(std::make_shared<BasicPluginInfo>(name, description, numDeps, deps), manager);
     }
 
     BasicPluginProxy(const BasicPluginInfo &info, BasicPluginManager<B> *manager)
     {
-        init(new BasicPluginInfo(info), manager);
+        init(std::make_shared<BasicPluginInfo>(info), manager);
     }
 
 protected:
@@ -63,7 +64,7 @@ protected:
      *
      * @param manager A pointer to the Plugin Manager.
      */
-    virtual void init(BasicPluginInfo *info, BasicPluginManager<B> *manager) {
+    virtual void init(std::shared_ptr<BasicPluginInfo> info, BasicPluginManager<B> *manager) {
         try {
             if (!manager) {
                 std::cerr << "BasicPluginProxyBase() manager cannot be NULL!"
@@ -71,7 +72,7 @@ protected:
                 exit(1);
             }
 
-            manager->registerPlugin(info, new BasicClassFactory<B, T>);
+            manager->registerPlugin(info, std::make_unique<BasicClassFactory<B, T> >());
 
         } catch (BasicException &e) {
             manager->setPluginException(e);
