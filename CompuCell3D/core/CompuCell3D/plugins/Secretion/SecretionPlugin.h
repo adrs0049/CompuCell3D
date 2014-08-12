@@ -102,9 +102,9 @@ namespace CompuCell3D {
     Dim3D fieldDim;
 	WatchableField3D<CellG *> *cellFieldG;
 	Automaton *automaton;
-	BoxWatcher *boxWatcherSteppable;
-	BoundaryPixelTrackerPlugin *boundaryPixelTrackerPlugin;
-	PixelTrackerPlugin *pixelTrackerPlugin;
+	std::shared_ptr<BoxWatcher> boxWatcherSteppable;
+	std::shared_ptr<BoundaryPixelTrackerPlugin> boundaryPixelTrackerPlugin;
+	std::shared_ptr<PixelTrackerPlugin> pixelTrackerPlugin;
 
 	ParallelUtilsOpenMP *pUtils;
 	BoundaryStrategy *boundaryStrategy;

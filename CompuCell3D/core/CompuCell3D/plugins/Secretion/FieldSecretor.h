@@ -63,7 +63,10 @@ namespace CompuCell3D {
 		BoundaryStrategy *boundaryStrategy;
 		unsigned int maxNeighborIndex;
 		WatchableField3D<CellG *> *cellFieldG;
-
+                
+                float getConcentrationOutsideCellAtBoundary(CellG * _cell);
+                float getConcentrationInsideCellAtBoundary(CellG * _cell);
+                
 		//IMPORTANT to handle exceptions properly all _secrete functinos have secrete counterpart defined int he %extend CompuCell3D::Field secretor in the CompuCellExtraDeclarations.i
 		bool _secreteInsideCell(CellG * _cell, float _amount);
 		bool _secreteInsideCellAtBoundary(CellG * _cell, float _amount);
@@ -83,4 +86,3 @@ namespace CompuCell3D {
 
 };
 #endif
-

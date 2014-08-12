@@ -28,6 +28,7 @@ using namespace CompuCell3D;
 #include <CompuCell3D/plugins/PixelTracker/PixelTrackerPlugin.h>
 #include <CompuCell3D/plugins/BoundaryPixelTracker/BoundaryPixelTrackerPlugin.h>
 #include <CompuCell3D/steppables/BoxWatcher/BoxWatcher.h>
+#include <CompuCell3D/helpers.h>
 
 using namespace std;
 
@@ -83,7 +84,7 @@ void SecretionPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 
 
 	bool comPluginAlreadyRegisteredFlag;
-	Plugin *plugin=Simulator::pluginManager.get("CenterOfMass",&comPluginAlreadyRegisteredFlag); //this will load Center Of Mass plugin if not already loaded
+	auto plugin=Simulator::pluginManager.get("CenterOfMass",&comPluginAlreadyRegisteredFlag); //this will load Center Of Mass plugin if not already loaded
 	if(!comPluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
 	
@@ -104,14 +105,14 @@ void SecretionPlugin::extraInit(Simulator *simulator) {
 	}
 	bool steppableAlreadyRegisteredFlag;
 	if(useBoxWatcher){
-		boxWatcherSteppable=(BoxWatcher*)Simulator::steppableManager.get("BoxWatcher",&steppableAlreadyRegisteredFlag);
+		boxWatcherSteppable=get_steppable<BoxWatcher>("BoxWatcher", &steppableAlreadyRegisteredFlag);
 		if(!steppableAlreadyRegisteredFlag)
 			boxWatcherSteppable->init(simulator);
 	}
 
 	bool pixelTrackerAlreadyRegisteredFlag;
 	if (! disablePixelTracker){
-		pixelTrackerPlugin=(PixelTrackerPlugin*)Simulator::pluginManager.get("PixelTracker",&pixelTrackerAlreadyRegisteredFlag);
+		pixelTrackerPlugin=get_plugin<PixelTrackerPlugin>("PixelTracker", &pixelTrackerAlreadyRegisteredFlag);
 		if (!pixelTrackerAlreadyRegisteredFlag){
 			pixelTrackerPlugin->init(simulator);
 		}
@@ -119,7 +120,7 @@ void SecretionPlugin::extraInit(Simulator *simulator) {
 
 	bool boundaryPixelTrackerAlreadyRegisteredFlag;
 	if (! disableBoundaryPixelTracker){
-		boundaryPixelTrackerPlugin=(BoundaryPixelTrackerPlugin*)Simulator::pluginManager.get("BoundaryPixelTracker",&boundaryPixelTrackerAlreadyRegisteredFlag);
+		boundaryPixelTrackerPlugin=get_plugin<BoundaryPixelTrackerPlugin>("BoundaryPixelTracker", &boundaryPixelTrackerAlreadyRegisteredFlag);
 		if (!boundaryPixelTrackerAlreadyRegisteredFlag){
 			boundaryPixelTrackerPlugin->init(simulator);
 		}
