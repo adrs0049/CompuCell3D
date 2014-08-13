@@ -1,6 +1,7 @@
 
 #ifndef CC3D_H
 #define CC3D_H
+	#include <CompuCell3D/CC3D_fwd.h>
     #include <CompuCell3D/Automaton/CC3D_Automaton.h>
     #include <CompuCell3D/Boundary/CC3D_Boundary.h>
     #include <CompuCell3D/Field3D/CC3D_Field3D.h>
