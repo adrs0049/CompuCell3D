@@ -1,7 +1,7 @@
 #ifndef CLDEQUE_H
 #define CLDEQUE_H
 #include <deque>
-#include <iostream>
+#include <ostream>
 
 template<typename T>
 class cldeque
