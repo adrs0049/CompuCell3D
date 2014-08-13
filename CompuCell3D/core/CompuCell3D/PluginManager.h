@@ -36,8 +36,10 @@ class PluginManager : public BasicPluginManager<PluginType>
     Simulator *simulator;
 
 public:
-	using plugins_t = std::map<std::string, std::shared_ptr<PluginType> >;
-
+	// ATTENTION Swig doesn't know about using yet
+ 	//using plugins_t = std::map<std::string, std::shared_ptr<PluginType> >;
+	typedef std::map<std::string, std::shared_ptr<PluginType> > plugins_t;
+	
     plugins_t & getPluginMap() {
         return BasicPluginManager<PluginType>::getPluginMapBPM();
     }
