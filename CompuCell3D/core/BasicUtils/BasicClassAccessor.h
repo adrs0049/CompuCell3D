@@ -47,15 +47,17 @@ public:
      *
      * @return A pointer the class T with in the given class group.
      */
-    std::shared_ptr<T> get(std::unique_ptr<BasicClassGroup>& group)
+    std::shared_ptr<T> get(std::shared_ptr<BasicClassGroup>& group)
     {
         return std::static_pointer_cast<T>(getClass(group));
     }
     
-    std::shared_ptr<T> get(const std::unique_ptr<BasicClassGroup>& group) const
+    std::shared_ptr<T> get(const std::shared_ptr<BasicClassGroup>& group) const
     {
         return std::static_pointer_cast<T>(getClass(group));
     }
+    
+    virtual ~BasicClassAccessor() {}
 
 protected:
     /**
@@ -66,7 +68,7 @@ protected:
         return std::make_unique<BasicClassFactory<void, T> >();
     }
 
-    virtual void deallocateClass(std::unique_ptr<BasicClassGroup>& group) const 
+    virtual void deallocateClass(std::shared_ptr<BasicClassGroup>& group) const 
     {
         auto ptr=get(group);
         if (ptr) ptr.reset(); // this calls the destructed of the class

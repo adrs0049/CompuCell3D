@@ -77,7 +77,7 @@ public:
      *
      * @return A new instance of the class group.
      */
-    virtual std::unique_ptr<BasicClassGroup> create();
+    virtual std::shared_ptr<BasicClassGroup> create();
 
     /**
      * The destructors of each of the classes in the group will be called in the
@@ -85,7 +85,7 @@ public:
      *
      * @param group The class group to be deallocated.
      */
-    virtual void destroy(std::unique_ptr<BasicClassGroup>& group);
+    virtual void destroy(std::shared_ptr<BasicClassGroup>& group);
 };
 
 #endif

@@ -39,7 +39,7 @@ public:
   /** 
    * @return A pointer to a newly allocated instance of class T.
    */
-  virtual std::unique_ptr<BaseType> create() {return std::make_unique<DerivedType>();}
+  virtual std::shared_ptr<BaseType> create() {return std::make_shared<DerivedType>();}
 
   /** 
    * @param classNode A pointer to the instance of class T to deallocate.

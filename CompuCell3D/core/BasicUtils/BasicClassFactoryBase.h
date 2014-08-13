@@ -31,10 +31,11 @@
  * Pure virtual interface for BasicClassFactory.
  */
 template <class T>
-class BasicClassFactoryBase 
+class BasicClassFactoryBase
 {
 public:
-  virtual std::unique_ptr<T> create() = 0;
+	// USE shared_ptr for the time being swig has trouble with unique_ptr
+    virtual std::shared_ptr<T> create() = 0;
 //   virtual void destroy(std::unique_ptr<T>& classNode) = 0;
 };
 
@@ -42,7 +43,7 @@ template <>
 class BasicClassFactoryBase<void>
 {
 public:
-	virtual std::shared_ptr<void> create() = 0;
+    virtual std::shared_ptr<void> create() = 0;
 // 	virtual void destroy(std::shared_ptr<void>& classNode) = 0;
 };
 

@@ -31,41 +31,47 @@
 template <class T>
 class BasicClassFactoryBase;
 
-/** 
+/**
  * The base class for BasicClassAccessor.
  * See BasicClassGroupFactory.
  */
-class BasicClassAccessorBase {
-  int id;
+class BasicClassAccessorBase
+{
+    int id;
 
 public:
-  BasicClassAccessorBase() : id(-1) {}
+    BasicClassAccessorBase() : id ( -1 ) {}
 
 protected:
-  virtual std::unique_ptr<BasicClassFactoryBase<void>> createClassFactory() = 0;
+	~BasicClassAccessorBase() {}
+    virtual std::unique_ptr<BasicClassFactoryBase<void>> createClassFactory() = 0;
 
+    /**
+     * Called by on registration by BasicClassGroupFactory to set this accessors
+     * id.
+     *
+     * @param id The assigned id.
+     */
+    void setId ( const int id )
+    {
+        this->id = id;
+    }
 
-  /** 
-   * Called by on registration by BasicClassGroupFactory to set this accessors 
-   * id.
-   * 
-   * @param id The assigned id.
-   */  
-  void setId(const int id) {this->id = id;}
+    /**
+     * Called by BasicClassAccessor to get a pointer to this accessors class in
+     * the group.
+     */
+    std::shared_ptr<void> getClass ( std::shared_ptr<BasicClassGroup>& group )
+    {
+        return group->getClass ( id );
+    }
+    std::shared_ptr<void> getClass ( const std::shared_ptr<BasicClassGroup>& group ) const
+    {
+        return group->getClass ( id );
+    }
 
-  /** 
-   * Called by BasicClassAccessor to get a pointer to this accessors class in 
-   * the group.
-   */
-  std::shared_ptr<void> getClass(std::unique_ptr<BasicClassGroup>& group) {
-    return group->getClass(id);
-  }
-  std::shared_ptr<void> getClass(const std::unique_ptr<BasicClassGroup>& group) const {
-    return group->getClass(id);
-  }
-  
-  virtual void deallocateClass(std::unique_ptr<BasicClassGroup>& group) const = 0;
-  friend class BasicClassGroupFactory;
+    virtual void deallocateClass ( std::shared_ptr<BasicClassGroup>& group ) const = 0;
+    friend class BasicClassGroupFactory;
 };
 
 #endif

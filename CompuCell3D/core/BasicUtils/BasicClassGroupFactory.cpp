@@ -47,7 +47,7 @@ void BasicClassGroupFactory::registerClass(std::shared_ptr<BasicClassAccessorBas
     classAccessors.push_back(accessor);
 }
 
-std::unique_ptr<BasicClassGroup> BasicClassGroupFactory::create()
+std::shared_ptr<BasicClassGroup> BasicClassGroupFactory::create()
 {
 	std::vector<std::shared_ptr<void> > classes {};
 	classes.reserve(classFactories.size());
@@ -55,15 +55,15 @@ std::unique_ptr<BasicClassGroup> BasicClassGroupFactory::create()
 	for (auto& factory : classFactories)
 		classes.emplace_back( factory->create() );
 			
-    return std::make_unique<BasicClassGroup>(classes);
+    return std::make_shared<BasicClassGroup>(classes);
 }
 
-void BasicClassGroupFactory::destroy(std::unique_ptr<BasicClassGroup>& group) 
+void BasicClassGroupFactory::destroy(std::shared_ptr<BasicClassGroup>& group) 
 {
     ASSERT_OR_THROW("BasicClassGroupFactory NULL group pointer!", group);
 
 	for (auto& accessor : classAccessors)
 		accessor->deallocateClass(group);
 
-    group.reset(nullptr);
+    group.reset();
 }

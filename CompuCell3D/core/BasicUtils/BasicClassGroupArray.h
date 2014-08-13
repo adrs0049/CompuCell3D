@@ -37,7 +37,7 @@ class BasicClassGroup;
  * deleted using an id which is simply an array index.
  */
 class BasicClassGroupArray {
-    std::vector<std::unique_ptr<BasicClassGroup> > groups;
+    std::vector<std::shared_ptr<BasicClassGroup> > groups;
     BasicClassGroupFactory factory;
 
 public:
@@ -81,26 +81,26 @@ public:
      *
      * @return A pointer to the class group.
      */
-    std::unique_ptr<BasicClassGroup>& get(const unsigned int id) {
+    std::shared_ptr<BasicClassGroup>& get(const unsigned int id) {
         return groups[id];
     }
     
     // const version
-    std::unique_ptr<BasicClassGroup> const& get(const unsigned int id) const {
+    std::shared_ptr<BasicClassGroup> const& get(const unsigned int id) const {
         return groups[id];
     }
 
     /**
      * See BasicClassGroupArray::get()
      */
-    std::unique_ptr<BasicClassGroup>& operator[](const unsigned int id) {
+    std::shared_ptr<BasicClassGroup>& operator[](const unsigned int id) {
         return groups[id];
     }
 
     /** CONST version
      * See BasicClassGroupArray::get()
      */
-    std::unique_ptr<BasicClassGroup> const& operator[](const unsigned int id) const {
+    std::shared_ptr<BasicClassGroup> const& operator[](const unsigned int id) const {
         return groups[id];
     }
 
