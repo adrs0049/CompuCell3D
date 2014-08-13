@@ -20,28 +20,8 @@
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
 
-
-#define CompuCellLibShared_EXPORTS	// if you dont define this DLL import/export macro  from CompuCellLib you will get error "definition of dllimport static data member not allowed"
-									//this is because you define static members in the Simulator class and witohut this macro they will be redefined here as import symbols which is not allowed
-
-#include "Simulator.h"
-using namespace CompuCell3D;
-
-#include <BasicUtils/BasicException.h>
-
 #include <iostream>
-#include <string>
-#include <fstream>
 using namespace std;
-
-#include <stdlib.h>
-
-#include <BasicUtils/BasicRandomNumberGenerator.h>
-
-
-PluginManager<Plugin> Simulator::pluginManager;
-PluginManager<Steppable> Simulator::steppableManager;
-BasicPluginManager<PluginBase> Simulator::pluginBaseManager;
 
 void Syntax(const string name) {
   cerr << "Syntax: " << name << " <config>" << endl;
