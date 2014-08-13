@@ -139,7 +139,7 @@ void DiffusionData::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
                 funcName=_xmlData->getFirstElement("FuncName")->getText();
         
         if(_xmlData->findElement("FieldDependencies"))
-            FieldDependenciesSTR=_xmlData->getFirstElement("FieldDependencies")->cdata;
+            FieldDependenciesSTR=_xmlData->getFirstElement("FieldDependencies")->getData();
             parseStringIntoList(FieldDependenciesSTR , fieldDependencies, ",");
 	
         for(int i = 0; i< fieldDependencies.size(); i++) {
