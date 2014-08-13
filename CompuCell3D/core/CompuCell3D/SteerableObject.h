@@ -26,16 +26,21 @@
 #include <string>
 
 class CC3DXMLElement;
-namespace CompuCell3D {
+namespace CompuCell3D
+{
+class ParseData;
 
-  class ParseData;
-
-  class SteerableObject  {
-  public:
+class SteerableObject
+{
+public:
     SteerableObject()  {}
     virtual ~SteerableObject() {}
-    virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false){}
-    virtual std::string steerableName(){return "SteerableObject";}
-  };
-}
+    virtual void update ( CC3DXMLElement *_xmlData, bool _fullInitFlag=false ) {}
+    virtual std::string steerableName()
+    {
+        return "SteerableObject";
+    }
+};
+
+}// end namespace
 #endif
