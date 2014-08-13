@@ -25,54 +25,40 @@
 #define CELLTYPEPLUGIN_H
 
 #include <CompuCell3D/CC3D.h>
-
-// // // #include <CompuCell3D/Plugin.h>
-
-// // // //#include <CompuCell3D/Potts3D/CellChangeWatcher.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
-// // // #include <CompuCell3D/plugins/CellType/CellTypeG.h>
-// // // #include <string>
-// // // #include <map>
-//#include "CellTypeParseData.h"
-//#include <CompuCell3D/dllDeclarationSpecifier.h>
 #include "CellTypeG.h"
 #include "CellTypeDLLSpecifier.h"
 
-
 class CC3DXMLElement;
 
-namespace CompuCell3D {
-  class Potts3D;
-  class CellG;
+namespace CompuCell3D
+{
+class Potts3D;
+class CellG;
 
 
-  class CELLTYPE_EXPORT CellTypePlugin : public Plugin, public Automaton {
+class CELLTYPE_EXPORT CellTypePlugin : public Plugin, public Automaton
+{
     Potts3D* potts;
-    
+
     std::map<unsigned char,std::string> typeNameMap;
     std::map<std::string,unsigned char> nameTypeMap;
-    
-    
-    
-//     std::map<unsigned char,std::string>::const_iterator typeNameMapItr;  
-//     std::map<std::string,unsigned char>::const_iterator nameTypeMapItr;
 
-    
-  public:
-    //CellTypeParseData cpd;
-
+public:
     CellTypePlugin();
     virtual ~CellTypePlugin();
 
     ///SimObject interface
-    virtual void init(Simulator *simulator, ParseData *_pd = nullptr);
+    virtual void init ( Simulator *simulator, ParseData *_pd = nullptr );
 
-    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData) override;
-    virtual void update(CC3DXMLElement *_xmlData,
-                        bool _fullInitFlag = false) override;
+    virtual void init ( Simulator *simulator, CC3DXMLElement *_xmlData ) override;
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
 
-    std::map<unsigned char,std::string> & getTypeNameMap(){return typeNameMap;}
-    
+    std::map<unsigned char,std::string> & getTypeNameMap()
+    {
+        return typeNameMap;
+    }
+
     ///Automaton Interface
     virtual unsigned char getCellType(const CellG *) const override;
     virtual std::string getTypeName(const char type) const override;
@@ -87,12 +73,7 @@ namespace CompuCell3D {
 
     //Steerable object interface
     virtual std::string steerableName() override;
-    virtual void update(ParseData *_pd, bool _fullInitFlag=false);
-
-	 
-
-    
-  };
+    virtual void update ( ParseData *_pd, bool _fullInitFlag=false );
 };
+} // end namespace
 #endif
-
