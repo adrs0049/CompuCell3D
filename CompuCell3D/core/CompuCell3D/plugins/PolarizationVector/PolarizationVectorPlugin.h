@@ -33,12 +33,10 @@ namespace CompuCell3D
 class CellG;
 class POLARIZATIONVECTOR_EXPORT PolarizationVectorPlugin : public Plugin
 {
+public:
 	// ATTENTION SWIG doesnt know about using yet
     //using PolVectorAccessor_t =  BasicClassAccessor<PolarizationVector>;
 	typedef BasicClassAccessor<PolarizationVector> PolVectorAccessor_t;
-    PolVectorAccessor_t polarizationVectorAccessor;
-
-public:
 
     PolarizationVectorPlugin();
     virtual ~PolarizationVectorPlugin();
@@ -55,6 +53,9 @@ public:
 
     void setPolarizationVector ( CellG * _cell, float _x, float _y, float _z );
     std::vector<float> getPolarizationVector ( CellG * _cell );
+
+private:
+	PolVectorAccessor_t polarizationVectorAccessor;
 };
 } // end namespace
 #endif

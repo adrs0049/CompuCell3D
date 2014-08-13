@@ -22,10 +22,12 @@ class ELASTICITYTRACKER_EXPORT ElasticityTrackerPlugin : public Plugin, public C
     WatchableField3D<CellG *> *cellFieldG;
     Dim3D fieldDim;
 
+public:
 	// ATTENTION SWIG doesnt know about using yet
     //using TrackerAccessor_t = BasicClassAccessor<ElasticityTracker>;
 	typedef BasicClassAccessor<ElasticityTracker> TrackerAccessor_t;
-	
+
+private:
     TrackerAccessor_t elasticityTrackerAccessor;
     Simulator *simulator;
     CellInventory * cellInventoryPtr;

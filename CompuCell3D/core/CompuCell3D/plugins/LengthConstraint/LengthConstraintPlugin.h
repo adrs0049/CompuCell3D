@@ -40,30 +40,30 @@ public:
     LengthEnergyParam() :targetLength ( 0 ),lambdaLength ( 0.0 ),minorTargetLength ( 0.0 ) {}
     LengthEnergyParam ( std::string _cellTypeName,
                         double _targetLength, double _lambdaLength )
-        : cellTypeName ( std::move ( _cellTypeName ) ),
-          targetLength ( _targetLength ), lambdaLength ( _lambdaLength )
+        : targetLength ( _targetLength ), lambdaLength ( _lambdaLength ),
+          cellTypeName ( std::move ( _cellTypeName ) )
     {}
     
     double targetLength;
+	float lambdaLength;
     double minorTargetLength;
-    float lambdaLength;
     std::string cellTypeName;
 };
 
 class LENGTHCONSTRAINT_EXPORT LengthConstraintPlugin : public Plugin,public EnergyFunction
 {
-
-    CC3DXMLElement *xmlData;
-
-    Potts3D *potts;
-    //energy function parse data
-
+public:
 	// ATTENTION SWIG doesnt know about using yet
     //using DataAccessor_t = BasicClassAccessor<LengthConstraintData>;
 	typedef BasicClassAccessor<LengthConstraintData> DataAccessor_t;
+	
+private:
+    CC3DXMLElement *xmlData;
+    Potts3D *potts;
+    //energy function parse data
     DataAccessor_t lengthConstraintDataAccessor;
 
-    std::vector<LengthEnergyParam> lengthEnergyParamVector;
+	std::vector<LengthEnergyParam> lengthEnergyParamVector;
     std::vector<std::string> typeNameVec;//temporary vector for storage type names
     BoundaryStrategyPtr boundaryStrategy;
 

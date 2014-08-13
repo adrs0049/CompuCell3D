@@ -23,13 +23,14 @@ class PLASTICITYTRACKER_EXPORT PlasticityTrackerPlugin : public Plugin, public C
     WatchableField3D<CellG *> *cellFieldG;
     Dim3D fieldDim;
 
+public:
     // ATTENTION SWIG doesn't know about using yet
     //using PlasticityTrackerAccessor_t = BasicClassAccessor<PlasticityTracker>;
     //using NeightborTrackerAccessor_t = BasicClassAccessor<NeighborTracker>;
-
 	typedef BasicClassAccessor<PlasticityTracker> PlasticityTrackerAccessor_t;
     typedef BasicClassAccessor<NeighborTracker> NeightborTrackerAccessor_t;
-	
+
+private:	
     PlasticityTrackerAccessor_t plasticityTrackerAccessor;
     NeightborTrackerAccessor_t * neighborTrackerAccessorPtr;
 

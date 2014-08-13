@@ -42,11 +42,11 @@ class CONTACTMULTICAD_EXPORT ContactMultiCadPlugin : public Plugin,public Energy
 public:
     typedef double ( ContactMultiCadPlugin::*contactEnergyPtr_t ) ( const CellG *cell1, const CellG *cell2 );
 
-private:
 	// ATTENTION SWIG cant deal with using yet
     //using DataAccessor_t = BasicClassAccessor<ContactMultiCadData>;
 	typedef BasicClassAccessor<ContactMultiCadData> DataAccessor_t;
-	
+
+private:	
     DataAccessor_t contactMultiCadDataAccessor;
     CC3DXMLElement *xmlData;
     Potts3D *potts;

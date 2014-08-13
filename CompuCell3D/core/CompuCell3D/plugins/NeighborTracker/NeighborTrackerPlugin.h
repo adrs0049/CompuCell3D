@@ -39,10 +39,12 @@ class CellInventory;
 
 class NEIGHBORTRACKER_EXPORT NeighborTrackerPlugin : public Plugin, public CellGChangeWatcher
 {
+public:
 	// ATTENTION SWIG doesnt know about using yet
     //using NeighborTracker_t = BasicClassAccessor<NeighborTracker>;
 	typedef BasicClassAccessor<NeighborTracker> NeighborTracker_t;
 	
+private:
     ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
     WatchableField3D<CellG *> *cellFieldG;

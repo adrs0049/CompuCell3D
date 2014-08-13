@@ -38,17 +38,18 @@ class Simulator;
 
 class CONNECTIVITYLOCALFLEX_EXPORT  ConnectivityLocalFlexPlugin : public Plugin,public EnergyFunction
 {
+public:
 	// ATTENTION SWIG cant deal with using yet
 	//using DataAccessor_t = BasicClassAccessor<ConnectivityLocalFlexData>;
     typedef BasicClassAccessor<ConnectivityLocalFlexData> DataAccessor_t;
+	
+private:
     DataAccessor_t connectivityLocalFlexDataAccessor;
     //Energy Function data
     Potts3D *potts;
-
     unsigned int numberOfNeighbors;
     std::vector<int> offsetsIndex; //this vector will contain indexes of offsets in the neighborListVector so that accessing
     //them using offsetsindex will ensure correct clockwise ordering
-
     unsigned int maxNeighborIndex;
     BoundaryStrategyPtr boundaryStrategy;
 

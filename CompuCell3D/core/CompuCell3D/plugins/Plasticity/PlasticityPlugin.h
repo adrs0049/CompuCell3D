@@ -30,15 +30,12 @@ class CC3DXMLElement;
 
 namespace CompuCell3D
 {
-
-
 template <class T> class Field3D;
 
 class Point3D;
 class Simulator;
 class PlasticityTrackerData;
 class PlasticityTracker;
-class BoundaryStrategy;
 
 /**
  * Calculates surface energy based on a target surface and
@@ -61,7 +58,7 @@ class PLASTICITY_EXPORT PlasticityPlugin : public Plugin, public EnergyFunction
     typedef double ( PlasticityPlugin::*diffEnergyFcnPtr_t ) ( float _deltaL,float _lBefore,const PlasticityTrackerData * _plasticityTrackerData,const CellG *_cell );
 
     diffEnergyFcnPtr_t diffEnergyFcnPtr;
-    BoundaryStrategy  *boundaryStrategy;
+    BoundaryStrategyPtr boundaryStrategy;
 
 public:
     PlasticityPlugin();

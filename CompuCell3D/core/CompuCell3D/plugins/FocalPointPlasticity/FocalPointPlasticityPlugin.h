@@ -39,10 +39,12 @@ class ParallelUtilsOpenMP;
 
 class FOCALPOINTPLASTICITY_EXPORT FocalPointPlasticityPlugin : public Plugin,public EnergyFunction, public CellGChangeWatcher
 {
+public:
 	// ATTENTION SWIG doesnt know about using yet
     //using TrackerAccessor_t = BasicClassAccessor<FocalPointPlasticityTracker>;
 	typedef BasicClassAccessor<FocalPointPlasticityTracker> TrackerAccessor_t;
-	
+
+private:
     TrackerAccessor_t focalPointPlasticityTrackerAccessor;
 
     Potts3D *potts;

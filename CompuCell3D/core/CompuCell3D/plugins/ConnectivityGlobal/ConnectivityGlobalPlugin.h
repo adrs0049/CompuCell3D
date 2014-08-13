@@ -36,15 +36,15 @@ class Automaton;
 
 class CONNECTIVITYGLOBAL_EXPORT ConnectivityGlobalPlugin : public Plugin,public EnergyFunction
 {
-private:
-	// ATTENTION SWIG cant deal with using yet
+public:
+		// ATTENTION SWIG cant deal with using yet
     //using DataAccessor_t = BasicClassAccessor<ConnectivityGlobalData>;
 	typedef BasicClassAccessor<ConnectivityGlobalData> DataAccessor_t;
+	
+private:
     DataAccessor_t connectivityGlobalDataAccessor;
-
     unsigned int maxNeighborIndex;
     BoundaryStrategyPtr boundaryStrategy;
-
     Potts3D *potts;
     std::vector<double> penaltyVec;
     unsigned char maxTypeId;

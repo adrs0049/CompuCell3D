@@ -39,20 +39,20 @@ public:
           formulaName ( "SimpleChemotaxisFormula" ),
           chemotaxisFormulaDictPtr ( nullptr ), automaton ( nullptr ) {}
 
+    typedef float ( ChemotaxisPlugin::*chemotaxisEnergyFormulaFcnPtr_t ) ( float,float,ChemotaxisData & );
+          
     float lambda;
     float saturationCoef;
+	std::string typeName;
+	chemotaxisEnergyFormulaFcnPtr_t  formulaPtr;
     std::string formulaName;
-    typedef float ( ChemotaxisPlugin::*chemotaxisEnergyFormulaFcnPtr_t ) ( float,float,ChemotaxisData & );
-    chemotaxisEnergyFormulaFcnPtr_t  formulaPtr;
     std::map<std::string,chemotaxisEnergyFormulaFcnPtr_t> *chemotaxisFormulaDictPtr;
+	Automaton * automaton;
 
-
-    std::string typeName;
-    std::vector<unsigned char> chemotactTowardsTypesVec;
+	std::vector<unsigned char> chemotactTowardsTypesVec;
     std::string chemotactTowardsTypesString;
-    Automaton * automaton;
 
-    void setLambda ( float _lambda )
+	void setLambda ( float _lambda )
     {
         lambda=_lambda;
     }

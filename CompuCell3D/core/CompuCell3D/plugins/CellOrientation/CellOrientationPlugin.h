@@ -45,15 +45,17 @@ public:
 class CELLORIENTATION_EXPORT CellOrientationPlugin : public Plugin,public EnergyFunction {
      Field3D<CellG *> *cellFieldG;
 
+public:
 	 // ATTENTION SIWG doesnt know about using yet
      //using PolVectorAccessor_t = BasicClassAccessor<PolarizationVector>;
      //using DataAccessor_t = BasicClassAccessor<LambdaCellOrientation>;
 	 typedef BasicClassAccessor<PolarizationVector> PolVectorAccessor_t;
      typedef BasicClassAccessor<LambdaCellOrientation> DataAccessor_t;
-     DataAccessor_t lambdaCellOrientationAccessor;
+
+private:
+	 DataAccessor_t lambdaCellOrientationAccessor;
 
      //EnergyFunction data
-
      Potts3D *potts;
      double lambdaCellOrientation;
      Simulator *simulator;

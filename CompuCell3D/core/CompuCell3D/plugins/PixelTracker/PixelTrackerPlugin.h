@@ -36,11 +36,12 @@ template <class T> class Field3D;
 template <class T> class WatchableField3D;
 
 class PIXELTRACKER_EXPORT PixelTrackerPlugin : public Plugin, public CellGChangeWatcher {
-
+public:
 	// ATTENTION SWIG doesnt know about using yet
 	//using pixelTrackerAccessor_t = BasicClassAccessor<PixelTracker>;
 	typedef BasicClassAccessor<PixelTracker> pixelTrackerAccessor_t;
 	
+private:
     //WatchableField3D<CellG *> *cellFieldG;
     Dim3D fieldDim;
     pixelTrackerAccessor_t pixelTrackerAccessor;

@@ -45,13 +45,12 @@ class CONTACTLOCALPRODUCT_EXPORT ContactLocalProductPlugin : public Plugin,publi
 public:
     typedef double ( ContactLocalProductPlugin::*contactEnergyPtr_t ) ( const CellG *cell1, const CellG *cell2 );
 
-private:
-    ParallelUtilsOpenMP *pUtils;
-
 	// ATTENTION SWIG doesnt know about using yet
     //using DataAccessor_t = BasicClassAccessor<ContactLocalProductData>;
     typedef BasicClassAccessor<ContactLocalProductData> DataAccessor_t;
 
+private:
+    ParallelUtilsOpenMP *pUtils;
     DataAccessor_t contactProductDataAccessor;
     Potts3D *potts;
     Simulator *sim;

@@ -39,12 +39,14 @@ class ContactLocalFlexDataContainer;
 
 class CONTACTLOCALFLEX_EXPORT ContactLocalFlexPlugin : public Plugin ,public CellGChangeWatcher,public EnergyFunction
 {
-    ParallelUtilsOpenMP *pUtils;
-    ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
-
+public:
 	// ATTENTION SWIG doesnt know about using yet
     //using DataAccessor_t = BasicClassAccessor<ContactLocalFlexDataContainer>;
 	typedef BasicClassAccessor<ContactLocalFlexDataContainer> DataAccessor_t;
+
+private:
+    ParallelUtilsOpenMP *pUtils;
+    ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
 	
     DataAccessor_t contactDataContainerAccessor;
     Potts3D *potts;
