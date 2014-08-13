@@ -39,7 +39,8 @@ using namespace std;
 using namespace CompuCell3D;
 
 // Singleton
-BoundaryStrategy* BoundaryStrategy::singleton;
+BoundaryStrategyPtr BoundaryStrategy::instance = nullptr;
+std::mutex BoundaryStrategy::_mutex;
 
 // Default constructor
 BoundaryStrategy::BoundaryStrategy()
@@ -64,8 +65,8 @@ BoundaryStrategy::BoundaryStrategy()
 
 // Constructor
 BoundaryStrategy::BoundaryStrategy ( string boundary_x, string boundary_y,
-                                     string boundary_z, string alg, int index, int size, string inputfile,LatticeType latticeType )
-
+                                     string boundary_z, string alg, int index,
+									 int size, string inputfile,LatticeType latticeType )
 {
     strategy_x = BoundaryFactory::createBoundary ( boundary_x );
     strategy_y = BoundaryFactory::createBoundary ( boundary_y );
@@ -87,7 +88,7 @@ BoundaryStrategy::BoundaryStrategy ( string boundary_x, string boundary_y,
 // Destructor
 BoundaryStrategy::~BoundaryStrategy()
 {
-    singleton = nullptr;
+     instance.reset();
 }
 
 LatticeMultiplicativeFactors BoundaryStrategy::generateLatticeMultiplicativeFactors ( LatticeType _latticeType,Dim3D dim )

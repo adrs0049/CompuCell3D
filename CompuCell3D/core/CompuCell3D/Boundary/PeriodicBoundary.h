@@ -25,7 +25,6 @@
 
 #include "Boundary.h"
 
-
 namespace CompuCell3D {
 
    /*
@@ -36,6 +35,6 @@ namespace CompuCell3D {
          bool applyCondition(int &coordinate, const int &max_value) override;
 		 ~PeriodicBoundary() override;
    };
-};
 
+} // end namespace
 #endif

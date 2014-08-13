@@ -34,6 +34,6 @@ namespace CompuCell3D {
           bool applyCondition(int &coordinate, const int &max_value) override;
           ~NoFluxBoundary() override;
    };
-};
-
+   
+} // end namespace
 #endif
