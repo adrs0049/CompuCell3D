@@ -1,8 +1,6 @@
 // -*-c++-*-
 
-
 %module ("threads"=1) CompuCell
-
 %include "typemaps.i"
 
 // ************************************************************
@@ -38,10 +36,6 @@
 %feature("autodoc",VolumeParseData_Class) VolumeParseData; 
 %feature("autodoc",TargetVolume_func) TargetVolume;
 %feature("autodoc",LambdaVolume_func) LambdaVolume;
-
-
-
-
 %include <windows.i>
 
 %{
@@ -75,7 +69,6 @@
 #include <PublicUtilities/Vector3.h>
 
 #include <BasicUtils/BasicException.h>
-#include <BasicUtils/BasicSmartPointer.h>
 #include <BasicUtils/BasicClassFactory.h>
 #include <BasicUtils/BasicPluginManager.h>
 
@@ -102,13 +95,7 @@
 // Namespaces
 using namespace std;
 using namespace CompuCell3D;
-
-
-
 %}
-
-
-
 
 %include stl.i //to ensure stl functionality 
 
@@ -120,10 +107,10 @@ using namespace CompuCell3D;
 // C++ std::map handling
 %include "std_map.i"
 
-// C++ std::map handling
+// C++ std::set handling
 %include "std_set.i"
 
-// C++ std::map handling
+// C++ std::vector handling
 %include "std_vector.i"
 
 %include "stl.i"
@@ -145,36 +132,16 @@ using namespace CompuCell3D;
     import_array();
 %}
 
-
-//C arrays
-//%include "carrays.i"
-
 // ******************************
 // Third Party Classes
 // ******************************
 
 %include "BasicUtils/BasicClassFactoryBase.h"
 %include "BasicUtils/BasicClassFactory.h"
-// %include <CompuCell3D/Plugin.h>
-// %include <BasicUtils/BasicPluginManager.h>
-
-// template <class T>
-// class BasicPluginManager {
-//   public:
-//     void loadLibraries(const std::string path);
-//     bool isLoaded(std::string pluginName);
-// };
-// 
-// %template(templatebasicpluginmanagersteppable) BasicPluginManager<Steppable>;
-// %template(templatebasicpluginmanagerplugin) BasicPluginManager<Plugin>;
-// 
-
 
 // ******************************
 // CompuCell3D Classes
 // ******************************
-
-
 //have to include all  export definitions for modules which are arapped to avoid problems with interpreting by swig win32 specific c++ extensions...
 #define COMPUCELLLIB_EXPORT
 #define BOUNDARYSHARED_EXPORT
@@ -260,16 +227,6 @@ using namespace CompuCell3D;
 
 %template (Coordinates3DDouble) Coordinates3D<double>; 
 
-
-// %extend Coordinates3DDouble{
-  // std::string __str__(){
-    // std::ostringstream s;
-    // s<<(*self);
-    // return s.str();
-  // }
-// }  
-
-
 %extend Coordinates3D<double>{
   std::string __str__(){
     std::ostringstream s;
@@ -277,7 +234,6 @@ using namespace CompuCell3D;
     return s.str();
   }
 }  
-
 
 // turns on proper handling of default arguments - only one wrapper code will get generated for a function
 // alternative way could be to use typecheck maps but I had trouble with it.
@@ -292,11 +248,7 @@ using namespace CompuCell3D;
 %include <CompuCell3D/Boundary/BoundaryStrategy.h>
 %include "Potts3D/Cell.h"
 
-    
-    
 using namespace CompuCell3D;
-
-
 
 %extend CompuCell3D::CellG{
       %pythoncode %{
@@ -460,39 +412,8 @@ using namespace CompuCell3D;
       %}
     };
 
-    
-
-%include "Field3D/Field3D.h"
-%include "Field3D/Field3DImpl.h"
-%include "Field3D/WatchableField3D.h"
-
-
-
-// %template(cellfield) CompuCell3D::Field3D<CellG *>;
-// %template(floatfield) CompuCell3D::Field3D<float>;
-// %template(floatfieldImpl) CompuCell3D::Field3DImpl<float>;
-// %template(watchablecellfield) CompuCell3D::WatchableField3D<CellG *>;
-
-
-
 %include <NeighborFinderParams.h>
-
-
 %include <CompuCell3D/PluginManager.h>
-
-// template <class T>
-// class PluginManager {
-//   public:
-//     void loadLibraries(const std::string path);
-//     bool isLoaded(std::string pluginName);
-// };
-
-// %template(templatebasicpluginmanagersteppable) BasicPluginManager<Steppable>;
-// %template(templatebasicpluginmanagerplugin) BasicPluginManager<Plugin>;
-
-
-// %include <CompuCell3D/Steppable.h>
-// %include <CompuCell3D/Plugin.h>
 %include <BasicUtils/BasicPluginManager.h>
 
 %template(bpmPlugin) BasicPluginManager<Plugin> ;
@@ -500,10 +421,6 @@ using namespace CompuCell3D;
 
 %template(pluginmanagertemplate) CompuCell3D::PluginManager<Plugin> ;
 %template(steppablemanagertemplate) CompuCell3D::PluginManager<Steppable> ;
-
-
-// %template(bpmStepNew) BasicPluginManager<StepNew> ;
-// %template(stepnewmanagertemplate) CompuCell3D::PluginManager<StepNew> ;
 
 %inline %{
 
@@ -515,12 +432,7 @@ using namespace CompuCell3D;
   BasicPluginManager<Steppable> * getSteppableManagerAsBPM(){
     return (BasicPluginManager<Steppable> *)&Simulator::steppableManager;
   }
-  
-//   CompuCell3D::PluginManager<StepNew> getStepManager(){return CompuCell3D::PluginManager<StepNew>();}
-//   CompuCell3D::PluginManager<Steppable> getSteppableManager(){return CompuCell3D::PluginManager<Steppable>();}
 %}
-
-
 
 // macros used to generate extra functions to better manipulate fields    
     
@@ -723,8 +635,6 @@ FIELD3DEXTENDERBASE(type,returnType)
 }
 %enddef    
     
-
-    
 %define CELLFIELD3DEXTENDER(type,returnType)
 FIELD3DEXTENDERBASE(type,returnType)    
 // %extend  type{
@@ -832,8 +742,6 @@ FIELD3DEXTENDERBASE(type,returnType)
 //     cerr<<"stop x="<< stop_x<<endl;
 //     cerr<<"step x="<< step_x<<endl;
 //     cerr<<"sliceLength="<<sliceLength<<endl;
-    
-    
 //     int x,y,z;
     PyObject *sliceX=0,*sliceY=0,* sliceZ=0;
     
@@ -843,33 +751,35 @@ FIELD3DEXTENDERBASE(type,returnType)
                 $self->set(Point3D(x,y,z),_val);
                 volumeTrackerPlugin->step();
             }
-    
-
   }
-
-  
 }
 %enddef    
-    
-    
-    
-%ignore Field3D<float>::typeStr;
-%ignore Field3DImpl<float>::typeStr;
-%ignore Field3D<int>::typeStr;
-%ignore Field3DImpl<int>::typeStr;
-%ignore Field3D<CellG*>::typeStr;
-%ignore Field3DImpl<CellG*>::typeStr;
-%ignore WatchableField3D<CellG*>::typeStr;
 
-%template(floatfield) Field3D<float>;
-%template(floatfieldImpl) Field3DImpl<float>;
-%template(intfield) Field3D<int>;
-%template(intfieldImpl) Field3DImpl<int>;
+%include "Field3D/Field3D.h"
+%include "Field3D/Field3DImpl.h"
+%include "Field3D/WatchableField3D.h"
 
-%template(cellfield) Field3D<CellG *>;
-%template(cellfieldImpl) Field3DImpl<CellG *>;
-%template(watchablecellfield) WatchableField3D<CellG *>;
+// %template(cellfield) CompuCell3D::Field3D<CellG *>;
+// %template(floatfield) CompuCell3D::Field3D<float>;
+// %template(floatfieldImpl) CompuCell3D::Field3DImpl<float>;
+// %template(watchablecellfield) CompuCell3D::WatchableField3D<CellG *>;
 
+%ignore CompuCell3D::Field3D<float>::typeStr;
+%ignore CompuCell3D::Field3DImpl<float>::typeStr;
+%ignore CompuCell3D::Field3D<int>::typeStr;
+%ignore CompuCell3D::Field3DImpl<int>::typeStr;
+%ignore CompuCell3D::Field3D<CellG*>::typeStr;
+%ignore CompuCell3D::Field3DImpl<CellG*>::typeStr;
+%ignore CompuCell3D::WatchableField3D<CellG*>::typeStr;
+
+%template(floatfield) CompuCell3D::Field3D<float>;
+%template(floatfieldImpl) CompuCell3D::Field3DImpl<float>;
+%template(intfield) CompuCell3D::Field3D<int>;
+%template(intfieldImpl) CompuCell3D::Field3DImpl<int>;
+
+%template(cellfield) CompuCell3D::Field3D<CellG *>;
+%template(cellfieldImpl) CompuCell3D::Field3DImpl<CellG *>;
+%template(watchablecellfield) CompuCell3D::WatchableField3D<CellG *>;
 
 CELLFIELD3DEXTENDER(Field3D<CellG *>,CellG*)
 FIELD3DEXTENDER(Field3D<float>,float)
@@ -919,19 +829,9 @@ FIELD3DEXTENDER(Field3D<int>,int)
 
 %include <BasicUtils/BasicException.h>
 
-
-//%include exception.i
-
-
-// ************************************************************
-// Init Functions
-// ************************************************************
-
-
 // ************************************************************
 // Inline Functions
 // ************************************************************
-
 
 %inline %{
 
