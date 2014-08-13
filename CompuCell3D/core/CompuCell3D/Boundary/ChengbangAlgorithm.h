@@ -28,32 +28,31 @@
 #include <vector>
 using std::vector;
 
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 
-    /*
-     * Chengbang's Algorithm. 
-     */
-   class ChengbangAlgorithm : public Algorithm {
-
-
-        public:       
-          ChengbangAlgorithm() {evolution=-1;}
-          void readFile(const int index, const int size,
-                        string inputfile) override;
-          bool inGrid(const Point3D &pt) override;
-          int getNumPixels(int x, int y, int z) override;
-          int i;
-          int s;
-          string filetoread;
-	  int evolution;
-        private:
-         vector<vector<vector<float> > > dataStructure;
-          void readFile(const char* inputFile);
-   };
-    
+/*
+ * Chengbang's Algorithm.
+ */
+class ChengbangAlgorithm : public Algorithm
+{
+public:
+    ChengbangAlgorithm()
+    {
+        evolution=-1;
+    }
+    void readFile ( const int index, const int size,
+                    string inputfile ) override;
+    bool inGrid ( const Point3D &pt ) override;
+    int getNumPixels ( int x, int y, int z ) override;
+    int i;
+    int s;
+    string filetoread;
+    int evolution;
+private:
+    vector<vector<vector<float> > > dataStructure;
+    void readFile ( const char* inputFile );
 };
 
-
-
-
+} // end namespace
 #endif
