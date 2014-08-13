@@ -27,7 +27,7 @@ using namespace std;
 #include "UniformFieldInitializer.h"
 
 UniformFieldInitializer::UniformFieldInitializer() :
-potts(0),sim(0) {}
+potts(nullptr),sim(nullptr) {}
 
 void UniformFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlData){
 	sim=simulator;
@@ -36,12 +36,10 @@ void UniformFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlD
 	ASSERT_OR_THROW("initField() Cell field G cannot be null!", cellFieldG);
 	Dim3D dim = cellFieldG->getDim();
 
-
 	bool pluginAlreadyRegisteredFlag;
 	auto plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
 	if(!pluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
-
 
 	oldStyleInitData.boxMin=Dim3D(0,0,0);
 	oldStyleInitData.boxMax=dim;
@@ -68,7 +66,8 @@ void UniformFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlD
 
 	CC3DXMLElementList regionVec=_xmlData->getElements("Region");
 
-	for (int i = 0 ; i<regionVec.size(); ++i){
+	for (const auto& elem : regionVec)
+	{
 		UniformFieldInitializerData initData;
 
 		if(regionVec[i]->findElement("Gap"))
@@ -85,19 +84,15 @@ void UniformFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlD
 			initData.boxMax.y=regionVec[i]->getFirstElement("BoxMax")->getAttributeAsUInt("y");
 			initData.boxMax.z=regionVec[i]->getFirstElement("BoxMax")->getAttributeAsUInt("z");
 		}
-
-		if(regionVec[i]->findElement("BoxMin")){
-			initData.boxMin.x=regionVec[i]->getFirstElement("BoxMin")->getAttributeAsUInt("x");
-			initData.boxMin.y=regionVec[i]->getFirstElement("BoxMin")->getAttributeAsUInt("y");
-			initData.boxMin.z=regionVec[i]->getFirstElement("BoxMin")->getAttributeAsUInt("z");
+		if(elem->findElement("BoxMin")){
+			initData.boxMin.x=elem->getFirstElement("BoxMin")->getAttributeAsUInt("x");
+			initData.boxMin.y=elem->getFirstElement("BoxMin")->getAttributeAsUInt("y");
+			initData.boxMin.z=elem->getFirstElement("BoxMin")->getAttributeAsUInt("z");
 		}
-
-
 		initDataVec.push_back(initData);
 	}
-
-
 }
+
 void UniformFieldInitializer::layOutCells(const UniformFieldInitializerData & _initData){
 
 	int size = _initData.gap + _initData.width;
@@ -117,14 +112,7 @@ void UniformFieldInitializer::layOutCells(const UniformFieldInitializerData & _i
 		&& _initData.boxMax.z<=dim.z
 		);
 
-
-	//  CenterOfMassPlugin * comPlugin=(CenterOfMassPlugin*)(Simulator::pluginManager.get("CenterOfMass"));
-	//  Cell *c;
-
-	//  comPlugin->getCenterOfMass(c);
-
 	Dim3D itDim;
-
 	itDim.x = boxDim.x / size;
 	if (boxDim.x % size) itDim.x += 1;
 	itDim.y = boxDim.y / size;
@@ -136,8 +124,6 @@ void UniformFieldInitializer::layOutCells(const UniformFieldInitializerData & _i
 	Point3D pt;
 	Point3D cellPt;
 	CellG *cell;
-
-
 
 	for (int z = 0; z < itDim.z; z++)
 		for (int y = 0; y < itDim.y; y++)
@@ -176,8 +162,6 @@ void UniformFieldInitializer::layOutCells(const UniformFieldInitializerData & _i
 						// but if we initialize steppers are not called thus is you overwrite a cell here it will not get removed from
 						//inventory unless you call steppers(VolumeTrackerPlugin) explicitely
 			}
-
-
 }
 
 unsigned char UniformFieldInitializer::initCellType(const UniformFieldInitializerData & _initData){
@@ -206,85 +190,17 @@ void UniformFieldInitializer::start() {
 
 	WatchableField3D<CellG *> *cellField =(WatchableField3D<CellG *> *) potts->getCellFieldG();
 	ASSERT_OR_THROW("initField() Cell field cannot be null!", cellField);
-	Dim3D dim = cellField->getDim();
-
-
-
 
 	if(initDataVec.size()!=0){
-		for (int i = 0 ; i < initDataVec.size(); ++i){
-
-			layOutCells(initDataVec[i]);
-			//          exit(0);
-		}
+		for (const auto& data : initDataVec)
+			layOutCells(data);
 	}else{
 		layOutCells(oldStyleInitData);
 	}
-
-
-	//   // TODO: Chage this code so it write the 0 spins too.  This will make it
-	//   //       possible to re-initialize a previously used field.
-	// 
-	//   int size = gap + width;
-	// 
-	//   Field3D<CellG *> *cellField = potts->getCellFieldG();
-	//   ASSERT_OR_THROW("initField() Cell field cannot be null!", cellField);
-	// 
-	//   Dim3D dim = cellField->getDim();
-	// 
-	// //  CenterOfMassPlugin * comPlugin=(CenterOfMassPlugin*)(Simulator::pluginManager.get("CenterOfMass"));
-	// //  Cell *c;
-	//   
-	// //  comPlugin->getCenterOfMass(c);
-	// 
-	//   Dim3D itDim;
-	// 
-	//   itDim.x = dim.x / size;
-	//   if (dim.x % size) itDim.x += 1;
-	//   itDim.y = dim.y / size;
-	//   if (dim.y % size) itDim.y += 1;
-	//   itDim.z = dim.z / size;
-	//   if (dim.z % size) itDim.z += 1;
-	// 
-	//   Point3D pt;
-	//   Point3D cellPt;
-	//   CellG *cell;
-	// 
-	//   for (int z = 0; z < itDim.z; z++)
-	//     for (int y = 0; y < itDim.y; y++)
-	//       for (int x = 0; x < itDim.x; x++) {
-	//    pt.x = x * size;
-	//    pt.y = y * size;
-	//    pt.z = z * size;
-	// 
-	//    if (BoundaryStrategy::getInstance()->isValid(pt))
-	//    cell = potts->createCellG(pt);
-	//    else
-	//        continue;
-	// 
-	// 
-	//    for (cellPt.z = pt.z; cellPt.z < pt.z + width &&
-	//           cellPt.z < dim.z; cellPt.z++)
-	//      for (cellPt.y = pt.y; cellPt.y < pt.y + width &&
-	//        cellPt.y < dim.y; cellPt.y++)
-	//        for (cellPt.x = pt.x; cellPt.x < pt.x + width &&
-	//          cellPt.x < dim.x; cellPt.x++){
-	// 
-	//          if (BoundaryStrategy::getInstance()->isValid(pt))
-	//                   cellField->set(cellPt, cell);
-	// 
-	//        }
-	//       }
-	// 
-	//    //Now will initialize types of cells
-	//    initializeCellTypes();
-	// /*   cerr<<"\t\tFIELD INITIALIZATION COMPLETE"<<endl;
-	//    exit(0);*/
 }
 
-
-
-void UniformFieldInitializer::initializeCellTypes(){
+void UniformFieldInitializer::initializeCellTypes()
+{
 	BasicRandomNumberGenerator *rand = BasicRandomNumberGenerator::getInstance();
 
 	cellInventoryPtr=& potts->getCellInventory();
@@ -295,34 +211,11 @@ void UniformFieldInitializer::initializeCellTypes(){
 	Point3D com;
 	CellG * cell;
 
-
-	float x,y,z;
-
 	for(cInvItr=cellInventoryPtr->cellInventoryBegin() ; cInvItr !=cellInventoryPtr->cellInventoryEnd() ;++cInvItr ){
 
 		cell=cellInventoryPtr->getCell(cInvItr);
-		//cell=*cInvItr;
-		///BCGPtr=cellAccessorPtr->get(*cInvItr);
-		x = cell->xCM / (float)cell->volume;
-		y = cell->yCM / (float)cell->volume;
-		z = cell->zCM / (float)cell->volume;
 		cell->type=rand->getInteger(0,1)+1;
 		cell->type=1;
-		/*         if ((x > 25) && (x < 30)){
-		cell->type = 1;
-		}else{
-		if ((z >= 60) && (z <= 90)){
-		cell->type = 2;
-		}
-		else{
-		cell->type = 2;
-		}
-
-		}*/
-		//cerr<<"vol old = "<<cell->volume<<endl;
-		//cerr<<"INIT typeNode.get(cellNodes)->type "<<(int)typeNode.get(cellNodes)->type<<
-		//" G part="<<(int)cellTypeGAccessorPtr->get(*cInvItr)->type<<endl;
-
 	}
 }
 
@@ -333,8 +226,3 @@ std::string UniformFieldInitializer::steerableName(){
 std::string UniformFieldInitializer::toString(){
 	return "UniformInitializer";
 }
-
-
-
-
-
