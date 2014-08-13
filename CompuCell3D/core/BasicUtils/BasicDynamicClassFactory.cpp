@@ -23,34 +23,35 @@
 \*******************************************************************/
 
 #include "BasicDynamicClassFactory.h"
-
 #include "BasicDynamicClassNodeBase.h"
-
 #include <stdlib.h>
 
 BasicDynamicClassFactory::BasicDynamicClassFactory() :
-  classSize(0), numClasses(0) {
+    classSize ( 0 ), numClasses ( 0 )
+{}
+
+void *BasicDynamicClassFactory::create()
+{
+    numClasses++;
+
+    // malloc 0 is not safe
+    void *x = malloc ( classSize ? classSize : 1 );
+
+    for ( unsigned int i = 0; i < nodes.getSize(); i++ )
+        nodes[i]->_init ( x );
+
+    return x;
 }
 
-void *BasicDynamicClassFactory::create() {
-  numClasses++;
-
-  // malloc 0 is not safe
-  void *x = malloc(classSize ? classSize : 1);
-
-  for (unsigned int i = 0; i < nodes.getSize(); i++)
-    nodes[i]->_init(x);
-
-  return x;
+void BasicDynamicClassFactory::destroy ( void *x )
+{
+    numClasses--;
+    free ( x );
 }
 
-void BasicDynamicClassFactory::destroy(void *x) {
-  numClasses--;
-  free(x);
-}
-
-void BasicDynamicClassFactory::registerNode(BasicDynamicClassNodeBase *node) {
-  node->setOffset(classSize);
-  classSize += node->getSize();
-  nodes.put(node);
+void BasicDynamicClassFactory::registerNode ( BasicDynamicClassNodeBase *node )
+{
+    node->setOffset ( classSize );
+    classSize += node->getSize();
+    nodes.put ( node );
 }
