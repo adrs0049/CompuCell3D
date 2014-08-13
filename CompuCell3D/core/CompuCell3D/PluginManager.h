@@ -55,5 +55,5 @@ public:
     }
 
 };
-}; // end namespace
+} // end namespace
 #endif
