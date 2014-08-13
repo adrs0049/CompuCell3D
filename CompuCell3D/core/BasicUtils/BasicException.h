@@ -59,6 +59,14 @@ class BasicException {
     std::shared_ptr<BasicException> cause;
     std::shared_ptr<std::list<std::string> > trace;
 
+    void swap(BasicException other)
+	{
+		std::swap(message, other.message);
+		std::swap(location, other.location);
+		std::swap(cause, other.cause);
+		std::swap(trace, other.trace);
+	}
+    	
 public:
     static unsigned int causePrintLevel;
     static bool enableStackTraces;
@@ -101,6 +109,13 @@ public:
         e.location.clear();
     }
 
+    BasicException& operator=(BasicException other)
+	{
+		BasicException tmp(other);
+		swap(other);
+		return *this;
+	}
+    
     virtual ~BasicException() {}
 
     const std::string getMessage() const {
