@@ -6,7 +6,10 @@
 namespace CompuCell3D {
 
 class BoundaryStrategy;
-using BoundaryStrategyPtr = std::shared_ptr<BoundaryStrategy>;
+
+typedef std::shared_ptr<BoundaryStrategy> BoundaryStrategyPtr;
+// ATTENTION SWIG doesn't support these yet
+// using BoundaryStrategyPtr = std::shared_ptr<BoundaryStrategy>;
 	
 } // end namespace
 
