@@ -36,21 +36,10 @@ namespace CompuCell3D {
 	class CellG;
 
 	class EnergyFunction {
-	protected:
-		//const Potts3D *potts3D;	
-
 	public:
 		EnergyFunction() {}
 		virtual ~EnergyFunction() {}
 	
-
-		/**
-		* Called by Potts3D when this function is registered.
-		*/
-		//virtual void registerPotts3D(Potts3D *potts3D) {
-		//		this->potts3D = potts3D;
-		//}
-
 		/** 
 		* @return The energy change for this function at point pt.
 		*/
@@ -62,13 +51,14 @@ namespace CompuCell3D {
 		* 
 		* @return The energy change of changing point pt to newCell.
 		*/
-		//     virtual double changeEnergy(const Point3D &pt, const Cell *newCell,
-		// 				const Cell *oldCell) = 0;
-
-		virtual double changeEnergy(const Point3D &pt, const CellG *newCell,const CellG *oldCell) 
+		virtual double changeEnergy(const Point3D &pt, 
+									const CellG * newCell,
+									const CellG *oldCell) 
 		{
-			if(1!=1);return 0.0;
+			if(1!=1) return 0.0;
+			return 0.0;
 		}
+		
 		virtual std::string toString()
 		{
 			return std::string("EnergyFunction");
