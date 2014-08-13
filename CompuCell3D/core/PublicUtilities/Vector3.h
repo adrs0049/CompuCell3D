@@ -2,8 +2,7 @@
 #define VECTOR3_H
 // This class is based on Vector3 from rook package
 
-#include <iostream>
-
+#include <ostream>
 
 class Vector3{
 
@@ -49,7 +48,6 @@ public:
    // void        SetPtEtaPhi(precision_t pt, precision_t eta, precision_t phi);
    // void        SetPtThetaPhi(precision_t pt, precision_t theta, precision_t phi);
   
-
    precision_t Phi() const;
    // The azimuth angle. returns phi from -pi to pi 
 
@@ -110,8 +108,6 @@ public:
    precision_t Angle(const Vector3 &) const;
    // The angle w.r.t. another 3-vector.
 
-
-
    void RotateX(precision_t);
    // Rotates the Hep3Vector around the x-axis.
 
@@ -127,15 +123,9 @@ public:
    // void Rotate(precision_t, const Vector3 &);
    // Rotates around the axis specified by another Hep3Vector.
 
-
    //components
    precision_t fX, fY, fZ;
-
-
-
-
 };
-
 
 Vector3 operator + (const Vector3 &, const Vector3 &);
 // Addition of 3-vectors.
@@ -149,21 +139,14 @@ Vector3::precision_t operator * (const Vector3 &, const Vector3 &);
 Vector3 operator * (const Vector3 &, Vector3::precision_t a);
 Vector3 operator * (Vector3::precision_t a, const Vector3 &);
 
-
-
-
-
 Vector3::precision_t & Vector3::operator[] (int i)       { return operator()(i); }
 Vector3::precision_t   Vector3::operator[] (int i) const { return operator()(i); }
-
 
 inline void Vector3::SetXYZ(Vector3::precision_t xx, Vector3::precision_t yy, Vector3::precision_t zz) {
    fX = xx;
    fY = yy;
    fZ = zz;
 }
-
-
 
 inline Vector3 & Vector3::operator = (const Vector3 & p) {
    fX = p.fX;
@@ -215,7 +198,6 @@ inline Vector3 Vector3::Cross(const Vector3 & p) const {
 
 inline Vector3::precision_t Vector3::Mag2() const { return fX*fX + fY*fY + fZ*fZ; }
 
-
 inline Vector3 Vector3::Orthogonal() const {
    precision_t xx = fX < 0.0 ? -fX : fX;
    precision_t yy = fY < 0.0 ? -fY : fY;
@@ -226,8 +208,6 @@ inline Vector3 Vector3::Orthogonal() const {
       return yy < zz ? Vector3(-fZ,0,fX) : Vector3(fY,-fX,0);
    }
 }
-
-
 
 inline Vector3::precision_t Vector3::CosTheta() const {
    precision_t ptot = Mag();
@@ -246,12 +226,7 @@ inline void Vector3::SetMag(Vector3::precision_t ma) {
    }
 }
 
-
 inline Vector3::precision_t Vector3::Perp2() const { return fX*fX + fY*fY; }
-
-
-
-
 inline Vector3::precision_t Vector3::Perp2(const Vector3 & p)  const {
    precision_t tot = p.Mag2();
    precision_t ss  = Dot(p);
@@ -261,14 +236,9 @@ inline Vector3::precision_t Vector3::Perp2(const Vector3 & p)  const {
    return per;
 }
 
-
 inline std::ostream & operator<<(std::ostream & _out, const Vector3 &_a){
    _out<<"("<<_a.fX<<","<<_a.fY<<","<<_a.fZ<<")";
    return _out;
 }
-
-
-
-
 
 #endif
