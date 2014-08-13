@@ -22,6 +22,7 @@
 
 #ifndef CC3D_BOUNDARY_H
 #define CC3D_BOUNDARY_H
+	#include <CompuCell3D/Boundary/BoundaryStrategyFwd.h>
     #include <CompuCell3D/Boundary/BoundaryStrategy.h>    
     #include <CompuCell3D/Boundary/NoFluxBoundary.h>
     #include <CompuCell3D/Boundary/Boundary.h>
