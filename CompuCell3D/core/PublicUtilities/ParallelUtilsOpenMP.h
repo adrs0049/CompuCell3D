@@ -20,7 +20,7 @@ public:
     typedef omp_lock_t OpenMPLock_t;
 
     ParallelUtilsOpenMP();
-    ~ParallelUtilsOpenMP();
+    virtual ~ParallelUtilsOpenMP();
     void setDim ( const Dim3D &_dim );
     Dim3D getDim();
 
