@@ -40,14 +40,22 @@
 template <class T>
 class BasicPluginManager {
 public:
-    using infos_t = typename std::list<std::shared_ptr<BasicPluginInfo> >;
-
+	// ATTENTION SWIG doesn't deal with these yet
+    //using infos_t = typename std::list<std::shared_ptr<BasicPluginInfo> >;
+	typedef typename std::list<std::shared_ptr<BasicPluginInfo> > infos_t;
+	
 private:
-	using factories_t = typename std::map<std::string, std::unique_ptr<BasicClassFactoryBase<T> > >;
-    using infoMap_t   = typename std::map<std::string, std::shared_ptr<BasicPluginInfo> >;
-    using plugins_t   = typename std::map<std::string, std::shared_ptr<T> >;
-	using libraryHandles_t = typename std::map<std::string, void *>;
-
+	// ATTENTION SWIG doesn't deal with these yet
+	//using factories_t = typename std::map<std::string, std::unique_ptr<BasicClassFactoryBase<T> > >;
+    //using infoMap_t   = typename std::map<std::string, std::shared_ptr<BasicPluginInfo> >;
+    //using plugins_t   = typename std::map<std::string, std::shared_ptr<T> >;
+	//using libraryHandles_t = typename std::map<std::string, void *>;
+	
+	typedef typename std::map<std::string, std::unique_ptr<BasicClassFactoryBase<T> > > factories_t;
+	typedef typename std::map<std::string, std::shared_ptr<BasicPluginInfo> > infoMap_t;
+    typedef typename std::map<std::string, std::shared_ptr<T> > plugins_t;
+	typedef typename std::map<std::string, void *> libraryHandles_t;
+	
     /// A map from plugin name to registered factory.
     factories_t factories;
 
