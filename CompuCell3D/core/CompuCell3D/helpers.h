@@ -2,7 +2,6 @@
 #define HELPER_H_H
 
 #include <memory>
-// #include <CompuCell3D/Simulator.h>
 
 namespace CompuCell3D {
 
@@ -30,6 +29,6 @@ registerClassOnCell(Potts3D * potts, Accessor& TheAccessor)
 	potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<Accessor>(TheAccessor));
 }
 
-}; // end namespace
+} // end namespace
 
 #endif
