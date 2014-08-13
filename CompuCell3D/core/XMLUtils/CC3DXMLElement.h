@@ -2,7 +2,6 @@
 #define CC3DXMLELEMENT_H
 
 #include <iosfwd>
-#include <iostream>
 #include <string>
 #include <map>
 #include <list>

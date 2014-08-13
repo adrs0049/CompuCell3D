@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <cstdio>
 #include <XMLUtils/XMLParserExpat.h>
 
 using namespace std;
