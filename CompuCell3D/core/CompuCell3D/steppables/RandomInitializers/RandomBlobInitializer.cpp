@@ -30,22 +30,21 @@ using namespace CompuCell3D;
 using namespace std;
 
 RandomBlobInitializer::RandomBlobInitializer():
-    mit(0),
-    potts(0),
-    simulator(0),
-    rand(0),
-    cellField(0),
-    pixelTrackerAccessorPtr(0),
-    builder(0),    
-    cellInventoryPtr(0)
-{
-	ndiv,growsteps = 0;
-	borderTypeID = -1;
-	showStats=false;
-}
+    mit(nullptr),
+    potts(nullptr),
+    simulator(nullptr),
+    rand(nullptr),
+    cellField(nullptr),
+    builder(nullptr),    
+    cellInventoryPtr(nullptr),
+    showStats(false),
+    ndiv(0),
+    growsteps(0),
+    borderTypeID(-1)
+{}
 
 RandomBlobInitializer::~RandomBlobInitializer(){
-    delete builder;
+    if (builder) delete builder;
 }
 
 void RandomBlobInitializer::init(Simulator *_simulator, CC3DXMLElement *_xmlData) {
@@ -59,8 +58,6 @@ void RandomBlobInitializer::init(Simulator *_simulator, CC3DXMLElement *_xmlData
 	builder = new FieldBuilder(_simulator);
     
     update(_xmlData,true);
-	
-    
 }
 
 void RandomBlobInitializer::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
@@ -171,20 +168,15 @@ void RandomBlobInitializer::start(){
 
 void RandomBlobInitializer::divide(){
 	CellInventory::cellInventoryIterator cInvItr;
-	CellG * cell;
-	CellG * child;
-	PixelTracker * pixelTracker;
-	set<PixelTrackerData>::iterator pixelItr;
-	Point3D pt;
 	vector<CellG*> cells;
 	for(cInvItr=cellInventoryPtr->cellInventoryBegin() ; cInvItr !=cellInventoryPtr->cellInventoryEnd() ;++cInvItr ){
 		if (cellInventoryPtr->getCell(cInvItr)->volume > 2)
 			cells.push_back(cellInventoryPtr->getCell(cInvItr));
 	}
 	if ((int)cells.size() > 0){
-		vector<CellG*>::iterator it;
-		for (it=cells.begin(); it < cells.end(); it++){
-			mit->doDirectionalMitosisAlongMinorAxis(*it);
+		for (auto& cell : cells)
+		{
+			mit->doDirectionalMitosisAlongMinorAxis(cell);
 			if (mit->childCell)
 				builder->setType(mit->childCell);
 		}
@@ -196,11 +188,6 @@ std::string RandomBlobInitializer::toString(){
    return "RandomBlobInitializer";
 }
 
-
 std::string RandomBlobInitializer::steerableName(){
    return toString();
 }
-
-
-
-

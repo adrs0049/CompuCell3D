@@ -26,7 +26,6 @@
 #define RANDOMBLOBINITIALIZER_H
 
 #include <CompuCell3D/CC3D.h>
-#include <CompuCell3D/plugins/PixelTracker/PixelTracker.h>
 #include <CompuCell3D/steppables/Mitosis/MitosisSteppable.h>
 #include <memory>
 #include "FieldBuilder.h"
@@ -40,16 +39,15 @@ namespace CompuCell3D {
     void setParameters(Simulator *_simulator, CC3DXMLElement *_xmlData);
     void divide();
     std::shared_ptr<MitosisSteppable>  mit;
-    Potts3D *potts;
+    Potts3D * potts;
     Simulator *simulator;
     BasicRandomNumberGenerator * rand;
-    BasicClassAccessor<PixelTracker> * pixelTrackerAccessorPtr;
     WatchableField3D<CellG *> *cellField;
     FieldBuilder * builder;
 	CellInventory * cellInventoryPtr;
     Dim3D dim,boxMin,boxMax,blobsize,blobpos;
     bool showStats;
-    int ndiv,growsteps,borderTypeID;
+	int ndiv,growsteps,borderTypeID;
 
   public:
     RandomBlobInitializer();
@@ -69,8 +67,6 @@ namespace CompuCell3D {
     virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
     virtual std::string steerableName();
     virtual std::string toString();    
-
-
   };
 };
 #endif
