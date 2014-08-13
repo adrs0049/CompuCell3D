@@ -22,7 +22,7 @@
 
 #include "Algorithm.h"
 #include "ChengbangAlgorithm.h"
-#include <ostream>
+#include <iostream>
 #include <ios>
 #include <fstream>
 #include <sstream>
@@ -30,6 +30,7 @@
 #include <set>
 
 using namespace CompuCell3D;
+using namespace std;
 /*
  * Read the input file and populate
  *
