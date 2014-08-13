@@ -45,8 +45,6 @@
 class BasicRandomNumberGeneratorNonStatic;
 
 namespace CompuCell3D {
- 	
-
   class EnergyFunction;
   class AcceptanceFunction;
   class FluctuationAmplitudeFunction;
@@ -365,5 +363,5 @@ namespace CompuCell3D {
 	long getRecentlyCreatedClusterId(){return recentlyCreatedClusterId;}
 	long getRecentlyCreatedCellId(){return recentlyCreatedCellId;}
   };
-};
+} // end namespace
 #endif
