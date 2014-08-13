@@ -1,5 +1,5 @@
 SET(SRCS
-   PyPlugin.cpp
+   #PyPlugin.cpp
    PyCompuCellObjAdapter.cpp
    EnergyFunctionPyWrapper.cpp
    ChangeWatcherPyWrapper.cpp

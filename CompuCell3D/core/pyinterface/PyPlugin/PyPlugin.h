@@ -11,7 +11,5 @@ namespace CompuCell3D{
     virtual void readXML(XMLPullParser &xmlIn){}
     virtual void writeXML(XMLSerializer &xmlOut){}
    };
-
-};
-
+} // end namespace
 #endif
