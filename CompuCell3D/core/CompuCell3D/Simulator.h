@@ -88,8 +88,6 @@ public:
     ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP *pUtilsSingle; // stores same information as pUtils but assumes that we use only single CPU - used in modules for which user requests single CPU runs e.g. Potts with large cells
 
-    double simValue;
-
     void setOutputRedirectionTarget ( long  _ptr );
     long getCerrStreamBufOrig();
     void restoreCerrStreamBufOrig ( long _ptr );
@@ -141,7 +139,7 @@ public:
         return pUtilsSingle;
     }
 
-    BoundaryStrategy * getBoundaryStrategy();
+    BoundaryStrategyPtr getBoundaryStrategy();
     void registerSteerableObject ( SteerableObject * );
     void unregisterSteerableObject ( const std::string & );
     SteerableObject * getSteerableObject ( const std::string & _objectName );
