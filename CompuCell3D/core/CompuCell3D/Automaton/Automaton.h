@@ -40,15 +40,12 @@ class Automaton : public CellGChangeWatcher
 
 protected:
     Potts3D* potts;
-    CellType* classType;
+    std::unique_ptr<CellType> classType;
 
 public:
     Automaton() {}
 
-    virtual ~Automaton()
-    {
-        if ( classType ) delete classType;
-    };
+    virtual ~Automaton() {}
 
     virtual void creation ( CellG* newCell ) {}
     virtual void updateVariables ( CellG* newCell ) {}
