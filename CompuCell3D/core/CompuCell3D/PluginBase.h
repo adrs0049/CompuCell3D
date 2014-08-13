@@ -25,15 +25,15 @@
 #ifndef PLUGINBASE_H
 #define PLUGINBASE_H
 
-namespace CompuCell3D {
-//   class Simulator;
-
-class PluginBase {
+namespace CompuCell3D
+{
+class PluginBase
+{
 public:
-  virtual ~PluginBase() {}
+    virtual ~PluginBase() {}
 
-  virtual void f() = 0;
-/*   virtual void init(Simulator *simulator) {} */
+    virtual void f() = 0;
+    /*   virtual void init(Simulator *simulator) {} */
 };
-};
+} // end namespace
 #endif // PLUGIN_H
