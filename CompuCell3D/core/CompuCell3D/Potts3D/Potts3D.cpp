@@ -716,7 +716,7 @@ unsigned int Potts3D::metropolisFast ( const unsigned int steps, const double te
         unsigned int currentWorkNodeNumber = pUtils->getCurrentWorkNodeNumber();
 
         BasicRandomNumberGeneratorNonStatic * rand = randNSVec[currentWorkNodeNumber].getInstance();
-        BoundaryStrategy * boundaryStrategy = BoundaryStrategy::getInstance();
+		BoundaryStrategyPtr boundaryStrategy = BoundaryStrategy::getInstance();
 
         // cerr<<"subgridSectionOrderVec.size()="<<subgridSectionOrderVec.size()<<endl;
         //iterating over subgridSections
@@ -915,7 +915,7 @@ unsigned int Potts3D::metropolisBoundaryWalker ( const unsigned int steps, const
     vector<Point3D> boundaryPointVector;
     boundaryPointVector.assign ( boundaryPixelSet.begin(),boundaryPixelSet.end() );
 
-    BoundaryStrategy * boundaryStrategy = BoundaryStrategy::getInstance();
+    BoundaryStrategyPtr boundaryStrategy = BoundaryStrategy::getInstance();
     //cerr<<"numberOf workNodes="<<pUtils->getNumberOfWorkNodesPotts()<<endl;
     pUtils->prepareParallelRegionPotts();
     pUtils->allowNestedParallelRegions ( true ); //necessary in case we use e.g. PDE solver caller which in turn calls parallel PDE solver
