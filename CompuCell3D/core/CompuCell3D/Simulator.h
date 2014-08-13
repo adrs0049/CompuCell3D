@@ -46,7 +46,6 @@ class CustomStreamBufferBase;
 
 namespace CompuCell3D
 {
-
 class ClassRegistry;
 class BoundaryStrategy;
 
