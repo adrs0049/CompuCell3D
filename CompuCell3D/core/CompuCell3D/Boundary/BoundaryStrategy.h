@@ -77,8 +77,7 @@ private:
     std::unique_ptr<Boundary> strategy_x;
     std::unique_ptr<Boundary> strategy_y;
     std::unique_ptr<Boundary> strategy_z;
-
-    Algorithm* algorithm;
+    std::unique_ptr<Algorithm> algorithm;
 
 	bool isValid ( const int coordinate, const int max_value ) const;
 
@@ -186,9 +185,7 @@ public:
     }
 
     unsigned int getMaxNeighborIndexFromDepth ( float depth ) const;
-
     unsigned int getMaxNeighborOrder() const;
-
     unsigned int getMaxNeighborIndexFromNeighborOrder ( unsigned int _neighborOrder ) const;
 
     ~BoundaryStrategy();

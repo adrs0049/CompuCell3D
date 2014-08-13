@@ -27,6 +27,7 @@
 #include "Algorithm.h"
 #include "ChengbangAlgorithm.h"
 #include "DefaultAlgorithm.h"
+#include <BasicUtils/memory_include.h>
 
 using namespace std;
 
@@ -42,18 +43,18 @@ public:
     static const string chengbang;
     static const string Default;
 
-    static Algorithm *createAlgorithm ( string algorithm, int index,
+    static std::unique_ptr<Algorithm> createAlgorithm ( string algorithm, int index,
                                         int size, string inputfile )
     {
         if ( algorithm == chengbang )
         {
-            Algorithm*  ca =  new ChengbangAlgorithm();
+            std::unique_ptr<Algorithm> ca = std::make_unique<ChengbangAlgorithm> ();
             ca->readFile ( index, size, inputfile );
             return ca;
         }
         else
         {
-            return new DefaultAlgorithm();
+            return std::make_unique<DefaultAlgorithm> ();
         }
     }
 };
