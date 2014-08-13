@@ -39,9 +39,6 @@ namespace CompuCell3D {
           bool inGrid(const Point3D &pt) override;
           int getNumPixels(int x, int y, int z) override;
    }; 
-};
-
-
-
+} // end namespace
 
 #endif
