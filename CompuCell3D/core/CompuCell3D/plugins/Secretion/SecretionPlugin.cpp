@@ -20,15 +20,13 @@
 *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
 *************************************************************************/
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 
 using namespace CompuCell3D;
 
-#include <CompuCell3D/Simulator.h>
 #include <CompuCell3D/plugins/PixelTracker/PixelTrackerPlugin.h>
 #include <CompuCell3D/plugins/BoundaryPixelTracker/BoundaryPixelTrackerPlugin.h>
 #include <CompuCell3D/steppables/BoxWatcher/BoxWatcher.h>
-#include <CompuCell3D/helpers.h>
 
 using namespace std;
 

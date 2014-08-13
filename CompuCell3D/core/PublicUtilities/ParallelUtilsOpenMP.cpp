@@ -1,5 +1,6 @@
 #include  "ParallelUtilsOpenMP.h"
 #include <algorithm>
+#include <iostream>
 
 using namespace std;
 using namespace CompuCell3D;

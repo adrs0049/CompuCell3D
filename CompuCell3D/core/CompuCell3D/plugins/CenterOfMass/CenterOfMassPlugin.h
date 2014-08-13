@@ -23,7 +23,7 @@
 #ifndef CENTEROFMASSPLUGIN_H
 #define CENTEROFMASSPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "CenterOfMassDLLSpecifier.h"
 
 namespace CompuCell3D

@@ -1,7 +1,7 @@
 #ifndef COMPUCELL3DEXTERNALPOTENTIALPLUGIN_H
 #define COMPUCELL3DEXTERNALPOTENTIALPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ExternalPotentialDLLSpecifier.h"
 
 namespace CompuCell3D

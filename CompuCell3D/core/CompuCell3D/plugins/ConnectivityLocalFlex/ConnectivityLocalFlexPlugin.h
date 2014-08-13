@@ -23,7 +23,7 @@
 #ifndef CONNECTIVITYLOCALFLEXPLUGIN_H
 #define CONNECTIVITYLOCALFLEXPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ConnectivityLocalFlexData.h"
 #include "ConnectivityLocalFlexDLLSpecifier.h"
 
@@ -38,7 +38,9 @@ class Simulator;
 
 class CONNECTIVITYLOCALFLEX_EXPORT  ConnectivityLocalFlexPlugin : public Plugin,public EnergyFunction
 {
-    using DataAccessor_t = BasicClassAccessor<ConnectivityLocalFlexData>;
+	// ATTENTION SWIG cant deal with using yet
+	//using DataAccessor_t = BasicClassAccessor<ConnectivityLocalFlexData>;
+    typedef BasicClassAccessor<ConnectivityLocalFlexData> DataAccessor_t;
     DataAccessor_t connectivityLocalFlexDataAccessor;
     //Energy Function data
     Potts3D *potts;

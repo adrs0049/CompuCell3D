@@ -23,10 +23,10 @@
 
 #ifndef PDESOLVERCALLERPLUGIN_H
 #define PDESOLVERCALLERPLUGIN_H
-#include <CompuCell3D/CC3D.h>
-#include <BasicUtils/memory_include.h>
+#include <CompuCell3D/CC3D_plugin.h>
 
 #include "PDESolverCallerDLLSpecifier.h"
+#include <CompuCell3D/ClassRegistry.h>
 
 class CC3DXMLElement;
 namespace CompuCell3D {

@@ -22,7 +22,7 @@
 
 #ifndef GLOBALBOUNDARYPIXELTRACKERPLUGIN_H
 #define GLOBALBOUNDARYPIXELTRACKERPLUGIN_H
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "GlobalBoundaryPixelTrackerDLLSpecifier.h"
 
 class CC3DXMLElement;

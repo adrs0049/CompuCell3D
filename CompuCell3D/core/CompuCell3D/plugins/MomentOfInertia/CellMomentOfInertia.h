@@ -41,5 +41,5 @@ namespace CompuCell3D {
     unsigned int iZZ;
     unsigned int iXZ;
   };
-};
+} // end namespace
 #endif

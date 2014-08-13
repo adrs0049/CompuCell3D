@@ -23,7 +23,7 @@
 #ifndef ORIENTEDCONTACTPLUGIN_H
 #define ORIENTEDCONTACTPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "OrientedContactDLLSpecifier.h"
 
 class CC3DXMLElement;

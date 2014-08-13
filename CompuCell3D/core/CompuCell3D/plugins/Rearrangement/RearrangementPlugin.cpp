@@ -21,17 +21,8 @@
  *************************************************************************/
 
 
-#include <CompuCell3D/CC3D.h>
-
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include <NeighborTracker/NeighborTrackerPlugin.h>
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
 
 using namespace CompuCell3D;
 

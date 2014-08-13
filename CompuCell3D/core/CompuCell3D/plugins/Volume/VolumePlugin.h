@@ -23,8 +23,7 @@
 #ifndef VOLUMEPLUGIN_H
 #define VOLUMEPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
-
+#include <CompuCell3D/CC3D_plugin.h>
 #include "VolumeDLLSpecifier.h"
 
 class CC3DXMLElement;

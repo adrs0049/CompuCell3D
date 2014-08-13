@@ -19,10 +19,9 @@
  *     along with this program; if not, write to the Free Software       *
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include <CompuCell3D/plugins/PlasticityTracker/PlasticityTrackerPlugin.h>
 #include <CompuCell3D/plugins/PlasticityTracker/PlasticityTracker.h>
-#include <CompuCell3D/helpers.h>
 
 using namespace CompuCell3D;
 using namespace std;

@@ -36,5 +36,5 @@ class LENGTHCONSTRAINT_EXPORT LengthConstraintData{
 	  double minorTargetLength;            
 };
 
-};
+} // end namespace
 #endif

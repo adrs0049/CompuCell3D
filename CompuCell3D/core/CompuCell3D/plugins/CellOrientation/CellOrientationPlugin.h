@@ -23,7 +23,7 @@
 #ifndef CELLORIENTATIONPLUGIN_H
 #define CELLORIENTATIONPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "CellOrientationDLLSpecifier.h"
 
 namespace CompuCell3D {
@@ -45,8 +45,11 @@ public:
 class CELLORIENTATION_EXPORT CellOrientationPlugin : public Plugin,public EnergyFunction {
      Field3D<CellG *> *cellFieldG;
 
-     using PolVectorAccessor_t = BasicClassAccessor<PolarizationVector>;
-     using DataAccessor_t = BasicClassAccessor<LambdaCellOrientation>;
+	 // ATTENTION SIWG doesnt know about using yet
+     //using PolVectorAccessor_t = BasicClassAccessor<PolarizationVector>;
+     //using DataAccessor_t = BasicClassAccessor<LambdaCellOrientation>;
+	 typedef BasicClassAccessor<PolarizationVector> PolVectorAccessor_t;
+     typedef BasicClassAccessor<LambdaCellOrientation> DataAccessor_t;
      DataAccessor_t lambdaCellOrientationAccessor;
 
      //EnergyFunction data
@@ -78,8 +81,6 @@ public:
                                  const CellG *oldCell) override;
      double changeEnergyCOMBased ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
      double changeEnergyPixelBased ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
-
-
 
      PolVectorAccessor_t * getPolarizationVectorAccessorPtr() {
           return polarizationVectorAccessorPtr;

@@ -4,22 +4,21 @@
 
 #include "PolarizationVectorDLLSpecifier.h"
 
-namespace CompuCell3D {
+namespace CompuCell3D
+{
+class CellG;
 
-   class CellG;
-   
+class POLARIZATIONVECTOR_EXPORT PolarizationVector
+{
+public:
 
-   class POLARIZATIONVECTOR_EXPORT PolarizationVector{
-      public:
-
-         PolarizationVector(float _x=0.0 ,float _y=0.0 , float _z=0.0)
-         :x(_x),y(_y),z(_z)
-          {}
-          float x,y,z;
-
-   };
-
+    PolarizationVector ( float _x=0.0 ,float _y=0.0 , float _z=0.0 )
+        :x ( _x ),y ( _y ),z ( _z )
+    {}
+    float x,y,z;
 };
+
+} // end namespace
 #endif
 
 

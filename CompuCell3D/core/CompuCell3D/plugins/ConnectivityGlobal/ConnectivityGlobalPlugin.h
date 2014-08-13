@@ -23,7 +23,7 @@
 #ifndef CONNECTIVITYGLOBALPLUGIN_H
 #define CONNECTIVITYGLOBALPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ConnectivityGlobalData.h"
 #include "ConnectivityGlobalDLLSpecifier.h"
 
@@ -37,8 +37,9 @@ class Automaton;
 class CONNECTIVITYGLOBAL_EXPORT ConnectivityGlobalPlugin : public Plugin,public EnergyFunction
 {
 private:
-
-    using DataAccessor_t = BasicClassAccessor<ConnectivityGlobalData>;
+	// ATTENTION SWIG cant deal with using yet
+    //using DataAccessor_t = BasicClassAccessor<ConnectivityGlobalData>;
+	typedef BasicClassAccessor<ConnectivityGlobalData> DataAccessor_t;
     DataAccessor_t connectivityGlobalDataAccessor;
 
     unsigned int maxNeighborIndex;

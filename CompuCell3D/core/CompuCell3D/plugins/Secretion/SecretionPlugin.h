@@ -24,7 +24,7 @@
 #ifndef SECRETIONPLUGIN_H
 #define SECRETIONPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "SecretionDataP.h"
 #include "SecretionDLLSpecifier.h"
 

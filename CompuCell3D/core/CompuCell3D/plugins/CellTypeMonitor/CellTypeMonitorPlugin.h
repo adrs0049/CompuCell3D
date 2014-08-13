@@ -2,9 +2,8 @@
 #ifndef CELLTYPEMONITORPLUGIN_H
 #define CELLTYPEMONITORPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "CellTypeMonitorDLLSpecifier.h"
-#include <CompuCell3D/Boundary/BoundaryStrategyFwd.h>
 
 class CC3DXMLElement;
 
@@ -19,19 +18,12 @@ namespace CompuCell3D {
     template <class T> class WatchableField3D;
 
     class CELLTYPEMONITOR_EXPORT CellTypeMonitorPlugin : public Plugin  ,public CellGChangeWatcher {
-        
     private:    
-                        
         CC3DXMLElement *xmlData;        
-        
         Potts3D *potts;
-        
         Simulator *sim;
-        
         ParallelUtilsOpenMP *pUtils;            
-        
         ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;        
-
         Automaton *automaton;
 
         BoundaryStrategyPtr boundaryStrategy;
@@ -63,6 +55,5 @@ namespace CompuCell3D {
         virtual std::string steerableName() override;
         virtual std::string toString() override;
     };
-};
+} // end namespace
 #endif
-        

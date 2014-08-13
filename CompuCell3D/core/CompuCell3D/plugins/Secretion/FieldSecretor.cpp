@@ -1,18 +1,11 @@
-#include <CompuCell3D/CC3D.h>
-
-
-
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include <CompuCell3D/plugins/PixelTracker/PixelTrackerPlugin.h>
 #include <CompuCell3D/plugins/BoundaryPixelTracker/BoundaryPixelTrackerPlugin.h>
 #include <CompuCell3D/plugins/BoundaryPixelTracker/BoundaryPixelTracker.h>
-
-
+#include <CompuCell3D/Field3D/CC3D_Field3D.h>
 
 using namespace CompuCell3D;
 using namespace std;
-
 
 #include "FieldSecretor.h"
 

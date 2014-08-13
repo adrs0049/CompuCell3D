@@ -1,8 +1,6 @@
 
 #ifndef FOCALPOINTPLASTICITYTRACKER_H
 #define FOCALPOINTPLASTICITYTRACKER_H
-
-
 /**
 @author m
 */

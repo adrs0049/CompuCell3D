@@ -1,4 +1,4 @@
- #include <CompuCell3D/CC3D.h>
+ #include <CompuCell3D/CC3D_plugin.h>
 using namespace CompuCell3D;
 #include <CompuCell3D/plugins/ClusterSurfaceTracker/ClusterSurfaceTrackerPlugin.h>
 #include "ClusterSurfacePlugin.h"

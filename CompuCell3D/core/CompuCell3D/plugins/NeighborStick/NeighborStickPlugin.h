@@ -22,70 +22,57 @@
 
 #ifndef NEIGHBORSTICKPLUGIN_H
 #define NEIGHBORSTICKPLUGIN_H
-#include <CompuCell3D/CC3D.h>
-
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-
-// // // #include <CompuCell3D/Plugin.h>
-
-// // // #include <BasicUtils/BasicClassAccessor.h>
-// // // #include <BasicUtils/BasicClassGroup.h> //had to include it to avoid problems with template instantiation
+#include <CompuCell3D/CC3D_plugin.h>
 #include <CompuCell3D/plugins/NeighborTracker/NeighborTracker.h>
-
-// // // #include <map>
-// // // #include <vector>
-
 #include "NeighborStickDLLSpecifier.h"
 
 class CC3DXMLElement;
 
-namespace CompuCell3D {
-  
+namespace CompuCell3D
+{
+class Potts3D;
+class Automaton;
+class Simulator;
 
-    class Potts3D;
-  class Automaton;
-  class Simulator;
-
-  class NEIGHBORSTICK_EXPORT NeighborStickPlugin : public Plugin, public EnergyFunction  {
-
+class NEIGHBORSTICK_EXPORT NeighborStickPlugin : public Plugin, public EnergyFunction
+{
     //energyFunction data
     Potts3D *potts;
     Simulator *sim;
     BasicClassAccessor<NeighborTracker> * neighborTrackerAccessorPtr;
-    
+
     double thresh;
     std::vector<std::string> typeNames;
     std::string typeNamesString;
     std::vector<int> idNames;
-    
-    void Types(std::string  _type){
-       typeNames.push_back(_type);
-    }
-    
-    Automaton *automaton;
-  
-  
-	 CC3DXMLElement *xmlData;
 
-  public:
+    void Types ( std::string  _type )
+    {
+        typeNames.push_back ( _type );
+    }
+
+    Automaton *automaton;
+    CC3DXMLElement *xmlData;
+
+public:
     NeighborStickPlugin();
     virtual ~NeighborStickPlugin();
 
 
-	 //plugin interface
-    virtual void init(Simulator *simulator,
-                      CC3DXMLElement *_xmlData = nullptr) override;
-    virtual void extraInit(Simulator *simulator) override;
+    //plugin interface
+    virtual void init ( Simulator *simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
+    virtual void extraInit ( Simulator *simulator ) override;
 
-         //EnergyFunction interface
-    virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
-                                const CellG *oldCell) override;
+    //EnergyFunction interface
+    virtual double changeEnergy ( const Point3D &pt, const CellG *newCell,
+                                  const CellG *oldCell ) override;
 
     //Steerable interface
-    virtual void update(CC3DXMLElement *_xmlData,
-                        bool _fullInitFlag = false) override;
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
     virtual std::string steerableName() override;
     virtual std::string toString() override;
-  };
 };
+} // end namespace
 #endif

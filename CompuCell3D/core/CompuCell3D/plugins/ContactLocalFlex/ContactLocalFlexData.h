@@ -27,42 +27,35 @@
 #include <set>
 #include <vector>
 
-
-namespace CompuCell3D {
-
+namespace CompuCell3D
+{
 class CellG;
 
+class CONTACTLOCALFLEX_EXPORT ContactLocalFlexData
+{
 
-class CONTACTLOCALFLEX_EXPORT ContactLocalFlexData{
+public:
+    ContactLocalFlexData() : neighborAddress ( nullptr ), J ( 0 ) {}
+    ///have to define < operator if using a class in the set and no < operator is defined for this class
+    bool operator< ( const ContactLocalFlexData & _rhs ) const
+    {
+        return neighborAddress < _rhs.neighborAddress;
+    }
 
-   public:
-     ContactLocalFlexData() : neighborAddress(nullptr), J(0) {}
-      ///have to define < operator if using a class in the set and no < operator is defined for this class
-      bool operator<(const ContactLocalFlexData & _rhs) const{
-         return neighborAddress < _rhs.neighborAddress;
-      }
-	  
-      CellG * neighborAddress;
-      double J;	  
-
-};
-
-
-   class ContactLocalFlexDataContainer{
-      public:
-         ContactLocalFlexDataContainer(){};
-         ~ContactLocalFlexDataContainer(){};
-         std::set<ContactLocalFlexData> contactDataContainer; //stores contact energies for cell neighbors
-         //add local default values
-         std::vector< std::vector<double> > localDefaultContactEnergies;
-         
-   };
-
-
-
-
-
-
+    CellG * neighborAddress;
+    double J;
 
 };
+
+class ContactLocalFlexDataContainer
+{
+public:
+    ContactLocalFlexDataContainer() {};
+    ~ContactLocalFlexDataContainer() {};
+    std::set<ContactLocalFlexData> contactDataContainer; //stores contact energies for cell neighbors
+    //add local default values
+    std::vector< std::vector<double> > localDefaultContactEnergies;
+
+};
+} // end namespace
 #endif

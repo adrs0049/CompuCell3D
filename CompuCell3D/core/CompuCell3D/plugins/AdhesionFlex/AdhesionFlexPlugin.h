@@ -23,7 +23,7 @@
 #ifndef ADHESIONFLEXPLUGIN_H
 #define ADHESIONFLEXPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 
 #include "AdhesionFlexData.h"
 #include "AdhesionFlexDLLSpecifier.h"
@@ -45,8 +45,10 @@ public:
     typedef double ( AdhesionFlexPlugin::*adhesionFlexEnergyPtr_t ) ( const CellG *cell1, const CellG *cell2 );
 
 private:
-    using AdhesionAccessor = BasicClassAccessor<AdhesionFlexData>;
-    AdhesionAccessor adhesionFlexDataAccessor;
+	// ATTENTION SWIG doesnt know about using yet
+    //using AdhesionAccessor = BasicClassAccessor<AdhesionFlexData>;
+	typedef BasicClassAccessor<AdhesionFlexData> AdhesionAccessor;
+	AdhesionAccessor adhesionFlexDataAccessor;
     CC3DXMLElement *xmlData;
     Potts3D *potts;
     Simulator *sim;

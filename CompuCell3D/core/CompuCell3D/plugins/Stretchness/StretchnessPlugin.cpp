@@ -20,24 +20,13 @@
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
 
- #include <CompuCell3D/CC3D.h>
+ #include <CompuCell3D/CC3D_plugin.h>
  
 #include <CompuCell3D/plugins/SurfaceTracker/SurfaceTrackerPlugin.h>
-
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
 using namespace CompuCell3D;
-
-
-
 using namespace std;
 
-
 #include "StretchnessPlugin.h"
-
-
 
 StretchnessPlugin::StretchnessPlugin() : xmlData(0), cellFieldG(0),targetStretchness(0),lambdaStretchness(0),scaleSurface(1.0) {}
 

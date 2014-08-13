@@ -23,10 +23,9 @@
 #ifndef PIXELTRACKERPLUGIN_H
 #define PIXELTRACKERPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "PixelTracker.h"
 #include "PixelTrackerDLLSpecifier.h"
-
 
 class CC3DXMLElement;
 namespace CompuCell3D {
@@ -36,11 +35,11 @@ class Field3DIndex;
 template <class T> class Field3D;
 template <class T> class WatchableField3D;
 
-
-
 class PIXELTRACKER_EXPORT PixelTrackerPlugin : public Plugin, public CellGChangeWatcher {
 
-	using pixelTrackerAccessor_t = BasicClassAccessor<PixelTracker>;
+	// ATTENTION SWIG doesnt know about using yet
+	//using pixelTrackerAccessor_t = BasicClassAccessor<PixelTracker>;
+	typedef BasicClassAccessor<PixelTracker> pixelTrackerAccessor_t;
 	
     //WatchableField3D<CellG *> *cellFieldG;
     Dim3D fieldDim;
@@ -52,8 +51,7 @@ public:
     PixelTrackerPlugin();
     virtual ~PixelTrackerPlugin();
 
-
-    // Field3DChangeWatcher interface
+	// Field3DChangeWatcher interface
     virtual void field3DChange(const Point3D &pt, CellG *newCell,
                                CellG *oldCell) override;
 
@@ -70,8 +68,6 @@ public:
     PixelTrackerData * getPixelTrackerData(PixelTrackerData * _psd) {
         return _psd;
     }
-
-
 };
-};
+} // end namespace
 #endif

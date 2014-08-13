@@ -23,7 +23,7 @@
 #ifndef CONTACTMULTICADPLUGIN_H
 #define CONTACTMULTICADPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ContactMultiCadData.h"
 #include "ContactMultiCadDLLSpecifier.h"
 
@@ -43,8 +43,10 @@ public:
     typedef double ( ContactMultiCadPlugin::*contactEnergyPtr_t ) ( const CellG *cell1, const CellG *cell2 );
 
 private:
-    using DataAccessor_t = BasicClassAccessor<ContactMultiCadData>;
-
+	// ATTENTION SWIG cant deal with using yet
+    //using DataAccessor_t = BasicClassAccessor<ContactMultiCadData>;
+	typedef BasicClassAccessor<ContactMultiCadData> DataAccessor_t;
+	
     DataAccessor_t contactMultiCadDataAccessor;
     CC3DXMLElement *xmlData;
     Potts3D *potts;

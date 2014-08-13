@@ -20,17 +20,16 @@
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
+#include "ElasticityTrackerPlugin.h"
+
 using namespace CompuCell3D;
 using namespace std;
-
-#include "ElasticityTrackerPlugin.h"
 
 ElasticityTrackerPlugin::ElasticityTrackerPlugin()
     : pUtils(nullptr), lockPtr(nullptr), cellFieldG(nullptr),
       initialized(false), maxNeighborIndex(0), boundaryStrategy(nullptr),
       manualInit(false), xmlData(nullptr)
-
 {}
 
 ElasticityTrackerPlugin::~ElasticityTrackerPlugin()
@@ -40,10 +39,8 @@ ElasticityTrackerPlugin::~ElasticityTrackerPlugin()
      lockPtr = nullptr;
 }
 
-
 void ElasticityTrackerPlugin::init ( Simulator *_simulator, CC3DXMLElement *_xmlData )
 {
-
      xmlData=_xmlData;
      simulator=_simulator;
      Potts3D *potts = simulator->getPotts();

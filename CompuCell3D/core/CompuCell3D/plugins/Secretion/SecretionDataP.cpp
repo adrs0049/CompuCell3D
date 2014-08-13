@@ -1,6 +1,6 @@
 
-#include <CompuCell3D/CC3D.h>
-
+#include <CompuCell3D/CC3D_plugin.h>
+#include <CompuCell3D/Field3D/CC3D_Field3D.h>
 
 using namespace CompuCell3D;
 using namespace std;

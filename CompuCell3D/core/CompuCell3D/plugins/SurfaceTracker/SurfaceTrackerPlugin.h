@@ -23,7 +23,7 @@
 #ifndef SURFACETRACKERPLUGIN_H
 #define SURFACETRACKERPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "SurfaceTrackerDLLSpecifier.h"
 
 class CC3DXMLElement;

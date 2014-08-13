@@ -23,13 +23,7 @@
 #ifndef STRECHNESSPLUGIN_H
 #define STRECHNESSPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Plugin.h>
-
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Boundary/BoundaryTypeDefinitions.h>
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-
+#include <CompuCell3D/CC3D_plugin.h>
 #include "StretchnessDLLSpecifier.h"
 
 class CC3DXMLElement;

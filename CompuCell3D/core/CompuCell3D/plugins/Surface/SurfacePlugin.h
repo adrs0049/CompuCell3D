@@ -23,7 +23,7 @@
 #ifndef SURFACEPLUGIN_H
 #define SURFACEPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "SurfaceDLLSpecifier.h"
 
 class CC3DXMLElement;

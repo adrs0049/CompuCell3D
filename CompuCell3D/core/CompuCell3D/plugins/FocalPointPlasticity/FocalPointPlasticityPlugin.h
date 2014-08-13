@@ -23,7 +23,7 @@
 #ifndef FOCALPOINTPLACTICITYPLUGIN_H
 #define FOCALPOINTPLACTICITYPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "FocalPointPlasticityTracker.h"
 #include "FocalPointPlasticityDLLSpecifier.h"
 
@@ -39,8 +39,10 @@ class ParallelUtilsOpenMP;
 
 class FOCALPOINTPLASTICITY_EXPORT FocalPointPlasticityPlugin : public Plugin,public EnergyFunction, public CellGChangeWatcher
 {
-    using TrackerAccessor_t = BasicClassAccessor<FocalPointPlasticityTracker>;
-
+	// ATTENTION SWIG doesnt know about using yet
+    //using TrackerAccessor_t = BasicClassAccessor<FocalPointPlasticityTracker>;
+	typedef BasicClassAccessor<FocalPointPlasticityTracker> TrackerAccessor_t;
+	
     TrackerAccessor_t focalPointPlasticityTrackerAccessor;
 
     Potts3D *potts;

@@ -23,7 +23,7 @@
 #ifndef SIMPLECLOCKPLUGIN_H
 #define SIMPLECLOCKPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "SimpleClock.h"
 #include "SimpleClockDLLSpecifier.h"
 
@@ -36,16 +36,14 @@ template <typename Y> class Field3DImpl;
 class SIMPLECLOCK_EXPORT SimpleClockPlugin : public Plugin
     //, public CellGChangeWatcher,public Stepper
 {
-    using Accessor_t = BasicClassAccessor<SimpleClock>;
-    Accessor_t simpleClockAccessor;
-
+	// ATTENTION SWIG doesnt know about using yet
+    //using Accessor_t = BasicClassAccessor<SimpleClock>;
+    typedef BasicClassAccessor<SimpleClock> Accessor_t;
+	Accessor_t simpleClockAccessor;
 
     Field3D<float> *simpleClockFieldPtr;
     Potts3D *potts;
-
-    // Point3D pt;
 public:
-
     SimpleClockPlugin();
     virtual ~SimpleClockPlugin();
 
@@ -60,5 +58,5 @@ public:
     }
 
 };
-};
+} // end namespace
 #endif

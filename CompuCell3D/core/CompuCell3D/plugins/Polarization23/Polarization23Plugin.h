@@ -2,11 +2,9 @@
 #ifndef POLARIZATION23PLUGIN_H
 #define POLARIZATION23PLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 
 #include "Polarization23Data.h"
-#include <BasicUtils/memory_include.h>
-
 #include "Polarization23DLLSpecifier.h"
 
 class CC3DXMLElement;
@@ -70,6 +68,5 @@ namespace CompuCell3D {
         virtual std::string toString();
 
     };
-};
+} // end namespace
 #endif
-        

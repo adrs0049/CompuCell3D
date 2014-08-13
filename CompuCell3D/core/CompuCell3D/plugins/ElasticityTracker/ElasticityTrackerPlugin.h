@@ -1,14 +1,13 @@
 #ifndef ELASTICITYTRACKERPLUGIN_H
 #define ELASTICITYTRACKERPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ElasticityTracker.h"
 #include "ElasticityTrackerDLLSpecifier.h"
 
 class CC3DXMLElement;
 namespace CompuCell3D
 {
-
 class Cell;
 class Field3DIndex;
 template <class T> class Field3D;
@@ -17,14 +16,16 @@ class CellInventory;
 
 class ELASTICITYTRACKER_EXPORT ElasticityTrackerPlugin : public Plugin, public CellGChangeWatcher
 {
-
     ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
 
     WatchableField3D<CellG *> *cellFieldG;
     Dim3D fieldDim;
 
-    using TrackerAccessor_t = BasicClassAccessor<ElasticityTracker>;
+	// ATTENTION SWIG doesnt know about using yet
+    //using TrackerAccessor_t = BasicClassAccessor<ElasticityTracker>;
+	typedef BasicClassAccessor<ElasticityTracker> TrackerAccessor_t;
+	
     TrackerAccessor_t elasticityTrackerAccessor;
     Simulator *simulator;
     CellInventory * cellInventoryPtr;

@@ -23,7 +23,7 @@
 #ifndef CONTACTLOCALPRODUCTPLUGIN_H
 #define CONTACTLOCALPRODUCTPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 
 #include "ContactLocalProductData.h"
 #include "ContactLocalProductDLLSpecifier.h"
@@ -42,15 +42,15 @@ class ParallelUtilsOpenMP;
 
 class CONTACTLOCALPRODUCT_EXPORT ContactLocalProductPlugin : public Plugin,public EnergyFunction
 {
-
 public:
     typedef double ( ContactLocalProductPlugin::*contactEnergyPtr_t ) ( const CellG *cell1, const CellG *cell2 );
-
 
 private:
     ParallelUtilsOpenMP *pUtils;
 
-    using DataAccessor_t = BasicClassAccessor<ContactLocalProductData>;
+	// ATTENTION SWIG doesnt know about using yet
+    //using DataAccessor_t = BasicClassAccessor<ContactLocalProductData>;
+    typedef BasicClassAccessor<ContactLocalProductData> DataAccessor_t;
 
     DataAccessor_t contactProductDataAccessor;
     Potts3D *potts;

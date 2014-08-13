@@ -23,34 +23,38 @@
 #ifndef POLARIZATIONVECTORPLUGIN_H
 #define POLARIZATIONVECTORPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "PolarizationVector.h"
 #include "PolarizationVectorDLLSpecifier.h"
 
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 
 class CellG;
-class POLARIZATIONVECTOR_EXPORT PolarizationVectorPlugin : public Plugin {
-
-	 using PolVectorAccessor_t =  BasicClassAccessor<PolarizationVector>;
-	 PolVectorAccessor_t polarizationVectorAccessor;
+class POLARIZATIONVECTOR_EXPORT PolarizationVectorPlugin : public Plugin
+{
+	// ATTENTION SWIG doesnt know about using yet
+    //using PolVectorAccessor_t =  BasicClassAccessor<PolarizationVector>;
+	typedef BasicClassAccessor<PolarizationVector> PolVectorAccessor_t;
+    PolVectorAccessor_t polarizationVectorAccessor;
 
 public:
 
-     PolarizationVectorPlugin();
-     virtual ~PolarizationVectorPlugin();
+    PolarizationVectorPlugin();
+    virtual ~PolarizationVectorPlugin();
 
-     PolVectorAccessor_t * getPolarizationVectorAccessorPtr() {
-          return &polarizationVectorAccessor;
-     }
+    PolVectorAccessor_t * getPolarizationVectorAccessorPtr()
+    {
+        return &polarizationVectorAccessor;
+    }
 
-     // SimObject interface
-     virtual void init(Simulator *simulator,
-                       CC3DXMLElement *_xmlData = nullptr) override;
-     virtual void extraInit(Simulator *simulator) override;
+    // SimObject interface
+    virtual void init ( Simulator *simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
+    virtual void extraInit ( Simulator *simulator ) override;
 
-     void setPolarizationVector ( CellG * _cell, float _x, float _y, float _z );
-     std::vector<float> getPolarizationVector ( CellG * _cell );
+    void setPolarizationVector ( CellG * _cell, float _x, float _y, float _z );
+    std::vector<float> getPolarizationVector ( CellG * _cell );
 };
-};
+} // end namespace
 #endif

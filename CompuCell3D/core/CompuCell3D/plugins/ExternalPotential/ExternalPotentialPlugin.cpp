@@ -1,19 +1,6 @@
-#include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/AdjacentNeighbor.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
-// // // #include <BasicUtils/BasicClassGroup.h>
-
-// // // #include <PublicUtilities/NumericalUtils.h>
-// // // #include <Utils/Coordinates3D.h>
-// // // #include <PublicUtilities/StringUtils.h>
-
-
+#include <CompuCell3D/CC3D_plugin.h>
 using namespace CompuCell3D;
 using namespace std;
-
 
 #include "ExternalPotentialPlugin.h"
 
@@ -40,13 +27,10 @@ void ExternalPotentialPlugin::init(Simulator *_simulator, CC3DXMLElement *_xmlDa
 	auto plugin=Simulator::pluginManager.get("CenterOfMass",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
 	if(!pluginAlreadyRegisteredFlag)
 		plugin->init(simulator);
-
   
   potts->registerEnergyFunctionWithName(this,"ExternalPotential");
   
   fieldDim=potts->getCellFieldG()->getDim();
-   
-   
    
   boundaryStrategy=BoundaryStrategy::getInstance();
   adjNeighbor.initialize(fieldDim);

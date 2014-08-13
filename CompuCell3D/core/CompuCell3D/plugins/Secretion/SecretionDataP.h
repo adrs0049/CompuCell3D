@@ -24,138 +24,142 @@
 #ifndef SECRETIONDATAPPLUGIN_H
 #define SECRETIONDATAPPLUGIN_H
 
-
 #include <string>
 #include <vector>
 #include <map>
 #include <set>
 
-//#include "SecretionPlugin.h"
-
 #include "SecretionDLLSpecifier.h"
 
 class CC3DXMLElement;
-namespace CompuCell3D {
+namespace CompuCell3D
+{
+class Potts3D;
+class CellG;
+class Steppable;
+class Simulator;
+class Automaton;
+class SecretionPlugin;
 
-  class Potts3D;
-  class CellG;
-  class Steppable;
-  class Simulator;
-  class Automaton;
-  class SecretionPlugin;
+class SECRETION_EXPORT SecretionOnContactDataP
+{
+public:
+    std::map<unsigned char, float> contactCellMap;
+    std::map<std::string, float> contactCellMapTypeNames;
+};
 
+class SECRETION_EXPORT UptakeDataP
+{
+public:
+    UptakeDataP() :typeId ( 0 ),maxUptake ( 0.0 ),relativeUptakeRate ( 0.0 )
+    {}
+    std::string typeName;
+    unsigned char typeId;
+    float maxUptake;
+    float relativeUptakeRate;
+    bool operator< ( const UptakeDataP & rhs ) const
+    {
+        return typeName<rhs.typeName;
+    }
 
-
-class SECRETION_EXPORT SecretionOnContactDataP{
-   public:
-      std::map<unsigned char, float> contactCellMap;
-
-      std::map<std::string, float> contactCellMapTypeNames;
 
 };
 
-class SECRETION_EXPORT UptakeDataP{
-   public:
-		UptakeDataP():typeId(0),maxUptake(0.0),relativeUptakeRate(0.0)
-		{}
-		std::string typeName;
-		unsigned char typeId;
-		float maxUptake;
-		float relativeUptakeRate;
-		bool operator<(const UptakeDataP & rhs)const{
-			return typeName<rhs.typeName;
-		}
+class SECRETION_EXPORT SecretionDataP: public SteerableObject
+{
+protected:
+    Automaton * automaton;
+public:
 
-      
-};
+    typedef void ( SecretionPlugin::*secrSingleFieldFcnPtr_t ) ( unsigned int idx );
 
+    SecretionDataP()
+        : automaton ( nullptr ), active ( false ), timesPerMCS ( 1 ),
+          useBoxWatcher ( false ) {}
+    enum SecretionMode {SECRETION=10001,SECRETION_ON_CONTACT=10002,CONSTANT_CONCENTRATION=10003,VARIABLE_CONCENTRATION=10004};
 
+    //SecretionMode secrMode;
+    void setAutomaton ( Automaton * _automaton )
+    {
+        automaton=_automaton;
+    }
+    bool active;
+    std::set<std::string> secrTypesNameSet;
 
-class SECRETION_EXPORT SecretionDataP: public SteerableObject{
-   protected:
-      Automaton * automaton;
-   public:
-	  
-	  typedef void (SecretionPlugin::*secrSingleFieldFcnPtr_t)(unsigned int idx);
+    //uptake
+    std::map<unsigned char,UptakeDataP> typeIdUptakeDataMap;
+    std::set<UptakeDataP> uptakeDataSet;
 
-          SecretionDataP()
-              : automaton(nullptr), active(false), timesPerMCS(1),
-                useBoxWatcher(false) {}
-      enum SecretionMode{SECRETION=10001,SECRETION_ON_CONTACT=10002,CONSTANT_CONCENTRATION=10003,VARIABLE_CONCENTRATION=10004};
+    //std::string secretionName;
 
-		//SecretionMode secrMode;
-      void setAutomaton(Automaton * _automaton){automaton=_automaton;}
-      bool active;
-      std::set<std::string> secrTypesNameSet;
-      
-		//uptake
-		std::map<unsigned char,UptakeDataP> typeIdUptakeDataMap;
-		std::set<UptakeDataP> uptakeDataSet;
+    std::map<unsigned char,float> typeIdSecrConstMap;
+    std::map<unsigned char,float> typeIdSecrConstConstantConcentrationMap;
+    std::map<unsigned char, std::string> typeIdSecrVarConcentrationMap;
 
+    //Here I store type Names of types secreting in a given mode
+    std::set<std::string> secretionTypeNames;
+    std::set<std::string> secretionOnContactTypeNames;
+    std::set<std::string> constantConcentrationTypeNames;
+    std::set<std::string> variableConcentrationTypeNames;
+    //Here I store type Names of types secreting in a given mode
+    std::set<unsigned char> secretionTypeIds;
+    std::set<unsigned char> secretionOnContactTypeIds;
+    std::set<unsigned char> constantConcentrationTypeIds;
+    std::set<unsigned char> variableConcentrationTypeIds;
 
-      //std::string secretionName;
-      
-      std::map<unsigned char,float> typeIdSecrConstMap;
-		std::map<unsigned char,float> typeIdSecrConstConstantConcentrationMap;
+    std::string additionalTerm;
 
-      //Here I store type Names of types secreting in a given mode
-      std::set<std::string> secretionTypeNames;
-      std::set<std::string> secretionOnContactTypeNames;
-      std::set<std::string> constantConcentrationTypeNames;
-      //Here I store type Names of types secreting in a given mode
-      std::set<unsigned char> secretionTypeIds;
-      std::set<unsigned char> secretionOnContactTypeIds;
-      std::set<unsigned char> constantConcentrationTypeIds;
+    std::map<unsigned char,SecretionOnContactDataP> typeIdSecrOnContactDataMap;
 
+    std::map<std::string,float> typeNameSecrConstMap;
+    std::map<std::string,float> typeNameSecrConstConstantConcentrationMap;
+    std::map<std::string,std::string> typeNameSecrVarConcentrationMap;
 
-      std::map<unsigned char,SecretionOnContactDataP> typeIdSecrOnContactDataMap;
+    std::map<std::string,SecretionOnContactDataP> typeNameSecrOnContactDataMap;
 
-      std::map<std::string,float> typeNameSecrConstMap;
-		std::map<std::string,float> typeNameSecrConstConstantConcentrationMap;
-      
-      std::map<std::string,SecretionOnContactDataP> typeNameSecrOnContactDataMap;
-      
-      float getSimpleSecretionConstByTypeName(std::string _typeName){
-        auto mitr = typeNameSecrConstMap.find(_typeName);
-         if(mitr!=typeNameSecrConstMap.end()){
+    float getSimpleSecretionConstByTypeName ( std::string _typeName )
+    {
+        auto mitr = typeNameSecrConstMap.find ( _typeName );
+        if ( mitr!=typeNameSecrConstMap.end() )
+        {
             return mitr->second;
-         }
-         return 0;
-      }
+        }
+        return 0;
+    }
 
-      void setSimpleSecretionConstByTypeName(std::string _typeName,float _const){
-        auto mitr = typeNameSecrConstMap.find(_typeName);
-         if(mitr!=typeNameSecrConstMap.end()){
+    void setSimpleSecretionConstByTypeName ( std::string _typeName,float _const )
+    {
+        auto mitr = typeNameSecrConstMap.find ( _typeName );
+        if ( mitr!=typeNameSecrConstMap.end() )
+        {
             mitr->second=_const;
-         }else{
-            Secretion(_typeName, _const);
-         }
-         
-      }
+        }
+        else
+        {
+            Secretion ( _typeName, _const );
+        }
+
+    }
+
+    void Secretion ( std::string _typeName, float _secretionConst );
+    void SecretionOnContact ( std::string _secretingTypeName, std::string _onContactWithTypeName,float _secretionConst );
+
+    //steerable interface
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
+    virtual std::string steerableName() override;
+
+    void initialize ( Automaton *_automaton );
+
+    std::string fieldName;
+    int timesPerMCS;
+    bool useBoxWatcher;
+
+    std::vector<secrSingleFieldFcnPtr_t>  secretionFcnPtrVec;
 
 
-
-      void Secretion(std::string _typeName, float _secretionConst);
-      void SecretionOnContact(std::string _secretingTypeName, std::string _onContactWithTypeName,float _secretionConst);
-
-		//steerable interface
-      virtual void update(CC3DXMLElement *_xmlData,
-                          bool _fullInitFlag = false) override;
-      virtual std::string steerableName() override;
-
-      void initialize(Automaton *_automaton);
-      
-      std::string fieldName;
-      int timesPerMCS;
-	  bool useBoxWatcher;
-
-	  std::vector<secrSingleFieldFcnPtr_t>  secretionFcnPtrVec;
-      
-
-   
-};   
-   
 
 };
-#endif
 
+} // end namespace
+#endif

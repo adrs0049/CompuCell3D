@@ -23,10 +23,8 @@
 #ifndef VOLUMETRACKERPLUGIN_H
 #define VOLUMETRACKERPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "VolumeTrackerDLLSpecifier.h"
-
-
 
 class CC3DXMLElement;
 
@@ -34,9 +32,6 @@ namespace CompuCell3D {
   class Potts3D;
   class CellG;
   class Simulator;
-
-  
-
 
   class VOLUMETRACKER_EXPORT VolumeTrackerPlugin : public Plugin, public CellGChangeWatcher, public Stepper 
   {

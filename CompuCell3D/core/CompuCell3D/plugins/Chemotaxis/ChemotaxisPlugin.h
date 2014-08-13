@@ -23,16 +23,15 @@
 #ifndef CHEMOTAXISPLUGIN_H
 #define CHEMOTAXISPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
+#include <CompuCell3D/Field3D/CC3D_Field3D.h>
 #include "ChemotaxisData.h"
 #include "ChemotaxisDLLSpecifier.h"
-
 
 class CC3DXMLElement;
 namespace CompuCell3D {
 
 class Simulator;
-
 class Automaton;
 
 template <class T>
@@ -40,9 +39,7 @@ class Field3DImpl;
 
 template <class T>
 class Field3D;
-
 class Potts3D;
-//class ChemotaxisData;
 
 class CHEMOTAXIS_EXPORT ChemotaxisPlugin : public Plugin,public EnergyFunction {
 
@@ -63,7 +60,9 @@ class CHEMOTAXIS_EXPORT ChemotaxisPlugin : public Plugin,public EnergyFunction {
     //bool okToChemotact(unsigned int fieldIdx,unsigned char cellType);
     std::string chemotaxisAlgorithm;
 
-	using chemotaxisDataAccessor_t = BasicClassAccessor< std::map<std::string,ChemotaxisData> >;
+	// ATTENTION SWIG doesnt know about using yet
+	//using chemotaxisDataAccessor_t = BasicClassAccessor< std::map<std::string,ChemotaxisData> >;
+	typedef BasicClassAccessor< std::map<std::string,ChemotaxisData> > chemotaxisDataAccessor_t;
     chemotaxisDataAccessor_t chemotaxisDataAccessor;
 
 public:
@@ -110,5 +109,5 @@ public:
 
     std::vector<std::string> getFileNamesWithChemotaxisData(CellG * _cell);
 };
-};
+} // end namespace
 #endif

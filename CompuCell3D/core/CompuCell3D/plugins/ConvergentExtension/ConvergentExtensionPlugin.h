@@ -23,7 +23,7 @@
 #ifndef CONVERGENTEXTENSIONPLUGIN_H
 #define CONVERGENTEXTENSIONPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ConvergentExtensionDLLSpecifier.h"
 
 class CC3DXMLElement;

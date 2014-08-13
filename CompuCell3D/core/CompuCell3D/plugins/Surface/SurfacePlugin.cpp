@@ -20,7 +20,7 @@
 *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
 *************************************************************************/
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 
 using namespace CompuCell3D;
 #include <CompuCell3D/plugins/SurfaceTracker/SurfaceTrackerPlugin.h>

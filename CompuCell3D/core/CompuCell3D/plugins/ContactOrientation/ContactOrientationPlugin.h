@@ -2,7 +2,7 @@
 #ifndef CONTACTORIENTATIONPLUGIN_H
 #define CONTACTORIENTATIONPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ContactOrientationData.h"
 #include "ContactOrientationDLLSpecifier.h"
 

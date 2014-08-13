@@ -23,7 +23,7 @@
 #ifndef CONTACTINTERNALPLUGIN_H
 #define CONTACTINTERNALPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ContactInternalDLLSpecifier.h"
 
 class CC3DXMLElement;

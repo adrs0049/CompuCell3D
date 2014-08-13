@@ -23,7 +23,7 @@
 #ifndef LENGTHCONSTRAINTPLUGIN_H
 #define LENGTHCONSTRAINTPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "LengthConstraintData.h"
 #include "LengthConstraintDLLSpecifier.h"
 
@@ -58,7 +58,9 @@ class LENGTHCONSTRAINT_EXPORT LengthConstraintPlugin : public Plugin,public Ener
     Potts3D *potts;
     //energy function parse data
 
-    using DataAccessor_t = BasicClassAccessor<LengthConstraintData>;
+	// ATTENTION SWIG doesnt know about using yet
+    //using DataAccessor_t = BasicClassAccessor<LengthConstraintData>;
+	typedef BasicClassAccessor<LengthConstraintData> DataAccessor_t;
     DataAccessor_t lengthConstraintDataAccessor;
 
     std::vector<LengthEnergyParam> lengthEnergyParamVector;

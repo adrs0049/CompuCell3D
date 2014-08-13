@@ -23,7 +23,7 @@
 #ifndef CURVATUREPLUGIN_H
 #define CURVATUREPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "CurvatureTracker.h"
 #include "CurvatureDLLSpecifier.h"
 
@@ -40,8 +40,10 @@ class CURVATURE_EXPORT CurvaturePlugin : public Plugin,public EnergyFunction, pu
 
     ParallelUtilsOpenMP *pUtils;
 
-    using TrackerAccessor_t = BasicClassAccessor<CurvatureTracker>;
-    TrackerAccessor_t curvatureTrackerAccessor;
+	// ATTENTION SWIG doesnt know about using yet
+    //using TrackerAccessor_t = BasicClassAccessor<CurvatureTracker>;
+    typedef BasicClassAccessor<CurvatureTracker> TrackerAccessor_t;
+	TrackerAccessor_t curvatureTrackerAccessor;
 
     Potts3D *potts;
 
@@ -67,14 +69,10 @@ class CURVATURE_EXPORT CurvaturePlugin : public Plugin,public EnergyFunction, pu
     double maxDistance;
     double potentialFunction(double _lambda,double _offset,double _targetDistance, double _distance);
 
-
     //vectorized variables for convenient parallel access
     std::vector<short> newJunctionInitiatedFlagWithinClusterVec;
     std::vector<CellG *> newNeighborVec;
-
     unsigned int maxNumberOfJunctions;
-
-
     enum FunctionType {GLOBAL=0,BYCELLTYPE=1,BYCELLID=2};
 
     FunctionType functionType;
@@ -92,13 +90,11 @@ class CURVATURE_EXPORT CurvaturePlugin : public Plugin,public EnergyFunction, pu
 
     typedef std::map<int, CurvatureTrackerData> curvatureParams_t;
 
-
     // plastParams_t plastParams;
     curvatureParams_t internalCurvatureParams;
 
     // plastParams_t typeSpecificPlastParams;
     curvatureParams_t internalTypeSpecificCurvatureParams;
-
 
     typedef std::vector<std::vector<CurvatureTrackerData> > CurvatureTrackerDataArray_t;
     typedef std::vector<CurvatureTrackerData> CurvatureTrackerDataVector_t;
@@ -112,7 +108,6 @@ class CURVATURE_EXPORT CurvaturePlugin : public Plugin,public EnergyFunction, pu
 public:
     CurvaturePlugin();
     virtual ~CurvaturePlugin();
-
 
     //Plugin interface
     virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData) override;

@@ -23,7 +23,7 @@
 #ifndef MOMENTOFINERTIAPLUGIN_H
 #define MOMENTOFINERTIAPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "MomentOfInertiaDLLSpecifier.h"
 
 namespace CompuCell3D

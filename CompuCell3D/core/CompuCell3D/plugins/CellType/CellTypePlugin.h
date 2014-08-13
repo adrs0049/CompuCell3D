@@ -24,7 +24,7 @@
 #ifndef CELLTYPEPLUGIN_H
 #define CELLTYPEPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "CellTypeG.h"
 #include "CellTypeDLLSpecifier.h"
 

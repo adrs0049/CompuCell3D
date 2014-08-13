@@ -2,9 +2,7 @@
 #ifndef BOUNDARYMONITORPLUGIN_H
 #define BOUNDARYMONITORPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
-
-
+#include <CompuCell3D/CC3D_plugin.h>
 #include "BoundaryMonitorDLLSpecifier.h"
 
 class CC3DXMLElement;
@@ -27,25 +25,18 @@ namespace CompuCell3D {
     private:    
                         
         CC3DXMLElement *xmlData;        
-        
         Potts3D *potts;
-        
         Simulator *sim;
-        
         ParallelUtilsOpenMP *pUtils;            
-        
         ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;        
-
         Automaton *automaton;
 
-        BoundaryStrategy *boundaryStrategy;
+        BoundaryStrategyPtr boundaryStrategy;
         WatchableField3D<CellG *> *cellFieldG;
         Array3DCUDA<unsigned char> * boundaryArray;
         unsigned int maxNeighborIndex;       
-    
-        
-    public:
 
+	public:
         BoundaryMonitorPlugin();
         virtual ~BoundaryMonitorPlugin();
         
@@ -67,6 +58,5 @@ namespace CompuCell3D {
         virtual std::string steerableName() override;
         virtual std::string toString() override;
     };
-};
+} // end namespace
 #endif
-        

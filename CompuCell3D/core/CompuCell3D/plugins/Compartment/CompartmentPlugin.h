@@ -23,7 +23,7 @@
 #ifndef COMPARTMENTPLUGIN_H
 #define COMPARTMENTPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "CompartmentDLLSpecifier.h"
 
 class CC3DXMLElement;

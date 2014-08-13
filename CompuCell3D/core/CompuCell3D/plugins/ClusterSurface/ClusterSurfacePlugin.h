@@ -2,11 +2,8 @@
 #ifndef CLUSTERSURFACEPLUGIN_H
 #define CLUSTERSURFACEPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
-
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ClusterSurfaceDLLSpecifier.h"
-#include <BasicUtils/memory_include.h>
-#include <CompuCell3D/Boundary/BoundaryStrategyFwd.h>
 
 class CC3DXMLElement;
 
@@ -75,6 +72,5 @@ namespace CompuCell3D {
         virtual std::string steerableName() override;
         virtual std::string toString() override;
     };
-};
+} // end namespace
 #endif
-        

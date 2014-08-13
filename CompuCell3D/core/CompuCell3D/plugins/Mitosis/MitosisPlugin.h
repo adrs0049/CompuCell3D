@@ -22,7 +22,8 @@
 
 #ifndef MITOSISPLUGIN_H
 #define MITOSISPLUGIN_H
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
+#include <CompuCell3D/Potts3D/Stepper.h>
 
 #include "MitosisDLLSpecifier.h"
 

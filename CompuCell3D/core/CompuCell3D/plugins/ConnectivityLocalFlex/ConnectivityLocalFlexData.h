@@ -28,13 +28,10 @@
 namespace CompuCell3D {
 
 class CONNECTIVITYLOCALFLEX_EXPORT ConnectivityLocalFlexData{
-
    public:
 	   ConnectivityLocalFlexData():connectivityStrength(0.0){}
 	  double connectivityStrength;
-      
-      
 };
 
-};
+} // end namespace
 #endif

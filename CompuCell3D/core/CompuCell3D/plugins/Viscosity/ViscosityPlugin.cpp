@@ -20,13 +20,12 @@
 *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
 *************************************************************************/
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 
 #include "ViscosityPlugin.h"
 using namespace CompuCell3D;
 
 #include <CompuCell3D/plugins/NeighborTracker/NeighborTrackerPlugin.h>
-#include <CompuCell3D/helpers.h>
 
 ViscosityPlugin::ViscosityPlugin():potts(0),sim(0),neighborTrackerAccessorPtr(0),lambdaViscosity(0),maxNeighborIndex(0)   {
 }

@@ -23,20 +23,8 @@
 #ifndef VISCOSITYPLUGIN_H
 #define VISCOSITYPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-// // // //#include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
-
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ViscosityDLLSpecifier.h"
-
-
-// // // #include <CompuCell3D/Plugin.h>
 
 class CC3DXMLElement ;
 namespace CompuCell3D {

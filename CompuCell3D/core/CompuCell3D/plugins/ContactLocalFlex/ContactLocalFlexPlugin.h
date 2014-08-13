@@ -23,7 +23,7 @@
 #ifndef CONTACTLOCALFLEXPLUGIN_H
 #define CONTACTLOCALFLEXPLUGIN_H
 
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ContactLocalFlexData.h"
 #include "ContactLocalFlexDLLSpecifier.h"
 
@@ -42,8 +42,10 @@ class CONTACTLOCALFLEX_EXPORT ContactLocalFlexPlugin : public Plugin ,public Cel
     ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
 
-    using DataAccessor_t = BasicClassAccessor<ContactLocalFlexDataContainer>;
-
+	// ATTENTION SWIG doesnt know about using yet
+    //using DataAccessor_t = BasicClassAccessor<ContactLocalFlexDataContainer>;
+	typedef BasicClassAccessor<ContactLocalFlexDataContainer> DataAccessor_t;
+	
     DataAccessor_t contactDataContainerAccessor;
     Potts3D *potts;
     Simulator *sim;

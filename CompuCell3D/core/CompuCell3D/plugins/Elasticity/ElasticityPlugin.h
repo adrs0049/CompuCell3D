@@ -22,7 +22,7 @@
 
 #ifndef ELASTICITYPLUGIN_H
 #define ELASTICITYPLUGIN_H
-#include <CompuCell3D/CC3D.h>
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ElasticityDLLSpecifier.h"
 
 class CC3DXMLElement;
