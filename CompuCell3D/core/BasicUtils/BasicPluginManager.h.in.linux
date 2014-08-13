@@ -51,7 +51,8 @@ private:
     //using plugins_t   = typename std::map<std::string, std::shared_ptr<T> >;
 	//using libraryHandles_t = typename std::map<std::string, void *>;
 	
-	typedef typename std::map<std::string, std::unique_ptr<BasicClassFactoryBase<T> > > factories_t;
+	// SWIG has trouble with the unique ptr
+	typedef typename std::map<std::string, std::shared_ptr<BasicClassFactoryBase<T> > > factories_t;
 	typedef typename std::map<std::string, std::shared_ptr<BasicPluginInfo> > infoMap_t;
     typedef typename std::map<std::string, std::shared_ptr<T> > plugins_t;
 	typedef typename std::map<std::string, void *> libraryHandles_t;
@@ -98,7 +99,7 @@ public:
 
         // Deallocate factories
 		for (auto& factory : factories)
-			factory.second.reset(nullptr);
+			factory.second.reset();
 		
 //         typename factories_t::iterator fIt;
 //         for (fIt = factories.begin(); fIt != factories.end(); fIt++)
@@ -289,8 +290,9 @@ public:
      * @param info A pointer to a new plugin info structure.
      * @param factory A pointer to a new plugin class factory.
      */
+	// ATTENTION factory could be unique
     void registerPlugin(std::shared_ptr<BasicPluginInfo> info,
-                        std::unique_ptr<BasicClassFactoryBase<T> > factory) {
+                        std::shared_ptr<BasicClassFactoryBase<T> > factory) {
         ASSERT_OR_THROW("registerPlugin() Plugin info cannot be null!!",
                         info);
         ASSERT_OR_THROW("registerPlugin() Plugin factory cannot be null!!",
@@ -328,7 +330,7 @@ public:
 
 protected:
     /// @return A reference to the named plugin's factory.
-    std::unique_ptr<BasicClassFactoryBase<T> > const&
+    std::shared_ptr<BasicClassFactoryBase<T> > const&
     getPluginFactory(const std::string pluginName) {
         auto it = factories.find(pluginName);
         ASSERT_OR_THROW(std::string("Plugin '") + pluginName + " not found!",
