@@ -37,10 +37,13 @@ class Simulator;
 
 class COMPUCELLLIB_EXPORT ClassRegistry : public Steppable 
 {
-    using ActiveSteppers_t = std::list<std::shared_ptr<Steppable> >;
-    ActiveSteppers_t activeSteppers;
+	// ATTENTION SWIG doesn't know about using yet
+	//using ActiveSteppers_t = std::list<std::shared_ptr<Steppable> >;
+    typedef std::list<std::shared_ptr<Steppable> > ActiveSteppers_t;
+	ActiveSteppers_t activeSteppers;
 
-    using ActiveSteppersMap_t = std::map<std::string, std::shared_ptr<Steppable> >;
+    //using ActiveSteppersMap_t = std::map<std::string, std::shared_ptr<Steppable> >;
+	typedef std::map<std::string, std::shared_ptr<Steppable> > ActiveSteppersMap_t;
     ActiveSteppersMap_t activeSteppersMap;
 
     Simulator *simulator;
