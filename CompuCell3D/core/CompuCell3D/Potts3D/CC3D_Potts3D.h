@@ -28,7 +28,6 @@
     #include <CompuCell3D/Potts3D/FluctuationAmplitudeFunction.h>
     #include <CompuCell3D/Potts3D/CellTypeMotilityData.h>
     #include <CompuCell3D/Potts3D/FixedStepper.h>
-    #include <CompuCell3D/Potts3D/CellChangeWatcher.h>
     #include <CompuCell3D/Potts3D/Cell.h>
     #include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
     #include <CompuCell3D/Potts3D/DefaultAcceptanceFunction.h>

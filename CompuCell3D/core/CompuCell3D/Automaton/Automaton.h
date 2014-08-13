@@ -33,7 +33,6 @@
 namespace CompuCell3D
 {
 class Potts3D;
-class Cell;
 
 class Automaton : public CellGChangeWatcher
 {

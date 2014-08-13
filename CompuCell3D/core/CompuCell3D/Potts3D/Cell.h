@@ -76,18 +76,10 @@ namespace CompuCell3D {
       long id;
       long clusterId;
 	  double fluctAmpl;
-      std::unique_ptr<BasicClassGroup> extraAttribPtr;
+	  // SWIG has trouble with unique_ptr
+      std::shared_ptr<BasicClassGroup> extraAttribPtr;
 
       PyObject *pyAttrib;
    };
-
-
-  class Cell {
-  };
-
-  class CellPtr{
-   public:
-   Cell * cellPtr;
-  };
-};
+} // end namespace
 #endif
