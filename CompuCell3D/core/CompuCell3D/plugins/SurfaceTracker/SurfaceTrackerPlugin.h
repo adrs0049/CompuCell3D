@@ -24,59 +24,53 @@
 #define SURFACETRACKERPLUGIN_H
 
 #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Plugin.h>
-
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
-
-// // // #include <CompuCell3D/Boundary/BoundaryTypeDefinitions.h>
 #include "SurfaceTrackerDLLSpecifier.h"
 
 class CC3DXMLElement;
-namespace CompuCell3D {
-  
-  
-  template <class T> class Field3D;
-  template <class T> class WatchableField3D;
-  class BoundaryStrategy;
-  class Potts3D;
-	
-  class SURFACETRACKER_EXPORT SurfaceTrackerPlugin : public Plugin, public CellGChangeWatcher {
+namespace CompuCell3D
+{
 
 
+template <class T> class Field3D;
+template <class T> class WatchableField3D;
+class Potts3D;
+
+class SURFACETRACKER_EXPORT SurfaceTrackerPlugin : public Plugin, public CellGChangeWatcher
+{
     WatchableField3D<CellG *> *cellFieldG;
     unsigned int maxNeighborIndex;
-    BoundaryStrategy *boundaryStrategy;
+    BoundaryStrategyPtr boundaryStrategy;
     LatticeMultiplicativeFactors lmf;
     Potts3D *potts;
 
-  public:
+public:
 
     SurfaceTrackerPlugin();
     virtual ~SurfaceTrackerPlugin();
 
-  
-
     // SimObject interface
-    virtual void init(Simulator *simulator,
-                      CC3DXMLElement *_xmlData = nullptr) override;
+    virtual void init ( Simulator *simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
 
-    const LatticeMultiplicativeFactors & getLatticeMultiplicativeFactors() const {return lmf;}
-    unsigned int getMaxNeighborIndex(){return maxNeighborIndex;}
+    const LatticeMultiplicativeFactors & getLatticeMultiplicativeFactors() const
+    {
+        return lmf;
+    }
+    unsigned int getMaxNeighborIndex()
+    {
+        return maxNeighborIndex;
+    }
 
-    virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                               CellG *oldCell) override;
+    virtual void field3DChange ( const Point3D &pt, CellG *newCell,
+                                 CellG *oldCell ) override;
 
-    // Begin XMLSerializable interface
-    //virtual void readXML(XMLPullParser &in);
-    //virtual void writeXML(XMLSerializer &out);
-    // End XMLSerializable interface
     //SteerableObject interface
-    virtual void update(CC3DXMLElement *_xmlData,
-                        bool _fullInitFlag = false) override;
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
 
     virtual std::string steerableName() override;
     virtual std::string toString() override;
-  };
 };
+
+} // end namespace
 #endif

@@ -24,101 +24,89 @@
 #define LENGTHCONSTRAINTPLUGIN_H
 
 #include <CompuCell3D/CC3D.h>
-
-// // // #include <CompuCell3D/Plugin.h>
-
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-
-// // // #include <BasicUtils/BasicClassAccessor.h>
-// // // #include <BasicUtils/BasicClassGroup.h> //had to include it to avoid problems with template instantiation
 #include "LengthConstraintData.h"
-
 #include "LengthConstraintDLLSpecifier.h"
 
 class CC3DXMLElement;
 
-namespace CompuCell3D {
-	class Potts3D;
+namespace CompuCell3D
+{
+class Potts3D;
+class CellG;
 
-	class CellG;
-	class BoundaryStrategy;
-
-	class LENGTHCONSTRAINT_EXPORT LengthEnergyParam{
-	public:
-		LengthEnergyParam():targetLength(0),lambdaLength(0.0),minorTargetLength(0.0){}
-                LengthEnergyParam(std::string _cellTypeName,
-                                  double _targetLength, double _lambdaLength)
-                    : cellTypeName(std::move(_cellTypeName)),
-                      targetLength(_targetLength), lambdaLength(_lambdaLength) {
-                }
-                double targetLength;
-		double minorTargetLength;
-		float lambdaLength;
-		std::string cellTypeName;
-
-	};
-
-	class LENGTHCONSTRAINT_EXPORT LengthConstraintPlugin : public Plugin,public EnergyFunction {
-
-		CC3DXMLElement *xmlData;        
-
-		Potts3D *potts;
-		//energy function parse data
-
-		using DataAccessor_t = BasicClassAccessor<LengthConstraintData>;
-		DataAccessor_t lengthConstraintDataAccessor;
-
-		std::vector<LengthEnergyParam> lengthEnergyParamVector;
-		std::vector<std::string> typeNameVec;//temporary vector for storage type names
-		BoundaryStrategy * boundaryStrategy;
-
-	public:
-
-		typedef double (LengthConstraintPlugin::*changeEnergyFcnPtr_t)(const Point3D &pt, const CellG *newCell,
-			const CellG *oldCell);
-
-		LengthConstraintPlugin();
-		virtual ~LengthConstraintPlugin();
-
-		// Plugin interface
-                virtual void init(Simulator *simulator,
-                                  CC3DXMLElement *_xmlData = nullptr) override;
-                virtual void extraInit(Simulator *simulator) override;
-                virtual std::string toString() override;
-
-                DataAccessor_t * getLengthConstraintDataPtr(){return & lengthConstraintDataAccessor;}
-
-		void setLengthConstraintData(CellG * _cell, double _lambdaLength=0.0, double _targetLength=0.0 ,double _minorTargetLength=0.0);    	
-		double getLambdaLength(CellG * _cell);  
-		double getTargetLength(CellG * _cell);  
-		double getMinorTargetLength(CellG * _cell);  
-
-
-		//EnergyFunction interface
-                virtual double changeEnergy(const Point3D &pt,
-                                            const CellG *newCell,
-                                            const CellG *oldCell) override;
-
-                double changeEnergy_xz(const Point3D &pt,const CellG *newCell,const CellG *oldCell);
-
-		double changeEnergy_xy(const Point3D &pt,const CellG *newCell,const CellG *oldCell);
-
-
-		double changeEnergy_yz(const Point3D &pt,const CellG *newCell,const CellG *oldCell);
-
-
-		double changeEnergy_3D(const Point3D &pt,const CellG *newCell,const CellG *oldCell);
-
-		changeEnergyFcnPtr_t changeEnergyFcnPtr;
-
-		void initTypeId(Potts3D * potts);
-
-		//SteerableObject interface
-                virtual void update(CC3DXMLElement *_xmlData,
-                                    bool _fullInitFlag = false) override;
-                virtual std::string steerableName() override;
-        };
+class LENGTHCONSTRAINT_EXPORT LengthEnergyParam
+{
+public:
+    LengthEnergyParam() :targetLength ( 0 ),lambdaLength ( 0.0 ),minorTargetLength ( 0.0 ) {}
+    LengthEnergyParam ( std::string _cellTypeName,
+                        double _targetLength, double _lambdaLength )
+        : cellTypeName ( std::move ( _cellTypeName ) ),
+          targetLength ( _targetLength ), lambdaLength ( _lambdaLength )
+    {}
+    
+    double targetLength;
+    double minorTargetLength;
+    float lambdaLength;
+    std::string cellTypeName;
 };
+
+class LENGTHCONSTRAINT_EXPORT LengthConstraintPlugin : public Plugin,public EnergyFunction
+{
+
+    CC3DXMLElement *xmlData;
+
+    Potts3D *potts;
+    //energy function parse data
+
+    using DataAccessor_t = BasicClassAccessor<LengthConstraintData>;
+    DataAccessor_t lengthConstraintDataAccessor;
+
+    std::vector<LengthEnergyParam> lengthEnergyParamVector;
+    std::vector<std::string> typeNameVec;//temporary vector for storage type names
+    BoundaryStrategyPtr boundaryStrategy;
+
+public:
+    typedef double ( LengthConstraintPlugin::*changeEnergyFcnPtr_t ) ( const Point3D &pt, const CellG *newCell,
+            const CellG *oldCell );
+
+    LengthConstraintPlugin();
+    virtual ~LengthConstraintPlugin();
+
+    // Plugin interface
+    virtual void init ( Simulator *simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
+    virtual void extraInit ( Simulator *simulator ) override;
+    virtual std::string toString() override;
+
+    DataAccessor_t * getLengthConstraintDataPtr()
+    {
+        return & lengthConstraintDataAccessor;
+    }
+
+    void setLengthConstraintData ( CellG * _cell, double _lambdaLength=0.0, double _targetLength=0.0 ,double _minorTargetLength=0.0 );
+    double getLambdaLength ( CellG * _cell );
+    double getTargetLength ( CellG * _cell );
+    double getMinorTargetLength ( CellG * _cell );
+
+    //EnergyFunction interface
+    virtual double changeEnergy ( const Point3D &pt,
+                                  const CellG *newCell,
+                                  const CellG *oldCell ) override;
+
+    double changeEnergy_xz ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
+    double changeEnergy_xy ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
+    double changeEnergy_yz ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
+    double changeEnergy_3D ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
+
+    changeEnergyFcnPtr_t changeEnergyFcnPtr;
+
+    void initTypeId ( Potts3D * potts );
+
+    //SteerableObject interface
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
+    virtual std::string steerableName() override;
+};
+
+} // end namespace
 #endif

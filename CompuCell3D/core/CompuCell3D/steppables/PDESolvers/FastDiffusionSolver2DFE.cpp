@@ -18,26 +18,16 @@
 #include <PublicUtilities/StringUtils.h>
 #include <string>
 #include <cmath>
-#include <iostream>
+#include <ostream>
 #include <fstream>
 #include <sstream>
 
 #include <time.h>
 #include <PublicUtilities/ParallelUtilsOpenMP.h>
-
-
 #include "FastDiffusionSolver2DFE.h"
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// std::ostream & operator<<(std::ostream & out,CompuCell3D::DiffusionData & diffData){
-//    
-//    
-// }
-
 
 using namespace CompuCell3D;
 using namespace std;
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FastDiffusionSolver2DSerializer::serialize(){
@@ -49,9 +39,7 @@ void FastDiffusionSolver2DSerializer::serialize(){
 		ofstream outStream(outName.str().c_str());
 		solverPtr->outputField( outStream,solverPtr->concentrationFieldVector[i]);
 	}
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FastDiffusionSolver2DSerializer::readFromFile(){
@@ -67,11 +55,7 @@ void FastDiffusionSolver2DSerializer::readFromFile(){
 		cerr<<"COULD NOT FIND ONE OF THE FILES"<<endl;
 		throw BasicException("Error in reading diffusion fields from file",e);
 	}
-
-
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FastDiffusionSolver2DFE::FastDiffusionSolver2DFE()
@@ -556,122 +540,6 @@ void FastDiffusionSolver2DFE::secreteOnContactSingleField(unsigned int idx){
 				}
 			}
 	}
-
-
-	//SecretionData & secrData=diffSecrFieldTuppleVec[idx].secrData;
-
-
-	//std::map<unsigned char,SecretionOnContactData>::iterator mitr;
-	//std::map<unsigned char,SecretionOnContactData>::iterator end_mitr=secrData.typeIdSecrOnContactDataMap.end();
-
-	//CellG *currentCellPtr;
-
-
-	//ConcentrationField_t & concentrationField=*concentrationFieldVector[idx];
-
-	//float currentConcentration;
-	//float secrConst;
-	//float secrConstMedium=0.0;
-	//std::map<unsigned char, float> * contactCellMapMediumPtr;
-	//std::map<unsigned char, float> * contactCellMapPtr;
-	//std::map<unsigned char, float>::iterator mitrTypeConst;
-
-	//bool secreteInMedium=false;
-	////the assumption is that medium has type ID 0
-	//if(secrData.secretionOnContactTypeIds.find(automaton->getTypeId("Medium")) != secrData.secretionOnContactTypeIds.end()){ 
-	//	mitr=secrData.typeIdSecrOnContactDataMap.find(automaton->getTypeId("Medium"));
-	//	secreteInMedium=true;
-	//	contactCellMapMediumPtr = &(mitr->second.contactCellMap);
-	//}
-
-
-
-	//Point3D pt;
-	//Neighbor n;
-	//CellG *nCell=0;
-	//WatchableField3D<CellG *> *fieldG =(WatchableField3D<CellG *> *) potts->getCellFieldG();
-	//unsigned char type;
-
-	//unsigned x_min=1,x_max=fieldDim.x+1;
-	//unsigned y_min=1,y_max=fieldDim.y+1;
-
-	//	for (int y = y_min; y < y_max; ++y)
-	//		for (int x = x_min; x < x_max; ++x){
-	//		pt=Point3D(x-1,y-1,0);
-	//		currentCellPtr=cellFieldG->get(pt);
-
-	//		currentConcentration = concentrationField.getDirect(x,y);
-
-
-
-	//		if(secreteInMedium && ! currentCellPtr){
-
-	//			for (int i = 0  ; i<offsetVec.size() ; ++i ){ 
-	//				n=boundaryStrategy->getNeighborDirect(pt,i);
-	//				if(!n.distance)//not a valid neighbor
-	//					continue;
-	//				nCell = fieldG->get(n.pt);
-
-	//				if(nCell)
-	//					type=nCell->type;
-	//				else
-	//					type=0;
-
-
-	//				mitrTypeConst=contactCellMapMediumPtr->find(type);
-
-	//				if(mitrTypeConst != contactCellMapMediumPtr->end()){//OK to secrete, contact detected
-	//					secrConstMedium = mitrTypeConst->second;
-
-
-	//					concentrationField.setDirect(x,y,currentConcentration+secrConstMedium);
-	//				}                     
-
-
-
-	//			}                  
-
-	//			continue;
-	//		}
-
-	//		if(currentCellPtr){
-	//			if(secrData.secretionOnContactTypeIds.find(currentCellPtr->type) == secrData.secretionOnContactTypeIds.end()){  
-	//				continue;
-	//			}
-
-	//			mitr=secrData.typeIdSecrOnContactDataMap.find(currentCellPtr->type);
-	//			if(mitr!=end_mitr){
-
-	//				contactCellMapPtr = &(mitr->second.contactCellMap);
-
-	//				for (int i = 0  ; i<offsetVec.size() ; ++i ){ 
-
-	//					n=boundaryStrategy->getNeighborDirect(pt,i);
-	//					if(!n.distance)//not a valid neighbor
-	//						continue;
-
-	//					nCell = fieldG->get(n.pt);
-
-	//					if(nCell)
-	//						type=nCell->type;
-	//					else
-	//						type=0;
-
-	//					mitrTypeConst=contactCellMapPtr->find(type);
-	//					if(mitrTypeConst != contactCellMapPtr->end()){//OK to secrete, contact detected
-	//						secrConst=mitrTypeConst->second;
-	//						//                         concentrationField->set(pt,currentConcentration+secrConst);
-
-	//						concentrationField.setDirect(x,y,currentConcentration+secrConst);
-	//					}
-
-	//				}
-
-
-	//			}
-	//		}
-	//	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -721,8 +589,6 @@ void FastDiffusionSolver2DFE::secreteSingleField(unsigned int idx){
 
 		}
 	}
-
-
 
 	//HAVE TO WATCH OUT FOR SHARED/PRIVATE VARIABLES
 	DiffusionData & diffData = diffSecrFieldTuppleVec[idx].diffData;
@@ -783,16 +649,7 @@ void FastDiffusionSolver2DFE::secreteSingleField(unsigned int idx){
 			for (int x = minDim.x; x < maxDim.x; x++){
 
 				pt=Point3D(x-1,y-1,0);
-				//             cerr<<"pt="<<pt<<" is valid "<<cellFieldG->isValid(pt)<<endl;
-				///**
 				currentCellPtr=cellFieldG->getQuick(pt);
-				//             currentCellPtr=cellFieldG->get(pt);
-				//             cerr<<"THIS IS PTR="<<currentCellPtr<<endl;
-
-				//             if(currentCellPtr)
-				//                cerr<<"This is id="<<currentCellPtr->id<<endl;
-				//currentConcentration = concentrationField.getDirect(x,y,z);
-
 				currentConcentration = concentrationField.getDirect(x,y);
 
 				if(secreteInMedium && ! currentCellPtr){
@@ -831,107 +688,6 @@ void FastDiffusionSolver2DFE::secreteSingleField(unsigned int idx){
 				}
 			}
 	}
-
-
-	//SecretionData & secrData=diffSecrFieldTuppleVec[idx].secrData;
-
-
-	//std::map<unsigned char,float>::iterator mitr;	
-	//std::map<unsigned char,float>::iterator end_mitr=secrData.typeIdSecrConstMap.end();
-	//std::map<unsigned char,UptakeData>::iterator mitrUptake;
-	//std::map<unsigned char,UptakeData>::iterator end_mitrUptake=secrData.typeIdUptakeDataMap.end();
-
-
-
-	//CellG *currentCellPtr;	
-	//float currentConcentration;
-	//float secrConst;
-	//float secrConstMedium=0.0;
-	//float maxUptakeInMedium=0.0;
-	//float relativeUptakeRateInMedium=0.0;
-
-	//ConcentrationField_t & concentrationField=*concentrationFieldVector[idx];
-
-
-	//bool doUptakeFlag=false;
-	//bool uptakeInMediumFlag=false;
-	//bool secreteInMedium=false;
-	////the assumption is that medium has type ID 0
-	//mitr=secrData.typeIdSecrConstMap.find(automaton->getTypeId("Medium"));
-
-	//if( mitr != end_mitr){
-	//	secreteInMedium=true;
-	//	secrConstMedium=mitr->second;
-	//}
-
-	////uptake for medium setup
-	//if(secrData.typeIdUptakeDataMap.size()){
-	//	doUptakeFlag=true;
-	//}
-	////uptake for medium setup
-	//if(doUptakeFlag){
-	//	mitrUptake=secrData.typeIdUptakeDataMap.find(automaton->getTypeId("Medium"));
-	//	if(mitrUptake != end_mitrUptake){
-	//		maxUptakeInMedium=mitrUptake->second.maxUptake;
-	//		relativeUptakeRateInMedium=mitrUptake->second.relativeUptakeRate;
-	//		uptakeInMediumFlag=true;
-
-	//	}
-	//}
-
-	//Point3D pt;
-	//unsigned x_min=1,x_max=fieldDim.x+1;
-	//unsigned y_min=1,y_max=fieldDim.y+1;
-
-	//	for (int y = y_min; y < y_max; ++y)
-	//		for (int x = x_min; x < x_max; ++x){
-	//		pt=Point3D(x-1,y-1,0);
-	//		currentCellPtr=cellFieldG->get(pt);
-	//		currentConcentration = concentrationField.getDirect(x,y);
-
-	//		if(secreteInMedium && ! currentCellPtr){				
-	//			concentrationField.setDirect(x,y,currentConcentration+secrConstMedium);
-
-	//		}
-
-	//		if(currentCellPtr){
-	//			if(secrData.secretionTypeIds.find(currentCellPtr->type) == secrData.secretionTypeIds.end()){ 
-	//				continue;
-	//			}
-
-	//			mitr=secrData.typeIdSecrConstMap.find(currentCellPtr->type);
-	//			if(mitr!=end_mitr){
-	//				secrConst=mitr->second;					
-	//				concentrationField.setDirect(x,y,currentConcentration+secrConst);
-	//			}
-	//		}
-	//		if(doUptakeFlag){
-	//			if(uptakeInMediumFlag && ! currentCellPtr){
-	//				if(currentConcentration>maxUptakeInMedium){						
-	//					concentrationField.setDirect(x,y,currentConcentration-maxUptakeInMedium);
-
-	//				}else{						
-	//					concentrationField.setDirect(x,y,currentConcentration-currentConcentration*relativeUptakeRateInMedium);
-	//				}
-	//			}
-	//			if(currentCellPtr){
-
-	//				mitrUptake=secrData.typeIdUptakeDataMap.find(currentCellPtr->type);
-	//				if(mitrUptake!=end_mitrUptake){
-	//					if(currentConcentration > mitrUptake->second.maxUptake){							
-	//						concentrationField.setDirect(x,y,currentConcentration-mitrUptake->second.maxUptake);
-
-	//						//cerr<<" uptake concentration="<< currentConcentration<<" relativeUptakeRate="<<mitrUptake->second.relativeUptakeRate<<" subtract="<<mitrUptake->second.maxUptake<<endl;
-	//					}else{
-	//						//cerr<<"concentration="<< currentConcentration<<" relativeUptakeRate="<<mitrUptake->second.relativeUptakeRate<<" subtract="<<currentConcentration*mitrUptake->second.relativeUptakeRate<<endl;							
-	//						concentrationField.setDirect(x,y,currentConcentration-currentConcentration*mitrUptake->second.relativeUptakeRate);
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -956,7 +712,6 @@ void FastDiffusionSolver2DFE::secreteConstantConcentrationSingleField(unsigned i
 		secreteInMedium=true;
 		secrConstMedium=mitrShared->second;
 	}
-
 
 	//HAVE TO WATCH OUT FOR SHARED/PRIVATE VARIABLES
 	DiffusionData & diffData = diffSecrFieldTuppleVec[idx].diffData;
@@ -989,8 +744,6 @@ void FastDiffusionSolver2DFE::secreteConstantConcentrationSingleField(unsigned i
 	{	
 
 		CellG *currentCellPtr;
-		//Field3DImpl<float> * concentrationField=concentrationFieldVector[idx];
-//		float currentConcentration;
 		float secrConst;
 
 		std::map<unsigned char,float>::iterator mitr;
@@ -1010,20 +763,11 @@ void FastDiffusionSolver2DFE::secreteConstantConcentrationSingleField(unsigned i
 			maxDim=pUtils->getFESolverPartition(threadNumber).second;
 		}
 
-
 		for (int y = minDim.y; y < maxDim.y; y++)
 			for (int x = minDim.x; x < maxDim.x; x++){
 
 				pt=Point3D(x-1,y-1,0);
-				//             cerr<<"pt="<<pt<<" is valid "<<cellFieldG->isValid(pt)<<endl;
-				///**
 				currentCellPtr=cellFieldG->getQuick(pt);
-				//             currentCellPtr=cellFieldG->get(pt);
-				//             cerr<<"THIS IS PTR="<<currentCellPtr<<endl;
-
-				//             if(currentCellPtr)
-				//                cerr<<"This is id="<<currentCellPtr->id<<endl;
-				//currentConcentration = concentrationArray[x][y][z];
 
 				if(secreteInMedium && ! currentCellPtr){
 					concentrationField.setDirect(x,y,secrConstMedium);
@@ -1038,78 +782,14 @@ void FastDiffusionSolver2DFE::secreteConstantConcentrationSingleField(unsigned i
 				}
 			}
 	}
-
-
-	//SecretionData & secrData=diffSecrFieldTuppleVec[idx].secrData;
-
-
-	//std::map<unsigned char,float>::iterator mitr;
-	//std::map<unsigned char,float>::iterator end_mitr=secrData.typeIdSecrConstMap.end();
-
-	//CellG *currentCellPtr;
-	//float currentConcentration;
-	//float secrConst;
-	//float secrConstMedium=0.0;
-
-	//ConcentrationField_t & concentrationField=*concentrationFieldVector[idx];
-
-
-	//bool secreteInMedium=false;
-	////the assumption is that medium has type ID 0
-	//if(secrData.constantConcentrationTypeIds.find(automaton->getTypeId("Medium")) != secrData.constantConcentrationTypeIds.end()){
-	//	mitr=secrData.typeIdSecrConstConstantConcentrationMap.find(automaton->getTypeId("Medium"));
-	//	secreteInMedium=true;
-	//	secrConstMedium=mitr->second;
-
-	//}
-
-
-	//Point3D pt;
-	//unsigned x_min=1,x_max=fieldDim.x+1;
-	//unsigned y_min=1,y_max=fieldDim.y+1;
-
-	//	for (int y = y_min; y < y_max; ++y)
-	//		for (int x = x_min; x < x_max; ++x){
-	//		pt=Point3D(x-1,y-1,0);
-	//		currentCellPtr=cellFieldG->get(pt);
-	//		
-	//		//currentConcentration = concentrationField.getDirect(x,y);
-
-	//		if(secreteInMedium && ! currentCellPtr){				
-	//			concentrationField.setDirect(x,y,secrConstMedium);
-	//		}
-
-	//		if(currentCellPtr){
-	//			if(secrData.constantConcentrationTypeIds.find(currentCellPtr->type) == secrData.constantConcentrationTypeIds.end()){ 
-	//				continue;
-	//			}
-
-	//			mitr=secrData.typeIdSecrConstConstantConcentrationMap.find(currentCellPtr->type);
-	//			if(mitr!=end_mitr){
-	//				secrConst=mitr->second;					
-	//				concentrationField.setDirect(x,y,secrConst);
-	//			}
-	//		}
-	//	}
-
-
 }
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FastDiffusionSolver2DFE::secrete() {
-
 	for(unsigned int i = 0 ; i < diffSecrFieldTuppleVec.size() ; ++i ){
-
 		for(unsigned int j = 0 ; j <diffSecrFieldTuppleVec[i].secrData.secretionFcnPtrVec.size() ; ++j){
 			(this->*diffSecrFieldTuppleVec[i].secrData.secretionFcnPtrVec[j])(i);
 		}
-
 	}
-
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1123,9 +803,6 @@ float FastDiffusionSolver2DFE::couplingTerm(Point3D & _pt,std::vector<CouplingDa
 	}
 
 	return couplingTerm;
-
-
-
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FastDiffusionSolver2DFE::boundaryConditionInit(int idx){
@@ -1139,7 +816,6 @@ void FastDiffusionSolver2DFE::boundaryConditionInit(int idx){
 	cerr<<"detailedBCFlag="<<detailedBCFlag<<endl;
 	//ConcentrationField_t & _array=*concentrationField;
 	//Array2D_t & concentrationArray=concentrationField->getContainer();
-
 
 	//TODO: seems it can be unifyed for several solvers
 	if (!detailedBCFlag){
@@ -1247,33 +923,6 @@ void FastDiffusionSolver2DFE::boundaryConditionInit(int idx){
 		}
 
 	}
-	//    if(periodicBoundaryCheckVector[0] || periodicBoundaryCheckVector[1]){
-	//       for(int y=0 ; y<workFieldDim.y ; ++y){
-	//             concentrationArray[0][y]=concentrationArray[workFieldDim.x-2][y];
-	//             concentrationArray[workFieldDim.x-1][y]=concentrationArray[1][y];
-	//       }
-	// 
-	//       for(int x=0 ; x<workFieldDim.x ; ++x){
-	//             concentrationArray[x][0]=concentrationArray[x][workFieldDim.y-2];
-	//             concentrationArray[x][workFieldDim.y-1]=concentrationArray[x][1];
-	//       }
-	// 
-	//       
-	//    }else{
-	//       for(int y=0 ; y<workFieldDim.y ; ++y){
-	//             concentrationArray[0][y]=concentrationArray[1][y];
-	//             concentrationArray[workFieldDim.x-1][y]=concentrationArray[workFieldDim.x-2][y];
-	//       }
-	// 
-	//       for(int x=0 ; x<workFieldDim.x ; ++x){
-	//             concentrationArray[x][0]=concentrationArray[x][1];
-	//             concentrationArray[x][workFieldDim.y-1]=concentrationArray[x][workFieldDim.y-2];
-	//       }
-	// 
-	// 
-	//    }
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1295,8 +944,6 @@ void FastDiffusionSolver2DFE::diffuseSingleField(unsigned int idx){
 	///T_{0,\delta \tau}=F*\sum_{i=1}^N T_{i}+(1-N*F)*T_{0}
 	///N - number of neighbors
 	///will have to double check this formula
-
-
 
 
 	DiffusionData & diffData = diffSecrFieldTuppleVec[idx].diffData;
@@ -1330,9 +977,6 @@ void FastDiffusionSolver2DFE::diffuseSingleField(unsigned int idx){
 	if(diffData.avoidDecayInIdSet.find(automaton->getTypeId("Medium")) != end_sitr_decay){
 		avoidDecayInMedium=true;
 	}
-
-
-
 
 	if(diffData.useBoxWatcher){
 
@@ -1444,14 +1088,10 @@ void FastDiffusionSolver2DFE::diffuse() {
 			diffuseSingleField(i);
 		}
 	}
-
-
-
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FastDiffusionSolver2DFE::scrarch2Concentration( ConcentrationField_t *scratchField, ConcentrationField_t *concentrationField){
 	//scratchField->switchContainersQuick(*(concentrationField));
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1495,7 +1135,6 @@ void FastDiffusionSolver2DFE::readConcentrationField(std::string fileName,Concen
 			}
 
 }
-
 
 void FastDiffusionSolver2DFE::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
 
@@ -1601,11 +1240,7 @@ void FastDiffusionSolver2DFE::update(CC3DXMLElement *_xmlData, bool _fullInitFla
 		}else{
 			unitsElem->attachElement("MaxUptakeUnit",decayConstUnit.toString());
 		}
-
-
-
 	}
-
 
 	//notice, only basic steering is enabled for PDE solvers - changing diffusion constants, do -not-diffuse to types etc...
 	// Coupling coefficients cannot be changed and also there is no way to allocate extra fields while simulation is running
@@ -1613,7 +1248,7 @@ void FastDiffusionSolver2DFE::update(CC3DXMLElement *_xmlData, bool _fullInitFla
 	bcSpecVec.clear();
 	bcSpecFlagVec.clear();
     
-    BoundaryStrategy * boundaryStrategyLocal = BoundaryStrategy::getInstance();
+    BoundaryStrategyPtr boundaryStrategyLocal = BoundaryStrategy::getInstance();
     cerr<<"TRYING TO DETERMINE LATTICE TYPE"<<endl;
     if (boundaryStrategyLocal->getLatticeType() == HEXAGONAL_LATTICE){
         ASSERT_OR_THROW("Fast Diffusion Solver 2D Does Not Work On Hex Lattice ", false);
@@ -1771,9 +1406,6 @@ std::string FastDiffusionSolver2DFE::toString(){
 	return "FastDiffusionSolver2DFE";
 }
 
-
-
 std::string FastDiffusionSolver2DFE::steerableName(){
 	return toString();
 }
-

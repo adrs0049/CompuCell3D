@@ -24,7 +24,6 @@
 #define CELLORIENTATIONPLUGIN_H
 
 #include <CompuCell3D/CC3D.h>
-
 #include "CellOrientationDLLSpecifier.h"
 
 namespace CompuCell3D {
@@ -34,7 +33,6 @@ class Point3D;
 class Potts3D;
 class Simulator;
 class LambdaCellOrientation;
-class BoundaryStrategy;
 
 template <class T> class Field3D;
 
@@ -58,10 +56,9 @@ class CELLORIENTATION_EXPORT CellOrientationPlugin : public Plugin,public Energy
      Simulator *simulator;
      Dim3D fieldDim;
      PolVectorAccessor_t *polarizationVectorAccessorPtr;
-     BoundaryStrategy *boundaryStrategy;
+     BoundaryStrategyPtr boundaryStrategy;
 
      bool lambdaFlexFlag;
-
 
 public:
      CellOrientationPlugin();
@@ -99,5 +96,5 @@ public:
      virtual std::string steerableName() override;
      virtual std::string toString() override;
 };
-};
+} // end namespace
 #endif

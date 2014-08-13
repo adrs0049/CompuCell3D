@@ -109,9 +109,6 @@ void MitosisSimplePlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 
     boundaryStrategy=BoundaryStrategy::getInstance();
     maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromNeighborOrder(5);
-
-
-
 }
 
 void MitosisSimplePlugin::handleEvent(CC3DEvent & _event) {

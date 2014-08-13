@@ -23,56 +23,38 @@
 #ifndef CONTACTLOCALFLEXPLUGIN_H
 #define CONTACTLOCALFLEXPLUGIN_H
 
-
-
 #include <CompuCell3D/CC3D.h>
-
-
-// // // #include <BasicUtils/BasicClassAccessor.h>
-// // // #include <BasicUtils/BasicClassGroup.h> //had to include it to avoid problems with template instantiation
-
-// // // #include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
-// // // // #include <CompuCell3D/Potts3D/TypeChangeWatcher.h>
-// // // #include <CompuCell3D/Plugin.h>
-
 #include "ContactLocalFlexData.h"
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-// // // #include <PublicUtilities/ParallelUtilsOpenMP.h>
 #include "ContactLocalFlexDLLSpecifier.h"
 
 class CC3DXMLElement;
 
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 
 class Simulator;
 class Potts3D;
 class Automaton;
 class ContactLocalFlexDataContainer;
-class BoundaryStrategy;
 
-
-class CONTACTLOCALFLEX_EXPORT ContactLocalFlexPlugin : public Plugin ,public CellGChangeWatcher,public EnergyFunction {
-
-
+class CONTACTLOCALFLEX_EXPORT ContactLocalFlexPlugin : public Plugin ,public CellGChangeWatcher,public EnergyFunction
+{
     ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
 
-	using DataAccessor_t = BasicClassAccessor<ContactLocalFlexDataContainer>;
-	
+    using DataAccessor_t = BasicClassAccessor<ContactLocalFlexDataContainer>;
+
     DataAccessor_t contactDataContainerAccessor;
     Potts3D *potts;
     Simulator *sim;
-    void updateContactEnergyData(CellG *_cell);
+    void updateContactEnergyData ( CellG *_cell );
     bool initializadContactData;
 
-
     // EnergyFunction Data
-
     typedef std::map<int, double> contactEnergies_t;
     typedef std::vector<std::vector<double> > contactEnergyArray_t;
 
     contactEnergies_t contactEnergies;
-
     contactEnergyArray_t contactEnergyArray;
 
     std::string autoName;
@@ -82,33 +64,34 @@ class CONTACTLOCALFLEX_EXPORT ContactLocalFlexPlugin : public Plugin ,public Cel
     bool weightDistance;
 
     unsigned int maxNeighborIndex;
-    BoundaryStrategy * boundaryStrategy;
+    BoundaryStrategyPtr boundaryStrategy;
     CC3DXMLElement *xmlData;
 
 public:
     ContactLocalFlexPlugin();
     virtual ~ContactLocalFlexPlugin();
 
-    DataAccessor_t * getContactDataContainerAccessorPtr() {
+    DataAccessor_t * getContactDataContainerAccessorPtr()
+    {
         return & contactDataContainerAccessor;
     }
     void initializeContactLocalFlexData();
 
     //CellGCellwatcher interface
-    virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                               CellG *oldCell) override;
+    virtual void field3DChange ( const Point3D &pt, CellG *newCell,
+                                 CellG *oldCell ) override;
     //EnergyFunction interface
-    virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
-                                const CellG *oldCell) override;
+    virtual double changeEnergy ( const Point3D &pt, const CellG *newCell,
+                                  const CellG *oldCell ) override;
     //Plugin interface
-    virtual void init(Simulator *simulator,
-                      CC3DXMLElement *_xmlData = nullptr) override;
-    virtual void extraInit(Simulator *simulator) override;
+    virtual void init ( Simulator *simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
+    virtual void extraInit ( Simulator *simulator ) override;
     virtual std::string toString() override;
 
     //Steerrable interface
-    virtual void update(CC3DXMLElement *_xmlData,
-                        bool _fullInitFlag = false) override;
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
     virtual std::string steerableName() override;
 
     //void initializeContactEnergy(CC3DXMLElement *_xmlData);
@@ -116,26 +99,24 @@ public:
     /**
      * @return The contact energy between cell1 and cell2.
      */
-    double contactEnergy(const CellG *cell1, const CellG *cell2);
+    double contactEnergy ( const CellG *cell1, const CellG *cell2 );
 
-    double defaultContactEnergy(const CellG *cell1, const CellG *cell2);
+    double defaultContactEnergy ( const CellG *cell1, const CellG *cell2 );
 
     /**
      * Sets the contact energy for two cell types.  A -1 type is interpreted
      * as the medium.
      */
-    void setContactEnergy(const std::string typeName1,
-                          const std::string typeName2, const double energy);
+    void setContactEnergy ( const std::string typeName1,
+                            const std::string typeName2, const double energy );
 
 protected:
     /**
      * @return The index used for ordering contact energies in the map.
      */
-    int getIndex(const int type1, const int type2) const;
+    int getIndex ( const int type1, const int type2 ) const;
 };
 
-
-
-};
+} // end namespace
 
 #endif

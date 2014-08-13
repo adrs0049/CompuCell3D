@@ -68,26 +68,11 @@ public:
 private:
 	DiffusableVectorRDOpenCLImplFieldProxy(const DiffusableVectorRDOpenCLImplFieldProxy&);
 	DiffusableVectorRDOpenCLImplFieldProxy & operator=(const DiffusableVectorRDOpenCLImplFieldProxy&);
-
-/*	DiffusableVectorRDOpenCLImplFieldProxy(DiffusableVectorRDOpenCLImplFieldProxy const &other):
-		m_chunkPtr(other.m_chunkPtr), m_dim(other.m_dim){}
-
-	DiffusableVectorRDOpenCLImplFieldProxy& operator=(DiffusableVectorRDOpenCLImplFieldProxy other){
-		swap(other);
-		return *this;
-	}
-
-	void swap(DiffusableVectorRDOpenCLImplFieldProxy &other){
-		std::swap(other.m_dim, m_dim);
-		std::swap(other.m_chunkPtr, m_chunkPtr);
-	}*/
-		
 };
-
 
 template <typename Real_t>
 class DiffusableVectorRDOpenCLImpl{
-	BoundaryStrategy const *m_boundaryStrategy;
+	BoundaryStrategyPtr m_boundaryStrategy;
 	unsigned int m_maxNeighborIndex;
 	std::vector<Real_t> m_array;
 	Dim3D m_dim;
@@ -103,7 +88,7 @@ public:
 
 	DiffusableVectorRDOpenCLImplFieldProxy<Real_t>* getConcentrationField(int idx);
 
-	BoundaryStrategy const *getBoundaryStrategy()const{return m_boundaryStrategy;}
+	BoundaryStrategyPtr getBoundaryStrategy()const{return m_boundaryStrategy;}
 	unsigned int getMaxNeighborIndex()const{return m_maxNeighborIndex;}
 	void initializeFieldUsingEquation(DiffusableVectorRDOpenCLImplFieldProxy<Real_t>* _field, std::string _expression);
 	void allocateDiffusableFieldVector(unsigned int numberOfFields,Dim3D fieldDim);
@@ -130,7 +115,6 @@ DiffusableVectorRDOpenCLImpl<Real_t>::~DiffusableVectorRDOpenCLImpl()
 		delete m_proxies[i];
 	}
 }
-
 
 template <typename Real_t>
 DiffusableVectorRDOpenCLImplFieldProxy<Real_t>*

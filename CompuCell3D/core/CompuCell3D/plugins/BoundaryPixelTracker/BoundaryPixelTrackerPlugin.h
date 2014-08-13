@@ -23,70 +23,60 @@
 #ifndef BOUNDARYPIXELTRACKERPLUGIN_H
 #define BOUNDARYPIXELTRACKERPLUGIN_H
 
- #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Plugin.h>
-
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
-// // // #include <BasicUtils/BasicClassAccessor.h>
-// // // #include <BasicUtils/BasicClassGroup.h> //had to include it to avoid problems with template instantiation
+#include <CompuCell3D/CC3D.h>
 #include "BoundaryPixelTracker.h"
-// // // #include <CompuCell3D/Field3D/AdjacentNeighbor.h>
-
 #include "BoundaryPixelTrackerDLLSpecifier.h"
 
-
 class CC3DXMLElement;
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 
-  class Cell;
-  class Field3DIndex;
-  class Potts3D;
-  template <class T> class Field3D;
-  template <class T> class WatchableField3D;
-  class BoundaryStrategy;
+class Cell;
+class Field3DIndex;
+class Potts3D;
+template <class T> class Field3D;
+template <class T> class WatchableField3D;
 
-  
-class BOUNDARYPIXELTRACKER_EXPORT BoundaryPixelTrackerPlugin : public Plugin, public CellGChangeWatcher {
+class BOUNDARYPIXELTRACKER_EXPORT BoundaryPixelTrackerPlugin : public Plugin, public CellGChangeWatcher
+{
+    Dim3D fieldDim;
+    using TrackerAccessor_t =  BasicClassAccessor<BoundaryPixelTracker>;
+    TrackerAccessor_t boundaryPixelTrackerAccessor;
+    Simulator *simulator;
+    Potts3D* potts;
+    unsigned int maxNeighborIndex;
+    BoundaryStrategyPtr boundaryStrategy;
+    CC3DXMLElement *xmlData;
 
-      //WatchableField3D<CellG *> *cellFieldG;
-      Dim3D fieldDim;
-	  
-	  using TrackerAccessor_t =  BasicClassAccessor<BoundaryPixelTracker>;
-      TrackerAccessor_t boundaryPixelTrackerAccessor;
-      Simulator *simulator;
-		Potts3D* potts;
-		unsigned int maxNeighborIndex;
-		BoundaryStrategy * boundaryStrategy;
-		CC3DXMLElement *xmlData;
+public:
+    BoundaryPixelTrackerPlugin();
+    virtual ~BoundaryPixelTrackerPlugin();
 
-		
-   public:
-      BoundaryPixelTrackerPlugin();
-      virtual ~BoundaryPixelTrackerPlugin();
-      
-      
-      // Field3DChangeWatcher interface
-      virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                                 CellG *oldCell) override;
+    // Field3DChangeWatcher interface
+    virtual void field3DChange ( const Point3D &pt, CellG *newCell,
+                                 CellG *oldCell ) override;
 
-                //Plugin interface
-      virtual void init(Simulator *_simulator,
-                        CC3DXMLElement *_xmlData = nullptr) override;
-      virtual void extraInit(Simulator *_simulators) override;
-      virtual void handleEvent(CC3DEvent &_event) override;
+    //Plugin interface
+    virtual void init ( Simulator *_simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
+    virtual void extraInit ( Simulator *_simulators ) override;
+    virtual void handleEvent ( CC3DEvent &_event ) override;
 
-                //Steerable interface
-      virtual void update(CC3DXMLElement *_xmlData,
-                          bool _fullInitFlag = false) override;
-      virtual std::string steerableName() override;
-      virtual std::string toString() override;
+    //Steerable interface
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
+    virtual std::string steerableName() override;
+    virtual std::string toString() override;
 
-                TrackerAccessor_t * getBoundaryPixelTrackerAccessorPtr(){return & boundaryPixelTrackerAccessor;}
-		//had to include this function to get set inereation working properly with Python , and Player that has restart capabilities
-		BoundaryPixelTrackerData * getBoundaryPixelTrackerData(BoundaryPixelTrackerData * _psd){return _psd;}
-
-      
-  };
+    TrackerAccessor_t * getBoundaryPixelTrackerAccessorPtr()
+    {
+        return & boundaryPixelTrackerAccessor;
+    }
+    //had to include this function to get set inereation working properly with Python , and Player that has restart capabilities
+    BoundaryPixelTrackerData * getBoundaryPixelTrackerData ( BoundaryPixelTrackerData * _psd )
+    {
+        return _psd;
+    }
 };
+} // end namespace
 #endif

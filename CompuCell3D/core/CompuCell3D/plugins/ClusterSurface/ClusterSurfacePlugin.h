@@ -6,6 +6,7 @@
 
 #include "ClusterSurfaceDLLSpecifier.h"
 #include <BasicUtils/memory_include.h>
+#include <CompuCell3D/Boundary/BoundaryStrategyFwd.h>
 
 class CC3DXMLElement;
 
@@ -14,8 +15,6 @@ namespace CompuCell3D {
 
     class Potts3D;
     class Automaton;
-    //class AdhesionFlexData;
-    class BoundaryStrategy;
 	class ClusterSurfaceTrackerPlugin ;
     class ParallelUtilsOpenMP;
     
@@ -24,22 +23,21 @@ namespace CompuCell3D {
 
     class CLUSTERSURFACE_EXPORT  ClusterSurfacePlugin : public Plugin ,public EnergyFunction  {
         
-    private:    
-                        
-        CC3DXMLElement *xmlData;        
-        
-        Potts3D *potts;
-        
-        Simulator *sim;
-        
-        ParallelUtilsOpenMP *pUtils;            
-        
-        ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;        
+    private:
+        typedef double (ClusterSurfacePlugin::*changeEnergy_t)(const Point3D &pt, const CellG *newCell,const CellG *oldCell);
 
-        Automaton *automaton;
-
-        BoundaryStrategy *boundaryStrategy;
+		ParallelUtilsOpenMP *pUtils; 
+		ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;   
+		CC3DXMLElement *xmlData;        
         WatchableField3D<CellG *> *cellFieldG;
+        double scaleClusterSurface;
+		BoundaryStrategyPtr boundaryStrategy;
+		ClusterSurfacePlugin::changeEnergy_t changeEnergyFcnPtr;
+		
+        Potts3D *potts;
+        Simulator *sim;
+        Automaton *automaton;
+		std::shared_ptr<ClusterSurfaceTrackerPlugin> cstPlugin;
     
         LatticeMultiplicativeFactors lmf;        
         unsigned int maxNeighborIndex;
@@ -49,14 +47,6 @@ namespace CompuCell3D {
 
         double targetClusterSurface;
         double lambdaClusterSurface;
-        
-        double scaleClusterSurface;
-    
-        typedef double (ClusterSurfacePlugin::*changeEnergy_t)(const Point3D &pt, const CellG *newCell,const CellG *oldCell);
-
-		std::shared_ptr<ClusterSurfaceTrackerPlugin> cstPlugin;
-
-        ClusterSurfacePlugin::changeEnergy_t changeEnergyFcnPtr;
         
     public:
 

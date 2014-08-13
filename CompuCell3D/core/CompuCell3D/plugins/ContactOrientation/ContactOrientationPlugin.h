@@ -1,32 +1,10 @@
 
 #ifndef CONTACTORIENTATIONPLUGIN_H
 #define CONTACTORIENTATIONPLUGIN_H
+
 #include <CompuCell3D/CC3D.h>
 #include "ContactOrientationData.h"
-
-// // // #include <CompuCell3D/Plugin.h>
-
-// // // #include <BasicUtils/BasicClassAccessor.h>
-// // // #include <BasicUtils/BasicClassGroup.h> //had to include it to avoid problems with template instantiation
-
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-
-
-// // // #include <PublicUtilities/ParallelUtilsOpenMP.h>
-
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-
-// // // #include <muParser/muParser.h>
-
-// // // // basic STL includes
-// // // #include <vector>
-// // // #include <list>
-// // // #include <map>
-// // // #include <set>
-// // // #include <string>
-
 #include "ContactOrientationDLLSpecifier.h"
-// // // #include <muParser/ExpressionEvaluator/ExpressionEvaluator.h>
 
 class CC3DXMLElement;
 
@@ -57,13 +35,10 @@ namespace CompuCell3D {
         
 		ExpressionEvaluatorDepot eed;
 		bool angularTermDefined;
-        
-        
-        
 
         Automaton *automaton;
 
-        BoundaryStrategy *boundaryStrategy;
+        BoundaryStrategyPtr boundaryStrategy;
         WatchableField3D<CellG *> *cellFieldG;
     
         //contact energy part

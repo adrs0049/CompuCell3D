@@ -24,87 +24,76 @@
 #define ORIENTEDCONTACTPLUGIN_H
 
 #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-
-
-// // // #include <CompuCell3D/Plugin.h>
-
 #include "OrientedContactDLLSpecifier.h"
 
 class CC3DXMLElement;
-namespace CompuCell3D {
+namespace CompuCell3D
+{
+class Potts3D;
+class Automaton;
+class Simulator;
 
+class ORIENTEDCONTACT_EXPORT OrientedContactPlugin : public Plugin,public EnergyFunction
+{
+    //Energy Function data
+    CC3DXMLElement *xmlData;
+    Potts3D *potts;
+    Simulator *sim;
 
-	class Potts3D;
-	class Automaton;
-	class BoundaryStrategy;
-	class Simulator;
+    typedef std::map<int, double> orientedContactEnergies_t;
+    typedef std::vector<std::vector<double> > orientedContactEnergyArray_t;
 
-	class ORIENTEDCONTACT_EXPORT OrientedContactPlugin : public Plugin,public EnergyFunction {
-		//Energy Function data
-		CC3DXMLElement *xmlData;
-		Potts3D *potts;
-		Simulator *sim;
+    orientedContactEnergies_t orientedContactEnergies;
+    orientedContactEnergyArray_t orientedContactEnergyArray;
 
-		typedef std::map<int, double> orientedContactEnergies_t;
-		typedef std::vector<std::vector<double> > orientedContactEnergyArray_t;
+    std::string autoName;
+    double depth;
+    double alpha;
 
-		orientedContactEnergies_t orientedContactEnergies;
+    Automaton *automaton;
+    bool weightDistance;
+    unsigned int maxNeighborIndex;
+    BoundaryStrategyPtr boundaryStrategy;
 
-		orientedContactEnergyArray_t orientedContactEnergyArray;
+public:
+    OrientedContactPlugin();
+    virtual ~OrientedContactPlugin();
 
-		std::string autoName;
-		double depth;
-		double alpha;
+    //EnergyFunction interface
+    virtual double changeEnergy ( const Point3D &pt,
+                                  const CellG *newCell,
+                                  const CellG *oldCell ) override;
+    //Plugin interface
+    virtual void init ( Simulator *simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
+    virtual void extraInit ( Simulator *simulator ) override;
+    virtual std::string toString() override;
 
-		Automaton *automaton;
-		bool weightDistance;
-		unsigned int maxNeighborIndex;
-		BoundaryStrategy * boundaryStrategy;
+    //Steerrable interface
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
+    virtual std::string steerableName() override;
+    //Energy Function Methods
 
+    double getOrientation ( const Point3D &pt, const CellG *newCell, const CellG *oldCell );
+    double getMediumOrientation ( const Point3D &pt, const CellG *newCell, const CellG *oldCell );
+    /**
+    * @return The orientedContact energy between cell1 and cell2.
+    */
+    double orientedContactEnergy ( const CellG *cell1, const CellG *cell2 );
 
-	public:
-		OrientedContactPlugin();
-		virtual ~OrientedContactPlugin();
+    /**
+    * Sets the orientedContact energy for two cell types.  A -1 type is interpreted
+    * as the medium.
+    */
+    void setOrientedContactEnergy ( const std::string typeName1,
+                                    const std::string typeName2, const double energy );
 
-		//EnergyFunction interface
-                virtual double changeEnergy(const Point3D &pt,
-                                            const CellG *newCell,
-                                            const CellG *oldCell) override;
-                //Plugin interface
-                virtual void init(Simulator *simulator,
-                                  CC3DXMLElement *_xmlData = nullptr) override;
-                virtual void extraInit(Simulator *simulator) override;
-                virtual std::string toString() override;
-
-                //Steerrable interface
-                virtual void update(CC3DXMLElement *_xmlData,
-                                    bool _fullInitFlag = false) override;
-                virtual std::string steerableName() override;
-                //Energy Function Methods
-
-		double getOrientation(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
-		double getMediumOrientation(const Point3D &pt, const CellG *newCell, const CellG *oldCell);
-		/**
-		* @return The orientedContact energy between cell1 and cell2.
-		*/
-		double orientedContactEnergy(const CellG *cell1, const CellG *cell2);
-
-		/**
-		* Sets the orientedContact energy for two cell types.  A -1 type is interpreted
-		* as the medium.
-		*/
-		void setOrientedContactEnergy(const std::string typeName1,
-			const std::string typeName2, const double energy);
-
-	protected:
-		/**
-		* @return The index used for ordering orientedContact energies in the map.
-		*/
-		int getIndex(const int type1, const int type2) const;
-
-
-
-	};
+protected:
+    /**
+    * @return The index used for ordering orientedContact energies in the map.
+    */
+    int getIndex ( const int type1, const int type2 ) const;
 };
+} // end namespace
 #endif

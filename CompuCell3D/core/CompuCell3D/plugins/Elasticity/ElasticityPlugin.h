@@ -23,75 +23,66 @@
 #ifndef ELASTICITYPLUGIN_H
 #define ELASTICITYPLUGIN_H
 #include <CompuCell3D/CC3D.h>
-
-
 #include "ElasticityDLLSpecifier.h"
 
 class CC3DXMLElement;
 
-namespace CompuCell3D {
-  
-  
-  template <class T> class Field3D;
+namespace CompuCell3D
+{
+template <class T> class Field3D;
 
-  class Point3D;
-  class Simulator;
-  class ElasticityTrackerData;
-  class ElasticityTracker;
-  class BoundaryStrategy;
+class Point3D;
+class Simulator;
+class ElasticityTrackerData;
+class ElasticityTracker;
 
-  /** 
-   * Calculates surface energy based on a target surface and
-   * lambda surface.
-   */
-  class BoundaryStrategy;
+/**
+ * Calculates surface energy based on a target surface and
+ * lambda surface.
+ */
+class BoundaryStrategy;
 
-  class ELASTICITY_EXPORT ElasticityPlugin : public Plugin, public EnergyFunction{
-    
-    
+class ELASTICITY_EXPORT ElasticityPlugin : public Plugin, public EnergyFunction
+{
     Field3D<CellG *> *cellFieldG;
-	std::string pluginName;
-	//energy function data
-    
+    std::string pluginName;
+    //energy function data
+
     float targetLengthElasticity;
-	 float maxLengthElasticity;
+    float maxLengthElasticity;
     double lambdaElasticity;
     Simulator *simulator;
-	Potts3D *potts;
+    Potts3D *potts;
     Dim3D fieldDim;
     BasicClassAccessor<ElasticityTracker> *elasticityTrackerAccessorPtr;
-    typedef double (ElasticityPlugin::*diffEnergyFcnPtr_t)(float _deltaL,float _lBefore,const ElasticityTrackerData * _elasticityTrackerData,const CellG *_cell);
+    typedef double ( ElasticityPlugin::*diffEnergyFcnPtr_t ) ( float _deltaL,float _lBefore,const ElasticityTrackerData * _elasticityTrackerData,const CellG *_cell );
 
     diffEnergyFcnPtr_t diffEnergyFcnPtr;
-    BoundaryStrategy  *boundaryStrategy;
+    BoundaryStrategyPtr boundaryStrategy;
 
-
-  public:
+public:
     ElasticityPlugin();
     virtual ~ElasticityPlugin();
 
-  	 //Plugin interface
-    virtual void init(Simulator *_simulator,
-                      CC3DXMLElement *_xmlData = nullptr) override;
+    //Plugin interface
+    virtual void init ( Simulator *_simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
     virtual std::string toString() override;
-    virtual void extraInit(Simulator *simulator) override;
-    virtual void handleEvent(CC3DEvent &_event) override;
+    virtual void extraInit ( Simulator *simulator ) override;
+    virtual void handleEvent ( CC3DEvent &_event ) override;
 
-         //EnergyFunction interface
-    virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
-                                const CellG *oldCell) override;
+    //EnergyFunction interface
+    virtual double changeEnergy ( const Point3D &pt, const CellG *newCell,
+                                  const CellG *oldCell ) override;
 
     //SteerableObject interface
-    virtual void update(CC3DXMLElement *_xmlData,
-                        bool _fullInitFlag = false) override;
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
     virtual std::string steerableName() override;
 
-        //EnergyFunction methods
-    double diffEnergyGlobal(float _deltaL,float _lBefore,const ElasticityTrackerData * _elasticityTrackerData,const CellG *_cell);
-    double diffEnergyLocal(float _deltaL,float _lBefore,const ElasticityTrackerData * _elasticityTrackerData,const CellG *_cell);
-  
-
-
-  };
+    //EnergyFunction methods
+    double diffEnergyGlobal ( float _deltaL,float _lBefore,const ElasticityTrackerData * _elasticityTrackerData,const CellG *_cell );
+    double diffEnergyLocal ( float _deltaL,float _lBefore,const ElasticityTrackerData * _elasticityTrackerData,const CellG *_cell );
 };
+} // end namespace
 #endif

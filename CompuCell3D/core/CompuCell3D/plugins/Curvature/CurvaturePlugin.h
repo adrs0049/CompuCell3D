@@ -34,7 +34,6 @@ class CC3DXMLElement;
 namespace CompuCell3D {
 class Potts3D;
 class Automaton;
-class BoundaryStrategy;
 class ParallelUtilsOpenMP;
 
 class CURVATURE_EXPORT CurvaturePlugin : public Plugin,public EnergyFunction, public CellGChangeWatcher  {
@@ -53,7 +52,7 @@ class CURVATURE_EXPORT CurvaturePlugin : public Plugin,public EnergyFunction, pu
     bool weightDistance;
     unsigned int maxNeighborIndex;
     unsigned int maxNeighborIndexJunctionMove;
-    BoundaryStrategy * boundaryStrategy;
+    BoundaryStrategyPtr boundaryStrategy;
     CC3DXMLElement *xmlData;
 
     std::set<std::string> plasticityTypesNames;
@@ -143,5 +142,5 @@ protected:
     int getIndex(const int type1, const int type2) const ;
 
 };
-};
+} // end namespace
 #endif

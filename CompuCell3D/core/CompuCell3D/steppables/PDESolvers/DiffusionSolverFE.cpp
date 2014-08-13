@@ -295,11 +295,7 @@ void DiffusionSolverFE<Cruncher>::init(Simulator *_simulator, CC3DXMLElement *_x
 	//setting up couplingData - field-field interaction terms
 	vector<CouplingData>::iterator pos;
 
-	float maxDiffConst = 0.0;
 	scalingExtraMCS = 0;
-	
-
-
 	for(unsigned int i = 0 ; i < diffSecrFieldTuppleVec.size() ; ++i){
 		pos=diffSecrFieldTuppleVec[i].diffData.couplingDataVec.begin();
 		for(size_t j = 0 ; j < diffSecrFieldTuppleVec[i].diffData.couplingDataVec.size() ; ++j){
@@ -363,23 +359,14 @@ void DiffusionSolverFE<Cruncher>::init(Simulator *_simulator, CC3DXMLElement *_x
 
 	//    exit(0);
 
-
-
-
-	float extraCheck;
-    
-	// //check diffusion constant and scale extraTimesPerMCS
-    
+	// //check diffusion constant and scale extraTimesPerMCS 
 	bool pluginAlreadyRegisteredFlag;
 	cellTypeMonitorPlugin=get_plugin<CellTypeMonitorPlugin>("CellTypeMonitor", &pluginAlreadyRegisteredFlag);
 	if(!pluginAlreadyRegisteredFlag){
 		cellTypeMonitorPlugin->init(simulator);	
 		h_celltype_field=cellTypeMonitorPlugin->getCellTypeArray();
         h_cellid_field=cellTypeMonitorPlugin->getCellIdArray();
-
 	}
-    
-
     
 	simulator->registerSteerableObject(this);
 
@@ -393,8 +380,6 @@ void DiffusionSolverFE<Cruncher>::boundaryConditionIndicatorInit(){
     // bool detailedBCFlag=bcSpecFlagVec[idx];
     // BoundaryConditionSpecifier & bcSpec=bcSpecVec[idx];
     Array3DCUDA<signed char> & bcField = *bc_indicator_field;
-    
-
         
         if (fieldDim.z>2){// if z dimension is "flat" we do not mark bc 
             // Z axis  - external boundary layer
@@ -829,11 +814,6 @@ void DiffusionSolverFE<Cruncher>::prepCellTypeField(int idx){
     if (static_cast<Cruncher*>(this)->getBoundaryStrategy()->getLatticeType() == HEXAGONAL_LATTICE ){ //for hex lattice we need two passes to correctly initialize lattice corners
         numberOfIters=2;
     }    
-    
-    Dim3D workFieldDimInternal=getInternalDim();
-    
-    // cerr<<"workFieldDimInternal="<<workFieldDimInternal<<endl;
-    // cerr<<"fieldDim="<<fieldDim<<endl;
     
     for (int iter = 0 ; iter < numberOfIters ; ++iter){
         if(periodicBoundaryCheckVector[0] || bcSpec.planePositions[0]==BoundaryConditionSpecifier::PERIODIC || bcSpec.planePositions[1]==BoundaryConditionSpecifier::PERIODIC){

@@ -18,14 +18,11 @@ namespace CompuCell3D {
 
     class Potts3D;
     class Automaton;
-    //class AdhesionFlexData;
-    class BoundaryStrategy;
     class ParallelUtilsOpenMP;
 
 	class PixelTracker;
 	class PixelTrackerPlugin;
 	class PixelTrackerData;
-
 
     class CLUSTERSURFACETRACKER_EXPORT  ClusterSurfaceTrackerPlugin : public Plugin  ,public CellGChangeWatcher {
         
@@ -43,7 +40,7 @@ namespace CompuCell3D {
 
         Automaton *automaton;
 
-        BoundaryStrategy *boundaryStrategy;
+        BoundaryStrategyPtr boundaryStrategy;
         LatticeMultiplicativeFactors lmf;
         WatchableField3D<CellG *> *cellFieldG;
         unsigned int maxNeighborIndex;
@@ -55,12 +52,8 @@ namespace CompuCell3D {
 
         ClusterSurfaceTrackerPlugin();
         virtual ~ClusterSurfaceTrackerPlugin();
-        
-                        
 
-        
-                
-        // CellChangeWatcher interface
+		// CellChangeWatcher interface
         virtual void field3DChange(const Point3D &pt, CellG *newCell,
                                    CellG *oldCell) override;
 

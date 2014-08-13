@@ -13,7 +13,6 @@
 #include <CompuCell3D/plugins/NeighborTracker/NeighborTrackerPlugin.h>
 #include <CompuCell3D/helpers.h>
 
-
 #include <BasicUtils/BasicString.h>
 #include <BasicUtils/BasicException.h>
 #include <BasicUtils/BasicRandomNumberGenerator.h>
@@ -22,9 +21,6 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
-
-
-
 
 using namespace CompuCell3D;
 using namespace std;

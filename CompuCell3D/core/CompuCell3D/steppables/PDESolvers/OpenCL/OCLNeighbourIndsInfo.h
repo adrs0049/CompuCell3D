@@ -11,13 +11,13 @@ struct OCLNeighbourIndsInfo{
 	cl_int m_nbhdDiffLen;
 
 	inline
-	static OCLNeighbourIndsInfo Init(LatticeType lt, Dim3D dim, BoundaryStrategy const *bs, 
+	static OCLNeighbourIndsInfo Init(LatticeType lt, Dim3D dim, BoundaryStrategyPtr bs, 
 		std::vector<std::vector<Point3D> > const &hexOffsetArray,
 		std::vector<Point3D> const &offsetVecCartesian);
 };
 
 
-OCLNeighbourIndsInfo OCLNeighbourIndsInfo::Init(LatticeType latticeType, Dim3D dim, BoundaryStrategy const *bs,
+OCLNeighbourIndsInfo OCLNeighbourIndsInfo::Init(LatticeType latticeType, Dim3D dim, BoundaryStrategyPtr bs,
 		std::vector<std::vector<Point3D> > const &hexOffsetArray,
 		std::vector<Point3D> const &offsetVecCartesian)
 {
@@ -48,7 +48,6 @@ OCLNeighbourIndsInfo OCLNeighbourIndsInfo::Init(LatticeType latticeType, Dim3D d
 			res.m_nbhdDiffLen=3;
 		}
 	}
-
 
 	if(latticeType==HEXAGONAL_LATTICE)
 	{
@@ -89,35 +88,6 @@ OCLNeighbourIndsInfo OCLNeighbourIndsInfo::Init(LatticeType latticeType, Dim3D d
 				}
 			}
 		}
-        //unnecessary code
-        // // // else
-		// // // {//2D
-        
-			// // // int yShifts[12]={0,1,1,0,-1,-1,
-            // // // 0,1,1,0,-1,-1};
-			// // // int xShifts[12]={-1,0,1,1,1,0,
-            // // // -1, -1, 0, 1, 0,-1};
-        
-			// // // // int yShifts[12]={0,1,1,0,-1,-1,
-				// // // // 0,1,1,0,-1,-1};
-			// // // // int xShifts[12]={-1, -1, 0, 1, 0,-1,
-				// // // // -1,0,1,1,1,0};
-
-			// // // //cerr<<"qq4.1 "<<h_nbhdConcShifts.size()<<" "<<h_nbhdDiffShifts.size()<<endl;
-			// // // for(int i=0; i<2; ++i){
-				// // // for(int j=0; j<6; ++j)
-				// // // {
-					// // // //cerr<<"1 i="<<i<<"j="<<j<<endl;
-					// // // cl_int4 shift={xShifts[6*i+j], yShifts[6*i+j], 0, 0};
-					// // // res.mh_nbhdConcShifts[6*i+j]=shift;
-					// // // //cerr<<"2 i="<<i<<"j="<<j<<endl;
-					// // // if(j<3)
-						// // // res.mh_nbhdDiffShifts[3*i+j]=shift;
-					// // // //cerr<<"3 i="<<i<<"j="<<j<<endl;
-				// // // }
-			// // // }
-		// // // }
-
 	}//if(latticeType==HEXAGONAL_LATTICE)
 	else{
 		//std::cerr<<"resizing here to "<<res.m_nbhdConcLen<<std::endl;

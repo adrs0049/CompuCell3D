@@ -2,29 +2,9 @@
 #ifndef CELLTYPEMONITORPLUGIN_H
 #define CELLTYPEMONITORPLUGIN_H
 
- #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Plugin.h>
-
-
-// // // #include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
-
-// // // #include <PublicUtilities/ParallelUtilsOpenMP.h>
-
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Field3D/Array3D.h>
-
-// // // #include <muParser/muParser.h>
-
-
-// basic STL includes
-// // // #include <vector>
-// // // #include <list>
-// // // #include <map>
-// // // #include <set>
-// // // #include <string>
-
-
+#include <CompuCell3D/CC3D.h>
 #include "CellTypeMonitorDLLSpecifier.h"
+#include <CompuCell3D/Boundary/BoundaryStrategyFwd.h>
 
 class CC3DXMLElement;
 
@@ -33,8 +13,6 @@ namespace CompuCell3D {
 
     class Potts3D;
     class Automaton;
-    //class AdhesionFlexData;
-    class BoundaryStrategy;
     class ParallelUtilsOpenMP;
     
     template <class T> class Field3D;
@@ -56,7 +34,7 @@ namespace CompuCell3D {
 
         Automaton *automaton;
 
-        BoundaryStrategy *boundaryStrategy;
+        BoundaryStrategyPtr boundaryStrategy;
         WatchableField3D<CellG *> *cellFieldG;
         Array3DCUDA<unsigned char> * cellTypeArray;
         // Array3DCUDA<int> * cellIdArray; // this should have been Array3DCUDA<long> but openCL on windows does not "like" longs so I am using int . 

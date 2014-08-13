@@ -1,22 +1,6 @@
  #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
-
-// // // #include <CompuCell3D/Potts3D/CellInventory.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
 using namespace CompuCell3D;
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-// // // #include <PublicUtilities/StringUtils.h>
-// // // #include <algorithm>
-
 #include <CompuCell3D/plugins/ClusterSurfaceTracker/ClusterSurfaceTrackerPlugin.h>
-
 #include "ClusterSurfacePlugin.h"
 
 ClusterSurfacePlugin::ClusterSurfacePlugin()
@@ -208,10 +192,7 @@ void ClusterSurfacePlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
         }else{
             CC3DXMLElement * lambdaSurfaceUnitElem = unitsElem->attachElement("LambdaSurfaceUnit",lambdaSurfaceUnit.toString());
         }
-
-
     }
-
 
     //if there are no child elements for this plugin it means will use changeEnergyByCellId
     if(!_xmlData->getNumberOfChildren()){ 

@@ -24,94 +24,78 @@
 #define MITOSISPLUGIN_H
 #include <CompuCell3D/CC3D.h>
 
-// // // #include <CompuCell3D/Plugin.h>
-
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-
-
-// // // #include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
-// // // #include <CompuCell3D/Potts3D/Stepper.h>
-
-// // // #include <BasicUtils/BasicArray.h>
-// // // #include <vector>
 #include "MitosisDLLSpecifier.h"
 
-namespace CompuCell3D {
-  class Potts3D;
-  class ParallelUtilsOpenMP ;
-  class BoundaryStrategy;
+namespace CompuCell3D
+{
+class Potts3D;
+class ParallelUtilsOpenMP;
 
-  class MITOSIS_EXPORT MitosisPlugin : public Plugin, public CellGChangeWatcher,
-			public Stepper {
-    protected:
-
+class MITOSIS_EXPORT MitosisPlugin : public Plugin, public CellGChangeWatcher,
+    public Stepper
+{
+protected:
     Potts3D *potts;
-	ParallelUtilsOpenMP *pUtils;    
+    ParallelUtilsOpenMP *pUtils;
     unsigned int doublingVolume;
 
-    //CellG *childCell;
-    //CellG *parentCell;
-
-	std::vector<CellG *> childCellVec;
+    std::vector<CellG *> childCellVec;
     std::vector<CellG *> parentCellVec;
-
-
-
-    //Point3D splitPt;
-    //bool split;
-    //bool on;
 
     std::vector<Point3D> splitPtVec;
     std::vector<short> splitVec; //using shorts instead of bool because vector<bool> has special implementation  not suitable for this plugin
     std::vector<short> onVec;
-	std::vector<short> mitosisFlagVec;
-
-
-    //BasicArray<Point3D> arrays[2];
+    std::vector<short> mitosisFlagVec;
 
     unsigned int maxNeighborIndex;
-    BoundaryStrategy * boundaryStrategy;
+    BoundaryStrategyPtr boundaryStrategy;
 
-  public:
+public:
 
     MitosisPlugin();
     virtual ~MitosisPlugin();
 
     // SimObject interface
-    virtual void init(Simulator *simulator,
-                      CC3DXMLElement *_xmlData = nullptr) override;
-    virtual void handleEvent(CC3DEvent &_event) override;
+    virtual void init ( Simulator *simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
+    virtual void handleEvent ( CC3DEvent &_event ) override;
 
     // CellChangeWatcher interface
-    virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                               CellG *oldCell) override;
+    virtual void field3DChange ( const Point3D &pt, CellG *newCell,
+                                 CellG *oldCell ) override;
 
     // Stepper interface
     virtual void step() override;
 
     //Steerable interface
-    virtual void update(CC3DXMLElement *_xmlData,
-                        bool _fullInitFlag = false) override;
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
     virtual std::string steerableName() override;
     virtual std::string toString() override;
 
     // Functions to turn on and off
     virtual void turnOn();
     virtual void turnOff();
-    //virtual void turnOnAll();
-    //virtual void turnOffAll();
 
     virtual bool doMitosis();///actually does mitosis - returns true if mitosis was done , false otherwise
-    virtual void updateAttributes();///updates some of the cell attributes 
+    virtual void updateAttributes();///updates some of the cell attributes
     CellG * getChildCell();
     CellG * getParentCell();
 
-    void setPotts(Potts3D *_potts){potts=_potts;}    
+    void setPotts ( Potts3D *_potts )
+    {
+        potts=_potts;
+    }
 
-	 unsigned int getDoublingVolume(){return doublingVolume;}
-    void setDoublingVolume(unsigned int _doublingVolume){doublingVolume=_doublingVolume;}
+    unsigned int getDoublingVolume()
+    {
+        return doublingVolume;
+    }
+    void setDoublingVolume ( unsigned int _doublingVolume )
+    {
+        doublingVolume=_doublingVolume;
+    }
 
-   
-  };
 };
+} // end namespace
 #endif

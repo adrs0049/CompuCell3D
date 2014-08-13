@@ -25,52 +25,49 @@
 #include <CompuCell3D/CC3D.h>
 #include "GlobalBoundaryPixelTrackerDLLSpecifier.h"
 
-
 class CC3DXMLElement;
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 
-  class Cell;
-  class Field3DIndex;
-  class Potts3D;
-  template <class T> class Field3D;
-  template <class T> class WatchableField3D;
-  class BoundaryStrategy;
+class Cell;
+class Field3DIndex;
+class Potts3D;
+template <class T> class Field3D;
+template <class T> class WatchableField3D;
 
-  
-class GLOBALBOUNDARYPIXELTRACKER_EXPORT GlobalBoundaryPixelTrackerPlugin : public Plugin, public CellGChangeWatcher {
+class GLOBALBOUNDARYPIXELTRACKER_EXPORT GlobalBoundaryPixelTrackerPlugin : public Plugin, public CellGChangeWatcher
+{
+    ParallelUtilsOpenMP *pUtils;
+    ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
 
-	ParallelUtilsOpenMP *pUtils;
-	ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
+    //WatchableField3D<CellG *> *cellFieldG;
+    Dim3D fieldDim;
+    Simulator *simulator;
+    Potts3D* potts;
+    unsigned int maxNeighborIndex;
+    BoundaryStrategyPtr boundaryStrategy;
+    CC3DXMLElement *xmlData;
+    std::set<Point3D> * boundaryPixelSetPtr;
 
-      //WatchableField3D<CellG *> *cellFieldG;
-      Dim3D fieldDim;
-      Simulator *simulator;
-		Potts3D* potts;
-		unsigned int maxNeighborIndex;
-		BoundaryStrategy * boundaryStrategy;
-		CC3DXMLElement *xmlData;
-		std::set<Point3D> * boundaryPixelSetPtr;
-			
-   public:
-      GlobalBoundaryPixelTrackerPlugin();
-      virtual ~GlobalBoundaryPixelTrackerPlugin();
-      
-      
-      // Field3DChangeWatcher interface
-      virtual void field3DChange(const Point3D &pt, CellG *newCell,
-                                 CellG *oldCell) override;
+public:
+    GlobalBoundaryPixelTrackerPlugin();
+    virtual ~GlobalBoundaryPixelTrackerPlugin();
 
-                //Plugin interface
-      virtual void init(Simulator *_simulator,
-                        CC3DXMLElement *_xmlData = nullptr) override;
-      virtual void extraInit(Simulator *_simulators) override;
-      virtual void handleEvent(CC3DEvent &_event) override;
+    // Field3DChangeWatcher interface
+    virtual void field3DChange ( const Point3D &pt, CellG *newCell,
+                                 CellG *oldCell ) override;
 
-                //Steerable interface
-      virtual void update(CC3DXMLElement *_xmlData,
-                          bool _fullInitFlag = false) override;
-      virtual std::string steerableName() override;
-      virtual std::string toString() override;
-  };
+    //Plugin interface
+    virtual void init ( Simulator *_simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
+    virtual void extraInit ( Simulator *_simulators ) override;
+    virtual void handleEvent ( CC3DEvent &_event ) override;
+
+    //Steerable interface
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
+    virtual std::string steerableName() override;
+    virtual std::string toString() override;
 };
+} // end namespace
 #endif

@@ -24,57 +24,51 @@
 #define CONVERGENTEXTENSIONPLUGIN_H
 
 #include <CompuCell3D/CC3D.h>
-
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-// // // #include <CompuCell3D/Plugin.h>
-// // // #include <map>
-// // // #include <set>
-// // // #include <vector>
-
 #include "ConvergentExtensionDLLSpecifier.h"
 
 class CC3DXMLElement;
 
-namespace CompuCell3D {
-	class Potts3D;
-	class Automaton;
-	class BoundaryStrategy;
+namespace CompuCell3D
+{
+class Potts3D;
+class Automaton;
 
-	class CONVERGENTEXTENSION_EXPORT ConvergentExtensionPlugin : public Plugin,public EnergyFunction {
+class CONVERGENTEXTENSION_EXPORT ConvergentExtensionPlugin : public Plugin,public EnergyFunction
+{
 
-		Potts3D *potts;
+    Potts3D *potts;
 
-		std::set<unsigned char> interactingTypes ;
-	   std::vector<double> alphaConvExtVec;
-		std::map<std::string , double> typeNameAlphaConvExtMap;
-		unsigned char maxTypeId;
+    std::set<unsigned char> interactingTypes ;
+    std::vector<double> alphaConvExtVec;
+    std::map<std::string , double> typeNameAlphaConvExtMap;
+    unsigned char maxTypeId;
 
-		double depth;
+    double depth;
 
-		Automaton *automaton;
-		
-		unsigned int maxNeighborIndex;
-		BoundaryStrategy * boundaryStrategy;
-		CC3DXMLElement *xmlData;
+    Automaton *automaton;
 
-	public:
-		ConvergentExtensionPlugin();
-		virtual ~ConvergentExtensionPlugin();
-		//Plugin interface
-                virtual void init(Simulator *simulator,
-                                  CC3DXMLElement *_xmlData) override;
-                virtual void extraInit(Simulator *simulator) override;
+    unsigned int maxNeighborIndex;
+    BoundaryStrategyPtr boundaryStrategy;
+    CC3DXMLElement *xmlData;
 
-                //EnergyFunction Interface
-                virtual double changeEnergy(const Point3D &pt,
-                                            const CellG *newCell,
-                                            const CellG *oldCell) override;
+public:
+    ConvergentExtensionPlugin();
+    virtual ~ConvergentExtensionPlugin();
+    //Plugin interface
+    virtual void init ( Simulator *simulator,
+                        CC3DXMLElement *_xmlData ) override;
+    virtual void extraInit ( Simulator *simulator ) override;
 
-                //Steerable interface
-                virtual void update(CC3DXMLElement *_xmlData,
-                                    bool _fullInitFlag = false) override;
-                virtual std::string steerableName() override;
-                virtual std::string toString() override;
-        };
+    //EnergyFunction Interface
+    virtual double changeEnergy ( const Point3D &pt,
+                                  const CellG *newCell,
+                                  const CellG *oldCell ) override;
+
+    //Steerable interface
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
+    virtual std::string steerableName() override;
+    virtual std::string toString() override;
 };
+} // end namespace
 #endif

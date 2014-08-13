@@ -24,70 +24,57 @@
 #define CONNECTIVITYGLOBALPLUGIN_H
 
 #include <CompuCell3D/CC3D.h>
-
 #include "ConnectivityGlobalData.h"
-
-
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-// // // #include <CompuCell3D/Plugin.h>
-
-// // // #include <BasicUtils/BasicClassAccessor.h>
-// // // #include <BasicUtils/BasicClassGroup.h> //had to include it to avoid problems with template instantiation
-
-
 #include "ConnectivityGlobalDLLSpecifier.h"
-// // // #include <vector>
 
 class CC3DXMLElement;
 
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 class Potts3D;
 class Automaton;
-class BoundaryStrategy;
 
-
-class CONNECTIVITYGLOBAL_EXPORT ConnectivityGlobalPlugin : public Plugin,public EnergyFunction {
-
-     //Energy Function data
+class CONNECTIVITYGLOBAL_EXPORT ConnectivityGlobalPlugin : public Plugin,public EnergyFunction
+{
 private:
 
-     using DataAccessor_t = BasicClassAccessor<ConnectivityGlobalData>;
-     DataAccessor_t connectivityGlobalDataAccessor;
+    using DataAccessor_t = BasicClassAccessor<ConnectivityGlobalData>;
+    DataAccessor_t connectivityGlobalDataAccessor;
 
-     unsigned int maxNeighborIndex;
-     BoundaryStrategy * boundaryStrategy;
+    unsigned int maxNeighborIndex;
+    BoundaryStrategyPtr boundaryStrategy;
 
-     Potts3D *potts;
-     std::vector<double> penaltyVec;
-     unsigned char maxTypeId;
-     bool doNotPrecheckConnectivity;
-
+    Potts3D *potts;
+    std::vector<double> penaltyVec;
+    unsigned char maxTypeId;
+    bool doNotPrecheckConnectivity;
 
 public:
-     ConnectivityGlobalPlugin();
-     virtual ~ConnectivityGlobalPlugin();
+    ConnectivityGlobalPlugin();
+    virtual ~ConnectivityGlobalPlugin();
 
-     //Plugin interface
-     virtual void init(Simulator *simulator,
-                       CC3DXMLElement *_xmlData = nullptr) override;
+    //Plugin interface
+    virtual void init ( Simulator *simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
 
-     DataAccessor_t * getConnectivityGlobalDataPtr() {
-          return & connectivityGlobalDataAccessor;
-     }
-     void setConnectivityStrength ( CellG * _cell, double _connectivityStrength );
-     double getConnectivityStrength ( CellG * _cell );
+    DataAccessor_t * getConnectivityGlobalDataPtr()
+    {
+        return & connectivityGlobalDataAccessor;
+    }
+    void setConnectivityStrength ( CellG * _cell, double _connectivityStrength );
+    double getConnectivityStrength ( CellG * _cell );
 
-     virtual std::string toString() override;
+    virtual std::string toString() override;
 
-     //EnergyFunction interface
-     virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
-                                 const CellG *oldCell) override;
+    //EnergyFunction interface
+    virtual double changeEnergy ( const Point3D &pt, const CellG *newCell,
+                                  const CellG *oldCell ) override;
 
-     bool checkIfCellIsFragmented ( const CellG * cell,Point3D cellPixel );
-     //SteerableObject interface
-     virtual void update(CC3DXMLElement *_xmlData,
-                         bool _fullInitFlag = false) override;
-     virtual std::string steerableName() override;
+    bool checkIfCellIsFragmented ( const CellG * cell,Point3D cellPixel );
+    //SteerableObject interface
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
+    virtual std::string steerableName() override;
 };
-};
+} // end namespace
 #endif

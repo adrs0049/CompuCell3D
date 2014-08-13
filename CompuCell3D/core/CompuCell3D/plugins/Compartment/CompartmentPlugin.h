@@ -23,36 +23,30 @@
 #ifndef COMPARTMENTPLUGIN_H
 #define COMPARTMENTPLUGIN_H
 
- #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-// // // #include <CompuCell3D/Plugin.h>
+#include <CompuCell3D/CC3D.h>
 #include "CompartmentDLLSpecifier.h"
-// // // #include <map>
-// // // #include <vector>
-// // // #include <string>
-
 
 class CC3DXMLElement;
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 
-  class Potts3D;
-  class Automaton;
-  class BoundaryStrategy;
+class Potts3D;
+class Automaton;
 
-
-  class COMPARTMENT_EXPORT CompartmentPlugin : public Plugin, public EnergyFunction {
-	//Energy function data
+class COMPARTMENT_EXPORT CompartmentPlugin : public Plugin, public EnergyFunction
+{
+    //Energy function data
     Potts3D *potts;
-	 CC3DXMLElement *xmlData;
+    CC3DXMLElement *xmlData;
     typedef std::map<int, double> contactEnergies_t;
     typedef std::vector<std::vector<double> > contactEnergyArray_t;
-    
+
     contactEnergies_t contactEnergies;
     contactEnergies_t internalEnergies;
 
     contactEnergyArray_t contactEnergyArray;
     contactEnergyArray_t internalEnergyArray;
-    
+
     std::string autoName;
     double depth;
 
@@ -60,54 +54,50 @@ namespace CompuCell3D {
     bool weightDistance;
 
     unsigned int maxNeighborIndex;
-    BoundaryStrategy * boundaryStrategy;
-
-
-
-  public:
+    BoundaryStrategyPtr boundaryStrategy;
+	
+public:
     CompartmentPlugin();
     virtual ~CompartmentPlugin();
 
-	//EnergyFunction interface
-    virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
-                                const CellG *oldCell) override;
-        //Plugin interface
-    virtual void init(Simulator *simulator,
-                      CC3DXMLElement *_xmlData = nullptr) override;
-    virtual void extraInit(Simulator *simulator) override;
+    //EnergyFunction interface
+    virtual double changeEnergy ( const Point3D &pt, const CellG *newCell,
+                                  const CellG *oldCell ) override;
+    //Plugin interface
+    virtual void init ( Simulator *simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
+    virtual void extraInit ( Simulator *simulator ) override;
     virtual std::string toString() override;
 
     //Steerrable interface
-    virtual void update(CC3DXMLElement *_xmlData,
-                        bool _fullInitFlag = false) override;
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
     virtual std::string steerableName() override;
 
-         //Energy Function methods
+    //Energy Function methods
 
     /**
      * @return The contact energy between cell1 and cell2.
      */
-    double contactEnergy(const CellG *cell1, const CellG *cell2);
-    double internalEnergy(const CellG *cell1, const CellG *cell2);
+    double contactEnergy ( const CellG *cell1, const CellG *cell2 );
+    double internalEnergy ( const CellG *cell1, const CellG *cell2 );
 
     /**
      * Sets the contact energy for two cell types.  A -1 type is interpreted
      * as the medium.
      */
-    void setContactCompartmentEnergy(const std::string typeName1,
-			  const std::string typeName2, const double energy);
+    void setContactCompartmentEnergy ( const std::string typeName1,
+                                       const std::string typeName2, const double energy );
 
-    void setInternalEnergy(const std::string typeName1,
-			  const std::string typeName2, const double energy);
+    void setInternalEnergy ( const std::string typeName1,
+                             const std::string typeName2, const double energy );
 
-  protected:
+protected:
     /**
      * @return The index used for ordering contact energies in the map.
      */
-    int getIndex(const int type1, const int type2) const;
-
-
-
-  };
+    int getIndex ( const int type1, const int type2 ) const;
 };
+
+} // end namespace
 #endif
