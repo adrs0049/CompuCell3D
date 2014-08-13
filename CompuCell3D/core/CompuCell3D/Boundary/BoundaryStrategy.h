@@ -34,8 +34,7 @@
 #include <BasicUtils/BasicException.h>
 
 #include <vector>
-#include <iostream>
-#include <vector>
+#include <ostream>
 #include "BoundaryTypeDefinitions.h"
 
 using namespace std;
@@ -223,7 +222,6 @@ public:
           }
      }
 };
->>>>>>> 15784c2... Some Boundary Changes
-};
 
+} // end namespace
 #endif
