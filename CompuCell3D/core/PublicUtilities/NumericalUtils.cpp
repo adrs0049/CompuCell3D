@@ -93,7 +93,7 @@ std::vector<std::complex<double> > solveCubicEquationRealCoeeficients(std::vecto
 
 namespace CompuCell3D {
 
-Coordinates3D<double> precalculateCentroid(const Point3D & pt, const CellG *_cell, int _volumeIncrement,const Point3D & fieldDim, BoundaryStrategy *boundaryStrategy)
+Coordinates3D<double> precalculateCentroid(const Point3D & pt, const CellG *_cell, int _volumeIncrement,const Point3D & fieldDim, BoundaryStrategyPtr boundaryStrategy)
 {
 
     Coordinates3D<double> ptTrans=boundaryStrategy->calculatePointCoordinates(pt);
@@ -171,7 +171,7 @@ Coordinates3D<double> precalculateCentroid(const Point3D & pt, const CellG *_cel
     return Coordinates3D<double>(xCM,yCM,zCM);
 }
 
-double distanceInvariantCM(double x0,double y0,double z0,double x1,double y1,double z1,const Point3D & fieldDim, BoundaryStrategy *boundaryStrategy,int _pbcX,int _pbcY,int _pbcZ)
+double distanceInvariantCM(double x0,double y0,double z0,double x1,double y1,double z1,const Point3D & fieldDim, BoundaryStrategyPtr boundaryStrategy,int _pbcX,int _pbcY,int _pbcZ)
 {
     double x0_t,y0_t,z0_t;
     double x1_t,y1_t,z1_t;
@@ -217,7 +217,7 @@ double distanceInvariantCM(double x0,double y0,double z0,double x1,double y1,dou
     return dist(x0_t,y0_t,z0_t,x1_t,y1_t,z1_t);
 }
 
-double distInvariantCM(double x0,double y0,double z0,double x1,double y1,double z1,const Point3D & fieldDim, BoundaryStrategy *boundaryStrategy)
+double distInvariantCM(double x0,double y0,double z0,double x1,double y1,double z1,const Point3D & fieldDim, BoundaryStrategyPtr boundaryStrategy)
 {
     double x0_t,y0_t,z0_t;
     double x1_t,y1_t,z1_t;
