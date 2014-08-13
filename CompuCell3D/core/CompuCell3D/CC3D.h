@@ -9,6 +9,7 @@
     #include <PublicUtilities/CC3D_PublicUtilities.h>    
     #include <Utils/CC3D_Utils.h>    
     #include <muParser/CC3D_muParser.h>    
-    #include <CompuCell3D/CC3D_STL.h>
     #include <CompuCell3D/CC3D_Main.h>
+	#include <CompuCell3D/helpers.h>
+	#include <BasicUtils/memory_include.h>
 #endif
