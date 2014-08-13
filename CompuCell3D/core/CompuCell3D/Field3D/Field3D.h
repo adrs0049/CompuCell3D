@@ -30,17 +30,12 @@
 #include "Field3DImpl.h"
 #include "Point3D.h"
 #include "Dim3D.h"
-
 #include "NeighborFinder.h"
 
 #include <fstream>
-
 #include <cmath>
-
 #include <algorithm> //need for debian compilation
-
 #include <BasicUtils/BasicException.h>
-
 #include <CompuCell3D/Boundary/BoundaryStrategy.h>
 
 namespace CompuCell3D
@@ -194,6 +189,8 @@ public:
         char* res = reinterpret_cast<char*> ( &t );
         std::reverse ( res, res+sizeof ( U ) );
     }
+    
+    virtual ~Field3D() {}
 };
 
 template<class T> const char Field3D<T>::typeStr[3] ="c3";

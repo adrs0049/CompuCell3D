@@ -25,7 +25,6 @@
 
 #include "Point3D.h"
 
-
 namespace CompuCell3D {
 
   template <class T>
@@ -41,6 +40,8 @@ namespace CompuCell3D {
      */
     virtual void field3DChange(const Point3D &pt, T newValue,
 			       T oldValue) = 0;
+				   
+	virtual ~Field3DChangeWatcher() {}
   };
-};
+} // end namespace
 #endif
