@@ -26,43 +26,48 @@
 #include "Potts3D.h"
 #include <string>
 
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 
-	/** 
-	* The Potts3D energy function interface.
-	*/
+/**
+* The Potts3D energy function interface.
+*/
 
-	class Point3D;
-	class CellG;
+class Point3D;
+class CellG;
 
-	class EnergyFunction {
-	public:
-		EnergyFunction() {}
-		virtual ~EnergyFunction() {}
-	
-		/** 
-		* @return The energy change for this function at point pt.
-		*/
-		virtual double localEnergy(const Point3D &pt){return 0.0;};
+class EnergyFunction
+{
+public:
+    EnergyFunction() {}
+    virtual ~EnergyFunction() {}
 
-		/** 
-		* @param pt The point of change.
-		* @param newCell The new spin.
-		* 
-		* @return The energy change of changing point pt to newCell.
-		*/
-		virtual double changeEnergy(const Point3D &pt, 
-									const CellG * newCell,
-									const CellG *oldCell) 
-		{
-			if(1!=1) return 0.0;
-			return 0.0;
-		}
-		
-		virtual std::string toString()
-		{
-			return std::string("EnergyFunction");
-		}
-	};
+    /**
+    * @return The energy change for this function at point pt.
+    */
+    virtual double localEnergy ( const Point3D &pt )
+    {
+        return 0.0;
+    };
+
+    /**
+    * @param pt The point of change.
+    * @param newCell The new spin.
+    *
+    * @return The energy change of changing point pt to newCell.
+    */
+    virtual double changeEnergy ( const Point3D &pt,
+                                  const CellG * newCell,
+                                  const CellG *oldCell )
+    {
+        if ( 1!=1 ) return 0.0;
+        return 0.0;
+    }
+
+    virtual std::string toString()
+    {
+        return std::string ( "EnergyFunction" );
+    }
 };
+} // end namespace
 #endif
