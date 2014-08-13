@@ -1,8 +1,7 @@
-#include <iostream>
+#include <ostream>
 #include <vector>
 #include <map>
 #include <string>
-#include <cstdarg>
 
 #include <muParser.h>
 #include <limits>
@@ -38,7 +37,6 @@ void ExpressionEvaluatorDepot::setAlias ( std::string _name, std::string _alias 
 
 void ExpressionEvaluatorDepot::setExpression ( std::string _expression )
 {
-
     expressionString=_expression;
     for ( auto &elem : eeVec )
         elem.setExpression ( expressionString );
@@ -250,9 +248,7 @@ int main ( int argc, char* argv[] )
         ev[0]=i*10;
         ev[1]=i*12;
 
-
-        cerr<<"i="<<i<<" x="<<ev.eval() <<endl;
-
+		cerr<<"i="<<i<<" x="<<ev.eval() <<endl;
     }
 
     ExpressionEvaluator ev;
