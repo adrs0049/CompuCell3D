@@ -1,22 +1,5 @@
 #include <CompuCell3D/CC3D.h>
-
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
-// // // #include <PublicUtilities/NumericalUtils.h>
-
-// // // #include <CompuCell3D/Potts3D/CellInventory.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
 using namespace CompuCell3D;
-
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-// // // #include <PublicUtilities/StringUtils.h>
-// // // #include <algorithm>
-
 #include "ContactOrientationPlugin.h"
 
 ContactOrientationPlugin::ContactOrientationPlugin()
@@ -25,11 +8,7 @@ ContactOrientationPlugin::ContactOrientationPlugin()
       automaton(nullptr),
       angularTermFcnPtr(&ContactOrientationPlugin::singleTermFormula) {}
 
-ContactOrientationPlugin::~ContactOrientationPlugin() {
-    //pUtils->destroyLock(lockPtr);
-    //delete lockPtr;
-    //lockPtr=0;
-}
+ContactOrientationPlugin::~ContactOrientationPlugin() {}
 
 void ContactOrientationPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
     xmlData=_xmlData;
@@ -38,54 +17,40 @@ void ContactOrientationPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlDa
     cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
     fieldDim=cellFieldG->getDim();
     pUtils=sim->getParallelUtils();
-    //lockPtr=new ParallelUtilsOpenMP::OpenMPLock_t;
-    //pUtils->initLock(lockPtr);
 
     update(xmlData,true);
-
 
     potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<BasicClassAccessor<ContactOrientationData> >(contactOrientationDataAccessor));
     potts->registerEnergyFunctionWithName(this,"ContactOrientation");
 
-
-
-    simulator->registerSteerableObject(this);
+	simulator->registerSteerableObject(this);
 }
 
-void ContactOrientationPlugin::extraInit(Simulator *simulator) {
-
-}
-
+void ContactOrientationPlugin::extraInit(Simulator *simulator) {}
 
 double ContactOrientationPlugin::singleTermFormula(double _alpha,double _theta) {
     return _alpha*fabs(cos(_theta));
 }
 
-
-double ContactOrientationPlugin::angularTermFunction(double _alpha,double _theta) {
-
+double ContactOrientationPlugin::angularTermFunction(double _alpha,double _theta) 
+{
     int currentWorkNodeNumber=pUtils->getCurrentWorkNodeNumber();
     ExpressionEvaluator & ev=eed[currentWorkNodeNumber];
     double angularTerm=0.0;
-
 
     ev[0]=_alpha;
     ev[1]=_theta;
     angularTerm=ev.eval();
 
-
     return angularTerm;
 }
 
-double ContactOrientationPlugin::changeEnergy(const Point3D &pt,const CellG *newCell,const CellG *oldCell) {
-
-
-    double energy = 0;
-
-    unsigned int token = 0;
-    double distance = 0;
+double ContactOrientationPlugin::changeEnergy(const Point3D &pt,
+											  const CellG *newCell,
+											  const CellG *oldCell) 
+{
+    double energy {0};
     Point3D n;
-
     CellG *nCell = nullptr;
     WatchableField3D<CellG *> *fieldG =(WatchableField3D<CellG *> *) potts->getCellFieldG();
     Neighbor neighbor;
@@ -99,7 +64,6 @@ double ContactOrientationPlugin::changeEnergy(const Point3D &pt,const CellG *new
     Vector3 comOldBefore;
     Vector3 comNewBefore;
 
-
     if(oldCell) {
         comOldBefore=Vector3(oldCell->xCOM,oldCell->yCOM,oldCell->zCOM);
 
@@ -109,7 +73,6 @@ double ContactOrientationPlugin::changeEnergy(const Point3D &pt,const CellG *new
         } else {
             comOldAfter=Vector3(oldCell->xCOM,oldCell->yCOM,oldCell->zCOM);
         }
-
     }
 
     if(newCell) {
@@ -117,9 +80,6 @@ double ContactOrientationPlugin::changeEnergy(const Point3D &pt,const CellG *new
         centroidNewAfter=precalculateCentroid(pt, newCell, 1,fieldDim,boundaryStrategy);
         comNewAfter=Vector3(centroidNewAfter.X()/(float)(newCell->volume+1),centroidNewAfter.Y()/(float)(newCell->volume+1),centroidNewAfter.Z()/(float)(newCell->volume+1));
     }
-
-
-
 
     for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ) {
         neighbor=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(pt),nIdx);
@@ -157,56 +117,11 @@ double ContactOrientationPlugin::changeEnergy(const Point3D &pt,const CellG *new
                     termOld=0.0;
                 }
 
-                //termN=alphaN*fabs(cos(thetaN));
-                //termN=alphaN*cos(thetaN);
-                // termN=singleTermFormula(alphaN,thetaN);
                 termN=(this->*angularTermFcnPtr)(alphaN,thetaN);
 
-                if((nCell->clusterId) != (oldCell->clusterId)) {
-
+                if((nCell->clusterId) != (oldCell->clusterId)) 
                     energy-=termOld+termN;
-
-                }
-            } else {
-                //           double nonMediumTerm=0.0;
-
-
-
-                //           if (oldCell){
-                //               double termOld=0.0;
-                //               Vector3 oldCellPolVector=getOriantationVector(oldCell);
-                //               double alphaOld=getAlpha(oldCell);
-                //               Vector3 oldDistVec=ptVec-comOldBefore;
-                //               double thetaOld=oldDistVec.Angle(oldCellPolVector);
-                //
-                //               if (oldCell->volume>1){
-                //                   //termOld=alphaOld*fabs(cos(thetaOld));
-                //	//termOld=alphaOld*cos(thetaOld);
-                //	termOld=singleTermFormula(alphaOld,thetaOld);
-                //               }else{
-                //                   termOld=0.0;
-                //               }
-                //
-                //               nonMediumTerm=termOld;
-                //           }else{
-                //
-                //               double termN=0.0;
-                //               Vector3 comNBefore(nCell->xCOM,nCell->yCOM,nCell->zCOM);
-                //               Vector3 nCellPolVector=getOriantationVector(nCell);
-                //               double alphaN=getAlpha(nCell);
-                //               Vector3 nDistVec=ptVec-comNBefore;
-
-                //               double thetaN=nDistVec.Angle(nCellPolVector);
-                //
-                //               //termN=alphaN*fabs(cos(thetaN));
-                ////termN=alphaN*cos(thetaN);
-                //termN=singleTermFormula(alphaN,thetaN);
-                //
-                //               nonMediumTerm=termN;
-                //           }
-                //           energy -= nonMediumTerm;
-            }
-
+            } 
         }
 
         //watch for case nCell=oldCell - use oldCellCOMAfter for calculations
@@ -237,81 +152,23 @@ double ContactOrientationPlugin::changeEnergy(const Point3D &pt,const CellG *new
                 double thetaNew=newDistVec.Angle(newCellPolVector);
                 double thetaN=nDistVec.Angle(nCellPolVector);
 
-                //termNew=alphaNew*fabs(cos(thetaNew));
-                //termNew=alphaNew*cos(thetaNew);
-                // termNew=singleTermFormula(alphaNew,thetaNew);
                 termNew=(this->*angularTermFcnPtr)(alphaNew,thetaNew);
-
-                //termN=alphaN*fabs(cos(thetaN));
-                //termN=alphaN*cos(thetaN);
-                // termN=singleTermFormula(alphaN,thetaN);
                 termN=(this->*angularTermFcnPtr)(alphaN,thetaN);
 
-                if((nCell->clusterId) != (newCell->clusterId)) {
-
+                if((nCell->clusterId) != (newCell->clusterId)) 
                     energy+=termNew+termN;
 
-                }
-
-            }
-            else {
-                //           double nonMediumTerm=0.0;
-                //
-
-                //           if (newCell){
-                //               double termNew=0.0;
-                //               Vector3 newCellPolVector=getOriantationVector(newCell);
-                //               double alphaNew=getAlpha(newCell);
-                //               Vector3 newDistVec=ptVec-comNewAfter;
-                //               double thetaNew=newDistVec.Angle(newCellPolVector);
-
-                ////termNew=alphaNew*fabs(cos(thetaNew));
-                ////termNew=alphaNew*cos(thetaNew);
-                //termNew=singleTermFormula(alphaNew,thetaNew);
-                //               nonMediumTerm=termNew;
-
-                //           }else{
-                //
-                //               double termN=0.0;
-
-                //Vector3 comNAfter;
-                //if (nCell==oldCell){
-                //	comNAfter=comOldAfter;
-                //}else{
-                //	comNAfter=Vector3(nCell->xCOM,nCell->yCOM,nCell->zCOM);
-                //}
-
-                //               Vector3 nCellPolVector=getOriantationVector(nCell);
-                //               double alphaN=getAlpha(nCell);
-                //               Vector3 nDistVec=ptVec-comNAfter;
-
-                //               double thetaN=nDistVec.Angle(nCellPolVector);
-                //
-                //               //termN=alphaN*fabs(cos(thetaN));
-                //               //termN=alphaN*cos(thetaN);
-                //termN=singleTermFormula(alphaN,thetaN);
-
-                //               nonMediumTerm=termN;
-                //           }
-                //           energy += nonMediumTerm;
             }
         }
     }
 
-
-    //cerr<<"pt="<<pt<<" energy="<<energy<<endl;
-    //cerr<<"energy="<<energy<<endl;
     return energy;
 }
 
-
 void ContactOrientationPlugin::handleEvent(CC3DEvent & _event) {
-    if (_event.id==CHANGE_NUMBER_OF_WORK_NODES) {
-
+    if (_event.id==CHANGE_NUMBER_OF_WORK_NODES) 
         update(xmlData);
-    }
 }
-
 
 void ContactOrientationPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag) {
     //PARSE XML IN THIS FUNCTION
@@ -320,7 +177,6 @@ void ContactOrientationPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFl
     ASSERT_OR_THROW("CELL TYPE PLUGIN WAS NOT PROPERLY INITIALIZED YET. MAKE SURE THIS IS THE FIRST PLUGIN THAT YOU SET", automaton)
 
     angularTermDefined=false;
-
 
     if (_xmlData->findElement("AngularTerm")) {
         unsigned int maxNumberOfWorkNodes=pUtils->getMaxNumberOfWorkNodesPotts();
@@ -338,13 +194,9 @@ void ContactOrientationPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFl
         angularTermFcnPtr=&ContactOrientationPlugin::singleTermFormula;
     }
 
-
-
     //Here I initialize max neighbor index for direct acces to the list of neighbors
     boundaryStrategy=BoundaryStrategy::getInstance();
     maxNeighborIndex=0;
-
-
 
     if(_xmlData->getFirstElement("Depth")) {
         maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromDepth(_xmlData->getFirstElement("Depth")->getDouble());
@@ -362,58 +214,6 @@ void ContactOrientationPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFl
     }
 
     cerr<<"Contact maxNeighborIndex="<<maxNeighborIndex<<endl;
-
-
-    return ;
-    set<unsigned char> cellTypesSet;
-    contactEnergies.clear();
-
-    if(potts->getDisplayUnitsFlag()) {
-        Unit contactEnergyUnit=potts->getEnergyUnit()/powerUnit(potts->getLengthUnit(),2);
-        CC3DXMLElement * unitsElem=_xmlData->getFirstElement("Units");
-        if (!unitsElem) { //add Units element
-            unitsElem=_xmlData->attachElement("Units");
-        }
-
-        if(unitsElem->getFirstElement("EnergyUnit")) {
-            unitsElem->getFirstElement("EnergyUnit")->updateElementValue(contactEnergyUnit.toString());
-        } else {
-            CC3DXMLElement * energyUnitElem = unitsElem->attachElement("EnergyUnit",contactEnergyUnit.toString());
-        }
-    }
-
-    CC3DXMLElementList energyVec=_xmlData->getElements("Energy");
-
-    for (int i = 0 ; i<energyVec.size(); ++i) {
-        setContactEnergy(energyVec[i]->getAttribute("Type1"), energyVec[i]->getAttribute("Type2"), energyVec[i]->getDouble());
-        //inserting all the types to the set (duplicate are automatically eleminated) to figure out max value of type Id
-        cellTypesSet.insert(automaton->getTypeId(energyVec[i]->getAttribute("Type1")));
-        cellTypesSet.insert(automaton->getTypeId(energyVec[i]->getAttribute("Type2")));
-    }
-
-    //Now that we know all the types used in the simulation we will find size of the contactEnergyArray
-    vector<unsigned char> cellTypesVector(cellTypesSet.begin(),cellTypesSet.end());//coping set to the vector
-
-    int size= * max_element(cellTypesVector.begin(),cellTypesVector.end());
-    size+=1;//if max element is e.g. 5 then size has to be 6 for an array to be properly allocated
-
-    int index ;
-    contactEnergyArray.clear();
-    contactEnergyArray.assign(size,vector<double>(size,0.0));
-
-    for(int i = 0 ; i < size ; ++i)
-        for(int j = 0 ; j < size ; ++j) {
-            index = getIndex(cellTypesVector[i],cellTypesVector[j]);
-            contactEnergyArray[i][j] = contactEnergies[index];
-        }
-
-    cerr<<"size="<<size<<endl;
-    for(int i = 0 ; i < size ; ++i)
-        for(int j = 0 ; j < size ; ++j) {
-            cerr<<"contact["<<i<<"]["<<j<<"]="<<contactEnergyArray[i][j]<<endl;
-        }
-
-
 }
 
 double ContactOrientationPlugin::contactEnergy(const CellG *cell1, const CellG *cell2) {
@@ -433,19 +233,14 @@ void ContactOrientationPlugin::setContactEnergy(const string typeName1,const str
     contactEnergies[index] = energy;
 }
 
-
 int ContactOrientationPlugin::getIndex(const int type1, const int type2) const {
     if (type1 < type2) return ((type1 + 1) | ((type2 + 1) << 16));
     else return ((type2 + 1) | ((type1 + 1) << 16));
 }
 
-
 void ContactOrientationPlugin::setOriantationVector(CellG * _cell,double _x, double _y, double _z) {
-
     contactOrientationDataAccessor.get(_cell->extraAttribPtr)->oriantationVec=Vector3(_x,_y,_z);
-
 }
-
 
 Vector3 ContactOrientationPlugin::getOriantationVector(const CellG * _cell) {
     return contactOrientationDataAccessor.get(_cell->extraAttribPtr)->oriantationVec;
@@ -458,11 +253,9 @@ double ContactOrientationPlugin::getAlpha(const CellG * _cell) {
     return contactOrientationDataAccessor.get(_cell->extraAttribPtr)->alpha;
 }
 
-
 std::string ContactOrientationPlugin::toString() {
     return "ContactOrientation";
 }
-
 
 std::string ContactOrientationPlugin::steerableName() {
     return toString();
