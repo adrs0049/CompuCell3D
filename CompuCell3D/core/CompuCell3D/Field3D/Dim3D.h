@@ -39,7 +39,7 @@ namespace CompuCell3D {
     /// Construct a Dim3D with dimensions (0,0,0).
     Dim3D() : Point3D() {}
 
-    Dim3D(const short x, const short y, const short z) : Point3D(x, y, z) {}
+    Dim3D(const value_type x, const value_type y, const value_type z) : Point3D(x, y, z) {}
 
     /// Copy constructor
     Dim3D(const Dim3D &dim) : Point3D(dim) {}  
@@ -85,7 +85,7 @@ namespace CompuCell3D {
       return x < _rhs.x || (!(_rhs.x < x)&& y < _rhs.y)
 			||(!(_rhs.x < x)&& !(_rhs.y <y )&& z < _rhs.z);
    }
-   short & operator[](int _idx){
+   value_type & operator[](int _idx){
 	   if(!_idx){
 			return x;
 	   }else if(_idx==1){

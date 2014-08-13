@@ -37,16 +37,18 @@ namespace CompuCell3D {
    */
   class Point3D /*: public virtual XMLSerializable*/ {
   public:
-    short x;
-    short y;
-    short z;
+	using value_type = unsigned short;  
+	  
+    value_type x;
+    value_type y;
+    value_type z;
 
     /** 
      * Construct a point at the origin.
      */    
     Point3D() : x(0), y(0), z(0) {}
 
-    Point3D(const short x, const short y, const short z) :
+    Point3D(const value_type x, const value_type y, const value_type z) :
       x(x), y(y), z(z) {}
 
     /** 
