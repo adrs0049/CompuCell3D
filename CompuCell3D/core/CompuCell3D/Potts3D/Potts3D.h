@@ -199,7 +199,7 @@ namespace CompuCell3D {
     void setDebugOutputFrequency(unsigned int _freq){debugOutputFrequency=_freq;}
     void setSimulator(Simulator *_sim){sim=_sim;}
     
-    void setFrozenTypeVector(std::vector<unsigned char> & _frozenTypeVec);
+    void setFrozenTypeVector(std::vector<unsigned char> _frozenTypeVec);
     const std::vector<unsigned char> & getFrozenTypeVector(){return frozenTypeVec;}
 	
 	void setMassUnit(const Unit & _unit){massUnit=_unit;}

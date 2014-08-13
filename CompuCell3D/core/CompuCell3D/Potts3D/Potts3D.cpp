@@ -1078,7 +1078,7 @@ bool Potts3D::checkIfFrozen ( unsigned char _type )
     return false;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Potts3D::setFrozenTypeVector ( std::vector<unsigned char> & _frozenTypeVec )
+void Potts3D::setFrozenTypeVector ( std::vector<unsigned char> _frozenTypeVec )
 {
     frozenTypeVec=_frozenTypeVec;
     sizeFrozenTypeVec=frozenTypeVec.size();
