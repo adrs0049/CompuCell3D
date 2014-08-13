@@ -62,6 +62,13 @@ public:
 		x.line = -1;
 	}
 	
+	BasicFileLocation& operator=(BasicFileLocation other)
+	{
+		BasicFileLocation tmp(other);
+		swap(other);
+		return *this;
+	}
+	
     /**
      * @param filename The name of the file.
      * @param line The line with that file.
@@ -108,6 +115,14 @@ public:
         col = -1;
         empty = true;
     }
+    
+    void swap(BasicFileLocation other)
+	{
+		std::swap(filename, other.filename);
+		line = other.line;
+		col = other.col;
+		empty = other.empty;
+	}
 
     friend std::ostream &operator<<(std::ostream &stream,
                                     const BasicFileLocation &fl);
