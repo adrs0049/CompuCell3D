@@ -113,6 +113,10 @@ using namespace CompuCell3D;
 // C++ std::vector handling
 %include "std_vector.i"
 
+// c++ std::shared_ptr handling
+#define SWIG_SHARED_PTR_SUBNAMESPACE tr1
+%include <std_shared_ptr.i>
+
 %include "stl.i"
 
 //enables better handling of STL exceptions
