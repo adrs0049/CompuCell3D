@@ -27,7 +27,10 @@
 
 namespace CompuCell3D {
   
-  class CellGChangeWatcher : public Field3DChangeWatcher<CellG *> {
+  class CellGChangeWatcher : public Field3DChangeWatcher<CellG *> 
+  {
+  public:
+	  virtual ~CellGChangeWatcher() {}
   };
 
 };
