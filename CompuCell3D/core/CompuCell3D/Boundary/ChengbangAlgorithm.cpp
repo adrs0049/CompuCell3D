@@ -213,12 +213,14 @@ int ChengbangAlgorithm::getNumPixels ( int x, int y, int z )
             /* for(unsigned int m=0; m<dataStructure2[i][j].size(); m++)
                  s.insert(dataStructure2[i][j][m]);*/
 
-            set<float, less<float> >::iterator p;
+//             set<float, less<float> >::iterator p;
             vector<float> dataStructure;
-            for ( p=s.begin(); p!=s.end(); p++ )
-            {
-                if ( *p > -1 ) dataStructure.push_back ( *p );
-            }
+			for ( const auto& elem : s )
+				if (elem > -1) dataStructure.push_back(elem);
+//             for ( p=s.begin(); p!=s.end(); p++ )
+//             {
+//                 if ( *p > -1 ) dataStructure.push_back ( *p );
+//             }
 
             for ( unsigned int k=0; k< dataStructure.size(); k+=2 )
             {
