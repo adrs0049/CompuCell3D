@@ -26,10 +26,11 @@
 #include <math.h>
 #include <CompuCell3D/Boundary/BoundaryStrategy.h>
 #include <BasicUtils/BasicException.h>
+#include <BasicUtils/memory_include.h>
+#include <algorithm>
 
 #include "Dim3D.h"
 #include "Field3D.h"
-
 
 namespace CompuCell3D
 {
@@ -48,7 +49,8 @@ class Field3DImpl : public Field3D<T>
 {
 protected:
     Dim3D dim;
-    T *field;
+    //T *field;
+	std::unique_ptr<T[]> field;
     T initialValue;
     long len;
 public:
@@ -71,19 +73,19 @@ public:
 
         // Allocate and initialize the field
         len = dim.x * dim.y * dim.z;
-        field = new T[len];
-        for ( unsigned int i = 0; i < len; i++ )
-            field[i] = initialValue;
+        field = std::move(std::make_unique<T[]>(len)); // new T[len];
+		std::fill_n(field.get(), len, initialValue);
     }
 
     virtual ~Field3DImpl()
     {
+		/*
         if ( field )
         {
             delete field;
             field = nullptr;
         }
-
+		*/
     }
 
     virtual void set ( const Point3D &pt, const T value )
@@ -94,10 +96,9 @@ public:
 
     virtual void resizeAndShift ( const Dim3D theDim,  Dim3D shiftVec=Dim3D() )
     {
-        auto field2 = new T[theDim.x * theDim.y * theDim.z];
-        //first initialize the lattice with initial value
-        for ( long int i = 0 ; i <  theDim.x*theDim.y*theDim.z ; ++i )
-            field2[i]=initialValue;
+		auto nLen = theDim.x * theDim.y * theDim.z;
+		auto field2 = std::move(std::make_unique<T[]>(nLen));
+		std::fill_n(field2.get(), nLen, initialValue); 
 
         //then  copy old field
         for ( int x = 0; x < theDim.x; x++ )
@@ -111,10 +112,8 @@ public:
                     }
 
 
-        delete []  field;
-        field = field2;
+        field = std::move(field2);
         dim = theDim;
-
 
         //Set dimension for the Boundary Strategy
         BoundaryStrategy::getInstance()->setDim ( dim );
@@ -127,21 +126,17 @@ public:
 
     T getQuick ( const Point3D &pt ) const
     {
-
-        //return field[PT2IDX(pt)];
-        return ( isValid ( pt ) ? field[PT2IDX ( pt )] : initialValue );
+        return field[PT2IDX(pt)];
+        //return ( isValid ( pt ) ? field[PT2IDX ( pt )] : initialValue );
     }
 
     void setQuick ( const Point3D &pt,const T _value )
     {
-
         field[PT2IDX ( pt )]=_value;
     }
 
-
     virtual T get ( const Point3D &pt ) const
     {
-
         return ( isValid ( pt ) ? field[PT2IDX ( pt )] : initialValue );
     }
 
@@ -157,8 +152,6 @@ public:
             field[_offset]=_value;
     }
 
-
-
     virtual Dim3D getDim() const
     {
         return dim;
@@ -171,5 +164,5 @@ public:
                  0 <= pt.z && pt.z < dim.z );
     }
 };
-};
+} // end namespace
 #endif

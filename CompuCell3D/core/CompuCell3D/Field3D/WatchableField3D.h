@@ -26,39 +26,44 @@
 #include "Field3DImpl.h"
 #include "Field3DChangeWatcher.h"
 
-#include <BasicUtils/BasicArray.h>
 #include <BasicUtils/BasicException.h>
 
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 
-  template <class T>
-  class Field3DImpl;
+template <class T>
+class Field3DImpl;
 
-  template <class T>
-  class WatchableField3D: public Field3DImpl<T> {
-    BasicArray<Field3DChangeWatcher<T> *> changeWatchers;
+template <class T>
+class WatchableField3D: public Field3DImpl<T>
+{
+    std::vector<Field3DChangeWatcher<T> *> changeWatchers;
 
-  public:
-    /** 
+public:
+    /**
      * @param dim The field dimensions
      * @param initialValue The initial value of all data elements in the field.
      */
-    WatchableField3D(const Dim3D dim, const T &initialValue) : 
-      Field3DImpl<T>(dim, initialValue) {}
+    WatchableField3D ( const Dim3D dim, const T &initialValue ) :
+        Field3DImpl<T> ( dim, initialValue ) 
+	{}
 
-      virtual ~WatchableField3D(){}   
-    virtual void addChangeWatcher(Field3DChangeWatcher<T> *watcher) {
-      ASSERT_OR_THROW("addChangeWatcher() watcher cannot be NULL!", watcher);
-      changeWatchers.put(watcher);
+    virtual ~WatchableField3D() {}
+    virtual void addChangeWatcher ( Field3DChangeWatcher<T> *watcher )
+    {
+        ASSERT_OR_THROW ( "addChangeWatcher() watcher cannot be NULL!", watcher );
+        changeWatchers.push_back ( watcher );
     }
 
-    virtual void set(const Point3D &pt, const T value) {
-      T oldValue = Field3DImpl<T>::get(pt);
-      Field3DImpl<T>::set(pt, value);
+    virtual void set ( const Point3D &pt, const T value )
+    {
+        auto oldValue = Field3DImpl<T>::get ( pt );
+        Field3DImpl<T>::set ( pt, value );
 
-      for (unsigned int i = 0; i < changeWatchers.getSize(); i++)
-	changeWatchers[i]->field3DChange(pt, value, oldValue);
+		for ( const auto& changeWatcher : changeWatchers )
+			changeWatcher->field3DChange ( pt, value, oldValue );
     }
-  };
 };
+
+} // end namespace
 #endif
