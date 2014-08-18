@@ -29,11 +29,10 @@ using namespace CompuCell3D;
 ContactInternalPlugin::ContactInternalPlugin()
     : potts(nullptr), depth(1), weightDistance(false) {}
 
-ContactInternalPlugin::~ContactInternalPlugin() {
-  
-}
+ContactInternalPlugin::~ContactInternalPlugin() 
+{}
 
-void ContactInternalPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
+void ContactInternalPlugin::init(SimulatorPtr simulator, CC3DXMLElement *_xmlData) {
 
   xmlData=_xmlData;
   potts=simulator->getPotts();
@@ -42,7 +41,7 @@ void ContactInternalPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 
 }
 
-void ContactInternalPlugin::extraInit(Simulator *simulator){
+void ContactInternalPlugin::extraInit(SimulatorPtr simulator){
 	update(xmlData,true);
 
 	Automaton * cellTypePluginAutomaton = potts->getAutomaton();
@@ -57,8 +56,6 @@ double ContactInternalPlugin::changeEnergy(const Point3D &pt,
                                   const CellG *newCell,
                                   const CellG *oldCell) {
    //cerr<<"ChangeEnergy"<<endl;
-   
-   
   double energy = 0;
   unsigned int token = 0;
   double distance = 0;
@@ -66,7 +63,7 @@ double ContactInternalPlugin::changeEnergy(const Point3D &pt,
   Neighbor neighbor;
 
   CellG *nCell = nullptr;
-  WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG*>*)potts->getCellFieldG();
+  auto fieldG = potts->getCellFieldG();
 
    if(weightDistance){
 

@@ -1,37 +1,15 @@
 
 
 #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Field3D/Field3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Boundary/BoundaryStrategy.h>
-
-// // // #include <CompuCell3D/Potts3D/CellInventory.h>
-// // // #include <CompuCell3D/Automaton/Automaton.h>
-// // // #include <BasicUtils/BasicString.h>
-// // // #include <BasicUtils/BasicException.h>
-// // // #include <PublicUtilities/StringUtils.h>
-// // // #include <algorithm>
-
-
-
-
-
-
 using namespace CompuCell3D;
-
-
 #include <iostream>
 using namespace std;
 
 #include "CleaverMeshDumper.h"
 
-
 #include <Cleaver/Cleaver.h>
 #include <Cleaver/InverseField.h>
 #include <Cleaver/FloatField.h>
-
 
 using namespace Cleaver;
 
@@ -59,12 +37,8 @@ void CellFieldCleaverSimulator::setFieldDim(Dim3D _dim){
 	m_bounds.size=vec3(fieldDim.x,fieldDim.y,fieldDim.z);
 }
 
-
-
 float CellFieldCleaverSimulator::valueAt(float x, float y, float z) const
 {
-
-
 	int dim_x = m_bounds.size.x;
 	int dim_y = m_bounds.size.y;
 	int dim_z = m_bounds.size.z;
@@ -78,8 +52,6 @@ float CellFieldCleaverSimulator::valueAt(float x, float y, float z) const
 	}
 
 	CellG * cell=cellField->get(Point3D(x,y,z));
-
-	
 
 
 	if (! cell){
@@ -107,12 +79,6 @@ float CellFieldCleaverSimulator::valueAt(float x, float y, float z) const
 	//}
 }
 
-
-
-
-
-
-
 CleaverMeshDumper::CleaverMeshDumper() :
 cellFieldG(0),sim(0),potts(0),
 xmlData(0),boundaryStrategy(0),automaton(0),cellInventoryPtr(0)
@@ -120,42 +86,27 @@ xmlData(0),boundaryStrategy(0),automaton(0),cellInventoryPtr(0)
 	meshOutputFormat="tetgen";
 	outputMeshSurface=false;
 	verbose=false;
-
 }
 
-CleaverMeshDumper::~CleaverMeshDumper() {
-}
+CleaverMeshDumper::~CleaverMeshDumper() 
+{}
 
-
-void CleaverMeshDumper::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
+void CleaverMeshDumper::init(SimulatorPtr simulator, CC3DXMLElement *_xmlData) {
 	xmlData=_xmlData;
-
 	potts = simulator->getPotts();
 	cellInventoryPtr=& potts->getCellInventory();
 	sim=simulator;
-	cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG = potts->getCellFieldG();
 	fieldDim=cellFieldG->getDim();
-
-
 	simulator->registerSteerableObject(this);
-
 	update(_xmlData,true);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void CleaverMeshDumper::extraInit(Simulator *simulator){
-	//PUT YOUR CODE HERE
-}
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void CleaverMeshDumper::extraInit(SimulatorPtr simulator){}
+void CleaverMeshDumper::start(){}
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void CleaverMeshDumper::start(){
-
-	//PUT YOUR CODE HERE
-
-}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void CleaverMeshDumper::simulateCleaverMesh(){
 	CellFieldCleaverSimulator cfcs;

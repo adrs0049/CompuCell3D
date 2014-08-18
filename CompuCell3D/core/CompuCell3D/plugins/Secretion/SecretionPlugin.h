@@ -48,14 +48,14 @@ template <typename Y> class Field3DImpl;
 
 class SECRETION_EXPORT SecretionPlugin : public Plugin, public FixedStepper
 {
-    Potts3D* potts;
-    Simulator * sim;
+    Potts3DPtr potts;
+    SimulatorPtr sim;
     CC3DXMLElement *xmlData;
 
     std::vector<SecretionDataP>  secretionDataPVec;
     Dim3D fieldDim;
-    WatchableField3D<CellG *> *cellFieldG;
-    Automaton *automaton;
+    cellFieldPtr cellFieldG;
+    AutomatonPtr automaton;
     std::shared_ptr<BoxWatcher> boxWatcherSteppable;
     std::shared_ptr<BoundaryPixelTrackerPlugin> boundaryPixelTrackerPlugin;
     std::shared_ptr<PixelTrackerPlugin> pixelTrackerPlugin;
@@ -73,9 +73,9 @@ public:
     typedef void ( SecretionPlugin::*secrSingleFieldFcnPtr_t ) ( unsigned int idx );
 
     ///SimObject interface
-    virtual void init ( Simulator *simulator,
+    virtual void init ( SimulatorPtr simulator,
                         CC3DXMLElement *_xmlData = nullptr ) override;
-    virtual void extraInit ( Simulator *simulator ) override;
+    virtual void extraInit ( SimulatorPtr simulator ) override;
 
     Field3D<float>*  getConcentrationFieldByName ( std::string _fieldName );
 

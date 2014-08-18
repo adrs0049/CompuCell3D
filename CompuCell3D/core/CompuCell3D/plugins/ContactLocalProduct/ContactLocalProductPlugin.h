@@ -52,8 +52,8 @@ public:
 private:
     ParallelUtilsOpenMP *pUtils;
     DataAccessor_t contactProductDataAccessor;
-    Potts3D *potts;
-    Simulator *sim;
+    Potts3DPtr potts;
+    SimulatorPtr sim;
     CC3DXMLElement *xmlData;
 
     //Energy function data
@@ -69,7 +69,7 @@ private:
 
     DataAccessor_t * contactProductDataAccessorPtr;
 
-    Automaton *automaton;
+    AutomatonPtr automaton;
     bool weightDistance;
 
     contactEnergyPtr_t contactEnergyPtr;

@@ -19,7 +19,7 @@ class ELASTICITYTRACKER_EXPORT ElasticityTrackerPlugin : public Plugin, public C
     ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
 
-    WatchableField3D<CellG *> *cellFieldG;
+    std::shared_ptr<Field3D<CellG *> > cellFieldG;
     Dim3D fieldDim;
 
 public:
@@ -29,7 +29,7 @@ public:
 
 private:
     TrackerAccessor_t elasticityTrackerAccessor;
-    Simulator *simulator;
+    SimulatorPtr simulator;
     CellInventory * cellInventoryPtr;
     bool initialized;
 
@@ -42,9 +42,9 @@ public:
     virtual ~ElasticityTrackerPlugin();
 
     // SimObject interface
-    virtual void init ( Simulator *_simulator,
+    virtual void init ( SimulatorPtr _simulator,
                         CC3DXMLElement *_xmlData = nullptr ) override;
-    virtual void extraInit ( Simulator *simulator ) override;
+    virtual void extraInit ( SimulatorPtr simulator ) override;
 
     // BCGChangeWatcher interface
     virtual void field3DChange ( const Point3D &pt, CellG *newCell,

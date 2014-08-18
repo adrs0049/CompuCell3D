@@ -18,16 +18,14 @@ namespace CompuCell3D {
     template <class T> class WatchableField3D;
 
     class CELLTYPEMONITOR_EXPORT CellTypeMonitorPlugin : public Plugin  ,public CellGChangeWatcher {
-    private:    
-        CC3DXMLElement *xmlData;        
-        Potts3D *potts;
-        Simulator *sim;
-        ParallelUtilsOpenMP *pUtils;            
-        ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;        
-        Automaton *automaton;
-
+		ParallelUtilsOpenMP *pUtils;
+        ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
+        CC3DXMLElement *xmlData;
+        Potts3DPtr potts;
+        SimulatorPtr sim;
+        AutomatonPtr automaton;
         BoundaryStrategyPtr boundaryStrategy;
-        WatchableField3D<CellG *> *cellFieldG;
+        cellFieldPtr cellFieldG;
         Array3DCUDA<unsigned char> * cellTypeArray;
         // Array3DCUDA<int> * cellIdArray; // this should have been Array3DCUDA<long> but openCL on windows does not "like" longs so I am using int . 
         Array3DCUDA<float> * cellIdArray; // this should have been Array3DCUDA<long> but openCL on windows does not "like" longs so I am using float . 

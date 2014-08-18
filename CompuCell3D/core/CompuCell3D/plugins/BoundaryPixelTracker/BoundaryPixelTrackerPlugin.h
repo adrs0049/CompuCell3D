@@ -47,8 +47,8 @@ public:
 private:
     Dim3D fieldDim;
 	TrackerAccessor_t boundaryPixelTrackerAccessor;
-    Simulator *simulator;
-    Potts3D* potts;
+    SimulatorPtr simulator;
+    Potts3DPtr potts;
     unsigned int maxNeighborIndex;
     BoundaryStrategyPtr boundaryStrategy;
     CC3DXMLElement *xmlData;
@@ -62,9 +62,9 @@ public:
                                  CellG *oldCell ) override;
 
     //Plugin interface
-    virtual void init ( Simulator *_simulator,
+    virtual void init ( SimulatorPtr _simulator,
                         CC3DXMLElement *_xmlData = nullptr ) override;
-    virtual void extraInit ( Simulator *_simulators ) override;
+    virtual void extraInit ( SimulatorPtr _simulators ) override;
     virtual void handleEvent ( CC3DEvent &_event ) override;
 
     //Steerable interface

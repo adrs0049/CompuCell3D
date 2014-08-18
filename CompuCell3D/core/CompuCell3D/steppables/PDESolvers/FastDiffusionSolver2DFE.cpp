@@ -92,7 +92,7 @@ void FastDiffusionSolver2DFE::init(Simulator *simulator, CC3DXMLElement *_xmlDat
 	cellInventoryPtr=& potts->getCellInventory(); 
 
 	///getting field ptr from Potts3D
-	cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG=potts->getCellFieldG();
 	fieldDim=cellFieldG->getDim();
 
 	pUtils=simulator->getParallelUtils();
@@ -249,68 +249,11 @@ void FastDiffusionSolver2DFE::handleEvent(CC3DEvent & _event){
 		return;
 	}
 	
-    cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+    cellFieldG=potts->getCellFieldG();
 
 	CC3DEventLatticeResize ev = static_cast<CC3DEventLatticeResize&>(_event);
 	Point3D pt;
 	Point3D ptShift;
-
-
-
-	//////ConcentrationField_t * tmpField=new ConcentrationField_t;
-	//////tmpField->allocateArray(ev.newDim);
-
-
-	//////cerr<<" BEFORE concentration at pt = "<<concentrationFieldVector[0]->get(Point3D(10,10,0))<<endl;
-	//////////when lattice is growing or shrinking
-	//////tmpField->shiftArray=concentrationFieldVector[0]->shiftArray;
-	//////tmpField->shiftSwap=concentrationFieldVector[0]->shiftSwap;
-
-
-	//////float * newArrayCont=tmpField->arrayCont;
-	//////float * arrayCont=concentrationFieldVector[0]->arrayCont;
-	//////int borderWidth=concentrationFieldVector[0]->borderWidth;
-	//////int shiftArray=concentrationFieldVector[0]->shiftArray;
-	//////Dim3D internalDim=concentrationFieldVector[0]->internalDim;
-	//////Dim3D newInternalDim=tmpField->internalDim;
-
-	//////cerr<<" ev.shiftVec="<<ev.shiftVec<<endl;
-	//////cerr<<"fieldDim="<<fieldDim<<endl;
-
-	//////for(pt.x=0 ; pt.x < ev.newDim.x ; ++pt.x)
-	//////	for(pt.y=0 ; pt.y < ev.newDim.y ; ++pt.y){			
-	//////			ptShift=pt-ev.shiftVec;
-	//////			if (ptShift.x>=0 && ptShift.x<fieldDim.x && ptShift.y>=0 && ptShift.y<fieldDim.y )
-	//////			{
-	//////				//if (pt.x==50 && pt.y==50){
-	//////				//	cerr<<concentrationFieldVector[0]->get(pt.x,pt.y)<<endl;
-	//////				//}
-
-	//////					//tmpField->set(pt.x,pt.y,concentrationFieldVector[0]->get(ptShift.x,ptShift.y));	
-	//////					//if (concentrationFieldVector[0]->get(ptShift.x,ptShift.y)>10000.0){
-	//////					//	cerr<<"pt="<<pt<<" c="<<concentrationFieldVector[0]->get(ptShift.x,ptShift.y)<<endl;
-	//////					//}
-	//////				//cerr<<"ptShift="<<ptShift<<" pt="<<pt<<" c="<<concentrationFieldVector[0]->get(pt.x,pt.y)<<endl;
-	//////				//cerr<<" check conc="<<tmpField->get(pt.x,pt.y)<<endl;
-	//////				//cerr<<"ptShift="<<ptShift<<" pt="<<pt<<endl;
- //////                   newArrayCont[(pt.x+borderWidth)+shiftArray + (2*(pt.y+borderWidth)+shiftArray)* newInternalDim.x]=arrayCont[ptShift.x+borderWidth+shiftArray + (2*(ptShift.y+borderWidth)+shiftArray)* internalDim.x];
- //////                   // get(ptShift.x,ptShift.y);                    
-	//////			}
-	//////		}
-	//////cerr<<" check conc="<<tmpField->get(10,10)<<endl;
-	//////cerr<<"tmpField->dim="<<tmpField->dim<<endl;
-	//////cerr<<" tmpField->internalDim="<<tmpField->internalDim<<endl;
-	//////concentrationFieldVector[0]->arrayCont=tmpField->arrayCont;
-	//////concentrationFieldVector[0]->dim=tmpField->dim;
-	//////
-
-	//////concentrationFieldVector[0]->internalDim=tmpField->internalDim;
-	//////concentrationFieldVector[0]->arraySize=tmpField->arraySize;
-
-	//////cerr<<"concentrationFieldVector.size()="<<concentrationFieldVector.size()<<endl;
-	//////cerr<<" AFTER concentration at pt = "<<concentrationFieldVector[0]->get(10,10)<<endl;
-	//////cerr<<" AFTER concentration at pt = "<<concentrationFieldVector[0]->get(Point3D(10,10,0))<<endl;
-	////////concentrationFieldVector[0]=tmpField;
 
     for (size_t i =0 ;   i < concentrationFieldVector.size() ; ++i){
         concentrationFieldVector[i]->resizeAndShift(ev.newDim,ev.shiftVec);
@@ -457,7 +400,7 @@ void FastDiffusionSolver2DFE::secreteOnContactSingleField(unsigned int idx){
 		Point3D pt;
 		Neighbor n;
 		CellG *nCell=0;
-		WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+		auto fieldG = potts->getCellFieldG();
 		unsigned char type;
 
 		int threadNumber=pUtils->getCurrentWorkNodeNumber();
@@ -473,8 +416,6 @@ void FastDiffusionSolver2DFE::secreteOnContactSingleField(unsigned int idx){
 			minDim=pUtils->getFESolverPartition(threadNumber).first;
 			maxDim=pUtils->getFESolverPartition(threadNumber).second;
 		}
-
-
 
 		for (int y = minDim.y; y < maxDim.y; y++)
 			for (int x = minDim.x; x < maxDim.x; x++){
@@ -556,8 +497,6 @@ void FastDiffusionSolver2DFE::secreteSingleField(unsigned int idx){
 	std::map<unsigned char,float>::iterator end_mitr=secrData.typeIdSecrConstMap.end();
 	std::map<unsigned char,UptakeData>::iterator mitrUptakeShared;
 	std::map<unsigned char,UptakeData>::iterator end_mitrUptake=secrData.typeIdUptakeDataMap.end();
-
-
 
 	//ConcentrationField_t & concentrationField=*concentrationFieldVector[idx];
 

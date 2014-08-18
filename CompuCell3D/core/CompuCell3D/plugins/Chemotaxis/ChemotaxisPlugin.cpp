@@ -33,19 +33,18 @@ using namespace std;
 #include "ChemotaxisPlugin.h"
 
 ChemotaxisPlugin::ChemotaxisPlugin()
-    : algorithmPtr(&ChemotaxisPlugin::merksChemotaxis), xmlData(nullptr),
-      chemotaxisAlgorithm("merks"), automaton(nullptr) {
-
+: sim(nullptr), xmlData(nullptr), automaton(nullptr), potts(nullptr), 
+ algorithmPtr(&ChemotaxisPlugin::merksChemotaxis), 
+chemotaxisAlgorithm("merks")
+{
     //this dictionary will be used in chemotaxis of individual cells (i.e. in per-cell as opposed to type-based chemotaxis)
     chemotaxisFormulaDict["SaturationChemotaxisFormula"]=&ChemotaxisPlugin::saturationChemotaxisFormula;
     chemotaxisFormulaDict["SaturationLinearChemotaxisFormula"]=&ChemotaxisPlugin::saturationLinearChemotaxisFormula;
     chemotaxisFormulaDict["SimpleChemotaxisFormula"]=&ChemotaxisPlugin::simpleChemotaxisFormula;
-
 }
 
-ChemotaxisPlugin::~ChemotaxisPlugin() {
-}
-
+ChemotaxisPlugin::~ChemotaxisPlugin() 
+{}
 
 void ChemotaxisPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 
@@ -98,7 +97,7 @@ void ChemotaxisPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag) {
 
     //cerr<<"chemicalFieldXMlList.size()="<<chemicalFieldXMlList.size()<<endl;
 
-    for (int i  = 0 ; i < chemicalFieldXMlList.size() ; ++i) {
+    for (unsigned int i  = 0 ; i < chemicalFieldXMlList.size() ; ++i) {
         chemotaxisFieldDataVec.push_back(ChemotaxisFieldData());
         ChemotaxisFieldData & cfd=chemotaxisFieldDataVec[chemotaxisFieldDataVec.size()-1];
 
@@ -111,7 +110,7 @@ void ChemotaxisPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag) {
 
         //cerr<<"chemotactByTypeXMlList.size()="<<chemotactByTypeXMlList.size()<<endl;
 
-        for (int j = 0 ; j < chemotactByTypeXMlList.size() ; ++j) {
+        for (unsigned int j = 0 ; j < chemotactByTypeXMlList.size() ; ++j) {
             cfd.vecChemotaxisData.push_back(ChemotaxisData());
             ChemotaxisData & cd=cfd.vecChemotaxisData[cfd.vecChemotaxisData.size()-1];
             cd.typeName=chemotactByTypeXMlList[j]->getAttribute("Type");
@@ -147,7 +146,7 @@ void ChemotaxisPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag) {
     //cerr<<"chemotaxisFieldDataVec[0].vecChemotaxisData.size()="<<chemotaxisFieldDataVec[0].vecChemotaxisData.size()<<endl;
 
     for (auto &elem : chemotaxisFieldDataVec)
-      for (int j = 0; j < elem.vecChemotaxisData.size(); ++j) {
+      for (unsigned int j = 0; j < elem.vecChemotaxisData.size(); ++j) {
         if (automaton->getTypeId(elem.vecChemotaxisData[j].typeName) > maxType)
           maxType = automaton->getTypeId(elem.vecChemotaxisData[j].typeName);
         }
@@ -178,9 +177,8 @@ void ChemotaxisPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag) {
         algorithmPtr=&ChemotaxisPlugin::haptoChemotaxis;
     }
 
-
-    for(int i = 0 ; i < chemotaxisFieldDataVec.size() ; ++ i)
-        for(int j = 0 ; j < chemotaxisFieldDataVec[i].vecChemotaxisData.size() ; ++j) {
+    for(unsigned int i = 0 ; i < chemotaxisFieldDataVec.size() ; ++ i)
+        for(unsigned int j = 0 ; j < chemotaxisFieldDataVec[i].vecChemotaxisData.size() ; ++j) {
 
             vecTypeNamesTmp.clear();
 
@@ -225,7 +223,6 @@ void ChemotaxisPlugin::update(CC3DXMLElement *_xmlData, bool _fullInitFlag) {
     fieldVec.clear();
     fieldVec.assign(chemotaxisFieldDataVec.size(), nullptr); // allocate
                                                              // fieldVec
-
     fieldNameVec.clear();
     fieldNameVec.assign(chemotaxisFieldDataVec.size(),"");//allocate fieldNameVec
 
@@ -324,7 +321,7 @@ double ChemotaxisPlugin::regularChemotaxis(const Point3D &pt, const CellG *newCe
             if( !chemotaxisDone && (int)newCell->type < vecVecChemotaxisData[i].size() ) {
 
                 ChemotaxisData & chemotaxisDataRef = vecVecChemotaxisData[i][(int)newCell->type];
-                ChemotaxisData * chemotaxisDataPtr = & vecVecChemotaxisData[i][(int)newCell->type];
+                //ChemotaxisData * chemotaxisDataPtr = & vecVecChemotaxisData[i][(int)newCell->type];
 
                 ChemotaxisPlugin::chemotaxisEnergyFormulaFcnPtr_t
                     formulaCurrentPtr = nullptr;

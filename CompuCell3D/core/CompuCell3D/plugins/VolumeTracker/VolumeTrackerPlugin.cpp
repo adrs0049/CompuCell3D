@@ -46,7 +46,7 @@ void VolumeTrackerPlugin::initVec(const Dim3D & _dim){
 
 bool VolumeTrackerPlugin::checkIfOKToResize(Dim3D _newSize,Dim3D _shiftVec){
 
-	Field3DImpl<CellG*> *cellField=(Field3DImpl<CellG*> *)potts->getCellFieldG();
+	auto cellField=potts->getCellFieldGImpl();
 	Dim3D fieldDim=cellField->getDim();
 	Point3D pt;
 	Point3D shiftVec(_shiftVec.x,_shiftVec.y,_shiftVec.z);
@@ -72,16 +72,13 @@ bool VolumeTrackerPlugin::checkIfOKToResize(Dim3D _newSize,Dim3D _shiftVec){
 	return true;
 }
 
-
-
 void VolumeTrackerPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 {
 	sim=simulator;
 	pUtils=sim->getParallelUtils();
 	lockPtr=new ParallelUtilsOpenMP::OpenMPLock_t;
 	pUtils->initLock(lockPtr);
-
-
+	
 	potts = simulator->getPotts();
 	potts->registerCellGChangeWatcher(this);
 	potts->registerStepper(this);
@@ -89,7 +86,6 @@ void VolumeTrackerPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData)
         deadCellVec.assign(pUtils->getMaxNumberOfWorkNodesPotts(),
                            (CellG *)nullptr);
 }
-
 
 void VolumeTrackerPlugin::handleEvent(CC3DEvent & _event){
 	if (_event.id==CHANGE_NUMBER_OF_WORK_NODES){
@@ -100,23 +96,11 @@ void VolumeTrackerPlugin::handleEvent(CC3DEvent & _event){
 	}
 }
 
-
 std::string VolumeTrackerPlugin::toString(){return "VolumeTracker";}
-
 std::string VolumeTrackerPlugin::steerableName(){return toString();}
-
 
 void VolumeTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCell, CellG *oldCell) 
 {
-	//if (newCell)
-	//   newCell->volume++;
-	//
-	//if (oldCell)
-	//   if((--oldCell->volume) == 0)
-	//      deadCellG = oldCell;
-
-
-	
 	if (newCell)
 		newCell->volume++;
 
@@ -126,23 +110,12 @@ void VolumeTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCell, CellG
 		
 			deadCellVec[pUtils->getCurrentWorkNodeNumber()] = oldCell;
 		}
-		
-	
 }
 
 //have to fix it
 void VolumeTrackerPlugin::step() {
-
-	
-	// if (deadCellG) {
-	//cerr<<"THIS IS VolumeTrackerPlugin removing cell "<<deadCellG<<" deadCellG->type="<<(int)deadCellG->type<<" deadCellG->id="<<deadCellG->id<<endl; 
-	//   potts->destroyCellG(deadCellG);
-	//   deadCellG = 0;
-	// }
 	CellG *deadCellPtr=deadCellVec[pUtils->getCurrentWorkNodeNumber()];
-//         cerr<<"inside step function "<<deadCellPtr<<endl;
 	if (deadCellPtr) {
-
         //NOTICE: we cannot use #pragma omp critical instead of locks because although this is called from inside the parallel region critical directive has to be included explicitely inside #pragma omp parallel section - and this has to be known at the compile time
 		pUtils->setLock(lockPtr);
 		//cerr<<"THIS IS VolumeTrackerPlugin removing cell "<<deadCellPtr<<" deadCellG->type="<<(int)deadCellPtr->type<<" deadCellG->id="<<deadCellPtr->id<<" thread="<<pUtils->getCurrentWorkNodeNumber()<<endl; 
@@ -150,7 +123,4 @@ void VolumeTrackerPlugin::step() {
                 deadCellVec[pUtils->getCurrentWorkNodeNumber()] = nullptr;
                 pUtils->unsetLock(lockPtr);
 	}
-
-	
 }
-

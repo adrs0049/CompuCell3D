@@ -44,17 +44,17 @@ public:
 
 class SURFACE_EXPORT SurfacePlugin : public Plugin , public EnergyFunction
 {
-    Potts3D *potts;
+    Potts3DPtr potts;
+	bool energyExpressionDefined;
+	ParallelUtilsOpenMP *pUtils;
+	cellFieldPtr cellFieldG;
     CC3DXMLElement *xmlData;
-    ParallelUtilsOpenMP *pUtils;
-    ExpressionEvaluatorDepot eed;
-    bool energyExpressionDefined;
-    std::string pluginName;
+	BoundaryStrategyPtr boundaryStrategy;
+	std::string pluginName;
 
-    BoundaryStrategyPtr boundaryStrategy;
+	ExpressionEvaluatorDepot eed;
     unsigned int maxNeighborIndex;
     LatticeMultiplicativeFactors lmf;
-    WatchableField3D<CellG *> *cellFieldG;
 
 	enum FunctionType {GLOBAL=0,BYCELLTYPE=1,BYCELLID=2};
     FunctionType functionType;
@@ -79,11 +79,10 @@ class SURFACE_EXPORT SurfacePlugin : public Plugin , public EnergyFunction
 public:
     SurfacePlugin()
         : potts ( nullptr ), energyExpressionDefined ( false ), pUtils ( nullptr ),
-          pluginName ( "Surface" ), scaleSurface ( 1.0 ),
-          boundaryStrategy ( nullptr ) {};
+          cellFieldG(nullptr), xmlData(nullptr),
+          boundaryStrategy ( nullptr ), pluginName ( "Surface" ), scaleSurface ( 1.0 )
+	{}
     virtual ~SurfacePlugin();
-
-
 
     // SimObject interface
     virtual void extraInit ( Simulator *simulator ) override;

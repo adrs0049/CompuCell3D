@@ -27,11 +27,14 @@ using namespace std;
 
 #include "ContactPlugin.h"
 
-ContactPlugin::ContactPlugin() : xmlData ( nullptr ), weightDistance ( false ) {}
+ContactPlugin::ContactPlugin() 
+: potts( nullptr), xmlData ( nullptr ), weightDistance ( false ),
+boundaryStrategy(nullptr), automaton(nullptr)
+{}
 
 ContactPlugin::~ContactPlugin() {}
 
-void ContactPlugin::init ( Simulator *simulator, CC3DXMLElement *_xmlData )
+void ContactPlugin::init ( SimulatorPtr simulator, CC3DXMLElement *_xmlData )
 {
     potts=simulator->getPotts();
     xmlData=_xmlData;
@@ -39,7 +42,8 @@ void ContactPlugin::init ( Simulator *simulator, CC3DXMLElement *_xmlData )
     simulator->registerSteerableObject ( this );
 }
 
-void ContactPlugin::extraInit(Simulator *simulator){
+void ContactPlugin::extraInit(Simulator *simulator)
+{
 	update(xmlData,true);
 	Automaton * cellTypePluginAutomaton = potts->getAutomaton();
 	if (cellTypePluginAutomaton)
@@ -48,14 +52,13 @@ void ContactPlugin::extraInit(Simulator *simulator){
 		contactEnergyArray.size() == ((unsigned int)cellTypePluginAutomaton->getMaxTypeId()+1) );
 	}
 }
-
+	
 void ContactPlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
 {
     automaton = potts->getAutomaton();
     ASSERT_OR_THROW ( "CELL TYPE PLUGIN WAS NOT PROPERLY INITIALIZED YET. MAKE SURE THIS IS THE FIRST PLUGIN THAT YOU SET", automaton )
     set<unsigned char> cellTypesSet;
     contactEnergies.clear();
-
 
     if ( potts->getDisplayUnitsFlag() )
     {
@@ -79,7 +82,7 @@ void ContactPlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
 
     CC3DXMLElementList energyVec=_xmlData->getElements ( "Energy" );
 
-    for ( int i = 0 ; i<energyVec.size(); ++i )
+    for ( unsigned int i = 0 ; i<energyVec.size(); ++i )
     {
         setContactEnergy ( energyVec[i]->getAttribute ( "Type1" ), energyVec[i]->getAttribute ( "Type2" ), energyVec[i]->getDouble() );
         //inserting all the types to the set (duplicate are automatically eleminated) to figure out max value of type Id
@@ -145,12 +148,10 @@ void ContactPlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
 double ContactPlugin::changeEnergy ( const Point3D &pt,const CellG *newCell,const CellG *oldCell )
 {
     double energy = 0;
-    unsigned int token = 0;
-    double distance = 0;
     Point3D n;
 
     CellG *nCell = nullptr;
-    WatchableField3D<CellG *> *fieldG = ( WatchableField3D<CellG *> * ) potts->getCellFieldG();
+    auto fieldG = potts->getCellFieldG();
     Neighbor neighbor;
 
     if ( weightDistance )

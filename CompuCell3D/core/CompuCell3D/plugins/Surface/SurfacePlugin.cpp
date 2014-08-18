@@ -29,13 +29,13 @@ using namespace std;
 
 SurfacePlugin::~SurfacePlugin() {}
 
-void SurfacePlugin::init ( Simulator *simulator, CC3DXMLElement *_xmlData )
+void SurfacePlugin::init ( SimulatorPtr simulator, CC3DXMLElement *_xmlData )
 {
     potts = simulator->getPotts();
-    cellFieldG = ( WatchableField3D<CellG *>* ) potts->getCellFieldG();
+    cellFieldG = potts->getCellFieldG();
 
     bool pluginAlreadyRegisteredFlag;
-    auto plugin=std::static_pointer_cast<SurfaceTrackerPlugin> ( Simulator::pluginManager.get ( "SurfaceTracker",&pluginAlreadyRegisteredFlag ) ); //this will load SurfaceTracker plugin if it is not already loaded
+	auto plugin = get_plugin<SurfaceTrackerPlugin>("SurfaceTracker", &pluginAlreadyRegisteredFlag);
     cerr<<"GOT HERE BEFORE CALLING INIT"<<endl;
     if ( !pluginAlreadyRegisteredFlag )
         plugin->init ( simulator );
@@ -138,7 +138,7 @@ void SurfacePlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
 
         CC3DXMLElementList energyVec=_xmlData->getElements ( "SurfaceEnergyParameters" );
 
-        for ( int i = 0 ; i<energyVec.size(); ++i )
+        for ( unsigned int i = 0 ; i<energyVec.size(); ++i )
         {
             SurfaceEnergyParam surParam;
 
@@ -153,7 +153,7 @@ void SurfacePlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
                                  typeIdVec.end() );
         int maxTypeId=*pos;
         surfaceEnergyParamVector.assign ( maxTypeId+1,SurfaceEnergyParam() );
-        for ( int i = 0 ; i < surfaceEnergyParamVectorTmp.size() ; ++i )
+        for ( unsigned int i = 0 ; i < surfaceEnergyParamVectorTmp.size() ; ++i )
         {
             surfaceEnergyParamVector[typeIdVec[i]]=surfaceEnergyParamVectorTmp[i];
         }
@@ -185,7 +185,7 @@ void SurfacePlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
     boundaryStrategy=BoundaryStrategy::getInstance();
 }
 
-void SurfacePlugin::extraInit ( Simulator *simulator )
+void SurfacePlugin::extraInit ( SimulatorPtr simulator )
 {
     update ( xmlData );
 }
@@ -227,7 +227,6 @@ double SurfacePlugin::diffEnergy ( double lambda, double targetSurface,double su
 {
     if ( !energyExpressionDefined )
     {
-
         return lambda * ( diff*diff + 2 * diff * ( surface - fabs ( targetSurface ) ) );
     }
     else
@@ -248,17 +247,14 @@ double SurfacePlugin::diffEnergy ( double lambda, double targetSurface,double su
         energyAfter=ev.eval();
 
         return energyAfter-energyBefore;
-
     }
 }
 
 double SurfacePlugin::changeEnergyGlobal ( const Point3D &pt, const CellG *newCell,const CellG *oldCell )
 {
-
-    double energy = 0.0;
-
     if ( oldCell == newCell ) return 0.0;
 
+	double energy = 0.0;
     pair<double,double> newOldDiffs=getNewOldSurfaceDiffs ( pt,newCell,oldCell );
 
     if ( newCell )
@@ -271,23 +267,16 @@ double SurfacePlugin::changeEnergyGlobal ( const Point3D &pt, const CellG *newCe
         energy += diffEnergy ( lambdaSurface , targetSurface , oldCell->surface*scaleSurface, newOldDiffs.second*scaleSurface );
     }
 
-
-//       cerr<<"Surface Global Energy="<<energy<<endl;
     return energy;
-
 }
 
 double SurfacePlugin::changeEnergyByCellType ( const Point3D &pt,
         const CellG *newCell,
         const CellG *oldCell )
 {
-
-    /// E = lambda * (surface - targetSurface) ^ 2
-
-    double energy = 0.0;
-
     if ( oldCell == newCell ) return 0.0;
 
+	double energy = 0.0;
     pair<double,double> newOldDiffs=getNewOldSurfaceDiffs ( pt,newCell,oldCell );
 
     if ( newCell )
@@ -309,15 +298,10 @@ double SurfacePlugin::changeEnergyByCellId ( const Point3D &pt,
         const CellG *newCell,
         const CellG *oldCell )
 {
-
-    /// E = lambda * (surface - targetSurface) ^ 2
-
-    double energy = 0.0;
-
     if ( oldCell == newCell ) return 0.0;
 
-    pair<double,double> newOldDiffs=getNewOldSurfaceDiffs ( pt,newCell,oldCell );
-
+	double energy = 0.0;
+	pair<double,double> newOldDiffs=getNewOldSurfaceDiffs ( pt,newCell,oldCell );
     if ( newCell )
     {
         energy += diffEnergy ( newCell->lambdaSurface , newCell->targetSurface , newCell->surface*scaleSurface, newOldDiffs.first * scaleSurface );
@@ -328,18 +312,14 @@ double SurfacePlugin::changeEnergyByCellId ( const Point3D &pt,
         energy += diffEnergy ( oldCell->lambdaSurface , oldCell->targetSurface , oldCell->surface*scaleSurface, newOldDiffs.second*scaleSurface );
     }
 
-
 //       cerr<<"Surface By Id Energy="<<energy<<endl;
     return energy;
 }
 
 double SurfacePlugin::changeEnergy ( const Point3D &pt,const CellG *newCell,const CellG *oldCell )
 {
-
     /// E = lambda * (surface - targetSurface) ^ 2
     return ( this->*changeEnergyFcnPtr ) ( pt,newCell,oldCell );
-
-
 }
 
 std::string SurfacePlugin::steerableName()

@@ -23,31 +23,20 @@ namespace CompuCell3D {
 	class PixelTrackerData;
 
     class CLUSTERSURFACETRACKER_EXPORT  ClusterSurfaceTrackerPlugin : public Plugin  ,public CellGChangeWatcher {
-        
-    private:    
-                        
-        CC3DXMLElement *xmlData;        
-        
-        Potts3D *potts;
-        
-        Simulator *sim;
-        
         ParallelUtilsOpenMP *pUtils;            
-        
-        ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;        
-
-        Automaton *automaton;
-
+        ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;    
+		CC3DXMLElement *xmlData;        
+        Potts3DPtr potts;
+        SimulatorPtr sim;
+        AutomatonPtr automaton;
         BoundaryStrategyPtr boundaryStrategy;
         LatticeMultiplicativeFactors lmf;
-        WatchableField3D<CellG *> *cellFieldG;
+        cellFieldPtr cellFieldG;
         unsigned int maxNeighborIndex;
 
 		std::shared_ptr<PixelTrackerPlugin> pixelTrackerPlugin;
 		BasicClassAccessor<PixelTracker> *pixelTrackerAccessorPtr;
-        
     public:
-
         ClusterSurfaceTrackerPlugin();
         virtual ~ClusterSurfaceTrackerPlugin();
 

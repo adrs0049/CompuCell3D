@@ -22,21 +22,20 @@ template <class T> class WatchableField3D;
 
 class POLARIZATION23_EXPORT  Polarization23Plugin : public Plugin ,public EnergyFunction
 {
-
 private:
-    BasicClassAccessor<Polarization23Data> polarization23DataAccessor;
-    CC3DXMLElement *xmlData;
-    Potts3D *potts;
-    Simulator *sim;
-    ParallelUtilsOpenMP *pUtils;
+	BasicClassAccessor<Polarization23Data> polarization23DataAccessor;
+	
+	ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
-    Automaton *automaton;
+    CC3DXMLElement *xmlData;
+    Potts3DPtr potts;
+    SimulatorPtr sim;
+    AutomatonPtr automaton;
     BoundaryStrategyPtr boundaryStrategy;
-    WatchableField3D<CellG *> *cellFieldG;
+    cellFieldPtr cellFieldG;
     Dim3D fieldDim;
 
 public:
-
     Polarization23Plugin();
     virtual ~Polarization23Plugin();
 

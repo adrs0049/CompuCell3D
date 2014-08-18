@@ -20,7 +20,7 @@ void ExternalPotentialPlugin::init(Simulator *_simulator, CC3DXMLElement *_xmlDa
   
   xmlData=_xmlData;
   potts = _simulator->getPotts();
-  cellFieldG=(WatchableField3D<CellG *> * )potts->getCellFieldG();
+  cellFieldG = potts->getCellFieldG();
   simulator=_simulator;
 
 	bool pluginAlreadyRegisteredFlag;

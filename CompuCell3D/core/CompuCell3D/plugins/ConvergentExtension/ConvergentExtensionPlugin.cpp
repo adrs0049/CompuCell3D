@@ -32,7 +32,7 @@ ConvergentExtensionPlugin::ConvergentExtensionPlugin() : xmlData ( nullptr ) {}
 ConvergentExtensionPlugin::~ConvergentExtensionPlugin()
 {}
 
-void ConvergentExtensionPlugin::init ( Simulator *simulator, CC3DXMLElement *_xmlData )
+void ConvergentExtensionPlugin::init ( SimulatorPtr simulator, CC3DXMLElement *_xmlData )
 {
     potts=simulator->getPotts();
     xmlData=_xmlData;
@@ -45,7 +45,7 @@ void ConvergentExtensionPlugin::init ( Simulator *simulator, CC3DXMLElement *_xm
         plugin->init ( simulator );
 }
 
-void ConvergentExtensionPlugin::extraInit ( Simulator *simulator )
+void ConvergentExtensionPlugin::extraInit ( SimulatorPtr simulator )
 {
     update ( xmlData,true );
 }
@@ -61,11 +61,9 @@ void ConvergentExtensionPlugin::update ( CC3DXMLElement *_xmlData, bool _fullIni
     typeNameAlphaConvExtMap.clear();
     CC3DXMLElementList alphaVec=_xmlData->getElements ( "Alpha" );
 
-    for ( int i = 0 ; i<alphaVec.size(); ++i )
+    for ( unsigned int i = 0 ; i<alphaVec.size(); ++i )
     {
         typeNameAlphaConvExtMap.insert ( make_pair ( alphaVec[i]->getAttribute ( "Type" ),alphaVec[i]->getDouble() ) );
-
-
         //inserting all the types to the set (duplicate are automatically eleminated) to figure out max value of type Id
         cellTypesSet.insert ( automaton->getTypeId ( alphaVec[i]->getAttribute ( "Type" ) ) );
     }
@@ -77,7 +75,6 @@ void ConvergentExtensionPlugin::update ( CC3DXMLElement *_xmlData, bool _fullIni
     maxTypeId=size;
     size+=1;//if max element is e.g. 5 then size has to be 6 for an array to be properly allocated
 
-    int index ;
     alphaConvExtVec.assign ( size,0.0 );
     //inserting alpha values to alphaConvExtVec;
     for ( auto &elem : typeNameAlphaConvExtMap )
@@ -122,18 +119,11 @@ void ConvergentExtensionPlugin::update ( CC3DXMLElement *_xmlData, bool _fullIni
 
 double ConvergentExtensionPlugin::changeEnergy ( const Point3D &pt,const CellG *newCell,const CellG *oldCell )
 {
-
-    //cerr<<"ChangeEnergy"<<endl;
-    // Assumption simulation is 2D in xy plane
-
     double energy = 0;
-    unsigned int token = 0;
-    double distance = 0;
-    double nCellAlpha,cellAlpha;
     Point3D n;
 
     CellG *nCell = nullptr;
-    WatchableField3D<CellG *> *fieldG = ( WatchableField3D<CellG *> * ) potts->getCellFieldG();
+    auto fieldG = potts->getCellFieldG();
     Neighbor neighbor;
     Coordinates3D<double> ptTrans=boundaryStrategy->calculatePointCoordinates ( pt );
 
@@ -520,6 +510,7 @@ std::string ConvergentExtensionPlugin::steerableName()
 {
     return "ConvergentExtansion";
 }
+
 std::string ConvergentExtensionPlugin::toString()
 {
     return steerableName();

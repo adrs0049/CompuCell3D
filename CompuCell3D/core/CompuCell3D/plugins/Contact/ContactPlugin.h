@@ -35,31 +35,29 @@ class Automaton;
 
 class CONTACT_EXPORT ContactPlugin : public Plugin,public EnergyFunction
 {
-    Potts3D *potts;
+    Potts3DPtr potts;
+	CC3DXMLElement *xmlData;
+	bool weightDistance;
+	BoundaryStrategyPtr boundaryStrategy;
+	AutomatonPtr automaton;
 
     typedef std::map<int, double> contactEnergies_t;
     typedef std::vector<std::vector<double> > contactEnergyArray_t;
 
     contactEnergies_t contactEnergies;
-
     contactEnergyArray_t contactEnergyArray;
 
     std::string autoName;
     double depth;
-
-    Automaton *automaton;
-    bool weightDistance;
     unsigned int maxNeighborIndex;
-    BoundaryStrategyPtr boundaryStrategy;
-    CC3DXMLElement *xmlData;
 
 public:
     ContactPlugin();
     virtual ~ContactPlugin();
     //Plugin interface
-    virtual void init ( Simulator *simulator,
+    virtual void init ( SimulatorPtr simulator,
                         CC3DXMLElement *_xmlData ) override;
-    virtual void extraInit ( Simulator *simulator ) override;
+    virtual void extraInit ( SimulatorPtr simulator ) override;
 
     //EnergyFunction Interface
     virtual double changeEnergy ( const Point3D &pt,

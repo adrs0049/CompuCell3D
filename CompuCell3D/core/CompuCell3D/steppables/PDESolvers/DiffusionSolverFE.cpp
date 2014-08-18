@@ -203,7 +203,7 @@ void DiffusionSolverFE<Cruncher>::init(Simulator *_simulator, CC3DXMLElement *_x
 	///getting field ptr from Potts3D
 	///**
 	//   cellFieldG=potts->getCellFieldG();
-	cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG = potts->getCellFieldG();
 	fieldDim=cellFieldG->getDim();
 
 

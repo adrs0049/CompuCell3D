@@ -26,10 +26,11 @@ using namespace std;
 
 #include "UniformFieldInitializer.h"
 
-UniformFieldInitializer::UniformFieldInitializer() :
-potts(nullptr),sim(nullptr) {}
+UniformFieldInitializer::UniformFieldInitializer() 
+: potts(nullptr),sim(nullptr) {}
 
-void UniformFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlData){
+void UniformFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlData)
+{
 	sim=simulator;
 	potts = simulator->getPotts();   
 	WatchableField3D<CellG *> *cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
@@ -93,136 +94,150 @@ void UniformFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlD
 	}
 }
 
-void UniformFieldInitializer::layOutCells(const UniformFieldInitializerData & _initData){
+void UniformFieldInitializer::layOutCells ( const UniformFieldInitializerData & _initData )
+{
+    int size = _initData.gap + _initData.width;
+    int cellWidth=_initData.width;
 
-	int size = _initData.gap + _initData.width;
-	int cellWidth=_initData.width;
+    auto cellField = potts->getCellFieldG();
+    ASSERT_OR_THROW ( "initField() Cell field cannot be null!", cellField );
 
-	WatchableField3D<CellG *> *cellField = (WatchableField3D<CellG *> *)potts->getCellFieldG();
-	ASSERT_OR_THROW("initField() Cell field cannot be null!", cellField);
+    Dim3D dim = cellField->getDim();
+    Point3D boxDim=_initData.boxMax-_initData.boxMin;
+    cerr<<" _initData.boxMin "<<_initData.boxMin<<" _initData.boxMax="<<_initData.boxMax<<" dim="<<dim<<endl;
 
-	Dim3D dim = cellField->getDim();
-	Point3D boxDim=_initData.boxMax-_initData.boxMin;
-	cerr<<" _initData.boxMin "<<_initData.boxMin<<" _initData.boxMax="<<_initData.boxMax<<" dim="<<dim<<endl;
+    ASSERT_OR_THROW ( " BOX DOES NOT FIT INTO LATTICE ",
+                      _initData.boxMin.x>=0 && _initData.boxMin.y>=0 && _initData.boxMin.z>=0
+                      && _initData.boxMax.x<=dim.x
+                      && _initData.boxMax.y<=dim.y
+                      && _initData.boxMax.z<=dim.z
+                    );
 
-	ASSERT_OR_THROW(" BOX DOES NOT FIT INTO LATTICE ",
-		_initData.boxMin.x>=0 && _initData.boxMin.y>=0 && _initData.boxMin.z>=0 
-		&& _initData.boxMax.x<=dim.x 
-		&& _initData.boxMax.y<=dim.y 
-		&& _initData.boxMax.z<=dim.z
-		);
+    Dim3D itDim;
+    itDim.x = boxDim.x / size;
+    if ( boxDim.x % size ) itDim.x += 1;
+    itDim.y = boxDim.y / size;
+    if ( boxDim.y % size ) itDim.y += 1;
+    itDim.z = boxDim.z / size;
+    if ( boxDim.z % size ) itDim.z += 1;
 
-	Dim3D itDim;
-	itDim.x = boxDim.x / size;
-	if (boxDim.x % size) itDim.x += 1;
-	itDim.y = boxDim.y / size;
-	if (boxDim.y % size) itDim.y += 1;
-	itDim.z = boxDim.z / size;
-	if (boxDim.z % size) itDim.z += 1;
+    cerr<<"itDim="<<itDim<<endl;
+    Point3D pt;
+    Point3D cellPt;
+    CellG *cell;
 
-	cerr<<"itDim="<<itDim<<endl;
-	Point3D pt;
-	Point3D cellPt;
-	CellG *cell;
+    for ( int z = 0; z < itDim.z; z++ )
+        for ( int y = 0; y < itDim.y; y++ )
+            for ( int x = 0; x < itDim.x; x++ )
+            {
+                pt.x = _initData.boxMin.x + x * size;
+                pt.y = _initData.boxMin.y + y * size;
+                pt.z = _initData.boxMin.z + z * size;
+                //cerr<<" pt="<<pt<<endl;
 
-	for (int z = 0; z < itDim.z; z++)
-		for (int y = 0; y < itDim.y; y++)
-			for (int x = 0; x < itDim.x; x++) {
-				pt.x = _initData.boxMin.x + x * size;
-				pt.y = _initData.boxMin.y + y * size;
-				pt.z = _initData.boxMin.z + z * size;
-				//cerr<<" pt="<<pt<<endl;
+                if ( BoundaryStrategy::getInstance()->isValid ( pt ) )
+                {
+                    cell = potts->createCellG ( pt );
+                    cell->type=initCellType ( _initData );
+                    potts->runSteppers(); //used to ensure that VolumeTracker Plugin step fcn gets called every time we do something to the fields
+                    //It is necessary to do it this way because steppers are called only when we are performing pixel copies
+                    // but if we initialize steppers are not called thus is you overwrite a cell here it will not get removed from
+                    //inventory unless you call steppers(VolumeTrackerPlugin) explicitely
 
-				if (BoundaryStrategy::getInstance()->isValid(pt)){
-					cell = potts->createCellG(pt);
-					cell->type=initCellType(_initData);
-					potts->runSteppers(); //used to ensure that VolumeTracker Plugin step fcn gets called every time we do something to the fields
-					//It is necessary to do it this way because steppers are called only when we are performing pixel copies
-					// but if we initialize steppers are not called thus is you overwrite a cell here it will not get removed from
-					//inventory unless you call steppers(VolumeTrackerPlugin) explicitely
+                }
+                else
+                {
+                    continue;
+                }
 
-				}
-				else{
-					continue;
-				}
+                for ( cellPt.z = pt.z; cellPt.z < pt.z + cellWidth &&
+                        cellPt.z < dim.z; cellPt.z++ )
+                    for ( cellPt.y = pt.y; cellPt.y < pt.y + cellWidth &&
+                            cellPt.y < dim.y; cellPt.y++ )
+                        for ( cellPt.x = pt.x; cellPt.x < pt.x + cellWidth &&
+                                cellPt.x < dim.x; cellPt.x++ )
+                        {
 
-				for (cellPt.z = pt.z; cellPt.z < pt.z + cellWidth &&
-					cellPt.z < dim.z; cellPt.z++)
-					for (cellPt.y = pt.y; cellPt.y < pt.y + cellWidth &&
-						cellPt.y < dim.y; cellPt.y++)
-						for (cellPt.x = pt.x; cellPt.x < pt.x + cellWidth &&
-							cellPt.x < dim.x; cellPt.x++){
+                            if ( BoundaryStrategy::getInstance()->isValid ( pt ) )
+                                cellField->set ( cellPt, cell );
 
-								if (BoundaryStrategy::getInstance()->isValid(pt))
-									cellField->set(cellPt, cell);
-
-						}
-						potts->runSteppers(); //used to ensure that VolumeTracker Plugin step fcn gets called every time we do something to the fields
-						//It is necessary to do it this way because steppers are called only when we are performing pixel copies
-						// but if we initialize steppers are not called thus is you overwrite a cell here it will not get removed from
-						//inventory unless you call steppers(VolumeTrackerPlugin) explicitely
-			}
+                        }
+                potts->runSteppers(); //used to ensure that VolumeTracker Plugin step fcn gets called every time we do something to the fields
+                //It is necessary to do it this way because steppers are called only when we are performing pixel copies
+                // but if we initialize steppers are not called thus is you overwrite a cell here it will not get removed from
+                //inventory unless you call steppers(VolumeTrackerPlugin) explicitely
+            }
 }
 
-unsigned char UniformFieldInitializer::initCellType(const UniformFieldInitializerData & _initData){
-	Automaton * automaton=potts->getAutomaton();
-	if(_initData.typeNames.size()==0){//by default each newly created type will be 1 
-		return 1;
-	}/*else if (_initData.typeNames.size()==1){ //user specifie just one type
+unsigned char UniformFieldInitializer::initCellType ( const UniformFieldInitializerData & _initData )
+{
+    AutomatonPtr automaton=potts->getAutomaton();
+    if ( _initData.typeNames.size() ==0 ) //by default each newly created type will be 1
+    {
+        return 1;
+    }/*else if (_initData.typeNames.size()==1){ //user specifie just one type
 	 return automaton->getTypeId(_initData.typeNames[0]);
-	 }*/else{ //user has specified more than one cell type - will pick randomly the type
-		 BasicRandomNumberGenerator * randGen=BasicRandomNumberGenerator::getInstance();
-		 int index = randGen->getInteger(0, _initData.typeNames.size()-1);
+	 }*/else  //user has specified more than one cell type - will pick randomly the type
+    {
+        BasicRandomNumberGenerator * randGen=BasicRandomNumberGenerator::getInstance();
+        int index = randGen->getInteger ( 0, _initData.typeNames.size()-1 );
 
-		 //cerr<<"automaton="<<automaton<<endl;
-		 //cerr<<"index="<<index<<" _initData.typeNames.size()="<<_initData.typeNames.size()<<endl;
+        //cerr<<"automaton="<<automaton<<endl;
+        //cerr<<"index="<<index<<" _initData.typeNames.size()="<<_initData.typeNames.size()<<endl;
 
-		 return automaton->getTypeId(_initData.typeNames[index]);
-	}
+        return automaton->getTypeId ( _initData.typeNames[index] );
+    }
 
 }
 
-void UniformFieldInitializer::start() {
-	if (sim->getRestartEnabled()){
-		return ;  // we will not initialize cells if restart flag is on
-	}
-	cerr<<"INSIDE START"<<endl;
+void UniformFieldInitializer::start()
+{
+    if ( sim->getRestartEnabled() )
+    {
+        return ;  // we will not initialize cells if restart flag is on
+    }
+    cerr<<"INSIDE START"<<endl;
 
-	WatchableField3D<CellG *> *cellField =(WatchableField3D<CellG *> *) potts->getCellFieldG();
-	ASSERT_OR_THROW("initField() Cell field cannot be null!", cellField);
+    auto cellField = potts->getCellFieldG();
+    ASSERT_OR_THROW ( "initField() Cell field cannot be null!", cellField );
 
-	if(initDataVec.size()!=0){
-		for (const auto& data : initDataVec)
-			layOutCells(data);
-	}else{
-		layOutCells(oldStyleInitData);
-	}
+    if ( initDataVec.size() !=0 )
+    {
+        for ( const auto& data : initDataVec )
+            layOutCells ( data );
+    }
+    else
+    {
+        layOutCells ( oldStyleInitData );
+    }
 }
 
 void UniformFieldInitializer::initializeCellTypes()
 {
-	BasicRandomNumberGenerator *rand = BasicRandomNumberGenerator::getInstance();
+    BasicRandomNumberGenerator *rand = BasicRandomNumberGenerator::getInstance();
+    cellInventoryPtr=& potts->getCellInventory();
 
-	cellInventoryPtr=& potts->getCellInventory();
+    ///will initialize cell type here depending on the position of the cells
+    CellInventory::cellInventoryIterator cInvItr;
+    ///loop over all the cells in the inventory
+    Point3D com;
+    CellG * cell;
 
-	///will initialize cell type here depending on the position of the cells
-	CellInventory::cellInventoryIterator cInvItr;
-	///loop over all the cells in the inventory
-	Point3D com;
-	CellG * cell;
+    for ( cInvItr=cellInventoryPtr->cellInventoryBegin() ; cInvItr !=cellInventoryPtr->cellInventoryEnd() ; ++cInvItr )
+    {
 
-	for(cInvItr=cellInventoryPtr->cellInventoryBegin() ; cInvItr !=cellInventoryPtr->cellInventoryEnd() ;++cInvItr ){
-
-		cell=cellInventoryPtr->getCell(cInvItr);
-		cell->type=rand->getInteger(0,1)+1;
-		cell->type=1;
-	}
+        cell=cellInventoryPtr->getCell ( cInvItr );
+        cell->type=rand->getInteger ( 0,1 ) +1;
+        cell->type=1;
+    }
 }
 
-std::string UniformFieldInitializer::steerableName(){
-	return toString();
+std::string UniformFieldInitializer::steerableName()
+{
+    return toString();
 }
 
-std::string UniformFieldInitializer::toString(){
-	return "UniformInitializer";
+std::string UniformFieldInitializer::toString()
+{
+    return "UniformInitializer";
 }

@@ -44,7 +44,7 @@ SecretionPlugin::SecretionPlugin()
 SecretionPlugin::~SecretionPlugin()
 {}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void SecretionPlugin::init ( Simulator *simulator, CC3DXMLElement *_xmlData )
+void SecretionPlugin::init ( SimulatorPtr simulator, CC3DXMLElement *_xmlData )
 {
     xmlData=_xmlData;
     sim=simulator;
@@ -56,29 +56,20 @@ void SecretionPlugin::init ( Simulator *simulator, CC3DXMLElement *_xmlData )
     // REMARK: Secretion plugin is to be used to do "per cell" secretion (using python scripting) 
 
     potts = sim->getPotts();
-    cellFieldG= ( WatchableField3D<CellG*> * ) potts->getCellFieldG();
-
+    cellFieldG=  potts->getCellFieldG();
     fieldDim=cellFieldG->getDim();
-
     pUtils=simulator->getParallelUtils();
-
     automaton=potts->getAutomaton();
-
     potts->registerFixedStepper ( this,true ); //by putting true flag as second argument I ensure that secretion fixed stepper will be registered as first module
     //This is quick hack though not a very robust solution. We have to write CC3D scheduler...
-
     sim->registerSteerableObject ( this );
-
     boundaryStrategy=BoundaryStrategy::getInstance();
     maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromNeighborOrder ( 1 );
-
 
     bool comPluginAlreadyRegisteredFlag;
     auto plugin=Simulator::pluginManager.get ( "CenterOfMass",&comPluginAlreadyRegisteredFlag ); //this will load Center Of Mass plugin if not already loaded
     if ( !comPluginAlreadyRegisteredFlag )
         plugin->init ( simulator );
-
-
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void SecretionPlugin::extraInit ( Simulator *simulator )
@@ -536,7 +527,7 @@ void SecretionPlugin::secreteOnContactSingleField ( unsigned int idx )
         Point3D pt;
         Neighbor n;
         CellG *nCell = nullptr;
-        WatchableField3D<CellG *> *fieldG = ( WatchableField3D<CellG *> * ) potts->getCellFieldG();
+        auto fieldG = potts->getCellFieldG();
         unsigned char type;
 
         int threadNumber=pUtils->getCurrentWorkNodeNumber();

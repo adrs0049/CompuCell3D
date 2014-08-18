@@ -28,11 +28,10 @@ using namespace CompuCell3D;
 CompartmentPlugin::CompartmentPlugin()
     : potts(nullptr), depth(1), weightDistance(false) {}
 
-CompartmentPlugin::~CompartmentPlugin() {
-  
-}
+CompartmentPlugin::~CompartmentPlugin() 
+{}
 
-void CompartmentPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
+void CompartmentPlugin::init(SimulatorPtr simulator, CC3DXMLElement *_xmlData) {
 
   xmlData=_xmlData;
   potts=simulator->getPotts();
@@ -41,7 +40,7 @@ void CompartmentPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
 
 }
 
-void CompartmentPlugin::extraInit(Simulator *simulator){
+void CompartmentPlugin::extraInit(SimulatorPtr simulator){
 	update(xmlData,true);
 }
 
@@ -58,15 +57,9 @@ double CompartmentPlugin::changeEnergy(const Point3D &pt,
   Neighbor neighbor;
 
   CellG *nCell = nullptr;
-  WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG*>*)potts->getCellFieldG();
+  auto fieldG = potts->getCellFieldG();
 
    if(weightDistance){
-
-//       while (true) {
-//          n = fieldG->getNeighbor(pt, token, distance, false);
-//          if (distance > depth) break;
-// 
-//          nCell = fieldG->get(n);
       for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
          neighbor=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(pt),nIdx);
          if(!neighbor.distance){
@@ -83,12 +76,6 @@ double CompartmentPlugin::changeEnergy(const Point3D &pt,
          }
       }
   }else{
-   //default behaviour  no energy weighting 
-//       while (true) {
-//          n = fieldG->getNeighbor(pt, token, distance, false);
-//          if (distance > depth) break;
-// 
-//          nCell = fieldG->get(n);
       for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ){
          neighbor=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(pt),nIdx);
          if(!neighbor.distance){

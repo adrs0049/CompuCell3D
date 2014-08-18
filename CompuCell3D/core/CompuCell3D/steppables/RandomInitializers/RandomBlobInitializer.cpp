@@ -47,11 +47,11 @@ RandomBlobInitializer::~RandomBlobInitializer(){
     if (builder) delete builder;
 }
 
-void RandomBlobInitializer::init(Simulator *_simulator, CC3DXMLElement *_xmlData) {
+void RandomBlobInitializer::init(SimulatorPtr _simulator, CC3DXMLElement *_xmlData) {
 	cout << "START randomblob\n";
 	simulator = _simulator;
 	potts = _simulator->getPotts();
-	cellField = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellField = potts->getCellFieldG();
 	ASSERT_OR_THROW("initField() Cell field G cannot be null!", cellField);
 	dim=cellField->getDim();
 	cellInventoryPtr = & potts->getCellInventory();
@@ -64,7 +64,7 @@ void RandomBlobInitializer::update(CC3DXMLElement *_xmlData, bool _fullInitFlag)
     setParameters(simulator,_xmlData);
 }
 
-void RandomBlobInitializer::setParameters(Simulator *_simulator, CC3DXMLElement *_xmlData){
+void RandomBlobInitializer::setParameters(SimulatorPtr _simulator, CC3DXMLElement *_xmlData){
 	// initiate random generator
 	rand = BasicRandomNumberGenerator::getInstance();
 	if(_xmlData->getFirstElement("seed"))

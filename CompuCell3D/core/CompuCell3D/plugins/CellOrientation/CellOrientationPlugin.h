@@ -26,7 +26,8 @@
 #include <CompuCell3D/CC3D_plugin.h>
 #include "CellOrientationDLLSpecifier.h"
 
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 class CellOrientationEnergy;
 class PolarizationVector;
 class Point3D;
@@ -36,68 +37,72 @@ class LambdaCellOrientation;
 
 template <class T> class Field3D;
 
-class CELLORIENTATION_EXPORT LambdaCellOrientation {
+class CELLORIENTATION_EXPORT LambdaCellOrientation
+{
 public:
-     LambdaCellOrientation() :lambdaVal ( 0.0 ) {}
-     double  lambdaVal;
+    LambdaCellOrientation() :lambdaVal ( 0.0 ) {}
+    double  lambdaVal;
 };
 
-class CELLORIENTATION_EXPORT CellOrientationPlugin : public Plugin,public EnergyFunction {
-     Field3D<CellG *> *cellFieldG;
+class CELLORIENTATION_EXPORT CellOrientationPlugin : public Plugin,public EnergyFunction
+{
+    cellFieldPtr cellFieldG;
 
 public:
-	 // ATTENTION SIWG doesnt know about using yet
-     //using PolVectorAccessor_t = BasicClassAccessor<PolarizationVector>;
-     //using DataAccessor_t = BasicClassAccessor<LambdaCellOrientation>;
-	 typedef BasicClassAccessor<PolarizationVector> PolVectorAccessor_t;
-     typedef BasicClassAccessor<LambdaCellOrientation> DataAccessor_t;
+    // ATTENTION SIWG doesnt know about using yet
+    //using PolVectorAccessor_t = BasicClassAccessor<PolarizationVector>;
+    //using DataAccessor_t = BasicClassAccessor<LambdaCellOrientation>;
+    typedef BasicClassAccessor<PolarizationVector> PolVectorAccessor_t;
+    typedef BasicClassAccessor<LambdaCellOrientation> DataAccessor_t;
 
 private:
-	 DataAccessor_t lambdaCellOrientationAccessor;
+    DataAccessor_t lambdaCellOrientationAccessor;
 
-     //EnergyFunction data
-     Potts3D *potts;
-     double lambdaCellOrientation;
-     Simulator *simulator;
-     Dim3D fieldDim;
-     PolVectorAccessor_t *polarizationVectorAccessorPtr;
-     BoundaryStrategyPtr boundaryStrategy;
+    //EnergyFunction data
+    Potts3DPtr potts;
+    double lambdaCellOrientation;
+    SimulatorPtr simulator;
+    Dim3D fieldDim;
+    PolVectorAccessor_t *polarizationVectorAccessorPtr;
+    BoundaryStrategyPtr boundaryStrategy;
 
-     bool lambdaFlexFlag;
+    bool lambdaFlexFlag;
 
 public:
-     CellOrientationPlugin();
-     virtual ~CellOrientationPlugin();
+    CellOrientationPlugin();
+    virtual ~CellOrientationPlugin();
 
-     // SimObject interface
-     virtual void init(Simulator *simulator,
-                       CC3DXMLElement *_xmlData = nullptr) override;
-     virtual void extraInit(Simulator *simulator) override;
+    // SimObject interface
+    virtual void init ( SimulatorPtr simulator,
+                        CC3DXMLElement *_xmlData = nullptr ) override;
+    virtual void extraInit ( SimulatorPtr simulator ) override;
 
-     typedef double ( CellOrientationPlugin::*changeEnergy_t ) ( const Point3D &pt, const CellG *newCell,const CellG *oldCell );
+    typedef double ( CellOrientationPlugin::*changeEnergy_t ) ( const Point3D &pt, const CellG *newCell,const CellG *oldCell );
 
-     CellOrientationPlugin::changeEnergy_t changeEnergyFcnPtr;
+    CellOrientationPlugin::changeEnergy_t changeEnergyFcnPtr;
 
-     //EnergyFunctionInterface
-     virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
-                                 const CellG *oldCell) override;
-     double changeEnergyCOMBased ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
-     double changeEnergyPixelBased ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
+    //EnergyFunctionInterface
+    virtual double changeEnergy ( const Point3D &pt, const CellG *newCell,
+                                  const CellG *oldCell ) override;
+    double changeEnergyCOMBased ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
+    double changeEnergyPixelBased ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
 
-     PolVectorAccessor_t * getPolarizationVectorAccessorPtr() {
-          return polarizationVectorAccessorPtr;
-     }
-     DataAccessor_t * getLambdaCellOrientationAccessorPtr() {
-          return &lambdaCellOrientationAccessor;
-     }
-     void setLambdaCellOrientation ( CellG * _cell, double _lambda );
-     double getLambdaCellOrientation ( CellG * _cell );
+    PolVectorAccessor_t * getPolarizationVectorAccessorPtr()
+    {
+        return polarizationVectorAccessorPtr;
+    }
+    DataAccessor_t * getLambdaCellOrientationAccessorPtr()
+    {
+        return &lambdaCellOrientationAccessor;
+    }
+    void setLambdaCellOrientation ( CellG * _cell, double _lambda );
+    double getLambdaCellOrientation ( CellG * _cell );
 
-     //Steerable interface
-     virtual void update(CC3DXMLElement *_xmlData,
-                         bool _fullInitFlag = false) override;
-     virtual std::string steerableName() override;
-     virtual std::string toString() override;
+    //Steerable interface
+    virtual void update ( CC3DXMLElement *_xmlData,
+                          bool _fullInitFlag = false ) override;
+    virtual std::string steerableName() override;
+    virtual std::string toString() override;
 };
 } // end namespace
 #endif

@@ -48,12 +48,23 @@ private:
 	// ATTENTION SWIG doesnt know about using yet
     //using AdhesionAccessor = BasicClassAccessor<AdhesionFlexData>;
 	typedef BasicClassAccessor<AdhesionFlexData> AdhesionAccessor;
-	AdhesionAccessor adhesionFlexDataAccessor;
-    CC3DXMLElement *xmlData;
-    Potts3D *potts;
-    Simulator *sim;
-    ParallelUtilsOpenMP *pUtils;
+	
+	ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
+		
+    CC3DXMLElement *xmlData;
+    Potts3DPtr potts;
+    SimulatorPtr sim;
+	BoundaryStrategyPtr boundaryStrategy;
+	AdhesionAccessor * adhesionFlexDataAccessorPtr;
+    AutomatonPtr automaton;
+	adhesionFlexEnergyPtr_t adhesionFlexEnergyPtr;
+		
+	bool weightDistance;
+    bool adhesionDensityInitialized;
+	int numberOfAdhesionMolecules;
+	
+    AdhesionAccessor adhesionFlexDataAccessor;
 
 	typedef std::map<int, double> bindingParameters_t;
     typedef std::vector<std::vector<double> > bindingParameterArray_t;
@@ -64,21 +75,11 @@ private:
     std::string contactFunctionType;
     std::string autoName;
     double depth;
+	unsigned int maxNeighborIndex;
 
-    AdhesionAccessor * adhesionFlexDataAccessorPtr;
-
-    Automaton *automaton;
-    bool weightDistance;
-
-    adhesionFlexEnergyPtr_t adhesionFlexEnergyPtr;
-
-    unsigned int maxNeighborIndex;
-    BoundaryStrategyPtr boundaryStrategy;
-
-    bindingParameters_t bindingParameters;
+	bindingParameters_t bindingParameters;
     bindingParameterArray_t bindingParameterArray;
-    int numberOfAdhesionMolecules;
-    bool adhesionDensityInitialized;
+
     std::map<std::string, int> moleculeNameIndexMap;
     std::map<int,std::vector<float> > typeToAdhesionMoleculeDensityMap;
     std::vector<float>  adhesionMoleculeDensityVecMedium;

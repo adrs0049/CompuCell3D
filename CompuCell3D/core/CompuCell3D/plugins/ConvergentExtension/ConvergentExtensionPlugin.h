@@ -36,7 +36,7 @@ class Automaton;
 class CONVERGENTEXTENSION_EXPORT ConvergentExtensionPlugin : public Plugin,public EnergyFunction
 {
 
-    Potts3D *potts;
+    Potts3DPtr potts;
 
     std::set<unsigned char> interactingTypes ;
     std::vector<double> alphaConvExtVec;
@@ -45,7 +45,7 @@ class CONVERGENTEXTENSION_EXPORT ConvergentExtensionPlugin : public Plugin,publi
 
     double depth;
 
-    Automaton *automaton;
+    AutomatonPtr automaton;
 
     unsigned int maxNeighborIndex;
     BoundaryStrategyPtr boundaryStrategy;
@@ -55,9 +55,9 @@ public:
     ConvergentExtensionPlugin();
     virtual ~ConvergentExtensionPlugin();
     //Plugin interface
-    virtual void init ( Simulator *simulator,
+    virtual void init ( SimulatorPtr simulator,
                         CC3DXMLElement *_xmlData ) override;
-    virtual void extraInit ( Simulator *simulator ) override;
+    virtual void extraInit ( SimulatorPtr simulator ) override;
 
     //EnergyFunction Interface
     virtual double changeEnergy ( const Point3D &pt,

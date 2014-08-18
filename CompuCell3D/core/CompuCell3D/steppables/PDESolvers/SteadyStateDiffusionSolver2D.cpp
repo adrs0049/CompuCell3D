@@ -21,24 +21,12 @@
 #include <fstream>
 #include <sstream>
 
-
 #include <time.h>
-
-
 #include "SteadyStateDiffusionSolver2D.h"
-
 #include "hpppdesolvers.h" //have to put this header last to avoid STL header clash on linux
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// std::ostream & operator<<(std::ostream & out,CompuCell3D::DiffusionData & diffData){
-//    
-//    
-// }
-
 
 using namespace CompuCell3D;
 using namespace std;
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void SteadyStateDiffusionSolver2DSerializer::serialize(){
@@ -50,9 +38,7 @@ void SteadyStateDiffusionSolver2DSerializer::serialize(){
 		ofstream outStream(outName.str().c_str());
 		solverPtr->outputField( outStream,solverPtr->concentrationFieldVector[i]);
 	}
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void SteadyStateDiffusionSolver2DSerializer::readFromFile(){
@@ -68,11 +54,7 @@ void SteadyStateDiffusionSolver2DSerializer::readFromFile(){
 		cerr<<"COULD NOT FIND ONE OF THE FILES"<<endl;
 		throw BasicException("Error in reading diffusion fields from file",e);
 	}
-
-
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 SteadyStateDiffusionSolver2D::SteadyStateDiffusionSolver2D()
@@ -92,15 +74,11 @@ SteadyStateDiffusionSolver2D::SteadyStateDiffusionSolver2D()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 SteadyStateDiffusionSolver2D::~SteadyStateDiffusionSolver2D()
 {
-
 	if(serializerPtr)
 		delete serializerPtr ; serializerPtr=0;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void SteadyStateDiffusionSolver2D::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
-
-
-
 
 	simPtr=simulator;
 	potts = simulator->getPotts();
@@ -110,20 +88,15 @@ void SteadyStateDiffusionSolver2D::init(Simulator *simulator, CC3DXMLElement *_x
 	cellInventoryPtr=& potts->getCellInventory(); 
 
 	///getting field ptr from Potts3D
-	cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG=potts->getCellFieldG();
 	fieldDim=cellFieldG->getDim();
 
 	update(_xmlData,true);
 
-
-
 	///setting member function pointers
 	diffusePtr=&SteadyStateDiffusionSolver2D::diffuse;
 	secretePtr=&SteadyStateDiffusionSolver2D::secrete;
-
-
 	numberOfFields=diffSecrFieldTuppleVec.size();
-
 
 	vector<string> concentrationFieldNameVectorTmp; //temporary vector for field names
 	///assign vector of field names
@@ -168,9 +141,6 @@ void SteadyStateDiffusionSolver2D::init(Simulator *simulator, CC3DXMLElement *_x
 		cerr<<"Field "<<i<<" name: "<<concentrationFieldNameVectorTmp[i]<<endl;
 	}
 
-
-
-
 	cerr<<"FlexibleDiffusionSolverFE: extra Init in read XML"<<endl;
 
 	workFieldDim=Dim3D(fieldDim.x+1,fieldDim.y+1,1);
@@ -208,10 +178,6 @@ void SteadyStateDiffusionSolver2D::init(Simulator *simulator, CC3DXMLElement *_x
 		simPtr->registerConcentrationField(concentrationFieldNameVector[i] , concentrationFieldVector[i]);
 		cerr<<"registring field: "<<concentrationFieldNameVector[i]<<" field address="<<concentrationFieldVector[i]<<endl;
 	}
-
-
-
-
 
 	//    exit(0);
 
@@ -265,7 +231,7 @@ void SteadyStateDiffusionSolver2D::extraInit(Simulator *simulator){
 void SteadyStateDiffusionSolver2D::handleEvent(CC3DEvent & _event){
 	
 	if (_event.id==LATTICE_RESIZE){
-		cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+		cellFieldG=potts->getCellFieldG();
 	    
 		CC3DEventLatticeResize ev = static_cast<CC3DEventLatticeResize&>(_event);
 		

@@ -3,11 +3,11 @@ using namespace CompuCell3D;
 #include "Polarization23Plugin.h"
 
 Polarization23Plugin::Polarization23Plugin() :
-    pUtils ( 0 ),
-    lockPtr ( 0 ),
-    xmlData ( 0 ) ,
-    cellFieldG ( 0 ),
-    boundaryStrategy ( 0 )
+    pUtils ( nullptr ),
+    lockPtr ( nullptr ),
+    xmlData ( nullptr ) ,
+    cellFieldG ( nullptr ),
+    boundaryStrategy ( nullptr )
 {}
 
 Polarization23Plugin::~Polarization23Plugin()
@@ -22,7 +22,7 @@ void Polarization23Plugin::init ( Simulator *simulator, CC3DXMLElement *_xmlData
     xmlData=_xmlData;
     sim=simulator;
     potts=simulator->getPotts();
-    cellFieldG = ( WatchableField3D<CellG *> * ) potts->getCellFieldG();
+    cellFieldG = potts->getCellFieldG();
 
     fieldDim=cellFieldG->getDim();
 

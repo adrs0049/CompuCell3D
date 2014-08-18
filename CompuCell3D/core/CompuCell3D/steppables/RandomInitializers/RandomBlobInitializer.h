@@ -20,8 +20,8 @@
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
 
- //Author: Margriet Palm CWI, Netherlands
- 
+//Author: Margriet Palm CWI, Netherlands
+
 #ifndef RANDOMBLOBINITIALIZER_H
 #define RANDOMBLOBINITIALIZER_H
 
@@ -32,41 +32,46 @@
 
 #include "RandomFieldInitializerDLLSpecifier.h"
 
-namespace CompuCell3D {
-  class Potts3D;
+namespace CompuCell3D
+{
+class Potts3D;
 
-  class RANDOMINITIALIZERS_EXPORT RandomBlobInitializer : public Steppable {
-    void setParameters(Simulator *_simulator, CC3DXMLElement *_xmlData);
+class RANDOMINITIALIZERS_EXPORT RandomBlobInitializer : public Steppable
+{
+    void setParameters ( SimulatorPtr _simulator, CC3DXMLElement *_xmlData );
     void divide();
     std::shared_ptr<MitosisSteppable>  mit;
-    Potts3D * potts;
-    Simulator *simulator;
+    Potts3DPtr potts;
+    SimulatorPtr simulator;
     BasicRandomNumberGenerator * rand;
-    WatchableField3D<CellG *> *cellField;
+    cellFieldPtr cellField;
     FieldBuilder * builder;
-	CellInventory * cellInventoryPtr;
+    CellInventory * cellInventoryPtr;
     Dim3D dim,boxMin,boxMax,blobsize,blobpos;
     bool showStats;
-	int ndiv,growsteps,borderTypeID;
+    int ndiv,growsteps,borderTypeID;
 
-  public:
+public:
     RandomBlobInitializer();
     virtual ~RandomBlobInitializer();
-    void setPotts(Potts3D *potts) {this->potts = potts;}
+    void setPotts ( Potts3D *potts )
+    {
+        this->potts = potts;
+    }
 
     // SimObject interface
-    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-	virtual void extraInit(Simulator *simulator);
+    virtual void init ( Simulator *simulator, CC3DXMLElement *_xmlData=0 );
+    virtual void extraInit ( Simulator *simulator );
     // Begin Steppable interface
     virtual void start();
-    virtual void step(const unsigned int currentStep) {}
+    virtual void step ( const unsigned int currentStep ) {}
     virtual void finish() {}
     // End Steppable interface
-    
+
     //SteerableObject interface
-    virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
+    virtual void update ( CC3DXMLElement *_xmlData, bool _fullInitFlag=false );
     virtual std::string steerableName();
-    virtual std::string toString();    
-  };
+    virtual std::string toString();
 };
+} // end namespace
 #endif

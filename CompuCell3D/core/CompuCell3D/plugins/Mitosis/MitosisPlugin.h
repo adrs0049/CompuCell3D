@@ -36,7 +36,7 @@ class MITOSIS_EXPORT MitosisPlugin : public Plugin, public CellGChangeWatcher,
     public Stepper
 {
 protected:
-    Potts3D *potts;
+    Potts3DPtr potts;
     ParallelUtilsOpenMP *pUtils;
     unsigned int doublingVolume;
 

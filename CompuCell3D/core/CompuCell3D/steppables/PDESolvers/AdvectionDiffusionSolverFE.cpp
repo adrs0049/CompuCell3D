@@ -38,7 +38,7 @@ AdvectionDiffusionSolverFE::~AdvectionDiffusionSolverFE()
 
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void AdvectionDiffusionSolverFE::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
+void AdvectionDiffusionSolverFE::init(SimulatorPtr simulator, CC3DXMLElement *_xmlData) {
 
   simPtr=simulator;
   potts = simulator->getPotts();
@@ -49,7 +49,7 @@ void AdvectionDiffusionSolverFE::init(Simulator *simulator, CC3DXMLElement *_xml
   cellInventoryPtr=& potts->getCellInventory(); 
   
   ///getting field ptr from Potts3D
-  cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+  cellFieldG=potts->getCellFieldG();
   fieldDim=cellFieldG->getDim();
 
   update(_xmlData,true);
@@ -112,7 +112,7 @@ void AdvectionDiffusionSolverFE::init(Simulator *simulator, CC3DXMLElement *_xml
 
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void AdvectionDiffusionSolverFE::extraInit(Simulator *simulator){
+void AdvectionDiffusionSolverFE::extraInit(SimulatorPtr simulator){
 
    
 }

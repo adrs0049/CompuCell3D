@@ -65,7 +65,7 @@ void FlexibleDiffusionSolverADE::init(Simulator *_simulator, CC3DXMLElement *_xm
 	///getting field ptr from Potts3D
 	///**
 	//   cellFieldG=potts->getCellFieldG();
-	cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG = potts->getCellFieldG();
 	fieldDim=cellFieldG->getDim();
 
 	cerr<<"INSIDE INIT"<<endl;
@@ -311,7 +311,7 @@ void FlexibleDiffusionSolverADE::secreteOnContactSingleField(unsigned int idx){
 	Point3D pt;
 	Neighbor n;
 	CellG *nCell=0;
-	WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+	auto fieldG = potts->getCellFieldG();
 	unsigned char type;
 
 

@@ -100,7 +100,7 @@ void FlexibleDiffusionSolverFE::init(Simulator *_simulator, CC3DXMLElement *_xml
 	///getting field ptr from Potts3D
 	///**
 	//   cellFieldG=potts->getCellFieldG();
-	cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG = potts->getCellFieldG();
 	fieldDim=cellFieldG->getDim();
 
 
@@ -271,7 +271,7 @@ void FlexibleDiffusionSolverFE::handleEvent(CC3DEvent & _event){
 		return;
 	}
 	
-    cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+    cellFieldG=potts->getCellFieldG();
     
 	CC3DEventLatticeResize ev = static_cast<CC3DEventLatticeResize&>(_event);
 	
@@ -417,7 +417,7 @@ void FlexibleDiffusionSolverFE::secreteOnContactSingleField(unsigned int idx){
 		Point3D pt;
 		Neighbor n;
 		CellG *nCell=0;
-		WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+		auto fieldG = potts->getCellFieldG();
 		unsigned char type;
 
 		int threadNumber=pUtils->getCurrentWorkNodeNumber();

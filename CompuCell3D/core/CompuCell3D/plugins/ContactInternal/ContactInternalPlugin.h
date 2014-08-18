@@ -36,7 +36,7 @@ class Automaton;
 class CONTACTINTERNAL_EXPORT ContactInternalPlugin : public Plugin, public EnergyFunction
 {
     //Energy function data
-    Potts3D *potts;
+    Potts3DPtr potts;
     CC3DXMLElement *xmlData;
     typedef std::map<int, double> contactEnergies_t;
     typedef std::vector<std::vector<double> > contactEnergyArray_t;
@@ -47,7 +47,7 @@ class CONTACTINTERNAL_EXPORT ContactInternalPlugin : public Plugin, public Energ
     std::string autoName;
     double depth;
 
-    Automaton *automaton;
+    AutomatonPtr automaton;
     bool weightDistance;
 
     unsigned int maxNeighborIndex;

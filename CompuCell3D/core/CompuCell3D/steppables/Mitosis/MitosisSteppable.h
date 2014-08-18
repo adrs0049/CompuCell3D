@@ -68,7 +68,7 @@ public:
     BoundaryStrategyPtr boundaryStrategy;
 
     int maxNeighborIndex;
-    Potts3D *potts;
+    Potts3DPtr potts;
 
     bool divideAlongMinorAxisFlag;
     bool divideAlongMajorAxisFlag;

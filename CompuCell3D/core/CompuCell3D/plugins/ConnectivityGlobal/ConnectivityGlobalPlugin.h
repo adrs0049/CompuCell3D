@@ -45,7 +45,7 @@ private:
     DataAccessor_t connectivityGlobalDataAccessor;
     unsigned int maxNeighborIndex;
     BoundaryStrategyPtr boundaryStrategy;
-    Potts3D *potts;
+    Potts3DPtr potts;
     std::vector<double> penaltyVec;
     unsigned char maxTypeId;
     bool doNotPrecheckConnectivity;

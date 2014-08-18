@@ -45,12 +45,12 @@ class CURVATURE_EXPORT CurvaturePlugin : public Plugin,public EnergyFunction, pu
     typedef BasicClassAccessor<CurvatureTracker> TrackerAccessor_t;
 	TrackerAccessor_t curvatureTrackerAccessor;
 
-    Potts3D *potts;
+    Potts3DPtr potts;
 
     std::string autoName;
     double depth;
 
-    Automaton *automaton;
+    AutomatonPtr automaton;
     bool weightDistance;
     unsigned int maxNeighborIndex;
     unsigned int maxNeighborIndexJunctionMove;

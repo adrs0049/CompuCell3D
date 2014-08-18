@@ -8,41 +8,37 @@
 class CC3DXMLElement;
 
 namespace CompuCell3D {
-    
     class Simulator;
-
     class Potts3D;
     class Automaton;
-    //class AdhesionFlexData;
     class BoundaryStrategy;
     class ParallelUtilsOpenMP;
     
     template <class T> class Field3D;
     template <class T> class WatchableField3D;
 
-    class BOUNDARYMONITOR_EXPORT  BoundaryMonitorPlugin : public Plugin  ,public CellGChangeWatcher {
-        
-    private:    
-                        
+    class BOUNDARYMONITOR_EXPORT  BoundaryMonitorPlugin : 
+		public Plugin, public CellGChangeWatcher 
+	{
+		ParallelUtilsOpenMP *pUtils;            
+        ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;  
         CC3DXMLElement *xmlData;        
-        Potts3D *potts;
-        Simulator *sim;
-        ParallelUtilsOpenMP *pUtils;            
-        ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;        
-        Automaton *automaton;
+        cellFieldPtr cellFieldG;
+		BoundaryStrategyPtr boundaryStrategy;
+		SimulatorPtr sim;
+        AutomatonPtr automaton;
+		Potts3DPtr potts;
 
-        BoundaryStrategyPtr boundaryStrategy;
-        WatchableField3D<CellG *> *cellFieldG;
-        Array3DCUDA<unsigned char> * boundaryArray;
+		Array3DCUDA<unsigned char> * boundaryArray;
         unsigned int maxNeighborIndex;       
 
 	public:
         BoundaryMonitorPlugin();
         virtual ~BoundaryMonitorPlugin();
-        
-        Array3DCUDA<unsigned char> * getBoundaryArray();
-                
-        // CellChangeWatcher interface
+
+		Array3DCUDA<unsigned char> * getBoundaryArray();
+
+		// CellChangeWatcher interface
         virtual void field3DChange(const Point3D &pt, CellG *newCell,
                                    CellG *oldCell) override;
 

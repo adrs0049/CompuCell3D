@@ -5,7 +5,7 @@ using namespace CompuCell3D;
 ContactOrientationPlugin::ContactOrientationPlugin()
     : pUtils(nullptr), lockPtr(nullptr), xmlData(nullptr),
       angularTermDefined(false), cellFieldG(nullptr), boundaryStrategy(nullptr),
-      automaton(nullptr),
+      automaton(nullptr), potts(nullptr), sim(nullptr),
       angularTermFcnPtr(&ContactOrientationPlugin::singleTermFormula) {}
 
 ContactOrientationPlugin::~ContactOrientationPlugin() {}
@@ -14,7 +14,7 @@ void ContactOrientationPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlDa
     xmlData=_xmlData;
     sim=simulator;
     potts=simulator->getPotts();
-    cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+    cellFieldG = potts->getCellFieldG();
     fieldDim=cellFieldG->getDim();
     pUtils=sim->getParallelUtils();
 
@@ -52,7 +52,7 @@ double ContactOrientationPlugin::changeEnergy(const Point3D &pt,
     double energy {0};
     Point3D n;
     CellG *nCell = nullptr;
-    WatchableField3D<CellG *> *fieldG =(WatchableField3D<CellG *> *) potts->getCellFieldG();
+    auto fieldG = potts->getCellFieldG();
     Neighbor neighbor;
 
     //precalculating COMs before and after flip

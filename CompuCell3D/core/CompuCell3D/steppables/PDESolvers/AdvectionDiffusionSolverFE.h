@@ -14,6 +14,8 @@
 #include <iostream>
 
 #include "PDESolversDLLSpecifier.h"
+// ATTENTION REMOVE ME
+#include <CompuCell3D/CC3D.h>
 
 template<typename T>
 class BasicClassAccessor;
@@ -74,15 +76,15 @@ public :
     typedef Array3DBordersField3DAdapter<precision_t> ConcentrationField_t;
 
 protected:
-    Potts3D *potts;
-    Simulator *simPtr;
+    Potts3DPtr potts;
+    SimulatorPtr simPtr;
 
     unsigned int currentStep;
     unsigned int maxDiffusionZ;
     float averageRadius;
 
-    WatchableField3D<CellG *> *cellFieldG;
-    Automaton *automaton;
+    cellFieldPtr cellFieldG;
+    AutomatonPtr automaton;
 
     std::vector<DiffusionData> diffDataVec;
     std::vector<SecretionDataFlexAD> secrDataVec;

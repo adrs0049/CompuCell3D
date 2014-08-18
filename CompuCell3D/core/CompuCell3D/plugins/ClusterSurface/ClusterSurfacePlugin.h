@@ -26,14 +26,14 @@ namespace CompuCell3D {
 		ParallelUtilsOpenMP *pUtils; 
 		ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;   
 		CC3DXMLElement *xmlData;        
-        WatchableField3D<CellG *> *cellFieldG;
+        cellFieldPtr cellFieldG;
         double scaleClusterSurface;
 		BoundaryStrategyPtr boundaryStrategy;
 		ClusterSurfacePlugin::changeEnergy_t changeEnergyFcnPtr;
 		
-        Potts3D *potts;
-        Simulator *sim;
-        Automaton *automaton;
+        Potts3DPtr potts;
+        SimulatorPtr sim;
+        AutomatonPtr automaton;
 		std::shared_ptr<ClusterSurfaceTrackerPlugin> cstPlugin;
     
         LatticeMultiplicativeFactors lmf;        

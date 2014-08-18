@@ -25,7 +25,7 @@ void  DiffusionSolverFE_CPU::handleEventLocal(CC3DEvent & _event){
 		return;
 	}
 	
-    cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+    cellFieldG=potts->getCellFieldG();
     
 	CC3DEventLatticeResize ev = static_cast<CC3DEventLatticeResize&>(_event);	
     for (size_t i =0 ;   i < concentrationFieldVector.size() ; ++i){
@@ -259,7 +259,7 @@ void DiffusionSolverFE_CPU::secreteOnContactSingleField(unsigned int idx){
 		Point3D pt;
 		Neighbor n;
 		CellG *nCell=0;
-		WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+		auto fieldG = potts->getCellFieldG();
 		unsigned char type;
 
 		int threadNumber=pUtils->getCurrentWorkNodeNumber();

@@ -61,7 +61,7 @@ public:
     std::shared_ptr<PixelTrackerPlugin> pixelTrackerPlugin;
     BoundaryStrategyPtr boundaryStrategy;
     unsigned int maxNeighborIndex;
-    WatchableField3D<CellG *> *cellFieldG;
+    cellFieldPtr cellFieldG;
 
     float getConcentrationOutsideCellAtBoundary ( CellG * _cell );
     float getConcentrationInsideCellAtBoundary ( CellG * _cell );

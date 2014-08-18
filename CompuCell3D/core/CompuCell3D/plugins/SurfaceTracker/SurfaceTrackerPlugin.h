@@ -30,18 +30,17 @@ class CC3DXMLElement;
 namespace CompuCell3D
 {
 
-
 template <class T> class Field3D;
 template <class T> class WatchableField3D;
 class Potts3D;
 
 class SURFACETRACKER_EXPORT SurfaceTrackerPlugin : public Plugin, public CellGChangeWatcher
 {
-    WatchableField3D<CellG *> *cellFieldG;
-    unsigned int maxNeighborIndex;
+    cellFieldPtr cellFieldG;
     BoundaryStrategyPtr boundaryStrategy;
+	Potts3DPtr potts;
+	unsigned int maxNeighborIndex;
     LatticeMultiplicativeFactors lmf;
-    Potts3D *potts;
 
 public:
 
@@ -49,7 +48,7 @@ public:
     virtual ~SurfaceTrackerPlugin();
 
     // SimObject interface
-    virtual void init ( Simulator *simulator,
+    virtual void init ( SimulatorPtr simulator,
                         CC3DXMLElement *_xmlData = nullptr ) override;
 
     const LatticeMultiplicativeFactors & getLatticeMultiplicativeFactors() const

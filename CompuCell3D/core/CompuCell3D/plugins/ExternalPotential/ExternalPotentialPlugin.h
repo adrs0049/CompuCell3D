@@ -33,7 +33,7 @@ public:
 class EXTERNALPOTENTIAL_EXPORT ExternalPotentialPlugin : public Plugin,public EnergyFunction
 {
 private:
-    Potts3D *potts;
+    Potts3DPtr potts;
     AdjacentNeighbor  adjNeighbor;
     CC3DXMLElement * xmlData;
     Point3D boundaryConditionIndicator;
@@ -43,7 +43,7 @@ private:
     Coordinates3D<float> lambdaVec;
 
     AdjacentNeighbor  * adjNeighbor_ptr;
-    WatchableField3D<CellG *> *cellFieldG;
+    cellFieldPtr cellFieldG;
     Dim3D fieldDim;
     enum FunctionType {GLOBAL=0,BYCELLTYPE=1,BYCELLID=2};
     FunctionType functionType;

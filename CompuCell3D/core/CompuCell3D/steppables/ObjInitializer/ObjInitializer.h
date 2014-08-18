@@ -24,44 +24,41 @@
 #define OBJINITIALIZER_H
 
 #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Steppable.h>
-
-// // // #include <string>
-
 #include "ObjInitializerDLLSpecifier.h"
 
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 
-    class Potts3D;
+class Potts3D;
 
-    class OBJINITIALIZER_EXPORT ObjInitializer :
+class OBJINITIALIZER_EXPORT ObjInitializer :    public Steppable
+{
+    // don't change the name of the "potts" variable in this steppable,
+    //   otherwise it can't be found by other (??? which ???) CC3D code:
+    Potts3DPtr potts;
+    std::string gObjFileName;
 
-    public Steppable {
-    
-        // don't change the name of the "potts" variable in this steppable,
-        //   otherwise it can't be found by other (??? which ???) CC3D code:
-        Potts3D *potts;
+public:
 
-        std::string gObjFileName;
-        
-        public:
+    ObjInitializer();
+    ObjInitializer ( std::string );
 
-            ObjInitializer();
-            ObjInitializer(std::string);
-            
-            void setPotts(Potts3D *potts) {this->potts = potts;}
-            
-            // SimObject interface
-            virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-            
-            // Begin Steppable interface
-            virtual void start();
-            virtual void step(const unsigned int currentStep) {}
-            virtual void finish() {}
-            // End Steppable interface
+    void setPotts ( Potts3DPtr potts )
+    {
+        this->potts = potts;
+    }
 
-    }; // end of public Steppable
+    // SimObject interface
+    virtual void init ( SimulatorPtr simulator, CC3DXMLElement *_xmlData=0 );
 
-}; // end of namespace CompuCell3D
+    // Begin Steppable interface
+    virtual void start();
+    virtual void step ( const unsigned int currentStep ) {}
+    virtual void finish() {}
+    // End Steppable interface
+
+}; // end of public Steppable
+
+} // end of namespace CompuCell3D
 
 #endif // #ifndef OBJINITIALIZER_H

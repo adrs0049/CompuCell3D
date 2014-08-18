@@ -33,7 +33,7 @@ public:
 
     mutable float minValue,maxValue;
     void setFieldDim ( Dim3D _dim );
-    void setCellFieldPtr ( WatchableField3D<CellG *> * _cellField )
+    void setCellFieldPtr ( cellFieldPtr _cellField )
     {
         cellField=_cellField;
     }
@@ -46,18 +46,18 @@ private:
     Cleaver::BoundingBox m_bounds;
     Dim3D fieldDim;
     Dim3D paddingDim;
-    WatchableField3D<CellG *> * cellField;
+    cellFieldPtr cellField;
     std::set<unsigned char> includeCellTypesSet;
     std::set<unsigned char>::iterator end_sitr;
 };
 
 class CLEAVERMESHDUMPER_EXPORT CleaverMeshDumper : public Steppable
 {
-    WatchableField3D<CellG *> *cellFieldG;
-    Simulator * sim;
-    Potts3D *potts;
+    cellFieldPtr cellFieldG;
+    SimulatorPtr  sim;
+    Potts3DPtr potts;
     CC3DXMLElement *xmlData;
-    Automaton *automaton;
+    AutomatonPtr automaton;
     BoundaryStrategyPtr boundaryStrategy;
     CellInventory * cellInventoryPtr;
 
@@ -67,8 +67,8 @@ public:
     CleaverMeshDumper ();
     virtual ~CleaverMeshDumper ();
     // SimObject interface
-    virtual void init ( Simulator *simulator, CC3DXMLElement *_xmlData=0 );
-    virtual void extraInit ( Simulator *simulator );
+    virtual void init ( SimulatorPtr simulator, CC3DXMLElement *_xmlData=0 );
+    virtual void extraInit ( SimulatorPtr simulator );
 
     //steppable interface
     virtual void start();

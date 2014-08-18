@@ -45,14 +45,14 @@ class BoundaryStrategy;
 
 class PLASTICITY_EXPORT PlasticityPlugin : public Plugin, public EnergyFunction
 {
-    Field3D<CellG *> *cellFieldG;
+    std::shared_ptr<Field3D<CellG *> > cellFieldG;
     std::string pluginName;
 
     //energy function data
     float targetLengthPlasticity;
     float maxLengthPlasticity;
     double lambdaPlasticity;
-    Simulator *simulator;
+    SimulatorPtr simulator;
     Dim3D fieldDim;
     BasicClassAccessor<PlasticityTracker> *plasticityTrackerAccessorPtr;
     typedef double ( PlasticityPlugin::*diffEnergyFcnPtr_t ) ( float _deltaL,float _lBefore,const PlasticityTrackerData * _plasticityTrackerData,const CellG *_cell );
@@ -65,9 +65,9 @@ public:
     virtual ~PlasticityPlugin();
 
     //Plugin interface
-    virtual void init ( Simulator *simulator, CC3DXMLElement *_xmlData=0 );
+    virtual void init ( SimulatorPtr simulator, CC3DXMLElement *_xmlData=0 );
     virtual std::string toString();
-    virtual void extraInit ( Simulator *simulator );
+    virtual void extraInit ( SimulatorPtr simulator );
 
     //EnergyFunction interface
     virtual double changeEnergy ( const Point3D &pt, const CellG *newCell,

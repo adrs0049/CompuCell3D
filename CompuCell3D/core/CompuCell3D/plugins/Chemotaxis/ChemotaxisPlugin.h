@@ -41,14 +41,23 @@ template <class T>
 class Field3D;
 class Potts3D;
 
-class CHEMOTAXIS_EXPORT ChemotaxisPlugin : public Plugin,public EnergyFunction {
+class CHEMOTAXIS_EXPORT ChemotaxisPlugin : public Plugin,public EnergyFunction 
+{
+public:
+    typedef float (ChemotaxisPlugin::*chemotaxisEnergyFormulaFcnPtr_t)(float,float,ChemotaxisData &);
 
-    Simulator* sim;
+    typedef double (ChemotaxisPlugin::*changeEnergyEnergyFormulaFcnPtr_t)(const Point3D &, const CellG *,
+            const CellG *);
+private:
+
+	SimulatorPtr sim;
     CC3DXMLElement * xmlData;
-    Automaton *automaton;
+    AutomatonPtr automaton;
     //EnergyFunction data
 
-    Potts3D *potts;
+    Potts3DPtr potts;
+	changeEnergyEnergyFormulaFcnPtr_t algorithmPtr;
+	
     std::vector<Field3D<float> *> fieldVec;
     std::vector<std::string> fieldNameVec;
 
@@ -65,19 +74,11 @@ class CHEMOTAXIS_EXPORT ChemotaxisPlugin : public Plugin,public EnergyFunction {
 	typedef BasicClassAccessor< std::map<std::string,ChemotaxisData> > chemotaxisDataAccessor_t;
     chemotaxisDataAccessor_t chemotaxisDataAccessor;
 
-public:
-    typedef float (ChemotaxisPlugin::*chemotaxisEnergyFormulaFcnPtr_t)(float,float,ChemotaxisData &);
-
-    typedef double (ChemotaxisPlugin::*changeEnergyEnergyFormulaFcnPtr_t)(const Point3D &, const CellG *,
-            const CellG *);
-private:
-    changeEnergyEnergyFormulaFcnPtr_t algorithmPtr;
     std::map<std::string,chemotaxisEnergyFormulaFcnPtr_t> chemotaxisFormulaDict;
-
     double haptoHelper(unsigned int, const Point3D &);
 
 public:
-    ChemotaxisPlugin();
+	ChemotaxisPlugin();
     virtual ~ChemotaxisPlugin();
 
     virtual void init(Simulator *simulator,

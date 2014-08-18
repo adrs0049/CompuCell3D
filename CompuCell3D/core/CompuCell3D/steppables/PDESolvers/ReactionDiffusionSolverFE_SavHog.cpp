@@ -227,7 +227,7 @@ void ReactionDiffusionSolverFE_SavHog::init(Simulator *simulator, CC3DXMLElement
   cellInventoryPtr=& potts->getCellInventory(); 
   
   ///getting field ptr from Potts3D
-  cellFieldG=(WatchableField3D<CellG*> *)potts->getCellFieldG();
+  cellFieldG=potts->getCellFieldG();
   fieldDim=cellFieldG->getDim();
 
 
@@ -248,18 +248,13 @@ void ReactionDiffusionSolverFE_SavHog::init(Simulator *simulator, CC3DXMLElement
   ///setting member function pointers
   diffusePtr=&ReactionDiffusionSolverFE_SavHog::diffuse;
   simulator->registerSteerableObject(this);
-
-
-  
+ 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void ReactionDiffusionSolverFE_SavHog::start() {
-
    dt_dx2=deltaT/(deltaX*deltaX);
    initializeConcentration();
-   
-   
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

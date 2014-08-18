@@ -37,8 +37,8 @@ class Simulator;
 class NEIGHBORSTICK_EXPORT NeighborStickPlugin : public Plugin, public EnergyFunction
 {
     //energyFunction data
-    Potts3D *potts;
-    Simulator *sim;
+    Potts3DPtr potts;
+    SimulatorPtr sim;
     BasicClassAccessor<NeighborTracker> * neighborTrackerAccessorPtr;
 
     double thresh;
@@ -51,7 +51,7 @@ class NEIGHBORSTICK_EXPORT NeighborStickPlugin : public Plugin, public EnergyFun
         typeNames.push_back ( _type );
     }
 
-    Automaton *automaton;
+    AutomatonPtr automaton;
     CC3DXMLElement *xmlData;
 
 public:
@@ -60,9 +60,9 @@ public:
 
 
     //plugin interface
-    virtual void init ( Simulator *simulator,
+    virtual void init ( SimulatorPtr simulator,
                         CC3DXMLElement *_xmlData = nullptr ) override;
-    virtual void extraInit ( Simulator *simulator ) override;
+    virtual void extraInit ( SimulatorPtr simulator ) override;
 
     //EnergyFunction interface
     virtual double changeEnergy ( const Point3D &pt, const CellG *newCell,

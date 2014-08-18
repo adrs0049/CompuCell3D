@@ -30,95 +30,79 @@ using namespace std;
 #include "PIFDumper.h"
 
 PIFDumper::PIFDumper() :
-  potts(0),pifFileExtension("pif") {}
+    potts ( 0 ),pifFileExtension ( "pif" ) {}
 
-PIFDumper::PIFDumper(string filename) :
-  potts(0),pifFileExtension("pif") {}
+PIFDumper::PIFDumper ( string filename ) :
+    potts ( 0 ),pifFileExtension ( "pif" ) {}
 
-void PIFDumper::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
-	
-	//frequency=1;//CHECK HOW THIS IS HANDLED
-
-   //frequency=frequency;
-
-   potts = simulator->getPotts();
-   
-   ostringstream numStream;
-   string numString;
-   
-   numStream<<simulator->getNumSteps();;
-   
-   numString=numStream.str();
-   
-   numDigits=numString.size();
-   typePlug = get_plugin<CellTypePlugin>("CellType");
-
-   simulator->registerSteerableObject(this);
-
-	update(_xmlData,true);
+void PIFDumper::init ( SimulatorPtr simulator, CC3DXMLElement *_xmlData )
+{
+    potts = simulator->getPotts();
+    ostringstream numStream;
+    string numString;
+    numStream<<simulator->getNumSteps();;
+    numString=numStream.str();
+    numDigits=numString.size();
+    typePlug = get_plugin<CellTypePlugin> ( "CellType" );
+    simulator->registerSteerableObject ( this );
+    update ( _xmlData,true );
 }
 
-void PIFDumper::step( const unsigned int currentStep){
-   
-   ostringstream fullNameStr;
-   fullNameStr<<pifname;
-   fullNameStr.width(numDigits);
-   fullNameStr.fill('0');
-   fullNameStr<<currentStep<<"."<<pifFileExtension;
-   
+void PIFDumper::step ( const unsigned int currentStep )
+{
+    ostringstream fullNameStr;
+    fullNameStr<<pifname;
+    fullNameStr.width ( numDigits );
+    fullNameStr.fill ( '0' );
+    fullNameStr<<currentStep<<"."<<pifFileExtension;
 
-   ofstream pif(fullNameStr.str().c_str());
+    ofstream pif ( fullNameStr.str().c_str() );
 
-   WatchableField3D<CellG *> *cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
-   Dim3D dim = cellFieldG->getDim();
-   Point3D pt;
-   CellG * cell;
+    auto cellFieldG = potts->getCellFieldG();
+    Dim3D dim = cellFieldG->getDim();
+    Point3D pt;
+    CellG * cell;
 
-   for (int x = 0 ; x < dim.x ; ++x)
-      for (int y = 0 ; y < dim.y ; ++y)
-         for (int z = 0 ; z < dim.z ; ++z){
-            pt.x=x;
-            pt.y=y;
-            pt.z=z;
-            cell=cellFieldG->get(pt);
-            if(cell){
-               pif<<cell->id<<"\t";
-               pif<<typePlug->getTypeName(cell->type)<<"\t";
-               pif<<pt.x<<"\t"<<pt.x<<"\t";
-               pif<<pt.y<<"\t"<<pt.y<<"\t";
-               pif<<pt.z<<"\t"<<pt.z<<"\t";
-               pif<<endl;
+    for ( int x = 0 ; x < dim.x ; ++x )
+        for ( int y = 0 ; y < dim.y ; ++y )
+            for ( int z = 0 ; z < dim.z ; ++z )
+            {
+                pt.x=x;
+                pt.y=y;
+                pt.z=z;
+                cell=cellFieldG->get ( pt );
+                if ( cell )
+                {
+                    pif<<cell->id<<"\t";
+                    pif<<typePlug->getTypeName ( cell->type ) <<"\t";
+                    pif<<pt.x<<"\t"<<pt.x<<"\t";
+                    pif<<pt.y<<"\t"<<pt.y<<"\t";
+                    pif<<pt.z<<"\t"<<pt.z<<"\t";
+                    pif<<endl;
+                }
             }
-         }
 }
 
+void PIFDumper::start()
+{}
 
+void PIFDumper::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
+{
+    //Check how this is handled
+    //frequency=frequency;
+    pifname=_xmlData->getFirstElement ( "PIFName" )->getText();
+    if ( _xmlData->findElement ( "PIFFileExtension" ) )
+        pifFileExtension=_xmlData->getFirstElement ( "PIFFileExtension" )->getText();
 
-void PIFDumper::start() {
-
-
-} 
-
-
-void PIFDumper::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
-   
-   //Check how this is handled 
-	//frequency=frequency;
-	pifname=_xmlData->getFirstElement("PIFName")->getText();
-	if(_xmlData->findElement("PIFFileExtension"))
-		pifFileExtension=_xmlData->getFirstElement("PIFFileExtension")->getText();
-
-	//frequency=1;
+    //frequency=1;
 }
 
-std::string PIFDumper::toString(){
-   return "PIFDumper";
-
+std::string PIFDumper::toString()
+{
+    return "PIFDumper";
 }
 
-
-std::string PIFDumper::steerableName(){
-   return toString();
-
+std::string PIFDumper::steerableName()
+{
+    return toString();
 }
-

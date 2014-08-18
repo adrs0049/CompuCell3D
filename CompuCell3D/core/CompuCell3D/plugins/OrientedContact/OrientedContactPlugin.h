@@ -37,8 +37,8 @@ class ORIENTEDCONTACT_EXPORT OrientedContactPlugin : public Plugin,public Energy
 {
     //Energy Function data
     CC3DXMLElement *xmlData;
-    Potts3D *potts;
-    Simulator *sim;
+    Potts3DPtr potts;
+    SimulatorPtr sim;
 
     typedef std::map<int, double> orientedContactEnergies_t;
     typedef std::vector<std::vector<double> > orientedContactEnergyArray_t;
@@ -50,7 +50,7 @@ class ORIENTEDCONTACT_EXPORT OrientedContactPlugin : public Plugin,public Energy
     double depth;
     double alpha;
 
-    Automaton *automaton;
+    AutomatonPtr automaton;
     bool weightDistance;
     unsigned int maxNeighborIndex;
     BoundaryStrategyPtr boundaryStrategy;
@@ -64,9 +64,9 @@ public:
                                   const CellG *newCell,
                                   const CellG *oldCell ) override;
     //Plugin interface
-    virtual void init ( Simulator *simulator,
+    virtual void init ( SimulatorPtr simulator,
                         CC3DXMLElement *_xmlData = nullptr ) override;
-    virtual void extraInit ( Simulator *simulator ) override;
+    virtual void extraInit ( SimulatorPtr simulator ) override;
     virtual std::string toString() override;
 
     //Steerrable interface

@@ -19,51 +19,40 @@ namespace CompuCell3D {
     template <class T> class Field3D;
     template <class T> class WatchableField3D;
 
-    class CONTACTORIENTATION_EXPORT  ContactOrientationPlugin : public Plugin ,public EnergyFunction  {
-        
-    private:    
-        BasicClassAccessor<ContactOrientationData> contactOrientationDataAccessor;                
-        CC3DXMLElement *xmlData;        
-        
-        Potts3D *potts;
-        
-        Simulator *sim;
-        
-        ParallelUtilsOpenMP *pUtils;            
-        
-        ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;        
-        
-		ExpressionEvaluatorDepot eed;
+    class CONTACTORIENTATION_EXPORT  ContactOrientationPlugin : 
+				public Plugin, public EnergyFunction  
+	{
+    private:
+	
+		ParallelUtilsOpenMP *pUtils;
+        ParallelUtilsOpenMP::OpenMPLock_t *lockPtr; 
+		CC3DXMLElement *xmlData;
 		bool angularTermDefined;
+		cellFieldPtr cellFieldG;
+		BoundaryStrategyPtr boundaryStrategy;
+		Automaton *automaton;
+		Potts3D *potts;
+		Simulator *sim;
+        BasicClassAccessor<ContactOrientationData> contactOrientationDataAccessor;                
+		ExpressionEvaluatorDepot eed;
 
-        Automaton *automaton;
-
-        BoundaryStrategyPtr boundaryStrategy;
-        WatchableField3D<CellG *> *cellFieldG;
-    
         //contact energy part
         typedef std::map<int, double> contactEnergies_t;
         typedef std::vector<std::vector<double> > contactEnergyArray_t;
 
         contactEnergies_t contactEnergies;
-
         contactEnergyArray_t contactEnergyArray;
 
         double depth;        
         unsigned int maxNeighborIndex;
 		Dim3D fieldDim;
-        
-        
-        
-        
-    public:
 
+	public:
         ContactOrientationPlugin();
         virtual ~ContactOrientationPlugin();
-        
-        BasicClassAccessor<ContactOrientationData> * getContactOrientationDataAccessorPtr(){return & contactOrientationDataAccessor;}                
 
-        
+		BasicClassAccessor<ContactOrientationData> * getContactOrientationDataAccessorPtr(){return & contactOrientationDataAccessor;}                
+
         //Energy function interface
         virtual double changeEnergy(const Point3D &pt, const CellG *newCell,
                                     const CellG *oldCell) override;
@@ -92,8 +81,8 @@ namespace CompuCell3D {
         * as the medium.
         */
         void setContactEnergy(const std::string typeName1,const std::string typeName2, const double energy);        
-            
-    protected:
+
+	protected:
         /**
         * @return The index used for ordering contact energies in the map.
         */
@@ -103,8 +92,6 @@ namespace CompuCell3D {
         
         typedef double ( ContactOrientationPlugin::*angularTerm_t)(double _alpha,double _theta);
         ContactOrientationPlugin::angularTerm_t angularTermFcnPtr;
-    
     };
-};
+} // end namespace
 #endif
-        

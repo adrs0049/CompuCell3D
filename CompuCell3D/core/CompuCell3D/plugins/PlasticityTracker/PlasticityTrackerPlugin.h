@@ -20,7 +20,7 @@ class PLASTICITYTRACKER_EXPORT PlasticityTrackerPlugin : public Plugin, public C
 {
     ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
-    WatchableField3D<CellG *> *cellFieldG;
+    cellFieldPtr cellFieldG;
     Dim3D fieldDim;
 
 public:
@@ -34,7 +34,7 @@ private:
     PlasticityTrackerAccessor_t plasticityTrackerAccessor;
     NeightborTrackerAccessor_t * neighborTrackerAccessorPtr;
 
-    Simulator *simulator;
+    SimulatorPtr simulator;
     CellInventory * cellInventoryPtr;
     bool initialized;
 
@@ -46,8 +46,8 @@ public:
     virtual ~PlasticityTrackerPlugin();
 
     // SimObject interface
-    virtual void init ( Simulator *_simulator, CC3DXMLElement *_xmlData=0 );
-    virtual void extraInit ( Simulator *simulator );
+    virtual void init ( SimulatorPtr _simulator, CC3DXMLElement *_xmlData=0 );
+    virtual void extraInit ( SimulatorPtr simulator );
 
     // BCGChangeWatcher interface
     virtual void field3DChange ( const Point3D &pt, CellG *newCell,

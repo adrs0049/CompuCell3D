@@ -31,7 +31,7 @@ MitosisPlugin::MitosisPlugin() { potts = nullptr; }
 
 MitosisPlugin::~MitosisPlugin() {}
 
-void MitosisPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData) 
+void MitosisPlugin::init(SimulatorPtr simulator, CC3DXMLElement *_xmlData) 
 {
     potts = simulator->getPotts();
 
@@ -61,7 +61,6 @@ void MitosisPlugin::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 
     cerr<<"maxNumberOfWorkNodes="<<maxNumberOfWorkNodes<<endl;
     update(_xmlData,true);
-
 }
 
 void MitosisPlugin::handleEvent(CC3DEvent & _event) {
@@ -164,7 +163,7 @@ bool MitosisPlugin::doMitosis()
 
         split= false;
 
-        WatchableField3D<CellG *> *cellField =(WatchableField3D<CellG *> *) potts->getCellFieldG();
+        auto cellField = potts->getCellFieldG();
         //reseting poiters to parent and child cell - neessary otherwise may get some strange side effects when mitosis is aborted
         childCell = nullptr;
         parentCell = nullptr;
@@ -203,8 +202,6 @@ bool MitosisPlugin::doMitosis()
             CellG *nCell;
             // Loop over all the points from the last round.
             for (auto &elem : *ary0) {
-                unsigned int token = 0;
-                double distance = 0;
 
                 for(unsigned int nIdx=0 ; nIdx <= maxNeighborIndex ; ++nIdx ) {
                   neighbor = boundaryStrategy->getNeighborDirect(elem, nIdx);

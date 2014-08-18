@@ -96,7 +96,7 @@ void KernelDiffusionSolver::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 	cellInventoryPtr=& potts->getCellInventory(); 
 
 	///getting field ptr from Potts3D
-	cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG=potts->getCellFieldG();
 	fieldDim=cellFieldG->getDim();
 
 	pUtils=simulator->getParallelUtils();
@@ -162,7 +162,7 @@ void KernelDiffusionSolver::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 	cellInventoryPtr=& potts->getCellInventory(); 
 
 	///getting field ptr from Potts3D
-	cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG=potts->getCellFieldG();
 	fieldDim=cellFieldG->getDim();
 	float max_kernel = 1;
 	for(int q = 0; q < kernel.size(); q++) {
@@ -203,10 +203,6 @@ void KernelDiffusionSolver::init(Simulator *simulator, CC3DXMLElement *_xmlData)
 	
 }
 
-
-
-
-
 void KernelDiffusionSolver::initializeKernel(Simulator *simulator){
 	numberOfFields=diffSecrFieldTuppleVec.size();
 	cerr << "Number of Fields: " << numberOfFields << endl;
@@ -216,7 +212,7 @@ void KernelDiffusionSolver::initializeKernel(Simulator *simulator){
 	pt.y = (fieldDim.y>1 ? fieldDim.y/2 : 0);
 	pt.z = (fieldDim.z>1 ? fieldDim.z/2 : 0);
 
-	cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG=potts->getCellFieldG();
 	fieldDim=cellFieldG->getDim();
 	boundaryStrategy=BoundaryStrategy::getInstance();
 	//    maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromNeighborOrder(kernel);
@@ -384,7 +380,7 @@ pUtils->prepareParallelRegionFESolvers();
 		Point3D pt;
 		Neighbor n;
 		CellG *nCell=0;
-		WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+		auto fieldG = potts->getCellFieldG();
 		unsigned char type;
 
 		int threadNumber=pUtils->getCurrentWorkNodeNumber();
@@ -705,115 +701,6 @@ void KernelDiffusionSolver::secrete() {
 
 }
 
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//void KernelDiffusionSolver::step(const unsigned int _currentStep) {
-//
-//
-//
-//
-//	currentStep=_currentStep;
-//	cerr << "Current Step: " << currentStep << endl;
-//	cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
-//	fieldDim = cellFieldG->getDim();
-//	Point3D pt;
-//	Point3D ptCoarseGrained;
-//
-//	boundaryStrategy=BoundaryStrategy::getInstance();
-//	//     maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromNeighborOrder(kernel);
-//	Neighbor neighbor;
-//
-//	CellG *currentCellPtr;   
-//	float secrConst;
-//	//     workFieldDim=Dim3D(fieldDim.x,fieldDim.y,fieldDim.z);
-//
-//	secrete();
-//
-//
-//	for(int i=0; i < numberOfFields; i++) {
-//		//        cerr << "NumberOfFields: " << numberOfFields << endl;
-//		//        cerr << "Number of ConcentrationFields: " << concentrationFieldVector.size() << endl;
-//		//SecretionData & secrData=diffSecrFieldTuppleVec[i].secrData;
-//		//std::map<unsigned char,float>::iterator mitr;
-//		//std::map<unsigned char,float>::iterator end_mitr=secrData.typeIdSecrConstMap.end();
-//
-//		if(diffSecrFieldTuppleVec[i].diffData.diffConst==0.0 && diffSecrFieldTuppleVec[i].diffData.decayConst==0.0){
-//			continue; //skip solving of the equation if diffusion and decay constants are 0
-//		}
-//
-//		//Here we temporarily set Dim in BoundaryStrategy to reduced size we have to reset it back to the original size once we are done the field
-//		unsigned int coarseGrainFactor= coarseGrainFactorVec[i];
-//
-//		Dim3D originalDim = fieldDim;
-//		Dim3D workFieldDimTmp;
-//		workFieldDimTmp.x=(fieldDim.x/coarseGrainFactor>0?fieldDim.x/coarseGrainFactor:1);
-//		workFieldDimTmp.y=(fieldDim.y/coarseGrainFactor>0?fieldDim.y/coarseGrainFactor:1);
-//		workFieldDimTmp.z=(fieldDim.z/coarseGrainFactor>0?fieldDim.z/coarseGrainFactor:1);
-//
-//
-//		boundaryStrategy->setDim(workFieldDimTmp);
-//
-//
-//		ConcentrationField_t & concentrationField = *concentrationFieldVector[i];
-//		ConcentrationField_t * concentrationFieldPtr = concentrationFieldVector[i];
-//		//ConcentrationField_t * scratchFieldPtr;
-//		//scratchFieldPtr=concentrationFieldVector[diffSecrFieldTuppleVec.size()];
-//		//Array3D_t & scratchArray = scratchFieldPtr->getContainer();
-//		//        sleep(2);
-//
-//		for (unsigned int z = 0; z < workFieldDimTmp.z; z++) {
-//			for (unsigned int y = 0; y < workFieldDimTmp.y; y++){
-//				for (unsigned int x = 0; x < workFieldDimTmp.x; x++){
-//
-//					float value = 0.0;
-//					float zero_val = 0.0;
-//					pt=Point3D(x*coarseGrainFactor , y*coarseGrainFactor , z*coarseGrainFactor);
-//					ptCoarseGrained=Point3D(x,y,z);
-//					//                 currentCellPtr=cellFieldG->get(pt);
-//
-//					value += concentrationField.getDirect(pt.x+1,pt.y+1,pt.z+1)*NKer[i][0];
-//					//cerr<<"pt="<<pt<<endl;
-//
-//					//                 cerr << "pt.x: " << pt.x+1 << " pt.y: " << pt.y+1 << " value: " << concentrationArray[pt.x+1][pt.y+1] << endl; 
-//					//                 cerr << "pt.x: " << pt.x+1 << " pt.y: " << pt.y+1 << endl;
-//
-//					for(unsigned int nIdx=0 ; nIdx < tempmaxNeighborIndex[i]+1; ++nIdx ){
-//						neighbor=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(ptCoarseGrained),nIdx);
-//						//                    cerr << "neighbor.pt.x: " << neighbor.pt.x << " neighbor.pt.y: " << neighbor.pt.y << endl; 
-//
-//						if(!neighbor.distance){
-//							//                       cerr << "//if distance is 0 then the neighbor returned is invalid \n";
-//							//if distance is 0 then the neighbor returned is invalid
-//							continue;
-//						}
-//
-//						//                    cerr << "neighbor.pt.x: " << neighbor.pt.x+1 << " neighbor.pt.y: " << neighbor.pt.y+1 << " value: " << 
-//						//                          concentrationArray[neighbor.pt.x+1][neighbor.pt.y+1][neighbor.pt.z+1] << " NKer[i][nIdx]: " << NKer[i][nIdx+1] << "\n";
-//						//                    cerr << "Distance: " << neighbor.distance << " Adjusted Distance: " << neighborDistance[ceil(neighbor.distance*1000)] << endl;
-//						//cerr<<" neighbor="<<neighbor.pt<<" neighbor.x="<<neighbor.pt.x*coarseGrainFactor<<" neighbor.y="<<neighbor.pt.y*coarseGrainFactor<<endl;   
-//						value += concentrationField.getDirect(neighbor.pt.x*coarseGrainFactor+1,neighbor.pt.y*coarseGrainFactor+1,neighbor.pt.z*coarseGrainFactor+1)*NKer[i][nIdx+1];
-//
-//					}
-//					concentrationField.setDirectSwap(pt.x+1,pt.y+1,pt.z+1,value+zero_val);					
-//					//                 if(coarseGrainFactor>1)
-//					writePixelValue(Point3D(pt.x,pt.y,pt.z),concentrationField.getDirectSwap(pt.x+1,pt.y+1,pt.z+1),  coarseGrainFactor,concentrationField);               
-//				}
-//			}
-//		}
-//		//scrarch2Concentration(scratchFieldPtr,concentrationFieldPtr);
-//		concentrationField.swapArrays();
-//		//have to reset Dim in boundary Strategy to original value otherwise you will buggy simulation
-//		boundaryStrategy->setDim(originalDim);
-//	}
-//
-//	if(serializeFrequency>0 && serializeFlag && !(_currentStep % serializeFrequency)){
-//		serializerPtr->setCurrentStep(currentStep);
-//		serializerPtr->serialize();
-//	}
-//}
-
-
 void KernelDiffusionSolver::step(const unsigned int _currentStep) {
 
 	secrete();
@@ -823,8 +710,6 @@ void KernelDiffusionSolver::step(const unsigned int _currentStep) {
 		serializerPtr->setCurrentStep(currentStep);
 		serializerPtr->serialize();
 	}
-
-
 }
 
 void KernelDiffusionSolver::diffuse(){
@@ -837,7 +722,7 @@ void KernelDiffusionSolver::diffuse(){
 void KernelDiffusionSolver::diffuseSingleField(unsigned int idx){
 
 
-	cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG=potts->getCellFieldG();
 	fieldDim = cellFieldG->getDim();
 
 	boundaryStrategy=BoundaryStrategy::getInstance();

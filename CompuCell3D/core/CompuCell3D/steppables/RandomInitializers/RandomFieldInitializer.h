@@ -20,60 +20,52 @@
  *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
  *************************************************************************/
 
- //Author: Margriet Palm CWI, Netherlands
- 
+//Author: Margriet Palm CWI, Netherlands
+
 #ifndef RANDOMFIELDINITIALIZER_H
 #define RANDOMFIELDINITIALIZER_H
 
 #include <CompuCell3D/CC3D.h>
-
-// // // #include <CompuCell3D/Steppable.h>
-// // // #include <CompuCell3D/Field3D/Dim3D.h>
-// // // #include <BasicUtils/BasicRandomNumberGenerator.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-
-// // // #include <string>
-// // // #include <vector>
-// // // #include <map>
-
 #include "FieldBuilder.h"
 #include "RandomFieldInitializerDLLSpecifier.h"
 
-namespace CompuCell3D {
-  class Potts3D;
+namespace CompuCell3D
+{
+class Potts3D;
 
-  class RANDOMINITIALIZERS_EXPORT RandomFieldInitializer : public Steppable {
-    void setParameters(Simulator *_simulator, CC3DXMLElement *_xmlData);
-    Potts3D *potts;
-    Simulator *simulator;
+class RANDOMINITIALIZERS_EXPORT RandomFieldInitializer : public Steppable
+{
+    void setParameters ( SimulatorPtr _simulator, CC3DXMLElement *_xmlData );
+    Potts3DPtr potts;
+    SimulatorPtr simulator;
     BasicRandomNumberGenerator * rand;
-    WatchableField3D<CellG *> *cellField;
+    cellFieldPtr cellField;
     FieldBuilder * builder;
     Dim3D dim,boxMin,boxMax;
     bool showStats;
     int ncells,growsteps,borderTypeID;
 
-  public:
+public:
     RandomFieldInitializer();
     virtual ~RandomFieldInitializer();
-    void setPotts(Potts3D *potts) {this->potts = potts;}
+    void setPotts ( Potts3DPtr potts )
+    {
+        this->potts = potts;
+    }
 
     // SimObject interface
-    virtual void init(Simulator *simulator, CC3DXMLElement *_xmlData=0);
-    virtual void extraInit(Simulator *simulator);
+    virtual void init ( SimulatorPtr simulator, CC3DXMLElement *_xmlData=0 );
+    virtual void extraInit ( SimulatorPtr simulator );
     // Begin Steppable interface
     virtual void start();
-    virtual void step(const unsigned int currentStep) {}
+    virtual void step ( const unsigned int currentStep ) {}
     virtual void finish() {}
     // End Steppable interface
-    
+
     //SteerableObject interface
-    virtual void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
+    virtual void update ( CC3DXMLElement *_xmlData, bool _fullInitFlag=false );
     virtual std::string steerableName();
-    virtual std::string toString();        
-
-
-  };
+    virtual std::string toString();
 };
+} // end namespace
 #endif

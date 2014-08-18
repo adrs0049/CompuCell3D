@@ -25,14 +25,6 @@
 #include <sstream>
 #include <PublicUtilities/ParallelUtilsOpenMP.h>
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// std::ostream & operator<<(std::ostream & out,CompuCell3D::DiffusionData & diffData){
-//
-//
-// }
-
-
 using namespace CompuCell3D;
 using namespace std;
 
@@ -224,7 +216,7 @@ void ReactionDiffusionSolverFE::init(Simulator *_simulator, CC3DXMLElement *_xml
 	///getting field ptr from Potts3D
 	///**
 
-	cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG = potts->getCellFieldG();
 	fieldDim=cellFieldG->getDim();
 
 
@@ -312,25 +304,16 @@ void ReactionDiffusionSolverFE::init(Simulator *_simulator, CC3DXMLElement *_xml
 		cerr<<" concentrationFieldNameVector[i]="<<concentrationFieldNameVectorTmp[i]<<endl;
 	}
 
-
-
-
 	cerr<<"FIELDS THAT I HAVE"<<endl;
 	for(unsigned int i = 0 ; i < diffSecrFieldTuppleVec.size() ; ++i){
 		cerr<<"Field "<<i<<" name: "<<concentrationFieldNameVectorTmp[i]<<endl;
 	}
 
-
-
-
 	///allocate fields including scrartch field
 	allocateDiffusableFieldVector(diffSecrFieldTuppleVec.size(),fieldDim); 
 	workFieldDim=concentrationFieldVector[0]->getInternalDim();
-
-
 	//here I need to copy field names from concentrationFieldNameVectorTmp to concentrationFieldNameVector
 	//because concentrationFieldNameVector is reallocated with default values once I call allocateDiffusableFieldVector
-
 
 	for(unsigned int i=0 ; i < concentrationFieldNameVectorTmp.size() ; ++i){
 		concentrationFieldNameVector[i]=concentrationFieldNameVectorTmp[i];
@@ -343,20 +326,10 @@ void ReactionDiffusionSolverFE::init(Simulator *_simulator, CC3DXMLElement *_xml
 		cerr<<"registring field: "<<concentrationFieldNameVector[i]<<" field address="<<concentrationFieldVector[i]<<endl;
 	}
 
-
-
-
-
-	//    exit(0);
-
-
-
-
 	//we only autoscale diffusion when user requests it explicitely
 	if (!autoscaleDiffusion){
 		diffusionLatticeScalingFactor=1.0;
 	}
-
 
 	bool pluginAlreadyRegisteredFlag;
 	cellTypeMonitorPlugin=get_plugin<CellTypeMonitorPlugin>("CellTypeMonitor", &pluginAlreadyRegisteredFlag);
@@ -364,12 +337,9 @@ void ReactionDiffusionSolverFE::init(Simulator *_simulator, CC3DXMLElement *_xml
 		cellTypeMonitorPlugin->init(simulator);	
 		h_celltype_field=cellTypeMonitorPlugin->getCellTypeArray();
         h_cellid_field=cellTypeMonitorPlugin->getCellIdArray();
-
 	}
 
-
 	simulator->registerSteerableObject(this);
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,9 +348,7 @@ void ReactionDiffusionSolverFE::boundaryConditionIndicatorInit(){
     // bool detailedBCFlag=bcSpecFlagVec[idx];
     // BoundaryConditionSpecifier & bcSpec=bcSpecVec[idx];
     Array3DCUDA<signed char> & bcField = *bc_indicator_field;
-    
-
-        
+            
         if (fieldDim.z>2){// if z dimension is "flat" we do not mark bc 
             // Z axis  - external boundary layer
             for(int x=0 ; x< fieldDim.x+2; ++x)
@@ -593,7 +561,7 @@ void ReactionDiffusionSolverFE::handleEvent(CC3DEvent & _event){
 		return;
 	}
 	
-    cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+    cellFieldG=potts->getCellFieldG();
     
 	CC3DEventLatticeResize ev = static_cast<CC3DEventLatticeResize&>(_event);
 	
@@ -903,7 +871,7 @@ void ReactionDiffusionSolverFE::secreteOnContactSingleField(unsigned int idx){
 		Point3D pt;
 		Neighbor n;
 		CellG *nCell=0;
-		WatchableField3D<CellG *> *fieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+		auto fieldG = potts->getCellFieldG();
 		unsigned char type;
 
 		int threadNumber=pUtils->getCurrentWorkNodeNumber();

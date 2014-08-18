@@ -47,15 +47,14 @@ public:
 private:
     ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
-    WatchableField3D<CellG *> *cellFieldG;
+    cellFieldPtr cellFieldG;
     Dim3D fieldDim;
     NeighborTracker_t neighborTrackerAccessor;
-    Simulator *simulator;
+    SimulatorPtr simulator;
     bool periodicX,periodicY,periodicZ;
     CellInventory * cellInventoryPtr;
     bool checkSanity;
     unsigned int checkFreq;
-
     unsigned int maxNeighborIndex;
     BoundaryStrategyPtr boundaryStrategy;
 
@@ -69,7 +68,7 @@ public:
                                  CellG *oldCell ) override;
 
     //Plugin interface
-    virtual void init ( Simulator *_simulator,
+    virtual void init ( SimulatorPtr _simulator,
                         CC3DXMLElement *_xmlData = nullptr ) override;
     virtual std::string toString() override;
 

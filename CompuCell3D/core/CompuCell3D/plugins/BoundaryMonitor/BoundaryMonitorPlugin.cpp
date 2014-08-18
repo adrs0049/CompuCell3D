@@ -7,7 +7,8 @@ using namespace CompuCell3D;
 
 BoundaryMonitorPlugin::BoundaryMonitorPlugin()
     : pUtils ( nullptr ), lockPtr ( nullptr ), xmlData ( nullptr ), cellFieldG ( nullptr ),
-      boundaryStrategy ( nullptr ), maxNeighborIndex ( 0 ) {}
+      boundaryStrategy ( nullptr ), sim ( nullptr ), automaton ( nullptr ), potts ( nullptr ),
+      maxNeighborIndex ( 0 ) {}
 
 BoundaryMonitorPlugin::~BoundaryMonitorPlugin()
 {
@@ -32,7 +33,7 @@ void BoundaryMonitorPlugin::init ( Simulator *simulator, CC3DXMLElement *_xmlDat
     xmlData=_xmlData;
     sim=simulator;
     potts=simulator->getPotts();
-    cellFieldG = ( WatchableField3D<CellG *> * ) potts->getCellFieldG();
+    cellFieldG = potts->getCellFieldG();
 
     pUtils=sim->getParallelUtils();
     lockPtr=new ParallelUtilsOpenMP::OpenMPLock_t;

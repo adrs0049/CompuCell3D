@@ -47,13 +47,13 @@ public:
 private:
     TrackerAccessor_t focalPointPlasticityTrackerAccessor;
 
-    Potts3D *potts;
+    Potts3DPtr potts;
 
     ParallelUtilsOpenMP *pUtils;
     std::string autoName;
     double depth;
 
-    Automaton *automaton;
+    AutomatonPtr automaton;
     bool weightDistance;
     unsigned int maxNeighborIndex;
     unsigned int maxNeighborIndexJunctionMove;

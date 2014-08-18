@@ -37,7 +37,6 @@ BoundaryPixelTrackerPlugin::~BoundaryPixelTrackerPlugin() {}
 
 void BoundaryPixelTrackerPlugin::init ( Simulator *_simulator, CC3DXMLElement *_xmlData )
 {
-
     xmlData=_xmlData;
     simulator=_simulator;
     potts = simulator->getPotts();
@@ -46,12 +45,9 @@ void BoundaryPixelTrackerPlugin::init ( Simulator *_simulator, CC3DXMLElement *_
     ///REMARK. HAVE TO USE THE SAME BASIC CLASS ACCESSOR INSTANCE THAT WAS USED TO REGISTER WITH FACTORY
     ///************************************************************************************************
     registerClassOnCell<TrackerAccessor_t> ( potts, boundaryPixelTrackerAccessor );
-
     potts->registerCellGChangeWatcher ( this );
-
     boundaryStrategy=BoundaryStrategy::getInstance();
     maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromNeighborOrder ( 1 );
-
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void BoundaryPixelTrackerPlugin::extraInit ( Simulator *simulator )
@@ -92,8 +88,6 @@ void BoundaryPixelTrackerPlugin::handleEvent ( CC3DEvent & _event )
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void BoundaryPixelTrackerPlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
 {
-
-
     //Here I initialize max neighbor index for direct acces to the list of neighbors
     boundaryStrategy=BoundaryStrategy::getInstance();
     maxNeighborIndex=0;
@@ -103,7 +97,6 @@ void BoundaryPixelTrackerPlugin::update ( CC3DXMLElement *_xmlData, bool _fullIn
         maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromNeighborOrder ( 1 );
         return;
     }
-
 
     if ( _xmlData->getFirstElement ( "Depth" ) )
     {
@@ -132,7 +125,7 @@ void BoundaryPixelTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCe
     if ( newCell==oldCell ) //this may happen if you are trying to assign same cell to one pixel twice
         return;
 
-    WatchableField3D<CellG *> *fieldG = ( WatchableField3D<CellG *> * ) potts->getCellFieldG();
+    auto fieldG = potts->getCellFieldG();
 
     if ( newCell )
     {
@@ -225,14 +218,11 @@ void BoundaryPixelTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCe
             {
                 pixelSetRef.insert ( BoundaryPixelTrackerData ( neighbor.pt ) );
             }
-
         }
     }
-
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+////////////////////////////////////////////////////////////////////////////////
 std::string BoundaryPixelTrackerPlugin::toString()
 {
     return "BoundaryPixelTracker";
@@ -242,4 +232,3 @@ std::string BoundaryPixelTrackerPlugin::steerableName()
 {
     return toString();
 }
-

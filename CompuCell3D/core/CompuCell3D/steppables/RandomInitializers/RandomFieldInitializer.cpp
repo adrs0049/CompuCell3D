@@ -20,26 +20,11 @@
 *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.        *
 *************************************************************************/
 #include <CompuCell3D/CC3D.h>
-
-// // // #include <CompuCell3D/Automaton/Automaton.h>
-// // // #include <CompuCell3D/Simulator.h>
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // #include <CompuCell3D/Potts3D/Potts3D.h>
-// // // #include <CompuCell3D/Field3D/Point3D.h>
-// // // #include <CompuCell3D/Field3D/Dim3D.h>
-// // // #include <CompuCell3D/Field3D/WatchableField3D.h>
 #include <CompuCell3D/plugins/PixelTracker/PixelTracker.h>
 #include <CompuCell3D/plugins/PixelTracker/PixelTrackerPlugin.h>
 using namespace CompuCell3D;
 
-// // // #include <BasicUtils/BasicRandomNumberGenerator.h>
-// // // #include <PublicUtilities/StringUtils.h>
-
-// // // #include <string>
-// // // #include <map>
-
 #include "RandomFieldInitializer.h"
-
 using namespace std;
 
 RandomFieldInitializer::RandomFieldInitializer():    
@@ -59,10 +44,10 @@ RandomFieldInitializer::~RandomFieldInitializer(){
     delete builder;
 }
 
-void RandomFieldInitializer::init(Simulator *_simulator, CC3DXMLElement *_xmlData) {
+void RandomFieldInitializer::init(SimulatorPtr _simulator, CC3DXMLElement *_xmlData) {
 	simulator = _simulator;
 	potts = _simulator->getPotts();
-	cellField = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellField = potts->getCellFieldG();
 	ASSERT_OR_THROW("initField() Cell field G cannot be null!", cellField);
 	dim=cellField->getDim();
 	builder = new FieldBuilder(_simulator);
@@ -70,15 +55,13 @@ void RandomFieldInitializer::init(Simulator *_simulator, CC3DXMLElement *_xmlDat
     update(_xmlData,true);
 }
 
-
-
-void RandomFieldInitializer::extraInit(Simulator *simulator){}
+void RandomFieldInitializer::extraInit(SimulatorPtr simulator){}
 
 void RandomFieldInitializer::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
     setParameters(simulator,_xmlData);
 }
 
-void RandomFieldInitializer::setParameters(Simulator *_simulator, CC3DXMLElement *_xmlData){
+void RandomFieldInitializer::setParameters(SimulatorPtr _simulator, CC3DXMLElement *_xmlData){
 	// initiate random generator
 	rand = BasicRandomNumberGenerator::getInstance();
 	if(_xmlData->getFirstElement("seed"))

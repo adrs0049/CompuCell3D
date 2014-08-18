@@ -108,7 +108,7 @@ void SteadyStateDiffusionSolver::init(Simulator *simulator, CC3DXMLElement *_xml
 	cellInventoryPtr=& potts->getCellInventory(); 
 
 	///getting field ptr from Potts3D
-	cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+	cellFieldG=potts->getCellFieldG();
 	fieldDim=cellFieldG->getDim();
 
 	update(_xmlData,true);
@@ -249,7 +249,7 @@ void SteadyStateDiffusionSolver::extraInit(Simulator *simulator){
 void SteadyStateDiffusionSolver::handleEvent(CC3DEvent & _event){
 	
 	if (_event.id==LATTICE_RESIZE){
-		cellFieldG=(WatchableField3D<CellG *> *)potts->getCellFieldG();
+		cellFieldG=potts->getCellFieldG();
 	    
 		CC3DEventLatticeResize ev = static_cast<CC3DEventLatticeResize&>(_event);
 		

@@ -47,7 +47,7 @@ potts(0), gObjFileName(filename)
 // ----------------------------------------------------------------------
 // initialize the ObjInitializer steppable:
 // ----------------------------------------------------------------------
-void ObjInitializer::init(Simulator *simulator, CC3DXMLElement *_xmlData) {
+void ObjInitializer::init(SimulatorPtr simulator, CC3DXMLElement *_xmlData) {
     
     bool pluginAlreadyRegisteredFlag;
 
@@ -128,7 +128,7 @@ void ObjInitializer::start() {
     //
     // prepare a watchable field 3D as from the potts's  getCellFieldG() :
     //
-    WatchableField3D<CellG *> * lCellFieldG = (WatchableField3D<CellG *> *) potts->getCellFieldG();
+    auto lCellFieldG = potts->getCellFieldG();
     ASSERT_OR_THROW("ObjInitializer::start() ----- initField() Cell field cannot be null!", lCellFieldG);
 
     //

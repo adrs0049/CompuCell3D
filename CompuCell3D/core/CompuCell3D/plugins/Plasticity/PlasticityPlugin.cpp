@@ -41,22 +41,20 @@ PlasticityPlugin::PlasticityPlugin() :
 PlasticityPlugin::~PlasticityPlugin()
 {}
 
-void PlasticityPlugin::init ( Simulator *simulator, CC3DXMLElement *_xmlData )
+void PlasticityPlugin::init ( SimulatorPtr simulator, CC3DXMLElement *_xmlData )
 {
-    Potts3D *potts = simulator->getPotts();
+    Potts3DPtr potts = simulator->getPotts();
     cellFieldG = potts->getCellFieldG();
     pluginName=_xmlData->getAttribute ( "Name" );
-
-
     potts->registerEnergyFunctionWithName ( this,"PlasticityEnergy" );
     simulator->registerSteerableObject ( this );
     update ( _xmlData,true );
 }
 
-void PlasticityPlugin::extraInit ( Simulator *simulator )
+void PlasticityPlugin::extraInit ( SimulatorPtr simulator )
 {
-    Potts3D *potts = simulator->getPotts();
-    cellFieldG = potts->getCellFieldG();
+    Potts3DPtr potts = simulator->getPotts();
+    cellFieldG = potts->getCellField3DG();
 
     fieldDim=cellFieldG ->getDim();
     boundaryStrategy=BoundaryStrategy::getInstance();

@@ -51,14 +51,12 @@ void PixelTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCell,CellG *
 
     if(newCell) {
         std::set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessor.get(newCell->extraAttribPtr)->pixelSet;
-        auto sitr = pixelSetRef.find(PixelTrackerData(pt));
         pixelSetRef.insert(PixelTrackerData(pt));
     }
 
     if(oldCell) {
         std::set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessor.get(oldCell->extraAttribPtr)->pixelSet;
-        std::set<PixelTrackerData >::iterator sitr;
-        sitr=pixelSetRef.find(PixelTrackerData(pt));
+        auto sitr=pixelSetRef.find(PixelTrackerData(pt));
 
         ASSERT_OR_THROW("Could not find point:"+pt+" inside cell of id: "+BasicString(oldCell->id)+" type: "+BasicString((int)oldCell->type),
                         sitr!=pixelSetRef.end());
