@@ -38,7 +38,7 @@ endif(${CMAKE_SYSTEM_NAME} STREQUAL Windows)
 INSTALL_FILES(/include/CompuCell3D/CompuCell3D/Potts3D .h
   AcceptanceFunction
   AttributeAdder
-  CellChangeWatcher
+  #CellChangeWatcher
   CellGChangeWatcher
   Cell
   CellInventory
