@@ -8,10 +8,11 @@
 #include "FieldStorage.h"
 
 #include <CompuCell3D/Potts3D/Cell.h>
-
 #include "FieldExtractorBase.h"
-
 #include "FieldExtractorDLLSpecifier.h"
+
+// ATTENTION
+#include <CompuCell3D/CC3D_steppable.h>
 
 class FieldStorage;
 class vtkIntArray;
@@ -25,74 +26,82 @@ class vtkObject;
 //Notice one can speed up filling up of the Hex lattice data by allocating e.g. hexPOints ot cellType arrays
 //instead of inserting values. Inserting causes reallocations and this slows down the task completion
 
-namespace CompuCell3D{
+namespace CompuCell3D
+{
 
-	//have to declare here all the classes that will be passed to this class from Python
-	class Potts3D;
-	class Simulator;
-	class Dim3D;
+//have to declare here all the classes that will be passed to this class from Python
+class Potts3D;
+class Simulator;
+class Dim3D;
 
-	class FIELDEXTRACTOR_EXPORT FieldExtractor:public FieldExtractorBase{
-	public:
-		Potts3D * potts;
-		Simulator *sim;
-		FieldExtractor();
-		~FieldExtractor();
+class FIELDEXTRACTOR_EXPORT FieldExtractor:public FieldExtractorBase
+{
+public:
+    Potts3DPtr potts;
+    SimulatorPtr sim;
+    FieldExtractor();
+    ~FieldExtractor();
 
-		void setFieldStorage(FieldStorage * _fsPtr){fsPtr=_fsPtr;}
-		FieldStorage * getFieldStorage(FieldStorage * _fsPtr){return fsPtr;}
+    void setFieldStorage ( FieldStorage * _fsPtr )
+    {
+        fsPtr=_fsPtr;
+    }
+    FieldStorage * getFieldStorage ( FieldStorage * _fsPtr )
+    {
+        return fsPtr;
+    }
 
-		void extractCellField();
+    void extractCellField();
 
-		virtual void fillCellFieldData2D(long _cellTypeArrayAddr , std::string _plane ,  int _pos);
-		virtual void fillCellFieldData2DHex_old(long _cellTypeArrayAddr ,long _pointsArrayAddr, std::string _plane ,  int _pos);
-	    virtual void fillCellFieldData2DHex(long _cellTypeArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr, std::string _plane ,  int _pos);
+    virtual void fillCellFieldData2D ( long _cellTypeArrayAddr , std::string _plane ,  int _pos );
+    virtual void fillCellFieldData2DHex_old ( long _cellTypeArrayAddr ,long _pointsArrayAddr, std::string _plane ,  int _pos );
+    virtual void fillCellFieldData2DHex ( long _cellTypeArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr, std::string _plane ,  int _pos );
 
-		virtual void fillBorderData2D(long _pointArrayAddr ,long _linesArrayAddr, std::string _plane ,  int _pos);
-		virtual void fillBorderData2DHex(long _pointArrayAddr ,long _linesArrayAddr, std::string _plane ,  int _pos);
+    virtual void fillBorderData2D ( long _pointArrayAddr ,long _linesArrayAddr, std::string _plane ,  int _pos );
+    virtual void fillBorderData2DHex ( long _pointArrayAddr ,long _linesArrayAddr, std::string _plane ,  int _pos );
 
-		virtual void fillClusterBorderData2D(long _pointArrayAddr ,long _linesArrayAddr, std::string _plane ,  int _pos);
-		virtual void fillClusterBorderData2DHex(long _pointArrayAddr ,long _linesArrayAddr, std::string _plane ,  int _pos);
+    virtual void fillClusterBorderData2D ( long _pointArrayAddr ,long _linesArrayAddr, std::string _plane ,  int _pos );
+    virtual void fillClusterBorderData2DHex ( long _pointArrayAddr ,long _linesArrayAddr, std::string _plane ,  int _pos );
 
-		virtual void fillCentroidData2D(long _pointArrayAddr ,long _linesArrayAddr, std::string _plane ,  int _pos);
+    virtual void fillCentroidData2D ( long _pointArrayAddr ,long _linesArrayAddr, std::string _plane ,  int _pos );
 
-		virtual bool fillConFieldData2D(long _conArrayAddr,std::string _conFieldName, std::string _plane ,  int _pos);
-		virtual bool fillConFieldData2DHex(long _conArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos);
-        // virtual bool fillConFieldData2DCartesian(long _conArrayAddr,long _cartesianCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos);
-        // {return false;}
-        virtual bool fillConFieldData2DCartesian(long _conArrayAddr,long _cartesianCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos);
+    virtual bool fillConFieldData2D ( long _conArrayAddr,std::string _conFieldName, std::string _plane ,  int _pos );
+    virtual bool fillConFieldData2DHex ( long _conArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos );
+    // virtual bool fillConFieldData2DCartesian(long _conArrayAddr,long _cartesianCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos);
+    // {return false;}
+    virtual bool fillConFieldData2DCartesian ( long _conArrayAddr,long _cartesianCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos );
 
-	    virtual bool fillScalarFieldData2D(long _conArrayAddr,std::string _conFieldName, std::string _plane ,  int _pos);
-	    virtual bool fillScalarFieldData2DHex(long _conArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos);
-        virtual bool fillScalarFieldData2DCartesian(long _conArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos);
+    virtual bool fillScalarFieldData2D ( long _conArrayAddr,std::string _conFieldName, std::string _plane ,  int _pos );
+    virtual bool fillScalarFieldData2DHex ( long _conArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos );
+    virtual bool fillScalarFieldData2DCartesian ( long _conArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos );
 
-		virtual bool fillScalarFieldCellLevelData2D(long _conArrayAddr,std::string _conFieldName, std::string _plane ,  int _pos);
-		virtual bool fillScalarFieldCellLevelData2DHex(long _conArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos);
-        virtual bool fillScalarFieldCellLevelData2DCartesian(long _conArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos);
-		virtual bool fillScalarFieldCellLevelData3D(long _conArrayAddr ,long _cellTypeArrayAddr, std::string _conFieldName,std::vector<int> * _typesInvisibeVec);
+    virtual bool fillScalarFieldCellLevelData2D ( long _conArrayAddr,std::string _conFieldName, std::string _plane ,  int _pos );
+    virtual bool fillScalarFieldCellLevelData2DHex ( long _conArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos );
+    virtual bool fillScalarFieldCellLevelData2DCartesian ( long _conArrayAddr,long _hexCellsArrayAddr ,long _pointsArrayAddr , std::string _conFieldName , std::string _plane ,int _pos );
+    virtual bool fillScalarFieldCellLevelData3D ( long _conArrayAddr ,long _cellTypeArrayAddr, std::string _conFieldName,std::vector<int> * _typesInvisibeVec );
 
-		virtual bool fillVectorFieldData2D(long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName, std::string _plane ,  int _pos);
-		virtual bool fillVectorFieldData2DHex(long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName, std::string _plane ,  int _pos);
-		virtual bool fillVectorFieldData3D(long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName);
+    virtual bool fillVectorFieldData2D ( long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName, std::string _plane ,  int _pos );
+    virtual bool fillVectorFieldData2DHex ( long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName, std::string _plane ,  int _pos );
+    virtual bool fillVectorFieldData3D ( long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName );
 
-		virtual bool fillVectorFieldCellLevelData2D(long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName, std::string _plane ,  int _pos);
-		virtual bool fillVectorFieldCellLevelData2DHex(long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName, std::string _plane ,  int _pos);
-		virtual bool fillVectorFieldCellLevelData3D(long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName);
+    virtual bool fillVectorFieldCellLevelData2D ( long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName, std::string _plane ,  int _pos );
+    virtual bool fillVectorFieldCellLevelData2DHex ( long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName, std::string _plane ,  int _pos );
+    virtual bool fillVectorFieldCellLevelData3D ( long _pointsArrayIntAddr,long _vectorArrayIntAddr,std::string _fieldName );
 
-	    virtual bool fillScalarFieldData3D(long _conArrayAddr ,long _cellTypeArrayAddr, std::string _conFieldName,std::vector<int> * _typesInvisibeVec);
+    virtual bool fillScalarFieldData3D ( long _conArrayAddr ,long _cellTypeArrayAddr, std::string _conFieldName,std::vector<int> * _typesInvisibeVec );
 
-		virtual std::vector<int> fillCellFieldData3D(long _cellTypeArrayAddr, long _cellIdArrayAddr);
-		virtual bool fillConFieldData3D(long _conArrayAddr ,long _cellTypeArrayAddr, std::string _conFieldName,std::vector<int> * _typesInvisibeVec);
+    virtual std::vector<int> fillCellFieldData3D ( long _cellTypeArrayAddr, long _cellIdArrayAddr );
+    virtual bool fillConFieldData3D ( long _conArrayAddr ,long _cellTypeArrayAddr, std::string _conFieldName,std::vector<int> * _typesInvisibeVec );
 
-		void setVtkObj(void * _vtkObj);
-		void setVtkObjInt(long _vtkObjAddr);
-		vtkIntArray * produceVtkIntArray();
+    void setVtkObj ( void * _vtkObj );
+    void setVtkObjInt ( long _vtkObjAddr );
+    vtkIntArray * produceVtkIntArray();
 
-		int * produceArray(int _size);
-		void init(Simulator * _sim);
-	private:
-		FieldStorage * fsPtr;
-	};
+    int * produceArray ( int _size );
+    void init ( Simulator * _sim );
+private:
+    FieldStorage * fsPtr;
 };
+} // end namespace
 
 #endif
