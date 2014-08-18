@@ -58,5 +58,7 @@ public:
     virtual unsigned char getMaxTypeId() const =0;
 };
 
-};
+typedef Automaton* AutomatonPtr;
+
+} // end namespace
 #endif
