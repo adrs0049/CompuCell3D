@@ -182,7 +182,6 @@ bool BoundaryStrategy::isValidCustomDim ( const Point3D &pt, const Dim3D & custo
  */
 bool BoundaryStrategy::isValid ( const int coordinate, const int max_value ) const
 {
-
     return ( 0 <= coordinate && coordinate < max_value );
 }
 
@@ -213,7 +212,6 @@ void BoundaryStrategy::setDim ( const Dim3D theDim )
         latticeSpanVector.x=dim.x-1;
         latticeSpanVector.y= ( dim.y-1 ) *sqrt ( 3.0 ) /2.0;
         latticeSpanVector.z= ( dim.z-1 ) *sqrt ( 6.0 ) /3.0;
-
     }
     else
     {
@@ -258,18 +256,16 @@ void BoundaryStrategy::setIrregular()
  *
  * @return Point3D Valid Neighbor
  */
-Point3D BoundaryStrategy::getNeighbor ( const Point3D& pt, unsigned int& token, double& distance, bool checkBounds ) const
+Point3D BoundaryStrategy::getNeighbor ( const Point3D& pt, unsigned int& token, 
+										double& distance, bool checkBounds ) const
 {
     Neighbor n;
     Point3D p;
-    int x;
-    int y;
-    int z;
-    bool x_bool;
-    bool y_bool;
-    bool z_bool;
-
-    NeighborFinder::destroy();
+    int x, y, z;
+    bool x_bool, y_bool, z_bool;
+	
+// destroyign seems crazy here no?????
+//     NeighborFinder::destroy();
 
     while ( true )
     {
@@ -329,17 +325,13 @@ Point3D BoundaryStrategy::getNeighbor ( const Point3D& pt, unsigned int& token, 
 // this function returns neighbor but takes extra dim as an argument  menaning we can use it for lattices of size different than simulation dim. used in prepareOffsets functions
 Point3D BoundaryStrategy::getNeighborCustomDim ( const Point3D& pt, unsigned int& token,double& distance, const Dim3D & customDim, bool checkBounds ) const
 {
-
     Neighbor n;
     Point3D p;
-    int x;
-    int y;
-    int z;
-    bool x_bool;
-    bool y_bool;
-    bool z_bool;
+    int x, y, z;
+    bool x_bool, y_bool, z_bool;
 
-    NeighborFinder::destroy();
+	// destroying seems crazy no???
+//     NeighborFinder::destroy();
 
     while ( true )
     {
@@ -381,26 +373,22 @@ Point3D BoundaryStrategy::getNeighborCustomDim ( const Point3D& pt, unsigned int
     p.z = z;
 
     return p;
-
 }
-
 
 int BoundaryStrategy::getNumPixels ( int x, int y, int z ) const
 {
-
     return algorithm->getNumPixels ( x, y, z );
-
 }
 
 //returns true if _offset is stacked in _offsetVec
 //false otherwise
 bool BoundaryStrategy::checkIfOffsetAlreadyStacked ( Point3D & _ptToCheck , std::vector<Point3D> & _offsetVec ) const
 {
-
-    for ( auto &elem : _offsetVec )
+    for ( const auto &elem : _offsetVec )
     {
-        if ( elem.x == _ptToCheck.x && elem.y == _ptToCheck.y &&
-                elem.z == _ptToCheck.z )
+//         if ( elem.x == _ptToCheck.x && elem.y == _ptToCheck.y &&
+//                 elem.z == _ptToCheck.z )
+		if ( elem == _ptToCheck )
             return true;
     }
     return false;
@@ -416,17 +404,12 @@ bool BoundaryStrategy::checkEuclidianDistance ( Coordinates3D<double> & _pt1,Coo
     //checks if distance between two points is smaller than _distance
     //used to eliminate in offsetVec offsets that come from periodic conditions (opposite side of the lattice)
     return calculateDistance ( _pt1,_pt2 ) <_distance+0.1;
-
 }
-
-
-
 
 bool BoundaryStrategy::precisionCompare ( float _x,float _y,float _prec )
 {
     return fabs ( _x-_y ) <_prec;
 }
-
 
 Coordinates3D<double> BoundaryStrategy::HexCoord ( const Point3D & _pt ) const
 {
