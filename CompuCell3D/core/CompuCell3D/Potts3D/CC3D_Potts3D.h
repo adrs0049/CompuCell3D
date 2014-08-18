@@ -34,6 +34,7 @@
     #include <CompuCell3D/Potts3D/FirstOrderExpansionAcceptanceFunction.h>
     #include <CompuCell3D/Potts3D/EnergyFunction.h>
     #include <CompuCell3D/Potts3D/TypeChangeWatcher.h>
+	#include <CompuCell3D/Potts3D/CC3D_Potts_fwd.h>
     #include <CompuCell3D/Potts3D/Potts3D.h>
     #include <CompuCell3D/Potts3D/CellInventory.h>
     #include <CompuCell3D/Potts3D/TypeTransition.h>
