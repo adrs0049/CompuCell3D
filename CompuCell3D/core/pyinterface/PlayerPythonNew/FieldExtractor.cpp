@@ -39,7 +39,7 @@ void FieldExtractor::init(Simulator * _sim){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void FieldExtractor::extractCellField(){
 	//cerr<<"EXTRACTING CELL FIELD"<<endl;
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 	Point3D pt;
 	// cerr<< "FIeld Extractor cell field fieldDim="<<fieldDim<<endl;
@@ -65,7 +65,7 @@ void FieldExtractor::fillCellFieldData2D(long _cellTypeArrayAddr, std::string _p
 
 	vtkIntArray *_cellTypeArray=(vtkIntArray *)_cellTypeArrayAddr;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -121,7 +121,7 @@ void FieldExtractor::fillCellFieldData2DHex(long _cellTypeArrayAddr,long _hexCel
 	vtkPoints *_pointsArray=(vtkPoints *)_pointsArrayAddr;
 	vtkCellArray * _hexCellsArray=(vtkCellArray*)_hexCellsArrayAddr;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -195,7 +195,7 @@ void FieldExtractor::fillCellFieldData2DHex_old(long _cellTypeArrayAddr ,long _p
 	vtkIntArray *_cellTypeArray=(vtkIntArray *)_cellTypeArrayAddr;
 	vtkPoints *_pointsArray=(vtkPoints *)_pointsArrayAddr;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -258,7 +258,7 @@ void FieldExtractor::fillBorderData2D(long _pointArrayAddr ,long _linesArrayAddr
 	vtkPoints *points = (vtkPoints *)_pointArrayAddr;
 	vtkCellArray * lines=(vtkCellArray *)_linesArrayAddr; 
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -367,7 +367,7 @@ void FieldExtractor::fillBorderData2DHex(long _pointArrayAddr ,long _linesArrayA
 	vtkPoints *points = (vtkPoints *)_pointArrayAddr;
 	vtkCellArray * lines=(vtkCellArray *)_linesArrayAddr; 
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -796,7 +796,7 @@ void FieldExtractor::fillClusterBorderData2D(long _pointArrayAddr ,long _linesAr
 	vtkPoints *points = (vtkPoints *)_pointArrayAddr;
 	vtkCellArray * lines=(vtkCellArray *)_linesArrayAddr;
 
-	Field3D<CellG*> * cellFieldG = potts->getCellFieldG();
+	auto cellFieldG = potts->getCellField3DG();
 	Dim3D fieldDim = cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -911,7 +911,7 @@ void FieldExtractor::fillClusterBorderData2DHex(long _pointArrayAddr ,long _line
 	vtkPoints *points = (vtkPoints *)_pointArrayAddr;
 	vtkCellArray * lines = (vtkCellArray *)_linesArrayAddr;
 
-	Field3D<CellG*> * cellFieldG = potts->getCellFieldG();
+	auto cellFieldG = potts->getCellField3DG();
 	Dim3D fieldDim = cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -1400,7 +1400,7 @@ bool FieldExtractor::fillConFieldData2DHex(long _conArrayAddr,long _hexCellsArra
 		return false;
 
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -1476,7 +1476,7 @@ bool FieldExtractor::fillConFieldData2DCartesian(long _conArrayAddr,long _cartes
 	if(!conFieldPtr)
 		return false;
     
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -1553,7 +1553,7 @@ bool FieldExtractor::fillScalarFieldData2DHex(long _conArrayAddr,long _hexCellsA
 		return false;
 
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -1628,7 +1628,7 @@ bool FieldExtractor::fillScalarFieldData2DCartesian(long _conArrayAddr,long _car
 		return false;
 
     
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -1708,7 +1708,7 @@ bool FieldExtractor::fillScalarFieldCellLevelData2DHex(long _conArrayAddr,long _
 
 	FieldStorage::scalarFieldCellLevel_t::iterator mitr;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -1792,7 +1792,7 @@ bool FieldExtractor::fillScalarFieldCellLevelData2DCartesian(long _conArrayAddr,
         
 	FieldStorage::scalarFieldCellLevel_t::iterator mitr;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -1881,7 +1881,7 @@ bool FieldExtractor::fillConFieldData2D(long _conArrayAddr,std::string _conField
 		return false;
 
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -1942,7 +1942,7 @@ bool FieldExtractor::fillScalarFieldData2D(long _conArrayAddr,std::string _conFi
 		return false;
 
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -2003,7 +2003,7 @@ bool FieldExtractor::fillScalarFieldCellLevelData2D(long _conArrayAddr,std::stri
 
 	FieldStorage::scalarFieldCellLevel_t::iterator mitr;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -2075,7 +2075,7 @@ bool FieldExtractor::fillVectorFieldData2D(long _pointsArrayIntAddr,long _vector
 	if(!vectorFieldPtr)
 		return false;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -2143,7 +2143,7 @@ bool FieldExtractor::fillVectorFieldData2DHex(long _pointsArrayIntAddr,long _vec
 	if(!vectorFieldPtr)
 		return false;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -2211,7 +2211,7 @@ bool FieldExtractor::fillVectorFieldData3D(long _pointsArrayIntAddr,long _vector
 	if(!vectorFieldPtr)
 		return false;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	Point3D pt;
@@ -2250,7 +2250,7 @@ bool FieldExtractor::fillVectorFieldCellLevelData2D(long _pointsArrayIntAddr,lon
 		return false;
 
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -2322,7 +2322,7 @@ bool FieldExtractor::fillVectorFieldCellLevelData2DHex(long _pointsArrayIntAddr,
 	if(!vectorFieldPtr)
 		return false;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vector<int> fieldDimVec(3,0);
@@ -2394,7 +2394,7 @@ bool FieldExtractor::fillVectorFieldCellLevelData3D(long _pointsArrayIntAddr,lon
 	if(!vectorFieldPtr)
 		return false;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	Point3D pt;
@@ -2434,7 +2434,7 @@ bool FieldExtractor::fillVectorFieldCellLevelData3D(long _pointsArrayIntAddr,lon
 //
 //	vtkIntArray *cellTypeArray=(vtkIntArray *)_cellTypeArrayAddr;
 //
-//	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+//	auto cellFieldG=potts->getCellField3DG();
 //	Dim3D fieldDim=cellFieldG->getDim();
 //
 //	cellTypeArray->SetNumberOfValues((fieldDim.x+2)*(fieldDim.y+2)*(fieldDim.z+2));
@@ -2474,7 +2474,7 @@ vector<int> FieldExtractor::fillCellFieldData3D(long _cellTypeArrayAddr, long _c
 	vtkIntArray *cellTypeArray=(vtkIntArray *)_cellTypeArrayAddr;
 	vtkIntArray *cellIdArray=(vtkIntArray *)_cellIdArrayAddr;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim = cellFieldG->getDim();
 
 	cellTypeArray->SetNumberOfValues((fieldDim.x+2)*(fieldDim.y+2)*(fieldDim.z+2));
@@ -2528,7 +2528,7 @@ bool FieldExtractor::fillConFieldData3D(long _conArrayAddr ,long _cellTypeArrayA
 	if(!conFieldPtr)
 		return false;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	conArray->SetNumberOfValues((fieldDim.x+2)*(fieldDim.y+2)*(fieldDim.z+2));
@@ -2587,7 +2587,7 @@ bool FieldExtractor::fillScalarFieldData3D(long _conArrayAddr ,long _cellTypeArr
 		return false;
 
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	conArray->SetNumberOfValues((fieldDim.x+2)*(fieldDim.y+2)*(fieldDim.z+2));
@@ -2701,7 +2701,7 @@ bool FieldExtractor::fillScalarFieldCellLevelData3D(long _conArrayAddr ,long _ce
 	if(!conFieldPtr)
 		return false;
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	conArray->SetNumberOfValues((fieldDim.x+2)*(fieldDim.y+2)*(fieldDim.z+2));
