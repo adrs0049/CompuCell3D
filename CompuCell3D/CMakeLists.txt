@@ -55,7 +55,7 @@ set(CMAKE_CXX_FLAGS_C11 " -std=c++11 -march=core-avx2 ")
 set(CMAKE_CXX_COMMON_APPEND "${CMAKE_CXX_FLAGS_C11} -D__STRICT_ANSI__")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_COMMON_APPEND} -O2 -DNDEBUG_BUILD")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CMAKE_CXX_COMMON_APPEND} -DDEBUG_BUILD -O2 -Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CMAKE_CXX_COMMON_APPEND} -g -ggdb -DDEBUG_BUILD -O0 -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  ${CMAKE_CXX_COMMON_APPEND} -DNDEBUG_BUILD" )
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${CMAKE_CXX_COMMON_APPEND} -O3 -DNDEBUG_BUILD")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
@@ -67,19 +67,14 @@ endif(CMAKE_COMPILER_IS_GNUCC)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   #add_definitions("-std=c++11 -Wall -Wextra -Wshadow -Weffc++ -pedantic -Wstrict-aliasing -Wpointer-arith -Wcast-qual")
-  add_definitions("-std=c++11 -Wall")
+  add_definitions("-std=c++11 -Wall -Wextra -Wstrict-aliasing=2 -Wpointer-arith -Wno-unused-parameter")
 else()
   message(FATAL_ERROR "CMakeLists.txt has not been tested/written for your compiler.")
 endif()
 
 SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-INCLUDE_DIRECTORIES ( 
-    ${COMPUCELL3D_SOURCE_DIR}/core
-    )
-
+INCLUDE_DIRECTORIES ( ${COMPUCELL3D_SOURCE_DIR}/core)
 OPTION(USE_LIBRARY_VERSIONS "Use version numbers in libraries" OFF)
-
 SET(USE_LIBRARY_VERSIONS OFF)
 
 IF(USE_LIBRARY_VERSIONS)
