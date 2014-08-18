@@ -39,8 +39,6 @@ SET(SRCS
         ${ADDITIONAL_BASIC_UTILS_FILES}
 )
 
-
-
 # If we have pthreads build BasicThread
 # IF(CMAKE_USE_PTHREADS_INIT)
 #   SET(SRCS ${SRCS}
@@ -71,16 +69,10 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL Windows)
    ADD_STATIC_LIBRARY(BasicUtils ${SRCS})
 else(${CMAKE_SYSTEM_NAME} STREQUAL Windows)
    ADD_SHARED_LIBRARY(BasicUtils ${SRCS} LINK_LIBRARIES ${LIBS})
-
 endif(${CMAKE_SYSTEM_NAME} STREQUAL Windows)
 
-
-
-
-
-
 INSTALL_FILES(/include/CompuCell3D/BasicUtils .h
-  BasicArray
+  #BasicArray
   BasicClassAccessorBase
   BasicClassAccessor
   BasicClassFactoryBase
@@ -89,20 +81,20 @@ INSTALL_FILES(/include/CompuCell3D/BasicUtils .h
   BasicClassGroupFactory
   BasicClassGroup
   BasicClassRegistry
-  BasicCounter
-  BasicDynamicClassFactory
-  BasicDynamicClassNodeBase
-  BasicDynamicClassNode
+  #BasicCounter
+  #BasicDynamicClassFactory
+  #BasicDynamicClassNodeBase
+  #BasicDynamicClassNode
   BasicException
   BasicFileLocation
   BasicPluginInfo
   BasicPluginManager
   BasicPluginProxy
   BasicRandomNumberGenerator
-  BasicSmartPointer
+  #BasicSmartPointer
   BasicString
   BasicStringTable
   WindowsGlob
   wrapdll
-  Zap
+  #Zap
 )
