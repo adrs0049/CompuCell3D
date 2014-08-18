@@ -23,41 +23,36 @@
 #ifndef CUSTOMACCEPTANCEFUNCTION_H
 #define CUSTOMACCEPTANCEFUNCTION_H
 
-
 #include <PublicUtilities/ParallelUtilsOpenMP.h>
 #include <muParser/ExpressionEvaluator/ExpressionEvaluator.h>
-
 #include "AcceptanceFunction.h"
-
-
 #include <math.h>
 
 class CC3DXMLElement;
 
-// #include <iostream>
-namespace CompuCell3D {
+namespace CompuCell3D
+{
 
-	
-    class ParallelUtilsOpenMP;
-	class Simulator;
+class ParallelUtilsOpenMP;
+class Simulator;
 
-  class CustomAcceptanceFunction: public AcceptanceFunction {
-	ExpressionEvaluatorDepot eed;
-	Simulator *simulator;
-	ParallelUtilsOpenMP * pUtils;
-	
-  public:
-    CustomAcceptanceFunction() : simulator(nullptr), pUtils(nullptr) {}
-        //AcceptanceFunction interface
-        virtual double accept(const double temp, const double change) override;
+class CustomAcceptanceFunction: public AcceptanceFunction
+{
+    ExpressionEvaluatorDepot eed;
+    Simulator *simulator;
+    ParallelUtilsOpenMP * pUtils;
 
-        virtual void setOffset(double _offset) override{};
-        virtual void setK(double _k) override{};
+public:
+    CustomAcceptanceFunction() : simulator ( nullptr ), pUtils ( nullptr ) {}
+    
+    //AcceptanceFunction interface
+    virtual double accept ( const double temp, const double change ) override;
+    virtual void setOffset ( double _offset ) override {};
+    virtual void setK ( double _k ) override {};
 
-        void initialize(Simulator *_sim);
-	void update(CC3DXMLElement *_xmlData, bool _fullInitFlag=false);
-	
-	
-  };
+    void initialize ( Simulator *_sim );
+    void update ( CC3DXMLElement *_xmlData, bool _fullInitFlag=false );
 };
+
+} // end namespace
 #endif
