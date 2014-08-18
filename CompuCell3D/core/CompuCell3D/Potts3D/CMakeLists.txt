@@ -3,6 +3,7 @@ SET(SRCS
   Cell.cpp
   CellInventory.cpp
   DefaultAcceptanceFunction.cpp
+  DynamicAcceptanceFunction.cpp
   CustomAcceptanceFunction.cpp
   EnergyFunctionCalculator.cpp
   EnergyFunctionCalculatorStatistics.cpp
