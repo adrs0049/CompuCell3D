@@ -40,6 +40,7 @@
 #include <CompuCell3D/PottsParseData.h>
 #include <CompuCell3D/ParserStorage.h>
 #include <CompuCell3D/CC3DEvents.h>
+#include <CompuCell3D/CC3D_fwd.h>
 
 class CC3DXMLElement;
 class CustomStreamBufferBase;
@@ -218,6 +219,8 @@ public:
     void updateCC3DModule ( CC3DXMLElement *_element );
     void steer();
 };
+
+typedef Simulator* SimulatorPtr;
 
 } // end namespace
 #endif

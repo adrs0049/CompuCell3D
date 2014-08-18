@@ -808,7 +808,7 @@ void Simulator::initializePottsCC3D ( CC3DXMLElement * _xmlData )
             if ( energyFunctionCalculatorType=="Statistics" )
                 potts.createEnergyFunction ( energyFunctionCalculatorType );
         }
-        EnergyFunctionCalculator * enCalculator=potts.getEnergyFunctionCalculator();
+        auto& enCalculator=potts.getEnergyFunctionCalculator();
         enCalculator->setSimulator ( this );
         enCalculator->init ( _xmlData->getFirstElement ( "EnergyFunctionCalculator" ) );
     }
