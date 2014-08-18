@@ -48,5 +48,5 @@ namespace CompuCell3D {
     virtual void setK(double _k)=0;
 
   };
-};
+} // end namespace
 #endif
