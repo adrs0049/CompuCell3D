@@ -374,11 +374,10 @@ class BS{
 FIELD3DEXTENDER(CompuCell3D::Field3D<int>,int)
 FIELD3DEXTENDER(CompuCell3D::Field3DImpl<int>,int)
 
-FIELD3DEXTENDER(CompuCell3D::Field3D<float>, float)
-FIELD3DEXTENDER(CompuCell3D::Field3DImpl<float>, float)
+FIELD3DEXTENDER(CompuCell3D::Field3D<float>,float)
+FIELD3DEXTENDER(CompuCell3D::Field3DImpl<float>,float)
 
-* %extend CompuCell3D::Field3DImpl<int>{    
-* };
+//%extend CompuCell3D::Field3DImpl<int>{};
 
 %inline %{
         void fcn(CompuCell3D::Dim3D _dim){
