@@ -29,9 +29,7 @@ using namespace std;
 using namespace CompuCell3D;
 
 FieldWriter::FieldWriter():fsPtr(0),potts(0),sim(0),latticeData(0)
-{
-
-}
+{}
 ////////////////////////////////////////////////////////////////////////////////
 FieldWriter::~FieldWriter(){
 	if (latticeData){
@@ -52,7 +50,7 @@ void FieldWriter::init(Simulator * _sim){
 	}
     latticeData=vtkStructuredPoints::New();
     
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
     
     latticeData->SetDimensions(fieldDim.x,fieldDim.y,fieldDim.z);
@@ -76,7 +74,7 @@ void FieldWriter::writeFields(std::string _fileName){
 	latticeDataWriter->SetFileName(_fileName.c_str());
 
 	//get new field dim before each write event - in case simulation dimensions have changed
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
     
     latticeData->SetDimensions(fieldDim.x,fieldDim.y,fieldDim.z);
@@ -149,7 +147,7 @@ void FieldWriter::generatePIFFileFromCurrentStateOfSimulation(std::string _pifFi
 	Point3D pt;
 	Automaton *automaton=potts->getAutomaton();
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	for(pt.z =0 ; pt.z<fieldDim.z ; ++pt.z)	
@@ -172,7 +170,7 @@ void FieldWriter::generatePIFFileFromCurrentStateOfSimulation(std::string _pifFi
 }
 ////////////////////////////////////////////////////////////////////////////////
 void FieldWriter::addCellFieldForOutput(){
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	vtkCharArray *typeArray=vtkCharArray::New();
@@ -222,7 +220,7 @@ void FieldWriter::addCellFieldForOutput(){
 }
 ////////////////////////////////////////////////////////////////////////////////
 bool FieldWriter::addConFieldForOutput(std::string _conFieldName){
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	Field3D<float> *conFieldPtr=0; 
@@ -258,7 +256,7 @@ bool FieldWriter::addConFieldForOutput(std::string _conFieldName){
 }
 ////////////////////////////////////////////////////////////////////////////////
 bool FieldWriter::addScalarFieldForOutput(std::string _scalarFieldName){
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	FieldStorage::floatField3D_t * conFieldPtr=fsPtr->getScalarFieldByName(_scalarFieldName); 
@@ -289,7 +287,7 @@ bool FieldWriter::addScalarFieldForOutput(std::string _scalarFieldName){
 ////////////////////////////////////////////////////////////////////////////////
 bool FieldWriter::addScalarFieldCellLevelForOutput(std::string _scalarFieldCellLevelName){
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 	FieldStorage::scalarFieldCellLevel_t * conFieldPtr=fsPtr->getScalarFieldCellLevelFieldByName(_scalarFieldCellLevelName);
 
@@ -334,7 +332,7 @@ bool FieldWriter::addScalarFieldCellLevelForOutput(std::string _scalarFieldCellL
 ////////////////////////////////////////////////////////////////////////////////
 bool FieldWriter::addVectorFieldForOutput(std::string _vectorFieldName){
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 
 	FieldStorage::vectorField3D_t * vecFieldPtr=fsPtr->getVectorFieldFieldByName(_vectorFieldName);
@@ -374,7 +372,7 @@ bool FieldWriter::addVectorFieldForOutput(std::string _vectorFieldName){
 ////////////////////////////////////////////////////////////////////////////////
 bool FieldWriter::addVectorFieldCellLevelForOutput(std::string _vectorFieldCellLevelName){
 
-	Field3D<CellG*> * cellFieldG=potts->getCellFieldG();
+	auto cellFieldG=potts->getCellField3DG();
 	Dim3D fieldDim=cellFieldG->getDim();
 	FieldStorage::vectorFieldCellLevel_t * vecFieldPtr=fsPtr->getVectorFieldCellLevelFieldByName(_vectorFieldCellLevelName);
 
