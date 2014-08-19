@@ -39,16 +39,11 @@ class BasicClassFactoryBase;
 class BasicClassAccessorBase
 {
     int id;
-
 public:
     BasicClassAccessorBase() : id ( -1 ) {}
-// for debug
-    int getId ( void ) const
-	{
-		return id;
-	}
+
 protected:
-	~BasicClassAccessorBase() {}
+    ~BasicClassAccessorBase() {}
     virtual std::unique_ptr<BasicClassFactoryBase<void>> createClassFactory() = 0;
 
     /**
@@ -68,7 +63,7 @@ protected:
      */
     std::shared_ptr<void> getClass ( const std::shared_ptr<BasicClassGroup>& group ) const
     {
-		ASSERT_OR_THROW(std::string("BasicClassAccessorBase id ( ") + std::to_string(id) + std::string(" ) is not SET!!\n"),id!=-1);
+        ASSERT_OR_THROW ( std::string ( "BasicClassAccessorBase id ( " ) + std::to_string ( id ) + std::string ( " ) is not SET!!\n" ),id!=-1 );
         return group->getClass ( id );
     }
 
