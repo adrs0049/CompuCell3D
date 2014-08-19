@@ -352,50 +352,6 @@ Coordinates3D<double> distanceVectorCoordinatesInvariant(const Coordinates3D<dou
     return Coordinates3D<double>(x1_t-x0_t , y1_t-y0_t , z1_t-z0_t);
 }
 
-Coordinates3D<float> distanceVectorCoordinatesInvariant(const Coordinates3D<float> & _pt1 ,const Coordinates3D<float> & _pt0,const Point3D & _fieldDim) 
-{
-    Coordinates3D<float> shiftVec;
-    float x0_t,y0_t,z0_t;
-    float x1_t,y1_t,z1_t;
-
-    //shift is defined to be zero vector for non-periodic b.c. - everything reduces to naive calculations then
-    shiftVec.x= (_pt0.x-_fieldDim.x/2);
-    shiftVec.y= (_pt0.y-_fieldDim.y/2);
-    shiftVec.z= (_pt0.z-_fieldDim.z/2);
-
-    //moving x0,y0,z0 to approximetely center of the lattice
-    x0_t=_pt0.x-shiftVec.x;
-    y0_t=_pt0.y-shiftVec.y;
-    z0_t=_pt0.z-shiftVec.z;
-
-    //shifting accordingly other coordinates
-    x1_t=_pt1.x-shiftVec.x;
-    y1_t=_pt1.y-shiftVec.y;
-    z1_t=_pt1.z-shiftVec.z;
-
-    //making sure that x1_t,y1_t,z1_t is in the lattice
-
-    if(x1_t < 0) {
-        x1_t += _fieldDim.x;
-    } else if (x1_t > _fieldDim.x-1) {
-        x1_t -= _fieldDim.x;
-    }
-
-    if(y1_t < 0) {
-        y1_t += _fieldDim.y;
-    } else if (y1_t > _fieldDim.y-1) {
-        y1_t -= _fieldDim.y;
-    }
-
-    if(z1_t < 0) {
-        z1_t += _fieldDim.z;
-    } else if (z1_t > _fieldDim.z-1) {
-        z1_t -= _fieldDim.z;
-    }
-
-    return Coordinates3D<float>(x1_t-x0_t , y1_t-y0_t , z1_t-z0_t);
-}
-
 //works only on a square lattice for now
 CenterOfMassPair_t precalculateAfterFlipCM(
     const Point3D &pt,
