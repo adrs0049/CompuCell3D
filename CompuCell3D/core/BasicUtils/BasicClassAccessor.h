@@ -47,11 +47,6 @@ public:
      *
      * @return A pointer the class T with in the given class group.
      */
-    std::shared_ptr<T> get(std::shared_ptr<BasicClassGroup>& group)
-    {
-        return std::static_pointer_cast<T>(getClass(group));
-    }
-    
     std::shared_ptr<T> get(const std::shared_ptr<BasicClassGroup>& group) const
     {
         return std::static_pointer_cast<T>(getClass(group));

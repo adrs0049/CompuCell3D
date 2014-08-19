@@ -27,6 +27,7 @@
 
 #include "memory_include.h"
 #include "BasicClassGroup.h"
+#include "BasicException.h"
 
 template <class T>
 class BasicClassFactoryBase;
@@ -41,7 +42,11 @@ class BasicClassAccessorBase
 
 public:
     BasicClassAccessorBase() : id ( -1 ) {}
-
+// for debug
+    int getId ( void ) const
+	{
+		return id;
+	}
 protected:
 	~BasicClassAccessorBase() {}
     virtual std::unique_ptr<BasicClassFactoryBase<void>> createClassFactory() = 0;
@@ -61,12 +66,9 @@ protected:
      * Called by BasicClassAccessor to get a pointer to this accessors class in
      * the group.
      */
-    std::shared_ptr<void> getClass ( std::shared_ptr<BasicClassGroup>& group )
-    {
-        return group->getClass ( id );
-    }
     std::shared_ptr<void> getClass ( const std::shared_ptr<BasicClassGroup>& group ) const
     {
+		ASSERT_OR_THROW(std::string("BasicClassAccessorBase id ( ") + std::to_string(id) + std::string(" ) is not SET!!\n"),id!=-1);
         return group->getClass ( id );
     }
 
