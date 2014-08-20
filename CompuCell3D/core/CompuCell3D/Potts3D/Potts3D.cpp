@@ -54,7 +54,7 @@ using namespace std;
 Potts3D::Potts3D() :
 	cellFieldG ( nullptr ),
 	attrAdder ( nullptr ),
-	energyCalculator( std::make_unique<EnergyFunctionCalculatorStatistics>() ),
+	energyCalculator( nullptr ),
     connectivityConstraint ( nullptr ),
     typeTransition( new TypeTransition() ),
     automaton(nullptr),
@@ -73,7 +73,6 @@ Potts3D::Potts3D() :
 {
     neighbors.assign ( 100,Point3D() ); //statically allocated this buffer maybe will come with something better later
     frozenTypeVec.assign ( 0,0 );
-    energyCalculator->setPotts ( this );
     metropolisFcnPtr=&Potts3D::metropolisFast;
     cellInventory.setPotts3DPtr ( this );
     fluctAmplFcn= std::make_unique<MinFluctuationAmplitudeFunction> ( this );
@@ -102,9 +101,13 @@ void Potts3D::createEnergyFunction ( std::string _energyFunctionType )
 	//default is not to reassign energy finction calculator
     if ( _energyFunctionType=="Statistics" )
     {
-        energyCalculator = std::make_unique<EnergyFunctionCalculatorStatistics>();
-        energyCalculator->setPotts ( this );
+        energyCalculator = std::make_unique<EnergyFunctionCalculatorStatistics>(sim, this);
         //initialize Statistics Output Energy Finction Here
+    }
+    else
+    {
+        DBG_ONLY(cerr<<"default is to create a EnergyFunctionCalculator!\n"<<endl;);
+        energyCalculator = std::make_unique<EnergyFunctionCalculator>(sim, this);
     }
 }
 
@@ -177,20 +180,20 @@ Automaton* Potts3D::getAutomaton()
 
 void Potts3D::registerEnergyFunction ( EnergyFunction *function )
 {
+    ASSERT_OR_THROW("Potts3D energy calculator cannot be nullptr!\n", energyCalculator!=nullptr);
     energyCalculator->registerEnergyFunctionWithName ( function,function->toString() );
-    //    sim->registerSteerableObject(function);
 }
 
-void Potts3D::registerEnergyFunctionWithName ( EnergyFunction *_function,std::string _functionName )
+void Potts3D::registerEnergyFunctionWithName ( EnergyFunction *_function, std::string _functionName )
 {
+    ASSERT_OR_THROW("Potts3D energy calculator cannot be nullptr!\n", energyCalculator!=nullptr);
     energyCalculator->registerEnergyFunctionWithName ( _function,_functionName );
-    //   sim->registerSteerableObject(_function);
 }
 
 void Potts3D::unregisterEnergyFunction ( std::string _functionName )
 {
+    ASSERT_OR_THROW("Potts3D energy calculator cannot be nullptr!\n", energyCalculator!=nullptr);
     energyCalculator->unregisterEnergyFunction ( _functionName );
-    //    sim->unregisterSteerableObject(_functionName);
 }
 
 double Potts3D::getEnergy()
