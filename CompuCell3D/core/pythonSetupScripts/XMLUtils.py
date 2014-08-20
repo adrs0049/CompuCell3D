@@ -151,7 +151,8 @@ class Xml2Obj(object):
             data = data.encode()
             # # # print "Character Data",repr(data)
             element = self.nodeStack[-1]
-            element.cdata += data
+            element.appendData(data)
+            #element.cdata += data
 
     def Parse(self, filename):
         # Create an Expat parser
