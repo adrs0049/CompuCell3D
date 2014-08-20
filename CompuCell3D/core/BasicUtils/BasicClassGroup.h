@@ -36,19 +36,17 @@
  */
 class BasicClassGroup {
 public:
-	// FIXME i should be protected
+	virtual ~BasicClassGroup() {}
+
+protected:
 	/**
      * @param classes The class array.
      */
     BasicClassGroup(std::vector<std::shared_ptr<void> > classes)
         : classes{classes}
     {}
-        
-    ~BasicClassGroup() {}
 	
-protected:
     std::vector<std::shared_ptr<void> > classes;
-
 	std::size_t size() const { return classes.size(); }
     
     /**
