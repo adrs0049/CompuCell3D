@@ -24,6 +24,9 @@
 // C++ std::map handling
 %include "std_vector.i"
 
+// C++ std::map handling
+%include "std_shared_ptr.i"
+
 //enables better handling of STL exceptions
 %include "exception.i"
 
