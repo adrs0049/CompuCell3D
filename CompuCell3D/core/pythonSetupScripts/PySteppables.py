@@ -1,7 +1,4 @@
 "This module contains definitions of basic classes that are used to construct Python based Steppables"
-
-# import sys
-
 # necessary to keep refernces to attribute adder and dictAdder current
 global pyAttributeAdder
 global dictAdder
@@ -10,9 +7,7 @@ from enums import *
 pyAttributeAdder=None
 dictAdder=None
 
-
 #steppables
-
 class SimObjectPy:
     def __init__(self):pass
     def init(self,_simulator):
@@ -32,9 +27,6 @@ class SteppablePy(SimObjectPy):
     def step(self,_mcs):pass
     def finish(self):pass
 
-
-
-
 # class SteppableBasePy(SteppablePy): 
 from SBMLSolverHelper import SBMLSolverHelper
 class SteppableBasePy(SteppablePy,SBMLSolverHelper):         
@@ -52,27 +44,24 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
         self.cellListByType=CellListByType(self.inventory)
         self.clusterList=ClusterList(self.inventory) 
         self.clusters=Clusters(self.inventory)
-        
         self.boundaryStrategy=self.simulator.getBoundaryStrategy()
-        
         self.__modulesToUpdateDict={} #keeps modules to update   
-        
+
         import CompuCellSetup
         global pyAttributeAdder
         global dictAdder
         if not pyAttributeAdder or dictAdder:
             pyAttributeAdder, dictAdder = CompuCellSetup.attachDictionaryToCells(self.simulator)
-        
-        
+
         import CompuCellSetup
         self.typeIdTypeNameDict = CompuCellSetup.ExtractTypeNamesAndIds()    
         for typeId in self.typeIdTypeNameDict:
             setattr(self,self.typeIdTypeNameDict[typeId].upper(),typeId)
-                        
+
         import CompuCell      
         pluginManager=CompuCell.getPluginManagerAsBPM()                
         stepManager=CompuCell.getSteppableManagerAsBPM() # have to use explicit cast to BasicPluginManager to get steppable manager to work
-        
+
         #VolumeTrackerPlugin
         self.volumeTrackerPlugin=None
         if self.simulator.pluginManager.isLoaded("VolumeTracker"):
@@ -85,8 +74,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
         if self.simulator.pluginManager.isLoaded("CenterOfMass"):
             import CompuCell
             self.centerOfMassPlugin=CompuCell.getCenterOfMassPlugin()
-            
-
 
         #NeighborTrackerPlugin
         self.neighborTrackerPlugin=None
@@ -155,7 +142,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
             self.lengthConstraintPlugin=CompuCell.getLengthConstraintPlugin()
             self.lengthConstraintLocalFlexPlugin=self.lengthConstraintPlugin # kept for compatibility reasons
 
-            
         #ContactLocalFlexPlugin 
         self.contactLocalFlexPlugin=None
         if self.simulator.pluginManager.isLoaded("ContactLocalFlex"):
@@ -255,28 +241,21 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
         import CompuCell        
         return CompuCell.getPyAttrib(_cell)
         
-            
-            
     def changeNumberOfWorkNodes(self,_numberOfWorkNodes):
-        
         import CompuCell
         numberOfWorkNodesEv=CompuCell.CC3DEventChangeNumberOfWorkNodes()
         numberOfWorkNodesEv.oldNumberOfNodes=1
         numberOfWorkNodesEv.newNumberOfNodes=_numberOfWorkNodes
         self.simulator.postEvent(numberOfWorkNodesEv)
 
-    
-    
     def resizeAndShiftLattice(self,_newSize, _shiftVec=(0,0,0)):
-     
         print 'PYSTEPPABLES INSIDE resizeAndShiftLattice'
         if self.potts.getBoundaryXName().lower()=='periodic'\
             or self.potts.getBoundaryYName().lower()=='periodic'\
             or self.potts.getBoundaryZName().lower()=='periodic':
-                
+
             raise EnvironmentError('Cannot resize lattice with Periodic Boundary Conditions')
-        
-        
+
         import CompuCell        
         
         newSize=map(int,_newSize)# converting new size to integers
@@ -303,7 +282,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
 #         if sum(shiftVec)==0: # there is no shift in cell field
 #             return
         
-        
         # posting CC3DEventLatticeResize so that participating modules can react
         resizeEv=CompuCell.CC3DEventLatticeResize()
         resizeEv.oldDim=self.dim
@@ -311,7 +289,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
         resizeEv.shiftVec=CompuCell.Dim3D(shiftVec[0],shiftVec[1],shiftVec[2])
         
         self.simulator.postEvent(resizeEv)
-        
         
         self.__init__(self.simulator,self.frequency)
         import CompuCellSetup
@@ -321,15 +298,12 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
             if steppable !=self:
                 steppable.__init__(steppable.simulator,steppable.frequency) 
         
-        
-        
     def everyPixelWithSteps(self,step_x,step_y,step_z) :
         for x in xrange(0,self.dim.x,step_x):
             for y in xrange(0,self.dim.y,step_y):
                 for z in xrange(0,self.dim.z,step_z):
                     yield x,y,z
-        
-    
+
     def everyPixel(self,step_x=1,step_y=1,step_z=1):
         if  step_x==1 and step_y==1 and step_z==1:    
             import itertools
@@ -369,10 +343,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
         except:
             raise AttributeError('Could not find NeighborTracker Plugin')
 
-            
-
-
-
     def getFocalPointPlasticityDataList(self,_cell):
         if self.focalPointPlasticityPlugin:
             return FocalPointPlasticityDataList(self.focalPointPlasticityPlugin,_cell)
@@ -390,7 +360,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
             return AnchorFocalPointPlasticityDataList(self.focalPointPlasticityPlugin,_cell)            
             
         return None    
-
     
     def getCellBoundaryPixelList(self,_cell):
         if self.boundaryPixelTrackerPlugin:
@@ -407,7 +376,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
                 return [(boundaryPixelTrackerData.pixel.x,boundaryPixelTrackerData.pixel.y,boundaryPixelTrackerData.pixel.z) for boundaryPixelTrackerData in self.getCellBoundaryPixelList(_cell)]
         except:
             raise AttributeError('Could not find BoundaryPixelTracker Plugin')        
-        
         
     def getCellPixelList(self,_cell):
         if self.pixelTrackerPlugin:
@@ -437,7 +405,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
         return None    
         
     def getFieldSecretor(self,_fieldName):
-    
         if self.secretionPlugin:
             return self.secretionPlugin.getFieldSecretor(_fieldName)
             
@@ -571,9 +538,7 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
             self.cellField[0,0:self.dim.y,0:self.dim.z]=cell
             #wall 6 (right)
             self.cellField[self.dim.x-1,0:self.dim.y,0:self.dim.z]=cell
-            
-        
-            
+
     def destroyWall(self):
         self.buildWall(0) # build wall of Medium
         
@@ -599,7 +564,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
         
     def invariantDistanceVectorInteger(self,_from=[0,0,0],_to=[0,0,0]):
         '''
-        
         This function will calculate distance vector with integer coordinates between two Point3D points
         and make sure that the absolute values of the vector are smaller than 1/2 of the corresponding lattice dimension
         this way we simulate 'invariance' of distance assuming that periodic boundary conditions are in place 
@@ -654,7 +618,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
         '''
         
         return self.vectorNorm(self.invariantDistanceVector(_from, _to))    
-    
     
     def vectorNorm(self,_vec):
         import numpy
@@ -823,8 +786,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
     def addNewPlotWindow(self, _title='',_xAxisTitle='',_yAxisTitle='',_xScaleType='linear',_yScaleType='linear'):
         import CompuCellSetup
         return CompuCellSetup.addNewPlotWindow(_title,_xAxisTitle,_yAxisTitle,_xScaleType,_yScaleType)
-    
-    
 
     def getXMLElement(self,*args):
         element=None
@@ -854,16 +815,13 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
         # else:    
         element,coreElement=self.getXMLElementAndModuleRoot(args,returnModuleRoot=True)  
 
-        
         coreNameComposite=coreElement.getName()
         if coreElement.findAttribute('Name'):
             coreNameComposite+=coreElement.getAttribute('Name')            
         elif coreElement.findAttribute('Type'):
             coreNameComposite+=coreElement.getAttribute('Type')            
             
-        
         if element:
-            
             # now will register which modules were modified we will use this information when we call update function    
             currentMCS=self.simulator.getStep()
             try:
@@ -881,7 +839,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
         return element
         
     def  setXMLElementValue(self,value,*args):    
-    
         element=self.registerXMLElementUpdate(*args)
         if element:    
             element.updateElementValue(str(value))    
@@ -916,7 +873,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
         numberOfModules=moduleDict['NumberOfModules']    
         del moduleDict['NumberOfModules']
 
-            
         # [1][1] refers to number denoting the order in which module was added            
         # [1][1] refers to added element with order number being [1][1]            
         list_of_tuples=sorted(moduleDict.iteritems() ,key=lambda x: x[1][1]) 
@@ -992,7 +948,6 @@ class SteppableBasePy(SteppablePy,SBMLSolverHelper):
             return tmpElement,coreModuleElement
             
         return tmpElement,None                
-            
 
 class RunBeforeMCSSteppableBasePy(SteppableBasePy):
     def __init__(self,_simulator,_frequency=1):
@@ -1070,11 +1025,6 @@ class DolfinSolverSteppable(RunBeforeMCSSteppableBasePy):
         
         return stepFunctionExpressionFlexClassInstance
         
-        
-        
-        
-        
-        
 class SteppableRegistry(SteppablePy):
     def __init__(self):
         self.steppableList=[]
@@ -1122,7 +1072,6 @@ class SteppableRegistry(SteppablePy):
 
         for steppable in self.steppableList:
             steppable.extraInit(_simulator)
-            
             
     def start(self):
         for steppable in self.runBeforeMCSSteppableList:
@@ -1178,7 +1127,6 @@ class CellListIterator:
     def __iter__(self):
             return self
 
-            
 # iterating ofver inventory of cells of a given type
 class CellListByType:
     def __init__(self,_inventory,*args):            
@@ -1192,8 +1140,6 @@ class CellListByType:
         self.initTypeVec(args)
         self.inventory.initCellInventoryByMultiType(self.inventoryByType , self.types)  
         
-        
-        
     def __iter__(self):
         return CellListByTypeIterator(self)
 
@@ -1203,8 +1149,6 @@ class CellListByType:
 
         return self       
 
-        
-        
     def __len__(self):        
         return int(self.inventoryByType.size())
         
@@ -1225,10 +1169,6 @@ class CellListByType:
     def refresh(self):
         self.inventory.initCellInventoryByMultiType(self.inventoryByType , self.types)        
         
-
-
-        
-        
 class CellListByTypeIterator:
     def __init__(self,  _cellListByType):
         import CompuCell
@@ -1245,16 +1185,14 @@ class CellListByTypeIterator:
             # print 'dir(self.idCellPair)=',dir(self.idCellPair)
             self.invItr.next()
             return self.cell
-#       
+
         else:
             raise StopIteration
     
     def __iter__(self):
             return self 
-            
-            
-#this is used to iterate more easily over clusters 
 
+#this is used to iterate more easily over clusters 
 class ClusterList:
     def __init__(self,_inventory):
         self.inventory = _inventory.getClusterInventory().getContainer()
@@ -1282,7 +1220,6 @@ class ClusterListIterator:
             # print 'dir(self.idCellPair)=',dir(self.idCellPair)
             self.invItr.next()            
             return self.compartmentList
-#       
         else:
             raise StopIteration
     
@@ -1308,7 +1245,6 @@ class ClustersIterator:
         self.compartmentList=None
         
     def next(self):
-    
         if not self.invItr.isEnd():
             self.compartmentList=self.invItr.getCurrentRef()
             # print 'self.idCellPair=',self.idCellPair
@@ -1319,15 +1255,12 @@ class ClustersIterator:
         else:
             raise StopIteration
 
-
 #this is used to iterate more easily over list of compartments , notice regular map iteration will work too but this is more abstracted out and will work with other containers too
-
 class CompartmentList:
     def __init__(self,_inventory):            
         import CompuCell
         self.inventory = _inventory
-        
-                
+
     def __iter__(self):        
         return CompartmentListIterator(self)
                 
@@ -1336,7 +1269,6 @@ class CompartmentList:
         
     def clusterId(self):
         return self.__iter__().next().clusterId
-        
         
 class CompartmentListIterator:
     def __init__(self,  _cellList):
@@ -1360,8 +1292,6 @@ class CompartmentListIterator:
     
     def __iter__(self):
             return self 
-
-
 
 # this is wrapper for std::vector<CellG*>            
 class ClusterCellList:
@@ -1388,12 +1318,8 @@ class ClusterCellListIterator:
             # print "self.invItr=",dir(self.invItr)
             # print "self.invItr.next()=",self.invItr.next()
             # self.compartmentList = self.invItr.next()
-            
-            
-            
             self.cell=self.inventory[self.currentIdx]
             self.currentIdx+=1
-            
             return self.cell
         else:
             raise StopIteration
@@ -1406,7 +1332,6 @@ class CellNeighborList:
         self.cell=_cell
     def __iter__(self):
         return CellNeighborIterator(self)
-
 
 class CellNeighborIterator:
     def __init__(self, _cellNeighborList):
@@ -1428,7 +1353,6 @@ class CellNeighborIterator:
     def __iter__(self):
             return self
 
-
 class CellNeighborListAuto:
     def __init__(self,_neighborPlugin,_cell):
         self.neighborPlugin=_neighborPlugin
@@ -1436,8 +1360,6 @@ class CellNeighborListAuto:
         self.cell=_cell
     def __iter__(self):
         return CellNeighborIteratorAuto(self)
-
-
 
 class CellNeighborIteratorAuto:
     def __init__(self, _cellNeighborList):
@@ -1448,7 +1370,6 @@ class CellNeighborIteratorAuto:
         self.nTracker=self.neighborTrackerAccessor.get(self.cell.extraAttribPtr)
         self.nsdItr.initialize(self.nTracker.cellNeighbors)
         self.nsdItr.setToBegin()
-
 
     def next(self):
         if not self.nsdItr.isEnd():
@@ -1463,7 +1384,6 @@ class CellNeighborIteratorAuto:
     def __iter__(self):
             return self
 
-
 class CellBoundaryPixelList:
 
     def __init__(self,_boundaryPixelTrackerPlugin,_cell):
@@ -1477,8 +1397,6 @@ class CellBoundaryPixelList:
     def numberOfPixels(self):
         return self.boundaryPixelTrackerAccessor.get(self.cell.extraAttribPtr).pixelSet.size()
 
-
-
 class CellBoundaryPixelIterator:
     def __init__(self, _cellPixelList):
         import CompuCell
@@ -1489,7 +1407,6 @@ class CellBoundaryPixelIterator:
         self.boundaryPixelTracker=self.boundaryPixelTrackerAccessor.get(self.cell.extraAttribPtr)
         self.boundaryPixelItr.initialize(self.boundaryPixelTracker.pixelSet)
         self.boundaryPixelItr.setToBegin()
-
 
     def next(self):
         if not self.boundaryPixelItr.isEnd():
@@ -1505,9 +1422,7 @@ class CellBoundaryPixelIterator:
     def __iter__(self):
             return self
 
-
 class CellPixelList:
-
     def __init__(self,_pixelTrackerPlugin,_cell):
         self.pixelTrackerPlugin=_pixelTrackerPlugin
         self.pixelTrackerAccessor=self.pixelTrackerPlugin.getPixelTrackerAccessorPtr()
@@ -1519,8 +1434,6 @@ class CellPixelList:
     def numberOfPixels(self):
         return self.pixelTrackerAccessor.get(self.cell.extraAttribPtr).pixelSet.size()
 
-
-
 class CellPixelIterator:
     def __init__(self, _cellPixelList):
         import CompuCell
@@ -1531,7 +1444,6 @@ class CellPixelIterator:
         self.pixelTracker=self.pixelTrackerAccessor.get(self.cell.extraAttribPtr)
         self.pixelItr.initialize(self.pixelTracker.pixelSet)
         self.pixelItr.setToBegin()
-
 
     def next(self):
         if not self.pixelItr.isEnd():
@@ -1547,7 +1459,6 @@ class CellPixelIterator:
 
     def __iter__(self):
             return self
-            
 
 class ElasticityDataList:
     def __init__(self,_elasticityTrackerPlugin,_cell):
@@ -1556,7 +1467,6 @@ class ElasticityDataList:
         self.cell=_cell
     def __iter__(self):
         return ElasticityDataIterator(self)
-
 
 class ElasticityDataIterator:
     def __init__(self, _elasticityDataList):
@@ -1582,7 +1492,6 @@ class ElasticityDataIterator:
     def __iter__(self):
             return self
 
-
 class PlasticityDataList:
     def __init__(self,_plasticityTrackerPlugin,_cell):
         self.plasticityTrackerPlugin=_plasticityTrackerPlugin
@@ -1590,7 +1499,6 @@ class PlasticityDataList:
         self.cell=_cell
     def __iter__(self):
         return PlasticityDataIterator(self)
-
 
 class PlasticityDataIterator:
     def __init__(self, _plasticityDataList):
@@ -1616,7 +1524,6 @@ class PlasticityDataIterator:
     def __iter__(self):
             return self
 
-            
 class FocalPointPlasticityDataList:
     def __init__(self,_focalPointPlasticityPlugin,_cell):
         self.focalPointPlasticityPlugin=_focalPointPlasticityPlugin
@@ -1624,7 +1531,6 @@ class FocalPointPlasticityDataList:
         self.cell=_cell
     def __iter__(self):
         return FocalPointPlasticityDataIterator(self)
-
 
 class FocalPointPlasticityDataIterator:
     def __init__(self, _focalPointPlasticityDataList):
@@ -1715,7 +1621,6 @@ class AnchorFocalPointPlasticityDataIterator:
 
     def __iter__(self):
             return self              
-
 
 # forEachCellInInventory function takes as arguments inventory of cells and a function that will operate on a single cell
 # It will run singleCellOperation on each cell from cell inventory
