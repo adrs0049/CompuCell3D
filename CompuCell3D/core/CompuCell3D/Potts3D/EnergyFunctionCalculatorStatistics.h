@@ -13,7 +13,7 @@ class EnergyFunctionCalculatorStatistics : public EnergyFunctionCalculator
 {
 
 public:
-    EnergyFunctionCalculatorStatistics();
+    EnergyFunctionCalculatorStatistics(Simulator* _sim, Potts3D* _potts);
     virtual void init ( CC3DXMLElement *_xmlData ) override;
     virtual ~EnergyFunctionCalculatorStatistics();
     virtual double changeEnergy ( Point3D &pt, const CellG *newCell,

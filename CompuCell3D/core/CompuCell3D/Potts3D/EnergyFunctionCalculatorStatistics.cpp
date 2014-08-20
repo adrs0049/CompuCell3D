@@ -16,9 +16,11 @@
 using namespace CompuCell3D;
 using namespace std;
 
-EnergyFunctionCalculatorStatistics::EnergyFunctionCalculatorStatistics() 
-: EnergyFunctionCalculator()
+EnergyFunctionCalculatorStatistics::EnergyFunctionCalculatorStatistics(Simulator* _sim, Potts3D* _potts) 
+: EnergyFunctionCalculator(_sim, _potts)
 {
+	DBG_ONLY(cerr<<"Constructing EnergyFunctionCalculatorStatistics"<<endl;);
+	
     NTot=0;
     NAcc=0;
     NRej=0;
