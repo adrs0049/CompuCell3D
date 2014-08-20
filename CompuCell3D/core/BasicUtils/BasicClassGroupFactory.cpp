@@ -55,7 +55,7 @@ std::shared_ptr<BasicClassGroup> BasicClassGroupFactory::create()
 	for (auto& factory : classFactories)
 		classes.emplace_back( factory->create() );
 			
-    return std::make_shared<BasicClassGroup>(classes);
+    return std::shared_ptr<BasicClassGroup>(new BasicClassGroup(classes));
 }
 
 void BasicClassGroupFactory::destroy(std::shared_ptr<BasicClassGroup>& group) 
