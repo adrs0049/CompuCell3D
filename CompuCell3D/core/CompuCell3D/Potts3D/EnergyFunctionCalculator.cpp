@@ -6,12 +6,12 @@
 using namespace CompuCell3D;
 using namespace std;
 
-EnergyFunctionCalculator::EnergyFunctionCalculator(Simulator* _sim, Potts3D* _potts)
-: potts(_potts), sim(_sim)
+EnergyFunctionCalculator::EnergyFunctionCalculator ( Simulator* _sim, Potts3D* _potts )
+    : potts ( _potts ), sim ( _sim )
 {
-    ASSERT_OR_THROW("EnergyFunctionCalculator() Sim is NULL!\n", sim!=nullptr);
-    ASSERT_OR_THROW("EnergyFunctionCalculator() Potts3D is NULL!\n", potts!=nullptr);
-	DBG_ONLY(cerr<<"Constructing EnergyFunctionCalculator"<<endl;);
+    ASSERT_OR_THROW ( "EnergyFunctionCalculator() Sim is NULL!\n", sim!=nullptr );
+    ASSERT_OR_THROW ( "EnergyFunctionCalculator() Potts3D is NULL!\n", potts!=nullptr );
+    DBG_ONLY ( cerr<<"Constructing EnergyFunctionCalculator"<<endl; );
 }
 
 EnergyFunctionCalculator::~EnergyFunctionCalculator()
@@ -24,7 +24,7 @@ void EnergyFunctionCalculator::registerEnergyFunction ( EnergyFunction *_functio
 
     ASSERT_OR_THROW ( "Sim Pointer  cannot be NULL!",
                       sim );
-    
+
     ASSERT_OR_THROW ( "Potts3D Pointer  cannot be NULL!",
                       potts );
 
@@ -46,7 +46,7 @@ void EnergyFunctionCalculator::registerEnergyFunctionWithName ( EnergyFunction *
 
     ASSERT_OR_THROW ( "Sim Pointer  cannot be NULL!",
                       sim );
-    
+
     ASSERT_OR_THROW ( "Potts3D Pointer  cannot be NULL!",
                       potts );
 
@@ -85,6 +85,6 @@ double EnergyFunctionCalculator::changeEnergy ( Point3D &pt, const CellG *newCel
     double change {0};
     for ( auto &elem : energyFunctions )
         change += elem->changeEnergy ( pt, newCell, oldCell );
-	
+
     return change;
 }

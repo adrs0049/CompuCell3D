@@ -16,11 +16,11 @@
 using namespace CompuCell3D;
 using namespace std;
 
-EnergyFunctionCalculatorStatistics::EnergyFunctionCalculatorStatistics(Simulator* _sim, Potts3D* _potts) 
-: EnergyFunctionCalculator(_sim, _potts)
+EnergyFunctionCalculatorStatistics::EnergyFunctionCalculatorStatistics ( Simulator* _sim, Potts3D* _potts )
+    : EnergyFunctionCalculator ( _sim, _potts )
 {
-	DBG_ONLY(cerr<<"Constructing EnergyFunctionCalculatorStatistics"<<endl;);
-	
+    DBG_ONLY ( cerr<<"Constructing EnergyFunctionCalculatorStatistics"<<endl; );
+
     NTot=0;
     NAcc=0;
     NRej=0;
@@ -76,12 +76,12 @@ EnergyFunctionCalculatorStatistics::~EnergyFunctionCalculatorStatistics()
     }
 }
 
-double EnergyFunctionCalculatorStatistics::changeEnergy ( Point3D &pt, 
-														  const CellG *newCell,
-														  const CellG *oldCell,
-														  const unsigned int _flipAttempt )
+double EnergyFunctionCalculatorStatistics::changeEnergy ( Point3D &pt,
+        const CellG *newCell,
+        const CellG *oldCell,
+        const unsigned int _flipAttempt )
 {
-	DBG_ONLY(ASSERT_OR_THROW("EnergyFunctionCalculatorStatistics::changeEnergy: SimulatorPtr is NULL\n!!", sim!=nullptr));
+    DBG_ONLY ( ASSERT_OR_THROW ( "EnergyFunctionCalculatorStatistics::changeEnergy: SimulatorPtr is NULL\n!!", sim!=nullptr ) );
     ParallelUtilsOpenMP * pUtils=sim->getParallelUtils();
 
     if ( pUtils->getNumberOfWorkNodesPotts() ==1 )
@@ -118,7 +118,7 @@ double EnergyFunctionCalculatorStatistics::changeEnergy ( Point3D &pt,
 
         lastFlipAttempt=_flipAttempt;
     }
-    
+
     double change {0};
     if ( pUtils->getNumberOfWorkNodesPotts() == 1 )
     {
@@ -238,8 +238,8 @@ void EnergyFunctionCalculatorStatistics::calculateStatData()
 
     //calculating averages
     auto lItr=accNotAccList.begin();
-	for (const auto& EnergyData : totEnergyDataList)
-	{
+    for ( const auto& EnergyData : totEnergyDataList )
+    {
         ++NTot;
         for ( unsigned int i = 0 ; i < energyFunctionCount ; ++i )
         {
@@ -280,8 +280,8 @@ void EnergyFunctionCalculatorStatistics::calculateStatData()
     stdDevEnergyVectorRej.assign ( energyFunctionCount,0. );
 
     lItr=accNotAccList.begin();
-	for (const auto& EnergyData : totEnergyDataList)
-	{
+    for ( const auto& EnergyData : totEnergyDataList )
+    {
         for ( unsigned int i = 0 ; i < energyFunctionCount ; ++i )
         {
             stdDevEnergyVectorTot[i]+= ( EnergyData[i]-avgEnergyVectorTot[i] ) * ( EnergyData[i]-avgEnergyVectorTot[i] );
@@ -319,7 +319,7 @@ void EnergyFunctionCalculatorStatistics::writeHeaderFlex ( std::ofstream & _out 
 {
     int n=1;
 
-	for (const auto& energyFunctionName : energyFunctionsNameVec)
+    for ( const auto& energyFunctionName : energyFunctionsNameVec )
     {
         ostringstream str1;
         str1<<n<<". "<< energyFunctionName;
@@ -330,8 +330,8 @@ void EnergyFunctionCalculatorStatistics::writeHeaderFlex ( std::ofstream & _out 
     _out<<endl;
 }
 
-void 
-EnergyFunctionCalculatorStatistics::writeDataLineFlex 
+void
+EnergyFunctionCalculatorStatistics::writeDataLineFlex
 ( std::ofstream & _out, const std::vector<double> & _energies )
 {
     for ( const auto &_energie : _energies )
@@ -376,8 +376,8 @@ void EnergyFunctionCalculatorStatistics::prepareGatherResultsFiles()
 void EnergyFunctionCalculatorStatistics::outputResultsSingleSpinFlipGatherResults()
 {
     auto lItr=accNotAccList.begin();
-    for (const auto& EnergyData : totEnergyDataList)
-	{
+    for ( const auto& EnergyData : totEnergyDataList )
+    {
         if ( outputTotalSpinFlip )
             writeDataLineFlex ( *outTotSpinFlip, EnergyData );
 
@@ -415,8 +415,8 @@ void EnergyFunctionCalculatorStatistics::outputResultsSingleSpinFlip()
     writeHeaderFlex ( outSingleSpinFlipTotal );
 
     auto lItr=accNotAccList.begin();
-	for (const auto& EnergyData : totEnergyDataList)
-	{
+    for ( const auto& EnergyData : totEnergyDataList )
+    {
         writeDataLineFlex ( outSingleSpinFlipTotal, EnergyData );
         if ( *lItr ) //accepted flip
         {

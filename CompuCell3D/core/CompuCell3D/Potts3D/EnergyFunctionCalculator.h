@@ -22,7 +22,7 @@ class EnergyFunctionCalculator
 {
 
 public:
-    EnergyFunctionCalculator(Simulator* _sim, Potts3D* _potts);
+    EnergyFunctionCalculator ( Simulator* _sim, Potts3D* _potts );
     virtual ~EnergyFunctionCalculator();
 
     virtual void init ( CC3DXMLElement *_xmlData ) {}
@@ -32,7 +32,7 @@ public:
     virtual void configureEnergyCalculator ( std::vector<std::string> &_configVector ) {}
     virtual double changeEnergy ( Point3D &pt, const CellG *newCell,
                                   const CellG *oldCell,const unsigned int _flipAttempt );
-    
+
 private:
     void setPotts ( Potts3D * _potts )
     {
@@ -43,7 +43,7 @@ public:
     // this should be removed probably
     void setSimulator ( Simulator * _sim )
     {
-        ASSERT_OR_THROW("sim objects are actually different!\n",sim==_sim);
+        ASSERT_OR_THROW ( "sim objects are actually different!\n",sim==_sim );
 //         sim=_sim ;
     }
 public:
