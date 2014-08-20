@@ -37,6 +37,9 @@ using namespace std;
 // C++ std::map handling
 %include "std_vector.i"
 
+// C++ std::map handling
+%include "std_shared_ptr.i"
+
 //C++ std::list handling
 %include "std_list.i"
 
