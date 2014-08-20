@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 
+#include <BasicUtils/BasicException.h>
+
 class CC3DXMLElement;
 
 namespace CompuCell3D
@@ -30,15 +32,21 @@ public:
     virtual void configureEnergyCalculator ( std::vector<std::string> &_configVector ) {}
     virtual double changeEnergy ( Point3D &pt, const CellG *newCell,
                                   const CellG *oldCell,const unsigned int _flipAttempt );
+    
+private:
     void setPotts ( Potts3D * _potts )
     {
         potts=_potts;
     }
+
+public:
+    // this should be removed probably
     void setSimulator ( Simulator * _sim )
     {
-        sim=_sim ;
+        ASSERT_OR_THROW("sim objects are actually different!\n",sim==_sim);
+//         sim=_sim ;
     }
-
+public:
     virtual void setLastFlipAccepted ( bool _accept )
     {
         lastFlipAccepted=_accept;
@@ -49,8 +57,8 @@ protected:
     std::vector<std::string> energyFunctionsNameVec;
 
     std::map<std::string,EnergyFunction *> nameToEnergyFuctionMap;
-    Potts3D *potts;
-    Simulator *sim;
+    Potts3D* potts;
+    Simulator* sim;
 
     bool lastFlipAccepted;
 };
