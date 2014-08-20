@@ -85,13 +85,13 @@ typedef std::shared_ptr<WatchableField3D<CellG *> > cellFieldPtr;
  */
 class /*DECLSPECIFIER*/ Potts3D : public SteerableObject
 {
-	
+
 private:
     /// The potts field of cell spins.
     cellFieldPtr cellFieldG;
     AttributeAdder * attrAdder;
     std::unique_ptr<EnergyFunctionCalculator> energyCalculator;
-	
+
     /// Cell class aggregator and allocator.
     BasicClassGroupFactory cellFactoryGroup; 	//creates aggregate of objects associated with cell
     //DOES NOT creat group of cells (as a name might suggest)
@@ -112,15 +112,9 @@ private:
     /// The automaton to use.  Assuming one automaton per simulation.
     Automaton* automaton;
 
-//     DefaultAcceptanceFunction defaultAcceptanceFunction;
-//     FirstOrderExpansionAcceptanceFunction   firstOrderExpansionAcceptanceFunction;
-
     /// Used to determine the probablity that a pixel flip should be taken.
-	// should be unique
+    // should be unique
     std::unique_ptr<AcceptanceFunction> acceptanceFunction;
-
-    //ExpressionEvaluatorDepot acceptanceEed;
-//     CustomAcceptanceFunction customAcceptanceFunction;
     bool customAcceptanceExpressionDefined;
 
     std::unique_ptr<FluctuationAmplitudeFunction> fluctAmplFcn;
@@ -219,7 +213,7 @@ public:
     {
         return depth;
     }
-    
+
     void setDepth ( double _depth );
     void setNeighborOrder ( unsigned int _neighborOrder );
 
@@ -234,7 +228,7 @@ public:
     {
         debugOutputFrequency=_freq;
     }
-    
+
     void setSimulator ( Simulator *_sim )
     {
         sim=_sim;
@@ -250,17 +244,17 @@ public:
     {
         massUnit=_unit;
     }
-    
+
     void setLengthUnit ( const Unit & _unit )
     {
         lengthUnit=_unit;
     }
-    
+
     void setTimeUnit ( const Unit & _unit )
     {
         timeUnit=_unit;
     }
-    
+
     void setEnergyUnit ( const Unit & _unit )
     {
         energyUnit=_unit;
@@ -270,22 +264,22 @@ public:
     {
         return massUnit;
     }
-    
+
     Unit getLengthUnit()
     {
         return lengthUnit;
     }
-    
+
     Unit getTimeUnit()
     {
         return timeUnit;
     }
-    
+
     Unit getEnergyUnit()
     {
         return energyUnit;
     }
-    
+
     bool getDisplayUnitsFlag()
     {
         return displayUnitsFlag;
@@ -299,27 +293,27 @@ public:
     {
         boundary_x=_xName;
     }
-    
+
     void setBoundaryYName ( std::string const & _yName )
     {
         boundary_y=_yName;
     }
-    
+
     void setBoundaryZName ( std::string const & _zName )
     {
         boundary_z=_zName;
     }
-    
+
     std::string const & getBoundaryXName() const
     {
         return boundary_x;
     }
-    
+
     std::string const & getBoundaryYName() const
     {
         return boundary_y;
     }
-    
+
     std::string const & getBoundaryZName() const
     {
         return boundary_z;
@@ -329,27 +323,27 @@ public:
     {
         minCoordinates=_minCoord;
     }
-    
+
     void setMaxCoordinates ( Point3D _maxCoord )
     {
         maxCoordinates=_maxCoord;
     }
-    
+
     Point3D getMinCoordinates() const
     {
         return minCoordinates;
     }
-    
+
     Point3D getMaxCoordinates() const
     {
         return maxCoordinates;
     }
-    
+
     TypeTransition *getTypeTransition()
     {
         return typeTransition;
     }
-    
+
     virtual void createEnergyFunction ( std::string _energyFunctionType );
     std::unique_ptr<EnergyFunctionCalculator>& getEnergyFunctionCalculator()
     {
@@ -455,7 +449,6 @@ public:
     virtual double changeEnergy ( Point3D pt, const CellG *newCell,
                                   const CellG *oldCell );
 
-
     /**
      * Run the potts metropolis algorithm.
      *
@@ -477,24 +470,24 @@ public:
     void setMetropolisAlgorithm ( std::string _algName );
 
     /// @return A pointer to the potts field of BasicClassGroup.
- 	virtual std::shared_ptr<Field3D<CellG *> > getCellField3DG ()
+    virtual std::shared_ptr<Field3D<CellG *> > getCellField3DG ()
     {
- 		return std::static_pointer_cast<Field3D<CellG *> >(cellFieldG);
+        return std::static_pointer_cast<Field3D<CellG *> > ( cellFieldG );
         //return ( Field3D<CellG *> * ) cellFieldG;
     }
 
     /// @return A pointer to the potts cell field.
     virtual std::shared_ptr<Field3DImpl<CellG *> > getCellFieldGImpl ()
     {
- 		return std::static_pointer_cast<Field3DImpl<CellG *> >(cellFieldG);
+        return std::static_pointer_cast<Field3DImpl<CellG *> > ( cellFieldG );
 //         return ( Field3DImpl<CellG *> * ) cellFieldG;
     }
 
     virtual cellFieldPtr getCellFieldG ()
-	{
-		return cellFieldG;
-	}
-    
+    {
+        return cellFieldG;
+    }
+
     //SteerableObject interface
     virtual void update ( CC3DXMLElement *_xmlData,
                           bool _fullInitFlag = false ) override;

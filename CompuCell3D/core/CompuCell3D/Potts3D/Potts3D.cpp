@@ -52,15 +52,15 @@ using namespace CompuCell3D;
 using namespace std;
 
 Potts3D::Potts3D() :
-	cellFieldG ( nullptr ),
-	attrAdder ( nullptr ),
-	energyCalculator( nullptr ),
+    cellFieldG ( nullptr ),
+    attrAdder ( nullptr ),
+    energyCalculator ( nullptr ),
     connectivityConstraint ( nullptr ),
-    typeTransition( new TypeTransition() ),
-    automaton(nullptr),
+    typeTransition ( new TypeTransition() ),
+    automaton ( nullptr ),
     acceptanceFunction ( std::make_unique<DefaultAcceptanceFunction>() ),
     customAcceptanceExpressionDefined ( false ),
-    fluctAmplFcn(nullptr),
+    fluctAmplFcn ( nullptr ),
     energy ( 0 ),
     depth ( 1.0 ),
     recentlyCreatedCellId ( 1 ),
@@ -78,8 +78,8 @@ Potts3D::Potts3D() :
     fluctAmplFcn= std::make_unique<MinFluctuationAmplitudeFunction> ( this );
 }
 
-Potts3D::Potts3D ( const Dim3D dim ) 
-: Potts3D()
+Potts3D::Potts3D ( const Dim3D dim )
+    : Potts3D()
 {
     createCellField ( dim );
 }
@@ -88,26 +88,27 @@ Potts3D::~Potts3D()
 {
     cerr << "CellFieldPtr Ref Count = " << cellFieldG.use_count() << endl;
 // 	cerr << "Automaton Ref Count = " << cellFieldG.use_count() << endl;
-	
-	if ( typeTransition ) {
-		delete typeTransition;
-		typeTransition=nullptr;
-	}
-	//   if (attrAdder) delete attrAdder; attrAdder=0;
+
+    if ( typeTransition )
+    {
+        delete typeTransition;
+        typeTransition=nullptr;
+    }
+    //   if (attrAdder) delete attrAdder; attrAdder=0;
 }
 
 void Potts3D::createEnergyFunction ( std::string _energyFunctionType )
 {
-	//default is not to reassign energy finction calculator
+    //default is not to reassign energy finction calculator
     if ( _energyFunctionType=="Statistics" )
     {
-        energyCalculator = std::make_unique<EnergyFunctionCalculatorStatistics>(sim, this);
+        energyCalculator = std::make_unique<EnergyFunctionCalculatorStatistics> ( sim, this );
         //initialize Statistics Output Energy Finction Here
     }
     else
     {
-        DBG_ONLY(cerr<<"default is to create a EnergyFunctionCalculator!\n"<<endl;);
-        energyCalculator = std::make_unique<EnergyFunctionCalculator>(sim, this);
+        DBG_ONLY ( cerr<<"default is to create a EnergyFunctionCalculator!\n"<<endl; );
+        energyCalculator = std::make_unique<EnergyFunctionCalculator> ( sim, this );
     }
 }
 
@@ -154,7 +155,7 @@ void Potts3D::setNeighborOrder ( unsigned int _neighborOrder )
 void Potts3D::createCellField ( const Dim3D dim )
 {
     ASSERT_OR_THROW ( "createCellField() cell field G already created!", !cellFieldG );
-	cellFieldG = std::make_shared<WatchableField3D<CellG *> >( dim, nullptr );
+    cellFieldG = std::make_shared<WatchableField3D<CellG *> > ( dim, nullptr );
 //     cellFieldG = new WatchableField3D<CellG *> ( dim, nullptr ); // added
 }
 
@@ -180,19 +181,19 @@ Automaton* Potts3D::getAutomaton()
 
 void Potts3D::registerEnergyFunction ( EnergyFunction *function )
 {
-    ASSERT_OR_THROW("Potts3D energy calculator cannot be nullptr!\n", energyCalculator!=nullptr);
+    ASSERT_OR_THROW ( "Potts3D energy calculator cannot be nullptr!\n", energyCalculator!=nullptr );
     energyCalculator->registerEnergyFunctionWithName ( function,function->toString() );
 }
 
 void Potts3D::registerEnergyFunctionWithName ( EnergyFunction *_function, std::string _functionName )
 {
-    ASSERT_OR_THROW("Potts3D energy calculator cannot be nullptr!\n", energyCalculator!=nullptr);
+    ASSERT_OR_THROW ( "Potts3D energy calculator cannot be nullptr!\n", energyCalculator!=nullptr );
     energyCalculator->registerEnergyFunctionWithName ( _function,_functionName );
 }
 
 void Potts3D::unregisterEnergyFunction ( std::string _functionName )
 {
-    ASSERT_OR_THROW("Potts3D energy calculator cannot be nullptr!\n", energyCalculator!=nullptr);
+    ASSERT_OR_THROW ( "Potts3D energy calculator cannot be nullptr!\n", energyCalculator!=nullptr );
     energyCalculator->unregisterEnergyFunction ( _functionName );
 }
 
@@ -215,27 +216,27 @@ void Potts3D::setAcceptanceFunctionByName ( std::string _acceptanceFunctionName 
 {
     if ( _acceptanceFunctionName=="FirstOrderExpansion" )
     {
-        DBG_ONLY(cerr<<"FirstOrderExpansion Acceptance Function set!\n");
+        DBG_ONLY ( cerr<<"FirstOrderExpansion Acceptance Function set!\n" );
         acceptanceFunction=std::make_unique<FirstOrderExpansionAcceptanceFunction>();
-		//&firstOrderExpansionAcceptanceFunction;
+        //&firstOrderExpansionAcceptanceFunction;
         //          cerr<<"setting FirstOrderExpansion"<<endl;
         customAcceptanceExpressionDefined = false;
     }
     else if ( _acceptanceFunctionName=="Dynamic" )
-	{
-        DBG_ONLY(cerr<<"Dynamic Acceptance Function set!\n");
-		acceptanceFunction=std::make_unique<DynamicAcceptanceFunction>();
-        customAcceptanceExpressionDefined = false;
-	}	
-	else if ( _acceptanceFunctionName=="Custom")
     {
-        DBG_ONLY(cerr<<"Custom Acceptance Function set!\n");
+        DBG_ONLY ( cerr<<"Dynamic Acceptance Function set!\n" );
+        acceptanceFunction=std::make_unique<DynamicAcceptanceFunction>();
+        customAcceptanceExpressionDefined = false;
+    }
+    else if ( _acceptanceFunctionName=="Custom" )
+    {
+        DBG_ONLY ( cerr<<"Custom Acceptance Function set!\n" );
         customAcceptanceExpressionDefined = true;
     }
-	else
+    else
     {
-        DBG_ONLY(cerr<<"Default Acceptance Function set!\n");
-		acceptanceFunction=std::make_unique<DefaultAcceptanceFunction>();
+        DBG_ONLY ( cerr<<"Default Acceptance Function set!\n" );
+        acceptanceFunction=std::make_unique<DefaultAcceptanceFunction>();
         customAcceptanceExpressionDefined = false;
     }
 }
@@ -245,24 +246,24 @@ void Potts3D::registerAcceptanceFunction ( std::unique_ptr<AcceptanceFunction> f
     ASSERT_OR_THROW ( "registerAcceptanceFunction() function cannot be NULL!",
                       function );
 
-    acceptanceFunction = std::move(function);
+    acceptanceFunction = std::move ( function );
 }
 
 void  Potts3D::setFluctuationAmplitudeFunctionByName ( std::string _fluctuationAmplitudeFunctionName )
 {
     if ( _fluctuationAmplitudeFunctionName=="Min" )
 //     {
-        fluctAmplFcn=std::make_unique<MinFluctuationAmplitudeFunction>( this );
+        fluctAmplFcn=std::make_unique<MinFluctuationAmplitudeFunction> ( this );
 //         fluctAmplFcn=new MinFluctuationAmplitudeFunction ( this );
 //     }
     else if ( _fluctuationAmplitudeFunctionName=="Max" )
 //     {
-		fluctAmplFcn=std::make_unique<MaxFluctuationAmplitudeFunction>( this );
+        fluctAmplFcn=std::make_unique<MaxFluctuationAmplitudeFunction> ( this );
 //         fluctAmplFcn=new MaxFluctuationAmplitudeFunction ( this );
 //     }
     else if ( _fluctuationAmplitudeFunctionName=="ArithmetcAverage" )
 //     {
-        fluctAmplFcn=std::make_unique<ArithmeticAverageFluctuationAmplitudeFunction>( this );
+        fluctAmplFcn=std::make_unique<ArithmeticAverageFluctuationAmplitudeFunction> ( this );
 //         fluctAmplFcn=new ArithmeticAverageFluctuationAmplitudeFunction ( this );
 //     }
 }
@@ -321,12 +322,12 @@ CellG * Potts3D::createCellG ( const Point3D pt,long _clusterId )
     CellG * cell=createCell ( _clusterId );
     cellFieldG->set ( pt, cell );
 
-	return cell;
+    return cell;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CellG *Potts3D::createCell ( long _clusterId )
 {
-  auto cell = new CellG();
+    auto cell = new CellG();
     cell->extraAttribPtr=cellFactoryGroup.create();
     cell->id=recentlyCreatedCellId;
     ++recentlyCreatedCellId;
@@ -374,9 +375,9 @@ CellG * Potts3D::createCellGSpecifiedIds ( const Point3D pt,long _cellId,long _c
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // this function should be only used from PIF Initializers or when you really understand the way CC3D assigns cell ids
-CellG *Potts3D:: createCellSpecifiedIds ( long _cellId,long _clusterId )
+CellG *Potts3D:: createCellSpecifiedIds ( long _cellId, long _clusterId )
 {
-  auto cell = new CellG();
+    auto cell = new CellG();
     cell->extraAttribPtr=cellFactoryGroup.create();
     cell->id=_cellId;
 
@@ -407,6 +408,7 @@ CellG *Potts3D:: createCellSpecifiedIds ( long _cellId,long _clusterId )
     {
         attrAdder->addAttribute ( cell );
     }
+
     return cell;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -703,7 +705,7 @@ unsigned int Potts3D::metropolisFast ( const unsigned int steps, const double te
         unsigned int currentWorkNodeNumber = pUtils->getCurrentWorkNodeNumber();
 
         BasicRandomNumberGeneratorNonStatic * rand = randNSVec[currentWorkNodeNumber].getInstance();
-		BoundaryStrategyPtr boundaryStrategy = BoundaryStrategy::getInstance();
+        BoundaryStrategyPtr boundaryStrategy = BoundaryStrategy::getInstance();
 
         // cerr<<"subgridSectionOrderVec.size()="<<subgridSectionOrderVec.size()<<endl;
         //iterating over subgridSections
@@ -1008,18 +1010,22 @@ void Potts3D::setMetropolisAlgorithm ( std::string _algName )
 
     if ( algName=="list" )
     {
+        DBG_ONLY ( cerr<<"Set Metropolis List Algorithm"<<endl; );
         metropolisFcnPtr=&Potts3D::metropolisList;
     }
     else if ( algName=="fast" )
     {
+        DBG_ONLY ( cerr<<"Set Metropolis Fast Algorithm"<<endl; );
         metropolisFcnPtr=&Potts3D::metropolisFast;
     }
     else if ( algName=="boundarywalker" )
     {
+        DBG_ONLY ( cerr<<"Set Metropolis BoundaryWalker Algorithm"<<endl; );
         metropolisFcnPtr=&Potts3D::metropolisBoundaryWalker;
     }
     else
     {
+        DBG_ONLY ( cerr<<"Set Metropolis Fast Algorithm"<<endl; );
         metropolisFcnPtr=&Potts3D::metropolisFast;
     }
 }
@@ -1148,10 +1154,10 @@ void Potts3D::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
     unsigned int currentStep=sim->getStep();
     if ( _xmlData->getFirstElement ( "CustomAcceptanceFunction" ) )
     {
-        DBG_ONLY(cerr<<"customAcceptanceFunction defined:"<<customAcceptanceExpressionDefined<<endl);
+        DBG_ONLY ( cerr<<"customAcceptanceFunction defined:"<<customAcceptanceExpressionDefined<<endl );
         // this is slightly a lot of work
         auto customAcceptanceFunction = std::make_unique<CustomAcceptanceFunction>();
-        
+
         if ( currentStep>0 )
         {
             //we can only update custom acceptance function when simulation has been initialized and we know how many cores are used
@@ -1161,7 +1167,7 @@ void Potts3D::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
         //first  initialization of the acceptance function will be done in the metropolis function
         customAcceptanceExpressionDefined=true;
         customAcceptanceFunction->update ( _xmlData->getFirstElement ( "CustomAcceptanceFunction" ),false ); //this stores XML information inside ExpressionEvaluationDepot local variables
-        registerAcceptanceFunction ( std::move(customAcceptanceFunction) );
+        registerAcceptanceFunction ( std::move ( customAcceptanceFunction ) );
     }
 
     //Units
@@ -1269,4 +1275,3 @@ std::string Potts3D::steerableName()
 {
     return "Potts";
 }
-
