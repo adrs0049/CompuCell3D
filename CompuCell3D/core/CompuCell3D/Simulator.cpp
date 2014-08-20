@@ -43,6 +43,8 @@ using namespace CompuCell3D;
 
 #include <XMLUtils/CC3DXMLElement.h>
 
+#include "Terminate.h"
+
 #ifdef QT_WRAPPERS_AVAILABLE
 #include <QtWrappers/StreamRedirectors/CustomStreamBuffers.h>
 #endif
@@ -70,28 +72,37 @@ Simulator::Simulator() :
     qStreambufPtr ( nullptr ),
     restartEnabled ( false ),
     ppdCC3DPtr ( nullptr ),
-    ppdPtr ( nullptr )
+    ppdPtr ( nullptr ),
+    pUtils(new ParallelUtilsOpenMP()),
+    pUtilsSingle(new ParallelUtilsOpenMP())
 {
+	DBG_ONLY(std::cerr<<"Constructing Simulator Object\n");
     pluginManager.setSimulator ( this );
     steppableManager.setSimulator ( this );
-    classRegistry = make_unique<ClassRegistry> ( this );
+    classRegistry = std::make_unique<ClassRegistry> ( this );
     potts.setSimulator ( this );
-	pUtils = new ParallelUtilsOpenMP();
-	pUtilsSingle = new ParallelUtilsOpenMP();
+    // need to call this empty to init the EnergyFunction register in Potts
+    // it requires that the sim object is set in Potts!!
+    potts.createEnergyFunction("");
     //qStreambufPtr=getQTextEditBuffer();
+	
+	// DEBUG stuff
+ 	Error::TerminalCatcher::init();
+	
+	DBG_ONLY(std::cerr<<"Done construction Simulator Object at = " << this << std::endl);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Simulator::~Simulator()
 {
-    // cerr<<"\n\n\n********************************************************************************"<<endl;
-    // cerr<<"\n\n\n\n INSIDE SIMULATOR DELETE \n\n\n\n "<<endl;
-    // cerr<<"\n\n\n********************************************************************************"<<endl;
+    DBG_ONLY(cerr<<"\n\n\n********************************************************************************"<<endl;
+    cerr<<"\n\n\n\n INSIDE SIMULATOR DELETE \n\n\n\n "<<endl;
+    cerr<<"\n\n\n********************************************************************************"<<endl;);
 
     cleanAfterSimulation();
 
     classRegistry.reset ( nullptr );
-    delete pUtils;
-    delete pUtilsSingle;
+    if(pUtils) delete pUtils;
+    if(pUtilsSingle) delete pUtilsSingle;
 
 #ifdef QT_WRAPPERS_AVAILABLE
     //restoring original cerr stream buffer
@@ -265,20 +276,23 @@ void Simulator::postEvent ( CC3DEvent & _ev )
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Simulator::start()
 {
-
     try
     {
         // Print the names of loaded plugins
-        cerr << "Simulator::start():  Plugins:";
-        BasicPluginManager<Plugin>::infos_t *infos = &pluginManager.getPluginInfos();
-        BasicPluginManager<Plugin>::infos_t::iterator it;
+        cerr << "Simulator::start():\n\tPlugins: \n";
+        BasicPluginManager<Plugin>::infos_t& Pinfos = pluginManager.getPluginInfos();
 
-        for ( it = infos->begin(); it != infos->end(); it++ )
-            if ( pluginManager.isLoaded ( ( *it )->getName() ) )
-            {
-                if ( it != infos->begin() ) cerr << ",";
-                cerr << " " << ( *it )->getName();
-            }
+		for (const auto& info : Pinfos )
+			if ( pluginManager.isLoaded( info->getName() ) )
+				cerr << "\t\t" << info->getName() << std::endl;
+        cerr << endl;
+		
+		cerr << "\tSteppables: \n";
+        BasicPluginManager<Steppable>::infos_t& Sinfos = steppableManager.getPluginInfos();
+
+		for (const auto& info : Sinfos )
+			if ( steppableManager.isLoaded( info->getName() ) )
+				cerr << "\t\t" << info->getName() << std::endl;
         cerr << endl;
 
         classRegistry->start();
@@ -291,22 +305,32 @@ void Simulator::start()
              << endl;
 
         simulatorIsStepping=true; //initialize flag that simulator is stepping
+        cerr << "Simulator::start() successful\n";
     }
     catch ( const BasicException &e )
     {
-        cerr << "ERROR: " << e << endl;
         unloadModules();
+		
         stringstream errorMessageStream;
-
-        errorMessageStream<<"Exception in C++ code :\n"<<e.getMessage() <<"\n"<<"Location \n"<<"FILE :"<<e.getLocation().getFilename() <<"\n"<<"LINE :"<<e.getLocation().getLine();
+        errorMessageStream 	<< "Exception in C++ code : "  << e.getMessage() << "\n"
+							<< "In FILE :"  			   << e.getLocation().getFilename()
+							<< "on LINE :" 				   << e.getLocation().getLine() << "\n";
+		
+		if (e.getTrace())
+		{
+			errorMessageStream << "Traceback: \n";
+			
+			for ( const auto& message : *e.getTrace() )
+				errorMessageStream << message;
+			errorMessageStream << "\n";
+		}	
+							
         recentErrorMessage=errorMessageStream.str();
-        cerr<<"THIS IS recentErrorMessage="<<recentErrorMessage<<endl;
         if ( !newPlayerFlag )
         {
             throw e;
         }
     }
-
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Simulator::extraInit()
@@ -326,13 +350,23 @@ void Simulator::extraInit()
     }
     catch ( const BasicException &e )
     {
-        cerr << "ERROR: " << e << endl;
         unloadModules();
+		
         stringstream errorMessageStream;
-
-        errorMessageStream<<"Exception in C++ code :\n"<<e.getMessage() <<"\n"<<"Location \n"<<"FILE :"<<e.getLocation().getFilename() <<"\n"<<"LINE :"<<e.getLocation().getLine();
+        errorMessageStream 	<< "Exception in C++ code : "  << e.getMessage() << "\n"
+							<< "In FILE :"  			   << e.getLocation().getFilename()
+							<< "on LINE :" 				   << e.getLocation().getLine() << "\n";
+		
+		if (e.getTrace())
+		{
+			errorMessageStream << "Traceback: \n";
+			
+			for ( const auto& message : *e.getTrace() )
+				errorMessageStream << message;
+			errorMessageStream << "\n";
+		}	
+							
         recentErrorMessage=errorMessageStream.str();
-        cerr<<"THIS IS recentErrorMessage="<<recentErrorMessage<<endl;
         if ( !newPlayerFlag )
         {
             throw e;
@@ -367,13 +401,23 @@ void Simulator::step ( const unsigned int currentStep )
     }
     catch ( const BasicException &e )
     {
-        cerr << "ERROR: " << e << endl;
         unloadModules();
+		
         stringstream errorMessageStream;
-
-        errorMessageStream<<"Exception in C++ code :\n"<<e.getMessage() <<"\n"<<"Location \n"<<"FILE :"<<e.getLocation().getFilename() <<"\n"<<"LINE :"<<e.getLocation().getLine();
+        errorMessageStream 	<< "Exception in C++ code : "  << e.getMessage() << "\n"
+							<< "In FILE :"  			   << e.getLocation().getFilename()
+							<< "on LINE :" 				   << e.getLocation().getLine() << "\n";
+		
+		if (e.getTrace())
+		{
+			errorMessageStream << "Traceback: \n";
+			
+			for ( const auto& message : *e.getTrace() )
+				errorMessageStream << message;
+			errorMessageStream << "\n";
+		}	
+							
         recentErrorMessage=errorMessageStream.str();
-        cerr<<"THIS IS recentErrorMessage="<<recentErrorMessage<<endl;
         if ( !newPlayerFlag )
         {
             throw e;
@@ -399,12 +443,23 @@ void Simulator::finish()
     }
     catch ( const BasicException &e )
     {
-        cerr << "ERROR: " << e << endl;
+        unloadModules();
+		
         stringstream errorMessageStream;
-
-        errorMessageStream<<"Exception in C++ code :\n"<<e.getMessage() <<"\n"<<"Location \n"<<"FILE :"<<e.getLocation().getFilename() <<"\n"<<"LINE :"<<e.getLocation().getLine();
+        errorMessageStream 	<< "Exception in C++ code : "  << e.getMessage() << "\n"
+							<< "In FILE :"  			   << e.getLocation().getFilename()
+							<< "on LINE :" 				   << e.getLocation().getLine() << "\n";
+		
+		if (e.getTrace())
+		{
+			errorMessageStream << "Traceback: \n";
+			
+			for ( const auto& message : *e.getTrace() )
+				errorMessageStream << message;
+			errorMessageStream << "\n";
+		}	
+							
         recentErrorMessage=errorMessageStream.str();
-        cerr<<"THIS IS recentErrorMessage="<<recentErrorMessage<<endl;
         if ( !newPlayerFlag )
         {
             throw e;
