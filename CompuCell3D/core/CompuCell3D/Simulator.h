@@ -32,6 +32,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <boost/concept_check.hpp>
 #include <CompuCell3D/Potts3D/Potts3D.h>
 
 #include <BasicUtils/memory_include.h>
@@ -55,7 +56,7 @@ class Serializer;
 class PottsParseData;
 class ParallelUtilsOpenMP;
 
-class COMPUCELLLIB_EXPORT Simulator : public std::enable_shared_from_this<Simulator>
+class COMPUCELLLIB_EXPORT Simulator
 {
     std::unique_ptr<ClassRegistry> classRegistry;
 
@@ -132,10 +133,13 @@ public:
 
     ParallelUtilsOpenMP * getParallelUtils()
     {
+        DBG_ONLY ( cerr<<"putils="<<pUtils<<endl; );
+        DBG_ONLY ( ASSERT_OR_THROW ( "pUtils is NULL", pUtils!=nullptr ) );
         return pUtils;
     }
     ParallelUtilsOpenMP * getParallelUtilsSingleThread()
     {
+        DBG_ONLY ( ASSERT_OR_THROW ( "pUtilsSingle is NULL", pUtilsSingle!=nullptr ) );
         return pUtilsSingle;
     }
 
@@ -168,10 +172,10 @@ public:
     {
         return &potts;
     }
-    std::shared_ptr<Simulator> getSimulatorPtr()
-    {
-        return shared_from_this();
-    }
+//     std::shared_ptr<Simulator> getSimulatorPtr()
+//     {
+//         return shared_from_this();
+//     }
     std::unique_ptr<ClassRegistry>& getClassRegistry()
     {
         return classRegistry;
