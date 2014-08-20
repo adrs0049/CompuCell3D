@@ -22,6 +22,9 @@ void EnergyFunctionCalculator::registerEnergyFunction ( EnergyFunction *_functio
     ASSERT_OR_THROW ( "registerEnergyFunction() function cannot be NULL!",
                       _function );
 
+    ASSERT_OR_THROW ( "Sim Pointer  cannot be NULL!",
+                      sim );
+    
     ASSERT_OR_THROW ( "Potts3D Pointer  cannot be NULL!",
                       potts );
 
@@ -41,6 +44,9 @@ void EnergyFunctionCalculator::registerEnergyFunctionWithName ( EnergyFunction *
     ASSERT_OR_THROW ( "registerEnergyFunction() function cannot be NULL!",
                       _function );
 
+    ASSERT_OR_THROW ( "Sim Pointer  cannot be NULL!",
+                      sim );
+    
     ASSERT_OR_THROW ( "Potts3D Pointer  cannot be NULL!",
                       potts );
 
