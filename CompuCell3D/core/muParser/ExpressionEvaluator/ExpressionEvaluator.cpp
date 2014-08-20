@@ -6,6 +6,7 @@
 #include <muParser.h>
 #include <limits>
 #include <XMLUtils/CC3DXMLElement.h>
+#include <BasicUtils/debugHelpers.h>
 
 #include "ExpressionEvaluator.h"
 
@@ -166,7 +167,7 @@ void ExpressionEvaluator::addVariable ( std::string _name )
         p=Parser();
         for ( const auto& elem : varNameToIndexMap )
         {
-			cerr<<"associating "<<elem.first<<" with index "<<elem.second<<endl;
+			DBG_ONLY(cerr<<"associating "<<elem.first<<" with index "<<elem.second<<endl;);
             p.DefineVar ( elem.first, &varVec[elem.second] );
         }
         if ( expressionString.size() )
