@@ -32,65 +32,71 @@
 using namespace CompuCell3D;
 using namespace std;
 
-ClassRegistry::ClassRegistry(Simulator *simulator)
-    : simulator(simulator)
+ClassRegistry::ClassRegistry ( Simulator *simulator )
+    : simulator ( simulator )
 {}
 
-std::shared_ptr<Steppable> ClassRegistry::getStepper(string id) 
+std::shared_ptr<Steppable> ClassRegistry::getStepper ( string id )
 {
     auto stepper = activeSteppersMap[id];
-    ASSERT_OR_THROW(string("Stepper '") + id + "' not found!", stepper);
+    ASSERT_OR_THROW ( string ( "Stepper '" ) + id + "' not found!", stepper );
     return stepper;
 }
 
-void ClassRegistry::extraInit(Simulator * simulator) 
+void ClassRegistry::extraInit ( Simulator * simulator )
 {
-	for (const auto& stepper : activeSteppers)
-		stepper->extraInit(simulator);
+    for ( const auto& stepper : activeSteppers )
+        stepper->extraInit ( simulator );
 }
 
-void ClassRegistry::start() 
+void ClassRegistry::start()
 {
-	for (const auto& stepper : activeSteppers)
-		stepper->start();
+    for ( const auto& stepper : activeSteppers )
+    {
+        std::cerr << "Starting stepper: " << stepper->toString() << "\n";
+        stepper->start();
+    }
 }
 
-void ClassRegistry::step(const unsigned int currentStep) 
+void ClassRegistry::step ( const unsigned int currentStep )
 {
-	for (const auto& stepper : activeSteppers)
-		if (stepper->frequency && (currentStep % stepper->frequency) == 0)
-			stepper->step(currentStep);
+    for ( const auto& stepper : activeSteppers )
+        if ( stepper->frequency && ( currentStep % stepper->frequency ) == 0 )
+            stepper->step ( currentStep );
 }
 
-void ClassRegistry::finish() 
+void ClassRegistry::finish()
 {
-	for (const auto& stepper : activeSteppers)
-		stepper->finish();
+    for ( const auto& stepper : activeSteppers )
+    {
+        std::cerr << "Finishing stepper: " << stepper->toString() << "\n";
+        stepper->finish();
+    }
 }
 
-void ClassRegistry::addStepper(std::string _type, std::shared_ptr<Steppable> _steppable) 
+void ClassRegistry::addStepper ( std::string _type, std::shared_ptr<Steppable> _steppable )
 {
-    activeSteppers.push_back(_steppable);
+    activeSteppers.push_back ( _steppable );
     activeSteppersMap[_type] = _steppable;
 }
 
-void ClassRegistry::initModules(Simulator *_sim) 
+void ClassRegistry::initModules ( Simulator *_sim )
 {
     std::vector<CC3DXMLElement *> steppableCC3DXMLElementVectorRef = _sim->ps.steppableCC3DXMLElementVector;
     PluginManager<Steppable> &steppableManagerRef=Simulator::steppableManager;
 
     cerr<<" INSIDE INIT MODULES:"<<endl;
-	for (const auto& elem : steppableCC3DXMLElementVectorRef)
-	{
-        string type=elem->getAttribute("Type");
+    for ( const auto& elem : steppableCC3DXMLElementVectorRef )
+    {
+        string type=elem->getAttribute ( "Type" );
 
-        auto steppable = steppableManagerRef.get(type);
+        auto steppable = steppableManagerRef.get ( type );
         cerr<<"CLASS REGISTRY INITIALIZING "<<type<<endl;
 
-        steppable->init(_sim, elem);
-        addStepper(type, steppable);
+        steppable->init ( _sim, elem );
+        addStepper ( type, steppable );
     }
 
-    for (auto& stepper : activeSteppers)
+    for ( auto& stepper : activeSteppers )
         cerr<<"HAVE THIS STEPPER : "<<stepper->getParseData()->moduleName<<endl;;
 }
