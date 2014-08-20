@@ -56,9 +56,10 @@ protected:
      *
      * @return A pointer to the allocate memory for this class id.
      */
-    std::shared_ptr<void> getClass(const unsigned int id) {
-        ASSERT_OR_THROW("BasicClassGroup id out of range!",
-                        0 <= id && id < classes.size());
+    std::shared_ptr<void> getClass(const unsigned int id)
+	{
+		ASSERT_OR_THROW(std::string("BasicClassGroup id: ") + std::to_string(id) + " out of range ( "
+			+ std::to_string(classes.size()) + " )!\n", id < classes.size());
         return classes[id];
     }
 
