@@ -24,14 +24,15 @@
 #define DYNAMICACCEPTANCEFUNCTION_H
 
 #include "AcceptanceFunction.h"
-#include <cassert>
+#include <BasicUtils/debugHelpers.h>
 #include <ctgmath>
 
 namespace CompuCell3D
 {
 
 /**
- * The default Boltzman acceptance function.
+ * A dynamic Boltzman acceptance function. Allows effective freezing of cells
+ * when T -> 0
  */
 class DynamicAcceptanceFunction: public AcceptanceFunction
 {
@@ -54,7 +55,13 @@ public:
     
     double accept ( const double temp, const double change ) override
     {
-		assert(temp>=0);
+        DBG_ONLY(
+            ASSERT_OR_THROW("Temperature needs to be >= 0!\n", temp>=0);
+            cerr<<"change="<<change<<" offset="<<offset<<" k="<<k;
+            if ( change <= offset ) cerr<<" return="<<tanh(temp)<<endl;
+            else cerr<<" return="<<tanh(temp) * exp ( - ( change - offset ) / ( k * temp ) )<<endl;
+        );
+        
 		if ( change <= offset ) return tanh(temp);
 		return tanh(temp) * exp ( - ( change - offset ) / ( k * temp ) );
     }
