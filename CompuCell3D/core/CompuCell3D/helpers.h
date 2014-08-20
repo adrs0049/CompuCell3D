@@ -22,13 +22,6 @@ get_steppable(const std::string steppableName, bool * flag = nullptr)
 	return std::static_pointer_cast<Steppable>(Simulator::steppableManager.get(steppableName, flag));
 }
 
-template <typename Accessor>
-inline void
-registerClassOnCell(Potts3D * potts, Accessor& TheAccessor)
-{
-	potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<Accessor>(TheAccessor));
-}
-
 } // end namespace
 
 #endif
