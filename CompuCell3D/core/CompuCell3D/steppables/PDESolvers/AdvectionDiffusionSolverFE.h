@@ -17,6 +17,8 @@
 // ATTENTION REMOVE ME
 #include <CompuCell3D/CC3D.h>
 
+#include <CompuCell3D/plugins/NeighborTracker/NeighborTracker.h>
+
 template<typename T>
 class BasicClassAccessor;
 
@@ -116,7 +118,7 @@ protected:
 
     void update();
     void updateLocalCellInventory ( unsigned int idx );
-    BasicClassAccessor<NeighborTracker> * neighborTrackerAccessorPtr;
+    NeighborTrackerAccessor_t neighborTrackerAccessorPtr;
 
 public:
     AdvectionDiffusionSolverFE();

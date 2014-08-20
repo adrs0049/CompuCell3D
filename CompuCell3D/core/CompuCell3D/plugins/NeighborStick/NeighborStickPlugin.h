@@ -39,7 +39,7 @@ class NEIGHBORSTICK_EXPORT NeighborStickPlugin : public Plugin, public EnergyFun
     //energyFunction data
     Potts3DPtr potts;
     SimulatorPtr sim;
-    BasicClassAccessor<NeighborTracker> * neighborTrackerAccessorPtr;
+    NeighborTrackerAccessor_t neighborTrackerAccessorPtr;
 
     double thresh;
     std::vector<std::string> typeNames;
@@ -57,7 +57,6 @@ class NEIGHBORSTICK_EXPORT NeighborStickPlugin : public Plugin, public EnergyFun
 public:
     NeighborStickPlugin();
     virtual ~NeighborStickPlugin();
-
 
     //plugin interface
     virtual void init ( SimulatorPtr simulator,

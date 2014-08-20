@@ -72,5 +72,10 @@ public:
     std::set<NeighborSurfaceData > cellNeighbors; //stores ptrs to cell neighbors i.e. each cell keeps track of its neighbors
 
 };
+
+// ATTENTION SWIG doesnt know about using yet
+//using NeighborTracker_t = BasicClassAccessor<NeighborTracker>;
+typedef std::shared_ptr<BasicClassAccessor<NeighborTracker> > NeighborTrackerAccessor_t;
+
 } // end namespace
 #endif

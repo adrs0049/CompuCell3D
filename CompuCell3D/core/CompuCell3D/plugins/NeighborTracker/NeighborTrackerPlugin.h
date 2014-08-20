@@ -34,29 +34,22 @@ class Cell;
 class Field3DIndex;
 template <class T> class Field3D;
 template <class T> class WatchableField3D;
-
 class CellInventory;
 
 class NEIGHBORTRACKER_EXPORT NeighborTrackerPlugin : public Plugin, public CellGChangeWatcher
 {
-public:
-	// ATTENTION SWIG doesnt know about using yet
-    //using NeighborTracker_t = BasicClassAccessor<NeighborTracker>;
-	typedef BasicClassAccessor<NeighborTracker> NeighborTracker_t;
-	
-private:
     ParallelUtilsOpenMP *pUtils;
     ParallelUtilsOpenMP::OpenMPLock_t *lockPtr;
     cellFieldPtr cellFieldG;
-    Dim3D fieldDim;
-    NeighborTracker_t neighborTrackerAccessor;
     SimulatorPtr simulator;
-    bool periodicX,periodicY,periodicZ;
+	NeighborTrackerAccessor_t neighborTrackerAccessor;
     CellInventory * cellInventoryPtr;
-    bool checkSanity;
-    unsigned int checkFreq;
-    unsigned int maxNeighborIndex;
     BoundaryStrategyPtr boundaryStrategy;
+	bool checkSanity;
+    unsigned int checkFreq;
+	bool periodicX,periodicY,periodicZ;
+    unsigned int maxNeighborIndex;
+	Dim3D fieldDim;
 
 public:
     NeighborTrackerPlugin();
@@ -72,9 +65,9 @@ public:
                         CC3DXMLElement *_xmlData = nullptr ) override;
     virtual std::string toString() override;
 
-    NeighborTracker_t * getNeighborTrackerAccessorPtr()
+    NeighborTrackerAccessor_t getNeighborTrackerAccessorPtr()
     {
-        return & neighborTrackerAccessor;
+        return neighborTrackerAccessor;
     }
     // End XMLSerializable interface
     int returnNumber()

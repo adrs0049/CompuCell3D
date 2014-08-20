@@ -37,25 +37,24 @@ CellOrientationPlugin::CellOrientationPlugin()
 
 void CellOrientationPlugin::setLambdaCellOrientation ( CellG * _cell, double _lambda )
 {
-    lambdaCellOrientationAccessor.get ( _cell->extraAttribPtr )->lambdaVal=_lambda;
+    lambdaCellOrientationAccessor->get ( _cell->extraAttribPtr )->lambdaVal=_lambda;
 }
 double CellOrientationPlugin::getLambdaCellOrientation ( CellG * _cell )
 {
-    return lambdaCellOrientationAccessor.get ( _cell->extraAttribPtr )->lambdaVal;
+    return lambdaCellOrientationAccessor->get ( _cell->extraAttribPtr )->lambdaVal;
 }
 
 CellOrientationPlugin::~CellOrientationPlugin()
 {}
 
-void CellOrientationPlugin::init ( Simulator *simulator, CC3DXMLElement *_xmlData )
+void CellOrientationPlugin::init ( SimulatorPtr simulator, CC3DXMLElement *_xmlData )
 {
-
     cerr<<"INITIALIZE CELL ORIENTATION PLUGIN"<<endl;
     potts = simulator->getPotts();
     //    potts->getCellFactoryGroupPtr()->registerClass(&CellOrientationVectorAccessor); //register new class with the factory
 
     bool pluginAlreadyRegisteredFlag;
-    auto polVectorPlugin = std::static_pointer_cast<PolarizationVectorPlugin> ( Simulator::pluginManager.get ( "PolarizationVector",&pluginAlreadyRegisteredFlag ) );
+	auto polVectorPlugin = get_plugin<PolarizationVectorPlugin>("PolarizationVector", &pluginAlreadyRegisteredFlag);
     if ( !pluginAlreadyRegisteredFlag )
         polVectorPlugin->init ( simulator );
 
@@ -63,7 +62,7 @@ void CellOrientationPlugin::init ( Simulator *simulator, CC3DXMLElement *_xmlDat
     auto comPlugin=Simulator::pluginManager.get ( "CenterOfMass",&comPluginAlreadyRegisteredFlag ); //this will load VolumeTracker plugin if it is not already loaded
     if ( !comPluginAlreadyRegisteredFlag )
         comPlugin->init ( simulator );
-
+	
     polarizationVectorAccessorPtr=polVectorPlugin->getPolarizationVectorAccessorPtr();
 
     cellFieldG = potts->getCellFieldG();
@@ -74,28 +73,22 @@ void CellOrientationPlugin::init ( Simulator *simulator, CC3DXMLElement *_xmlDat
 
     potts->registerEnergyFunctionWithName ( this,"CellOrientationEnergy" );
 
-    potts->getCellFactoryGroupPtr()->registerClass ( std::make_shared<DataAccessor_t> ( lambdaCellOrientationAccessor ) );
-
+	lambdaCellOrientationAccessor = std::make_shared<BasicClassAccessor<LambdaCellOrientation> >();
+    potts->getCellFactoryGroupPtr()->registerClass ( lambdaCellOrientationAccessor );
 
     simulator->registerSteerableObject ( this );
     update ( _xmlData,true );
-
-
 }
 
-void CellOrientationPlugin::extraInit ( Simulator *simulator )
+void CellOrientationPlugin::extraInit ( SimulatorPtr simulator )
 {
     cerr<<"EXTRA INITIALIZE CELL ORIENTATION PLUGIN"<<endl;
-    Potts3D *potts = simulator->getPotts();
+    potts = simulator->getPotts();
     cellFieldG = potts->getCellFieldG();
 }
 
-
-
-
 void CellOrientationPlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
 {
-
     if ( !_xmlData->getNumberOfChildren() )   //using cell id - based lambdaCellOrientation
     {
         lambdaFlexFlag=true;
@@ -115,7 +108,6 @@ void CellOrientationPlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFla
     bool comBasedAlgorithm=false;
     if ( _xmlData->findElement ( "Algorithm" ) )
     {
-
         string algorithm=_xmlData->getFirstElement ( "Algorithm" )->getText();
 
         changeToLower ( algorithm );
@@ -126,7 +118,6 @@ void CellOrientationPlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFla
             changeEnergyFcnPtr = &CellOrientationPlugin::changeEnergyCOMBased;
         }
     }
-
 }
 
 double CellOrientationPlugin::changeEnergy ( const Point3D &pt,const CellG *newCell,const CellG *oldCell )
@@ -159,7 +150,7 @@ double CellOrientationPlugin::changeEnergyPixelBased ( const Point3D &pt,const C
         }
         else
         {
-            lambdaCellOrientationValue=lambdaCellOrientationAccessor.get ( oldCell->extraAttribPtr )->lambdaVal;
+            lambdaCellOrientationValue=lambdaCellOrientationAccessor->get ( oldCell->extraAttribPtr )->lambdaVal;
         }
 
         auto polarizationVecPtr = polarizationVectorAccessorPtr->get ( oldCell->extraAttribPtr );
@@ -177,7 +168,7 @@ double CellOrientationPlugin::changeEnergyPixelBased ( const Point3D &pt,const C
         }
         else
         {
-            lambdaCellOrientationValue=lambdaCellOrientationAccessor.get ( newCell->extraAttribPtr )->lambdaVal;
+            lambdaCellOrientationValue=lambdaCellOrientationAccessor->get ( newCell->extraAttribPtr )->lambdaVal;
         }
 
         auto polarizationVecPtr = polarizationVectorAccessorPtr->get ( newCell->extraAttribPtr );
@@ -219,7 +210,7 @@ double CellOrientationPlugin::changeEnergyCOMBased ( const Point3D &pt,const Cel
         }
         else
         {
-            lambdaCellOrientationValue=lambdaCellOrientationAccessor.get ( oldCell->extraAttribPtr )->lambdaVal;
+            lambdaCellOrientationValue=lambdaCellOrientationAccessor->get ( oldCell->extraAttribPtr )->lambdaVal;
         }
 
         auto polarizationVecPtr = polarizationVectorAccessorPtr->get ( oldCell->extraAttribPtr );
@@ -248,7 +239,7 @@ double CellOrientationPlugin::changeEnergyCOMBased ( const Point3D &pt,const Cel
         }
         else
         {
-            lambdaCellOrientationValue=lambdaCellOrientationAccessor.get ( newCell->extraAttribPtr )->lambdaVal;
+            lambdaCellOrientationValue=lambdaCellOrientationAccessor->get ( newCell->extraAttribPtr )->lambdaVal;
         }
 
         auto polarizationVecPtr = polarizationVectorAccessorPtr->get ( newCell->extraAttribPtr );

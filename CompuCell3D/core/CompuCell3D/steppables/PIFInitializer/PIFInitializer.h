@@ -54,6 +54,7 @@ public:
     virtual void start();
     virtual void step ( const unsigned int currentStep ) {}
     virtual void finish() {}
+    virtual std::string toString() override { return "PIFInitializer"; }
     // End Steppable interface
 };
 } // end namespace

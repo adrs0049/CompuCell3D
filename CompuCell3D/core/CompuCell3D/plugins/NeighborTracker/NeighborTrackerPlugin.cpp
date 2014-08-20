@@ -31,9 +31,11 @@ using namespace std;
 NeighborTrackerPlugin::NeighborTrackerPlugin()
     : pUtils ( nullptr ), lockPtr ( nullptr ),
       cellFieldG ( nullptr ), simulator ( nullptr ),
+      neighborTrackerAccessor ( nullptr ),
+      cellInventoryPtr ( nullptr ), boundaryStrategy ( nullptr ),
+      checkSanity ( false ), checkFreq ( 1 ),
       periodicX ( false ), periodicY ( false ), periodicZ ( false ),
-      cellInventoryPtr ( nullptr ), checkSanity ( false ), checkFreq ( 1 ),
-      maxNeighborIndex ( 0 ), boundaryStrategy ( nullptr ), changeCounter ( 0 )
+      maxNeighborIndex ( 0 ), changeCounter ( 0 )
 {}
 
 NeighborTrackerPlugin::~NeighborTrackerPlugin()
@@ -41,13 +43,10 @@ NeighborTrackerPlugin::~NeighborTrackerPlugin()
     pUtils->destroyLock ( lockPtr );
     delete lockPtr;
     lockPtr = nullptr;
-    //cerr<<"\n\n\n DELETING NeighborTrackerPlugin"<<endl;
 }
 
 void NeighborTrackerPlugin::init ( SimulatorPtr _simulator, CC3DXMLElement *_xmlData )
 {
-
-
     if ( _xmlData && _xmlData->findElement ( "CheckLatticeSanityFrequency" ) )
     {
         checkSanity=true;
@@ -65,10 +64,8 @@ void NeighborTrackerPlugin::init ( SimulatorPtr _simulator, CC3DXMLElement *_xml
     ///getting cell inventory
     cellInventoryPtr=& potts->getCellInventory();
 
-    ///************************************************************************************************
-    ///REMARK. HAVE TO USE THE SAME BASIC CLASS ACCESSOR INSTANCE THAT WAS USED TO REGISTER WITH FACTORY
-    ///************************************************************************************************
-    potts->getCellFactoryGroupPtr()->registerClass ( std::make_shared<NeighborTracker_t> ( neighborTrackerAccessor ) );
+    neighborTrackerAccessor = std::make_shared<BasicClassAccessor<NeighborTracker> >();
+    potts->getCellFactoryGroupPtr()->registerClass ( neighborTrackerAccessor );
     potts->registerCellGChangeWatcher ( this );
 
     fieldDim=cellFieldG->getDim();
@@ -115,12 +112,12 @@ void NeighborTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCell,Ce
 
     if ( newCell )
     {
-        newCellNeighborSurfaceDataSetPtr =  &neighborTrackerAccessor.get ( newCell->extraAttribPtr )->cellNeighbors;
+        newCellNeighborSurfaceDataSetPtr =  &neighborTrackerAccessor->get ( newCell->extraAttribPtr )->cellNeighbors;
     }
 
     if ( oldCell )
     {
-        oldCellNeighborSurfaceDataSetPtr =  &neighborTrackerAccessor.get ( oldCell->extraAttribPtr )->cellNeighbors;
+        oldCellNeighborSurfaceDataSetPtr =  &neighborTrackerAccessor->get ( oldCell->extraAttribPtr )->cellNeighbors;
     }
 
     if ( oldCell )
@@ -148,64 +145,17 @@ void NeighborTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCell,Ce
                     if ( set_NSD_itr->OKToRemove() ) ///if commSurfArea reaches 0 I remove this entry from cell neighbor set
                         oldCellNeighborSurfaceDataSetPtr->erase ( set_NSD_itr );
                     //cerr<<"erasing "<<adjCellPtr<<" from "<< oldCell<<endl;
-
                 }
                 else
                 {
-
-                    //cerr<<"adjCellPtr="<<adjCellPtr<<" oldCell="<<oldCell<<" oldCell.type="<<(int)oldCell->type<<" oldCell.id="<<oldCell->id<<endl;
-                    //cerr<<"oldCell->volume="<<oldCell->volume<<endl;
-                    //cerr<<"oldCell->surface="<<oldCell->surface<<endl;
-                    //cerr<<"newCell="<<newCell<<endl;
-
-                    //if(newCell){
-                    //	cerr<<"newCell.type="<<newCell->type<<" id="<<newCell->id<<endl;
-                    //}
-                    //if (adjCellPtr){
-                    //	cerr<<"adjCellPtr.type="<<(int)adjCellPtr->type<<endl;
-                    //	cerr<<"adjCellPtr->volume="<<adjCellPtr->volume<<endl;
-                    //	cerr<<"adjCellPtr->surface="<<adjCellPtr->surface<<endl;
-                    //}
-                    //cerr<<"neighbor.pt="<<neighbor.pt<<" pt="<<pt<<endl;
-
-
-                    //Neighbor nbr;
-                    //cerr<<"NEIGHBORS OF pt="<<pt<<" ************************* "<<endl;
-                    //for(unsigned int ndx=0 ; ndx <= maxNeighborIndex ; ++ndx ){
-                    //	nbr=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(pt),ndx);
-                    //	if(!nbr.distance)
-                    //		continue;
-                    //	cerr<<nbr.pt<<endl;
-                    //}
-                    //cerr<<"********************************************************"<<endl;
-                    //cerr<<"NEIGHBORS OF neighbor.pt="<<neighbor.pt<<" ************************* "<<endl;
-                    //for(unsigned int ndx=0 ; ndx <= maxNeighborIndex ; ++ndx ){
-                    //	nbr=boundaryStrategy->getNeighborDirect(const_cast<Point3D&>(neighbor.pt),ndx);
-                    //	if(!nbr.distance)
-                    //		continue;
-                    //	cerr<<nbr.pt<<endl;
-                    //}
-
-                    //cerr<<"********************************************************"<<endl;
-                    //cerr<<"oldcell neighbors ******************************************"<<endl;
-                    //for(set<NeighborSurfaceData>::iterator sitr=oldCellNeighborSurfaceDataSetPtr->begin(); sitr!=oldCellNeighborSurfaceDataSetPtr->end(); ++sitr){
-                    //	if(sitr->neighborAddress)
-                    //		cerr<<"neighbor.id="<<sitr->neighborAddress->id<<endl;
-                    //	else
-                    //		cerr<<"neighbor.id"<<0<<endl;
-
-                    //	cerr<<"neighborAddress="<<sitr->neighborAddress<<" commonSurfaceArea="<<sitr->commonSurfaceArea<<endl;
-
-                    //}
                     testLatticeSanityFull();
                     cerr<<"Could not find cell address in the boundary - set of cellNeighbors is corrupted. Exiting ..."<<endl;
                     ASSERT_OR_THROW ( "Could not find cell address in the boundary - set of cellNeighbors is corrupted. Exiting ...",0 );
                 }
 
-
                 if ( adjCellPtr ) ///now process common area for adj cell provided it is not the oldCell
                 {
-                    set<NeighborSurfaceData> &set_NSD_ref = neighborTrackerAccessor.get ( adjCellPtr->extraAttribPtr )->cellNeighbors;
+                    set<NeighborSurfaceData> &set_NSD_ref = neighborTrackerAccessor->get ( adjCellPtr->extraAttribPtr )->cellNeighbors;
                     set<NeighborSurfaceData>::iterator sitr;
                     sitr=set_NSD_ref.find ( oldCell );
                     if ( sitr!=set_NSD_ref.end() )
@@ -217,9 +167,6 @@ void NeighborTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCell,Ce
                     }
                 }
             }
-
-
-
         }
     }
 
@@ -250,7 +197,7 @@ void NeighborTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCell,Ce
 
                 if ( adjCellPtr ) ///now process common area for adj cell
                 {
-                    set<NeighborSurfaceData> &set_NSD_ref  = neighborTrackerAccessor.get ( adjCellPtr->extraAttribPtr )->cellNeighbors;
+                    set<NeighborSurfaceData> &set_NSD_ref  = neighborTrackerAccessor->get ( adjCellPtr->extraAttribPtr )->cellNeighbors;
                     pair<set<NeighborSurfaceData>::iterator,bool> sitr_OK_pair=set_NSD_ref.insert ( NeighborSurfaceData ( newCell ) );
                     auto sitr = sitr_OK_pair.first;
                     sitr->incrementCommonSurfaceArea ( *sitr ); ///increment commonSurfArea of adj cell with current cell
@@ -279,7 +226,7 @@ void NeighborTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCell,Ce
                 //                cerr<<"!old cell section  adjCellPtr="<<adjCellPtr <<" ptAdj="<<ptAdj<<"  oldCell="<<oldCell<<" pt="<<pt<<endl;
                 if ( adjCellPtr ) ///now process common area for adj cell provided it is not the oldCell
                 {
-                    set<NeighborSurfaceData> &set_NSD_ref = neighborTrackerAccessor.get ( adjCellPtr->extraAttribPtr )->cellNeighbors;
+                    set<NeighborSurfaceData> &set_NSD_ref = neighborTrackerAccessor->get ( adjCellPtr->extraAttribPtr )->cellNeighbors;
                     set<NeighborSurfaceData>::iterator sitr;
                     sitr=set_NSD_ref.find ( oldCell );
                     if ( sitr!=set_NSD_ref.end() )
@@ -320,16 +267,13 @@ void NeighborTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCell,Ce
 
                     if ( adjCellPtr ) ///now process common area of adj cell with medium in this case
                     {
-                        set<NeighborSurfaceData> &set_NSD_ref  = neighborTrackerAccessor.get ( adjCellPtr->extraAttribPtr )->cellNeighbors;
+                        set<NeighborSurfaceData> &set_NSD_ref  = neighborTrackerAccessor->get ( adjCellPtr->extraAttribPtr )->cellNeighbors;
                         pair<set<NeighborSurfaceData>::iterator,bool> sitr_OK_pair=set_NSD_ref.insert ( NeighborSurfaceData ( newCell ) );
                         auto sitr = sitr_OK_pair.first;
                         sitr->incrementCommonSurfaceArea ( *sitr ); ///increment commonSurfArea of adj cell with current cell
                     }
-
                 }
-
             }
-
         }
     }
 
@@ -347,7 +291,6 @@ void NeighborTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCell,Ce
         }
         pUtils->unsetLock ( lockPtr );
     }
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -362,7 +305,6 @@ double distance ( double x1,double y1,double z1,double x2,double y2,double z2 )
 
 void NeighborTrackerPlugin::testLatticeSanityFull()
 {
-
     Dim3D fieldDim=cellFieldG->getDim();
 
     Point3D pt ( 0,0,0 );
@@ -376,13 +318,10 @@ void NeighborTrackerPlugin::testLatticeSanityFull()
     map<CellG*,set<NeighborSurfaceData> >::iterator mitr;
 
     /// check neighbors of each cell - will loop over each lattice point and check if point belongs to boundary, then will examine neighbors
-
     set<NeighborSurfaceData> * set_NSD_ptr;
 
     pair<set<NeighborSurfaceData>::iterator,bool > set_NSD_itr_OK_Pair;
     set<NeighborSurfaceData>::iterator set_NSD_itr;
-
-    //set<CellG*> cellPointersSet;
 
     for ( int z=0 ; z < fieldDim.z ; ++z )
         for ( int y=0 ; y < fieldDim.y ; ++y )
@@ -392,11 +331,7 @@ void NeighborTrackerPlugin::testLatticeSanityFull()
                 pt.y=y;
                 pt.z=z;
 
-				//             currentPtIndex=field3DIndex.index(pt);
-                //currentCellPtr=cellFieldG->getByIndex(currentPtIndex);
                 currentCellPtr=cellFieldG->get ( pt );
-                //if(currentCellPtr)
-                //	cellPointersSet.insert(currentCellPtr);
 
                 if ( !currentCellPtr )
                     continue; //skip the loop if the current latice site does not belong to any cell
@@ -432,13 +367,9 @@ void NeighborTrackerPlugin::testLatticeSanityFull()
 
                         set_NSD_itr=set_NSD_itr_OK_Pair.first;
                         set_NSD_itr->incrementCommonSurfaceArea ( *set_NSD_itr ); ///increment commonSurfArea with adj cell
-
                     }
-
                 }
-
             }
-
 
     //Now do lattice sanity checks
     if ( mapCellNeighborSurfaceData.size() != cellInventoryPtr->getCellInventorySize() )
@@ -465,7 +396,7 @@ void NeighborTrackerPlugin::testLatticeSanityFull()
         }
         set_NSD_ptr=& ( mitr->second );
 
-        if ( ! ( *set_NSD_ptr == neighborTrackerAccessor.get ( cell->extraAttribPtr )->cellNeighbors ) )
+        if ( ! ( *set_NSD_ptr == neighborTrackerAccessor->get ( cell->extraAttribPtr )->cellNeighbors ) )
         {
             cerr<<"Have checked "<<counter<<" cells"<<endl;
             cerr<<"set of NeighborSurfaceData do not match for cell: "<<cell<<endl;

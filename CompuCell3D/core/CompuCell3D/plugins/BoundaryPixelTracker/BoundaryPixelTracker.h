@@ -46,7 +46,11 @@ public:
 
     ~BoundaryPixelTracker() {};
     std::set<BoundaryPixelTrackerData > pixelSet; //stores pixels belonging to a given cell
-
 };
+
+// ATTENTION SWIG cant deal with using yet
+//using TrackerAccessor_t =  BasicClassAccessor<BoundaryPixelTracker>;
+typedef std::shared_ptr<BasicClassAccessor<BoundaryPixelTracker> > BoundaryPixelTrackerAccessor_t;
+
 } // end namespace
 #endif

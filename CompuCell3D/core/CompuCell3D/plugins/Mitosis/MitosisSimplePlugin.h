@@ -57,7 +57,7 @@ public:
     bool divideAlongMajorAxisFlag;
     bool flag3D;
 
-    BasicClassAccessor<PixelTracker> *pixelTrackerAccessorPtr;
+    std::shared_ptr<BasicClassAccessor<PixelTracker> > pixelTrackerAccessorPtr;
     std::shared_ptr<PixelTrackerPlugin> pixelTrackerPlugin;
 
     virtual void handleEvent ( CC3DEvent &_event ) override;

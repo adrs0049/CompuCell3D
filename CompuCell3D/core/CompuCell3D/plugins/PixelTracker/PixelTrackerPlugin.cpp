@@ -28,19 +28,20 @@ using namespace std;
 
 #include "PixelTrackerPlugin.h"
 
-PixelTrackerPlugin::PixelTrackerPlugin() : simulator(nullptr), potts(nullptr) {}
+PixelTrackerPlugin::PixelTrackerPlugin() 
+: pixelTrackerAccessor(nullptr), simulator(nullptr), potts(nullptr)
+{}
 
 PixelTrackerPlugin::~PixelTrackerPlugin() {}
 
-void PixelTrackerPlugin::init(Simulator *_simulator, CC3DXMLElement *_xmlData)
+void PixelTrackerPlugin::init(SimulatorPtr _simulator, CC3DXMLElement *_xmlData)
 {
     simulator=_simulator;
     potts = simulator->getPotts();
 
-    ///************************************************************************************************
-    ///REMARK. HAVE TO USE THE SAME BASIC CLASS ACCESSOR INSTANCE THAT WAS USED TO REGISTER WITH FACTORY
-    ///************************************************************************************************
-    potts->getCellFactoryGroupPtr()->registerClass(std::make_shared<pixelTrackerAccessor_t>(pixelTrackerAccessor));
+	pixelTrackerAccessor = std::make_shared<BasicClassAccessor<PixelTracker> >();
+	potts->getCellFactoryGroupPtr()->registerClass(pixelTrackerAccessor);
+	
     potts->registerCellGChangeWatcher(this);
 }
 
@@ -50,12 +51,12 @@ void PixelTrackerPlugin::field3DChange(const Point3D &pt, CellG *newCell,CellG *
         return;
 
     if(newCell) {
-        std::set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessor.get(newCell->extraAttribPtr)->pixelSet;
+		std::set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessor->get(newCell->extraAttribPtr)->pixelSet;
         pixelSetRef.insert(PixelTrackerData(pt));
     }
 
     if(oldCell) {
-        std::set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessor.get(oldCell->extraAttribPtr)->pixelSet;
+        std::set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessor->get(oldCell->extraAttribPtr)->pixelSet;
         auto sitr=pixelSetRef.find(PixelTrackerData(pt));
 
         ASSERT_OR_THROW("Could not find point:"+pt+" inside cell of id: "+BasicString(oldCell->id)+" type: "+BasicString((int)oldCell->type),
@@ -82,7 +83,7 @@ void PixelTrackerPlugin::handleEvent(CC3DEvent & _event) {
     for(cInvItr=cellInventory.cellInventoryBegin() ; cInvItr !=cellInventory.cellInventoryEnd() ; ++cInvItr )
     {
         cell=cInvItr->second;
-        std::set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessor.get(cell->extraAttribPtr)->pixelSet;
+        std::set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessor->get(cell->extraAttribPtr)->pixelSet;
         for (const auto &elem : pixelSetRef) {
           Point3D &pixel = const_cast<Point3D &>(elem.pixel);
             pixel.x+=shiftVec.x;

@@ -25,6 +25,7 @@
 
 #include <CompuCell3D/CC3D_plugin.h>
 #include "CellOrientationDLLSpecifier.h"
+#include <CompuCell3D/plugins/PolarizationVector/PolarizationVector.h>
 
 namespace CompuCell3D
 {
@@ -44,26 +45,21 @@ public:
     double  lambdaVal;
 };
 
+// ATTENTION SIWG doesnt know about using yet
+//using DataAccessor_t = BasicClassAccessor<LambdaCellOrientation>;
+typedef std::shared_ptr<BasicClassAccessor<LambdaCellOrientation> > LambdaCellOrientationAccessor_t;
+
 class CELLORIENTATION_EXPORT CellOrientationPlugin : public Plugin,public EnergyFunction
 {
     cellFieldPtr cellFieldG;
-
-public:
-    // ATTENTION SIWG doesnt know about using yet
-    //using PolVectorAccessor_t = BasicClassAccessor<PolarizationVector>;
-    //using DataAccessor_t = BasicClassAccessor<LambdaCellOrientation>;
-    typedef BasicClassAccessor<PolarizationVector> PolVectorAccessor_t;
-    typedef BasicClassAccessor<LambdaCellOrientation> DataAccessor_t;
-
-private:
-    DataAccessor_t lambdaCellOrientationAccessor;
+    LambdaCellOrientationAccessor_t lambdaCellOrientationAccessor;
 
     //EnergyFunction data
     Potts3DPtr potts;
     double lambdaCellOrientation;
     SimulatorPtr simulator;
     Dim3D fieldDim;
-    PolVectorAccessor_t *polarizationVectorAccessorPtr;
+    PolVectorAccessor_t polarizationVectorAccessorPtr;
     BoundaryStrategyPtr boundaryStrategy;
 
     bool lambdaFlexFlag;
@@ -87,13 +83,13 @@ public:
     double changeEnergyCOMBased ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
     double changeEnergyPixelBased ( const Point3D &pt,const CellG *newCell,const CellG *oldCell );
 
-    PolVectorAccessor_t * getPolarizationVectorAccessorPtr()
+    PolVectorAccessor_t getPolarizationVectorAccessorPtr()
     {
         return polarizationVectorAccessorPtr;
     }
-    DataAccessor_t * getLambdaCellOrientationAccessorPtr()
+    LambdaCellOrientationAccessor_t getLambdaCellOrientationAccessorPtr()
     {
-        return &lambdaCellOrientationAccessor;
+        return lambdaCellOrientationAccessor;
     }
     void setLambdaCellOrientation ( CellG * _cell, double _lambda );
     double getLambdaCellOrientation ( CellG * _cell );

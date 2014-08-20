@@ -48,11 +48,11 @@ CellBoundaryTrackerPlugin::~CellBoundaryTrackerPlugin() {
   //if (surfaceEnergy) delete surfaceEnergy;
 }
 
-void CellBoundaryTrackerPlugin::init(Simulator *_simulator) {
+void CellBoundaryTrackerPlugin::init(SimulatorPtr _simulator) {
 
   cerr<<"INITIALIZING CELL BOUNDARYTRACKER PLUGIN"<<endl;
   simulator=_simulator;
-  Potts3D *potts = simulator->getPotts();
+  Potts3DPtr potts = simulator->getPotts();
   cellFieldG = potts->getCellFieldG();
 
 

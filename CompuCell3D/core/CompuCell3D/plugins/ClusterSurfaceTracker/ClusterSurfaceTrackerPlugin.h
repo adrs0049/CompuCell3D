@@ -35,7 +35,7 @@ namespace CompuCell3D {
         unsigned int maxNeighborIndex;
 
 		std::shared_ptr<PixelTrackerPlugin> pixelTrackerPlugin;
-		BasicClassAccessor<PixelTracker> *pixelTrackerAccessorPtr;
+		std::shared_ptr<BasicClassAccessor<PixelTracker> > pixelTrackerAccessorPtr;
     public:
         ClusterSurfaceTrackerPlugin();
         virtual ~ClusterSurfaceTrackerPlugin();

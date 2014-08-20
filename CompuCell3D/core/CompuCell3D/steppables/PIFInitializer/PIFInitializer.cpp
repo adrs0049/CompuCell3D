@@ -59,16 +59,16 @@ void PIFInitializer::start()
         return ;  // we will not initialize cells if restart flag is on
     }
 
-    cerr<<"ppdPtr->pifname="<<pifname<<endl;
+    cerr<<"PIFInitializer opening file: "<<pifname<<endl;
 
     std::ifstream piffile ( pifname.c_str(), ios::in );
-    cerr<<"opened pid file"<<endl;
+    DBG_ONLY(cerr<<"opened pid file"<<endl);
     ASSERT_OR_THROW ( string ( "Could not open\n"+pifname+"\nMake sure it exists and is in correct directory" ),piffile.good() );
     auto cellFieldG = potts->getCellFieldG();
     ASSERT_OR_THROW ( "initField() Cell field cannot be null!", cellFieldG );
 
     Dim3D dim = cellFieldG->getDim();
-    cerr<<"THIS IS DIM FOR PIF "<<dim<<endl;
+    DBG_ONLY(cerr<<"THIS IS DIM FOR PIF "<<dim<<endl);
 
     long spin;
     long clusterId;
@@ -86,11 +86,11 @@ void PIFInitializer::start()
 
     TypeTransition * typeTransitionPtr=potts->getTypeTransition();
 
-    cerr<<"typeTransitionPtr="<<typeTransitionPtr<<endl;
+    DBG_ONLY(cerr<<"typeTransitionPtr="<<typeTransitionPtr<<endl);
     getline ( piffile,line );
     istringstream pif ( line );
     pif >> first >> second;
-    cerr << "First: " << first << " Second: " << second << "\n";
+    DBG_ONLY(cerr << "First: " << first << " Second: " << second << "\n");
     if ( second == "Clusters" )
     {
         cerr << "Clusters Included" << "\n";
@@ -99,9 +99,10 @@ void PIFInitializer::start()
             istringstream pif ( line );
             pif >> clusterId>> spin >> celltype >> xLow;
 
-            //             cerr << "  Cluster Id:  " <<clusterId<< "  Spin: " << spin
-            //                << "  Type: " <<  celltype <<"\n";
-
+			DBG_ONLY(
+            cerr << "  Cluster Id:  " <<clusterId<< "  Spin: " << spin
+                 << "  Type: " <<  celltype <<"\n");
+				 
             ASSERT_OR_THROW ( string ( "PIF reader: xLow out of bounds : \n" ) +line, xLow >= 0 && xLow < dim.x );
             pif >> xHigh;
             ASSERT_OR_THROW ( string ( "PIF reader: xHigh out of bounds : \n" ) + line, xHigh >= 0 && xHigh < dim.x );
@@ -127,9 +128,7 @@ void PIFInitializer::start()
                             //It is necessary to do it this way because steppers are called only when we are performing pixel copies
                             // but if we initialize steppers are not called thus is you overwrite a cell here it will not get removed from
                             //inventory unless you call steppers(VolumeTrackerPlugin) explicitely
-
                         }
-
 
             }
             else // First time for this spin, we need to create a new cell
@@ -156,19 +155,20 @@ void PIFInitializer::start()
 
                         }
 
-                //         cell->type=potts->getAutomaton()->getTypeId(celltype);
-
-                //cerr << "CELLTYPE: " << celltype << "\n";
-                //cerr << "CLUSTERID: " << clusterId << "\n";
+                DBG_ONLY(
+                cell->type=potts->getAutomaton()->getTypeId(celltype);
+                cerr << "CELLTYPE: " << celltype << "\n";
+                cerr << "CLUSTERID: " << clusterId << "\n";
+				);
+				
                 typeTransitionPtr->setType ( cell,potts->getAutomaton()->getTypeId ( celltype ) );
-                //cell->clusterId=clusterId;
-                //cerr << "1. Cell Type from cell->:  " <<(int)cell->type<< "\n";
-                //cerr << "1. ClusterID from cell->:  " <<(int)cell->clusterId<< "\n";
-
-
+                
+				DBG_ONLY(
+				cell->clusterId=clusterId;
+                cerr << "1. Cell Type from cell->:  " <<(int)cell->type<< "\n";
+                cerr << "1. ClusterID from cell->:  " <<(int)cell->clusterId<< "\n";
+				);
             }
-
-
         }
     }
     else
@@ -178,8 +178,7 @@ void PIFInitializer::start()
         int tmp = atoi ( first.c_str() );
         spin = tmp;
         celltype = second;
-        //cerr << "spin: " << spin << " celltype: : " << celltype <<
-        //     " xLow: " << xLow << endl;
+        
         ASSERT_OR_THROW ( string ( "PIF reader: xLow out of bounds : \n" ) + line, xLow >= 0 && xLow < dim.x );
         pif >> xHigh;
         ASSERT_OR_THROW ( string ( "PIF reader: xHigh out of bounds : \n" ) +line, xHigh >= 0 && xHigh < dim.x );
@@ -195,8 +194,14 @@ void PIFInitializer::start()
         ASSERT_OR_THROW ( string ( "PIF reader: zHigh out of bounds : \n" ) +line, zHigh >= 0 && zHigh < dim.z );
         ASSERT_OR_THROW ( string ( "PIF reader: zHigh is smaller than xLow : \n" ) +line, zHigh >= zLow );
 
+		DBG_ONLY(cerr << "spin=" << spin << " celltype=" << celltype <<
+             " xLow=" << xLow << " xHigh=" << xHigh << " yLow=" << yLow
+             << " yHigh=" << yHigh << " zLow=" << zLow << " zHigh=" << zHigh
+             << endl);
+		
         if ( spinMap.count ( spin ) != 0 ) // Spin multiply listed
         {
+			DBG_ONLY(cerr << "PIFInit: Spin already exists!\n");
             for ( cellPt.z = zLow; cellPt.z <= zHigh; cellPt.z++ )
                 for ( cellPt.y = yLow; cellPt.y <= yHigh; cellPt.y++ )
                     for ( cellPt.x = xLow; cellPt.x <= xHigh; cellPt.x++ )
@@ -211,6 +216,7 @@ void PIFInitializer::start()
         }
         else // First time for this spin, we need to create a new cell
         {
+			DBG_ONLY(cerr << "PIFInit: New Spin!\n");
             spinMap[spin] = Point3D ( xLow, yLow, zLow );
             cell = potts->createCellGSpecifiedIds ( Point3D ( xLow, yLow, zLow ),spin );
             cell->type=potts->getAutomaton()->getTypeId ( celltype ); //first manually set cell type , then we reset it  via setType of transition Ptr  (transitionPtr is obsolete and not really used in most recent CC3D versions)
@@ -232,7 +238,7 @@ void PIFInitializer::start()
 
                     }
 
-
+			DBG_ONLY(cerr << "PIFInit: set type\n");
             typeTransitionPtr->setType ( cell , potts->getAutomaton()->getTypeId ( celltype ) );
             //cerr << "1. Cell Type from cell->:  " <<(int)cell->type<< "\n";
             // cerr << "getline(pif,line): " << getline(pif,line) << endl;
@@ -260,6 +266,11 @@ void PIFInitializer::start()
             ASSERT_OR_THROW ( string ( "PIF reader: zHigh out of bounds: \n " ) +line, zHigh >= 0 && zHigh < dim.z );
             ASSERT_OR_THROW ( string ( "PIF reader: zHigh is smaller than xLow: \n" ) +line, zHigh >= zLow );
 
+			DBG_ONLY(cerr << "spin=" << spin << " celltype=" << celltype <<
+             " xLow=" << xLow << " xHigh=" << xHigh << " yLow=" << yLow
+             << " yHigh=" << yHigh << " zLow=" << zLow << " zHigh=" << zHigh
+             << endl);
+			
             if ( spinMap.count ( spin ) != 0 ) // Spin multiply listed
             {
                 for ( cellPt.z = zLow; cellPt.z <= zHigh; cellPt.z++ )
@@ -299,13 +310,9 @@ void PIFInitializer::start()
 
                         }
 
-
                 typeTransitionPtr->setType ( cell,potts->getAutomaton()->getTypeId ( celltype ) );
                 //cerr << "2. Cell Type from cell->:  " <<(int)cell->type<< "\n";
-
             }
-
-
         }
 	}
 }

@@ -187,6 +187,10 @@ public:
     }
 };
 
+// ATTENTION SWIG doesnt know about using yet
+//using chemotaxisDataAccessor_t = BasicClassAccessor< std::map<std::string,ChemotaxisData> >;
+typedef std::shared_ptr<BasicClassAccessor< std::map<std::string,ChemotaxisData> > > chemotaxisDataAccessor_t;
+
 class  ChemotaxisFieldData
 {
 public:

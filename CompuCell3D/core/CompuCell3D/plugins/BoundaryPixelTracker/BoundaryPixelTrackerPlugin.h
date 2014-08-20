@@ -39,14 +39,9 @@ template <class T> class WatchableField3D;
 
 class BOUNDARYPIXELTRACKER_EXPORT BoundaryPixelTrackerPlugin : public Plugin, public CellGChangeWatcher
 {
-public:
-	// ATTENTION SWIG cant deal with using yet
-    //using TrackerAccessor_t =  BasicClassAccessor<BoundaryPixelTracker>;
-    typedef BasicClassAccessor<BoundaryPixelTracker> TrackerAccessor_t;
-	
 private:
     Dim3D fieldDim;
-	TrackerAccessor_t boundaryPixelTrackerAccessor;
+	BoundaryPixelTrackerAccessor_t boundaryPixelTrackerAccessor;
     SimulatorPtr simulator;
     Potts3DPtr potts;
     unsigned int maxNeighborIndex;
@@ -73,9 +68,9 @@ public:
     virtual std::string steerableName() override;
     virtual std::string toString() override;
 
-    TrackerAccessor_t * getBoundaryPixelTrackerAccessorPtr()
+    BoundaryPixelTrackerAccessor_t getBoundaryPixelTrackerAccessorPtr()
     {
-        return & boundaryPixelTrackerAccessor;
+        return boundaryPixelTrackerAccessor;
     }
     //had to include this function to get set inereation working properly with Python , and Player that has restart capabilities
     BoundaryPixelTrackerData * getBoundaryPixelTrackerData ( BoundaryPixelTrackerData * _psd )

@@ -3,6 +3,7 @@
 #define POLARIZATIONVECTOR_H
 
 #include "PolarizationVectorDLLSpecifier.h"
+#include <BasicUtils/BasicClassAccessor.h>
 
 namespace CompuCell3D
 {
@@ -17,6 +18,10 @@ public:
     {}
     float x,y,z;
 };
+
+// ATTENTION SWIG doesnt know about using yet
+//using PolVectorAccessor_t =  BasicClassAccessor<PolarizationVector>;
+typedef std::shared_ptr<BasicClassAccessor<PolarizationVector> > PolVectorAccessor_t;
 
 } // end namespace
 #endif

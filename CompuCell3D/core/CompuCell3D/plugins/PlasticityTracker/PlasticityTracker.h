@@ -39,5 +39,11 @@ public:
     std::set<PlasticityTrackerData> plasticityNeighbors; //stores ptrs to cell neighbors i.e. each cell keeps track of its neighbors
 
 };
+
+// ATTENTION SWIG doesn't know about using yet
+//using PlasticityTrackerAccessor_t = BasicClassAccessor<PlasticityTracker>;
+//using NeightborTrackerAccessor_t = BasicClassAccessor<NeighborTracker>;
+typedef std::shared_ptr<BasicClassAccessor<PlasticityTracker> > PlasticityTrackerAccessor_t;
+
 } // end namespace
 #endif

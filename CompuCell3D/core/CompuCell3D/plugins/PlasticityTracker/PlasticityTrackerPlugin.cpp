@@ -29,14 +29,11 @@ using namespace std;
 #include "PlasticityTrackerPlugin.h"
 
 PlasticityTrackerPlugin::PlasticityTrackerPlugin() :
-    pUtils ( 0 ),
-    lockPtr ( 0 ),
-    cellFieldG ( 0 ),
-    initialized ( false ),
-    maxNeighborIndex ( 0 ),
-    boundaryStrategy ( 0 ),
-    xmlData ( 0 )
-
+    pUtils ( nullptr ),  lockPtr ( nullptr ),
+    cellFieldG ( nullptr ), cellInventoryPtr(nullptr), 
+    plasticityTrackerAccessor(nullptr), 
+    boundaryStrategy ( 0 ), xmlData(nullptr), simulator(nullptr),
+    initialized ( false ), maxNeighborIndex ( 0 )
 {}
 
 PlasticityTrackerPlugin::~PlasticityTrackerPlugin()
@@ -59,12 +56,10 @@ void PlasticityTrackerPlugin::init ( SimulatorPtr _simulator, CC3DXMLElement *_x
     ///getting cell inventory
     cellInventoryPtr=& potts->getCellInventory();
 
-    ///************************************************************************************************
-    ///REMARK. HAVE TO USE THE SAME BASIC CLASS ACCESSOR INSTANCE THAT WAS USED TO REGISTER WITH FACTORY
-    ///************************************************************************************************
-    registerClassOnCell<PlasticityTrackerAccessor_t> ( potts, plasticityTrackerAccessor );
-    fieldDim=cellFieldG->getDim();
+	plasticityTrackerAccessor = std::make_shared<BasicClassAccessor<PlasticityTracker> >();
+	potts->getCellFactoryGroupPtr()->registerClass(plasticityTrackerAccessor);
 
+	fieldDim=cellFieldG->getDim();
     boundaryStrategy=BoundaryStrategy::getInstance();
     maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromNeighborOrder ( 1 ); //1st nearest neighbor
 
@@ -72,7 +67,7 @@ void PlasticityTrackerPlugin::init ( SimulatorPtr _simulator, CC3DXMLElement *_x
     auto plugin=Simulator::pluginManager.get ( "CenterOfMass",&pluginAlreadyRegisteredFlag ); //this will load COM plugin if it is not already loaded
     if ( !pluginAlreadyRegisteredFlag )
         plugin->init ( simulator );
-
+	
     potts->registerCellGChangeWatcher ( this ); //register plasticityTracker after CenterOfMass and after VolumeTracker - implicitely called from CenterOfmass
 }
 
@@ -125,14 +120,14 @@ void PlasticityTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCell,
         {
             //remove oldCell from neighbor list of old cell neighbors
             set<PlasticityTrackerData>::iterator sitr;
-            set<PlasticityTrackerData> * plasticityNeighborsPtr=&plasticityTrackerAccessor.get ( oldCell->extraAttribPtr )->plasticityNeighbors;
+            set<PlasticityTrackerData> * plasticityNeighborsPtr=&plasticityTrackerAccessor->get ( oldCell->extraAttribPtr )->plasticityNeighbors;
             set<PlasticityTrackerData> * plasticityNeighborsTmpPtr;
             //cerr<<"oldCell="<<oldCell<<" oldCell->id="<<oldCell->id<<" oldCell->type="<<(int)oldCell->type<<" oldCell->volume="<<oldCell->volume<<endl;
             for ( sitr=plasticityNeighborsPtr->begin() ; sitr != plasticityNeighborsPtr->end() ; ++sitr )
             {
                 //getting set of plasticityNeighbors from the neighbor (pointed by sitr) of the oldCell
                 //cerr<<"sitr->neighborAddress->id="<<sitr->neighborAddress->id<<endl;
-                plasticityNeighborsTmpPtr=&plasticityTrackerAccessor.get ( sitr->neighborAddress->extraAttribPtr )->plasticityNeighbors ;
+                plasticityNeighborsTmpPtr=&plasticityTrackerAccessor->get ( sitr->neighborAddress->extraAttribPtr )->plasticityNeighbors ;
 //             plasticityNeighborsTmpPtr->erase(PlasticityTrackerData(oldCell));
             }
         }
@@ -143,18 +138,18 @@ void PlasticityTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCell,
     CellG* nCell;
     bool pluginAlreadyRegisteredFlag;
     auto neighborTrackerPluginPtr = get_plugin<NeighborTrackerPlugin> ( "NeighborTracker", &pluginAlreadyRegisteredFlag );
-    neighborTrackerAccessorPtr=neighborTrackerPluginPtr->getNeighborTrackerAccessorPtr();
+    auto neighborTrackerAccessor=neighborTrackerPluginPtr->getNeighborTrackerAccessorPtr();
 
     if ( oldCell )
     {
 //       cerr << "ID: " << oldCell->id << " Type: " << (int)oldCell->type << " Address: " << oldCell << endl;
 //          sleep(5);
-        neighborData = & ( neighborTrackerAccessorPtr->get ( oldCell->extraAttribPtr )->cellNeighbors );
+        neighborData = & ( neighborTrackerAccessor->get ( oldCell->extraAttribPtr )->cellNeighbors );
 //          neighborTrackerAccessorPtr->get(oldCell->extraAttribPtr);
         set<PlasticityTrackerData>::iterator PlasSetitr;
         set<PlasticityTrackerData>::iterator tmpPlasSetitr;
-        set<PlasticityTrackerData> * plasticityNeighborsPtr=&plasticityTrackerAccessor.get ( oldCell->extraAttribPtr )->plasticityNeighbors;
-        set<PlasticityTrackerData> OGplasticityNeighborsPtr=plasticityTrackerAccessor.get ( oldCell->extraAttribPtr )->plasticityNeighbors;
+        set<PlasticityTrackerData> * plasticityNeighborsPtr=&plasticityTrackerAccessor->get ( oldCell->extraAttribPtr )->plasticityNeighbors;
+        set<PlasticityTrackerData> OGplasticityNeighborsPtr=plasticityTrackerAccessor->get ( oldCell->extraAttribPtr )->plasticityNeighbors;
         set<PlasticityTrackerData> * plasticityNeighborsTmpPtr;
 //       cerr << "Before Size of Set: " << plasticityNeighborsPtr->size() << endl;
         plasticityNeighborsPtr->clear();
@@ -174,14 +169,14 @@ void PlasticityTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCell,
 //             cerr << "\t Inserting NeigbhorID: " << sitr->neighborAddress << " Type: " << (int)nCell->type << endl;
 //             cerr << "\t Before Inserting Size of Set: " << plasticityNeighborsPtr->size() << endl;
                     plasticityNeighborsPtr->insert ( PlasticityTrackerData ( nCell ) );
-                    plasticityNeighborsTmpPtr=&plasticityTrackerAccessor.get ( nCell->extraAttribPtr )->plasticityNeighbors;
+                    plasticityNeighborsTmpPtr=&plasticityTrackerAccessor->get ( nCell->extraAttribPtr )->plasticityNeighbors;
                     plasticityNeighborsTmpPtr->insert ( PlasticityTrackerData ( oldCell ) );
                 }
             }
         }
         for ( PlasSetitr=plasticityNeighborsPtr->begin() ; PlasSetitr != plasticityNeighborsPtr->end() ; ++PlasSetitr )
         {
-            plasticityNeighborsTmpPtr=&plasticityTrackerAccessor.get ( oldCell->extraAttribPtr )->plasticityNeighbors;
+            plasticityNeighborsTmpPtr=&plasticityTrackerAccessor->get ( oldCell->extraAttribPtr )->plasticityNeighbors;
 //          cerr << "Set NeigbhorID: " << PlasSetitr->neighborAddress << " Type: " << (int)PlasSetitr->neighborAddress->type << endl;
 //             plasticityNeighborsTmpPtr->insert(PlasticityTrackerData(oldCell));
         }
@@ -190,7 +185,7 @@ void PlasticityTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCell,
         for ( PlasSetitr=OGplasticityNeighborsPtr.begin() ; PlasSetitr != OGplasticityNeighborsPtr.end() ; ++PlasSetitr )
         {
             //cerr << "OGSet NeigbhorID: " << PlasSetitr->neighborAddress << " Type: " << (int)PlasSetitr->neighborAddress->type << endl;
-            plasticityNeighborsTmpPtr=&plasticityTrackerAccessor.get ( PlasSetitr->neighborAddress->extraAttribPtr )->plasticityNeighbors;
+            plasticityNeighborsTmpPtr=&plasticityTrackerAccessor->get ( PlasSetitr->neighborAddress->extraAttribPtr )->plasticityNeighbors;
             for ( tmpPlasSetitr=plasticityNeighborsTmpPtr->begin() ; tmpPlasSetitr != plasticityNeighborsTmpPtr->end() ; ++tmpPlasSetitr )
             {
 //              cerr << "\t tmp NeigbhorID: " << tmpPlasSetitr->neighborAddress << " Type: " << (int)tmpPlasSetitr->neighborAddress->type << endl;
@@ -218,10 +213,9 @@ void PlasticityTrackerPlugin::initializePlasticityNeighborList()
     set<PlasticityTrackerData> * plasticityNeighborsTmpPtr;
     set<unsigned char>::iterator endSitr=plasticityTypes.end();
 
-
-    for ( unsigned int x =0 ; x< fieldDim.x ; ++x )
-        for ( unsigned int y =0 ; y< fieldDim.y ; ++y )
-            for ( unsigned int z =0 ; z< fieldDim.z ; ++z )
+    for ( int x =0 ; x< fieldDim.x ; ++x )
+        for ( int y =0 ; y< fieldDim.y ; ++y )
+            for ( int z =0 ; z< fieldDim.z ; ++z )
             {
                 pt=Point3D ( x,y,z );
                 cell=cellFieldG->get ( pt );
@@ -240,9 +234,9 @@ void PlasticityTrackerPlugin::initializePlasticityNeighborList()
                         {
                             if ( plasticityTypes.find ( nCell->type ) !=endSitr && plasticityTypes.find ( cell->type ) !=endSitr )
                             {
-                                plasticityNeighborsTmpPtr=&plasticityTrackerAccessor.get ( nCell->extraAttribPtr )->plasticityNeighbors;
+                                plasticityNeighborsTmpPtr=&plasticityTrackerAccessor->get ( nCell->extraAttribPtr )->plasticityNeighbors;
                                 plasticityNeighborsTmpPtr->insert ( PlasticityTrackerData ( cell ) );
-                                plasticityNeighborsTmpPtr=&plasticityTrackerAccessor.get ( cell->extraAttribPtr )->plasticityNeighbors;
+                                plasticityNeighborsTmpPtr=&plasticityTrackerAccessor->get ( cell->extraAttribPtr )->plasticityNeighbors;
                                 plasticityNeighborsTmpPtr->insert ( PlasticityTrackerData ( nCell ) );
                             }
                         }

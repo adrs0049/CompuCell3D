@@ -25,6 +25,7 @@
 
 #include <CompuCell3D/CC3D_plugin.h>
 #include "PlasticityDLLSpecifier.h"
+#include "CompuCell3D/plugins/PlasticityTracker/PlasticityTracker.h"
 
 class CC3DXMLElement;
 
@@ -54,7 +55,7 @@ class PLASTICITY_EXPORT PlasticityPlugin : public Plugin, public EnergyFunction
     double lambdaPlasticity;
     SimulatorPtr simulator;
     Dim3D fieldDim;
-    BasicClassAccessor<PlasticityTracker> *plasticityTrackerAccessorPtr;
+    PlasticityTrackerAccessor_t plasticityTrackerAccessorPtr;
     typedef double ( PlasticityPlugin::*diffEnergyFcnPtr_t ) ( float _deltaL,float _lBefore,const PlasticityTrackerData * _plasticityTrackerData,const CellG *_cell );
 
     diffEnergyFcnPtr_t diffEnergyFcnPtr;

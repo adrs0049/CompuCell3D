@@ -77,7 +77,7 @@ public:
     void setParentChildPositionFlag ( int _flag );
     int getParentChildPositionFlag();
 
-    BasicClassAccessor<PixelTracker> *pixelTrackerAccessorPtr;
+    std::shared_ptr<BasicClassAccessor<PixelTracker> > pixelTrackerAccessorPtr;
     std::shared_ptr<PixelTrackerPlugin> pixelTrackerPlugin;
     //comaprtment mitosis members
     std::vector<CompartmentMitosisData> parentBeforeMitosis;

@@ -23,18 +23,8 @@
 #ifndef CHEMOTAXISSIMPLEENERGY_H
 #define CHEMOTAXISSIMPLEENERGY_H
 
- #include <CompuCell3D/CC3D.h>
-// // // #include <CompuCell3D/Potts3D/EnergyFunction.h>
-
-
-// // // #include <CompuCell3D/Potts3D/Cell.h>
-// // // //#include <BasicUtils/BasicClassGroup.h>
-
-// // // #include <string>
-// // // #include <vector>
-
+#include <CompuCell3D/CC3D_plugin.h>
 #include "ChemotaxisSimpleDLLSpecifier.h"
-
 
 namespace CompuCell3D {
 

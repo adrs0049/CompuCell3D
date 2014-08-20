@@ -69,9 +69,6 @@ private:
     //bool okToChemotact(unsigned int fieldIdx,unsigned char cellType);
     std::string chemotaxisAlgorithm;
 
-	// ATTENTION SWIG doesnt know about using yet
-	//using chemotaxisDataAccessor_t = BasicClassAccessor< std::map<std::string,ChemotaxisData> >;
-	typedef BasicClassAccessor< std::map<std::string,ChemotaxisData> > chemotaxisDataAccessor_t;
     chemotaxisDataAccessor_t chemotaxisDataAccessor;
 
     std::map<std::string,chemotaxisEnergyFormulaFcnPtr_t> chemotaxisFormulaDict;
@@ -81,9 +78,9 @@ public:
 	ChemotaxisPlugin();
     virtual ~ChemotaxisPlugin();
 
-    virtual void init(Simulator *simulator,
+    virtual void init(SimulatorPtr simulator,
                       CC3DXMLElement *_xmlData = nullptr) override;
-    virtual void extraInit(Simulator *simulator) override;
+    virtual void extraInit(SimulatorPtr simulator) override;
 
     //EnergyFunction interface
     virtual double changeEnergy(const Point3D &pt, const CellG *newCell,

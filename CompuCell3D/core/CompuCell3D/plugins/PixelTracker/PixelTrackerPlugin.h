@@ -35,18 +35,19 @@ class Field3DIndex;
 template <class T> class Field3D;
 template <class T> class WatchableField3D;
 
+typedef std::shared_ptr<BasicClassAccessor<PixelTracker> > pixelTrackerAccessor_t;
+
 class PIXELTRACKER_EXPORT PixelTrackerPlugin : public Plugin, public CellGChangeWatcher {
 public:
 	// ATTENTION SWIG doesnt know about using yet
 	//using pixelTrackerAccessor_t = BasicClassAccessor<PixelTracker>;
-	typedef BasicClassAccessor<PixelTracker> pixelTrackerAccessor_t;
-	
+		
 private:
     //WatchableField3D<CellG *> *cellFieldG;
     Dim3D fieldDim;
     pixelTrackerAccessor_t pixelTrackerAccessor;
-    Simulator *simulator;
-    Potts3D *potts;
+    SimulatorPtr simulator;
+    Potts3DPtr potts;
 
 public:
     PixelTrackerPlugin();
@@ -57,13 +58,13 @@ public:
                                CellG *oldCell) override;
 
     //Plugin interface
-    virtual void init(Simulator *_simulator,
+    virtual void init(SimulatorPtr _simulator,
                       CC3DXMLElement *_xmlData = nullptr) override;
     virtual std::string toString() override;
     virtual void handleEvent(CC3DEvent &_event) override;
 
-    pixelTrackerAccessor_t * getPixelTrackerAccessorPtr() {
-        return & pixelTrackerAccessor;
+    pixelTrackerAccessor_t getPixelTrackerAccessorPtr() {
+        return pixelTrackerAccessor;
     }
     //had to include this function to get set itereation working properly with Python , and Player that has restart capabilities
     PixelTrackerData * getPixelTrackerData(PixelTrackerData * _psd) {

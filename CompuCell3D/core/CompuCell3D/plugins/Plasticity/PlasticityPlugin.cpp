@@ -59,7 +59,6 @@ void PlasticityPlugin::extraInit ( SimulatorPtr simulator )
     fieldDim=cellFieldG ->getDim();
     boundaryStrategy=BoundaryStrategy::getInstance();
 
-
     bool pluginAlreadyRegisteredFlag;
     auto trackerPlugin = get_plugin<PlasticityTrackerPlugin> ( "PlasticityTracker", &pluginAlreadyRegisteredFlag );
     if ( !pluginAlreadyRegisteredFlag )
@@ -69,8 +68,6 @@ void PlasticityPlugin::extraInit ( SimulatorPtr simulator )
 
 void PlasticityPlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
 {
-
-
     if ( _xmlData->findElement ( "Local" ) )
     {
         diffEnergyFcnPtr=&PlasticityPlugin::diffEnergyLocal;
@@ -84,13 +81,11 @@ void PlasticityPlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
             lambdaPlasticity=_xmlData->getFirstElement ( "LambdaPlasticity" )->getDouble();
         if ( _xmlData->findElement ( "MaxPlasticityLength" ) )
             maxLengthPlasticity=_xmlData->getFirstElement ( "MaxPlasticityLength" )->getDouble();
-
     }
 }
 
 double PlasticityPlugin::diffEnergyGlobal ( float _deltaL,float _lBefore,const PlasticityTrackerData * _plasticityTrackerData,const CellG *_cell )
 {
-
     if ( _cell->volume>1 )
     {
         if ( _lBefore<maxLengthPlasticity )

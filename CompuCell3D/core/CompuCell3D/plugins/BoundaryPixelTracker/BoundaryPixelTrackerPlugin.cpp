@@ -35,22 +35,21 @@ BoundaryPixelTrackerPlugin::BoundaryPixelTrackerPlugin()
 
 BoundaryPixelTrackerPlugin::~BoundaryPixelTrackerPlugin() {}
 
-void BoundaryPixelTrackerPlugin::init ( Simulator *_simulator, CC3DXMLElement *_xmlData )
+void BoundaryPixelTrackerPlugin::init ( SimulatorPtr _simulator, CC3DXMLElement *_xmlData )
 {
     xmlData=_xmlData;
     simulator=_simulator;
     potts = simulator->getPotts();
 
-    ///************************************************************************************************
-    ///REMARK. HAVE TO USE THE SAME BASIC CLASS ACCESSOR INSTANCE THAT WAS USED TO REGISTER WITH FACTORY
-    ///************************************************************************************************
-    registerClassOnCell<TrackerAccessor_t> ( potts, boundaryPixelTrackerAccessor );
-    potts->registerCellGChangeWatcher ( this );
+	boundaryPixelTrackerAccessor = std::make_shared<BasicClassAccessor<BoundaryPixelTracker> >();
+	potts->getCellFactoryGroupPtr()->registerClass(boundaryPixelTrackerAccessor);
+
+	potts->registerCellGChangeWatcher ( this );
     boundaryStrategy=BoundaryStrategy::getInstance();
     maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromNeighborOrder ( 1 );
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void BoundaryPixelTrackerPlugin::extraInit ( Simulator *simulator )
+void BoundaryPixelTrackerPlugin::extraInit ( SimulatorPtr simulator )
 {
     update ( xmlData,true );
 }
@@ -73,15 +72,13 @@ void BoundaryPixelTrackerPlugin::handleEvent ( CC3DEvent & _event )
     for ( cInvItr=cellInventory.cellInventoryBegin() ; cInvItr !=cellInventory.cellInventoryEnd() ; ++cInvItr )
     {
         cell=cInvItr->second;
-        set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessor.get ( cell->extraAttribPtr )->pixelSet;
+        set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessor->get ( cell->extraAttribPtr )->pixelSet;
         for ( const auto &elem : pixelSetRef )
         {
-
             Point3D &pixel = const_cast<Point3D &> ( elem.pixel );
             pixel.x+=shiftVec.x;
             pixel.y+=shiftVec.y;
             pixel.z+=shiftVec.z;
-
         }
     }
 }
@@ -108,13 +105,11 @@ void BoundaryPixelTrackerPlugin::update ( CC3DXMLElement *_xmlData, bool _fullIn
         //cerr<<"got here will do neighbor order"<<endl;
         if ( _xmlData->getFirstElement ( "NeighborOrder" ) )
         {
-
             maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromNeighborOrder ( _xmlData->getFirstElement ( "NeighborOrder" )->getUInt() );
         }
         else
         {
             maxNeighborIndex=boundaryStrategy->getMaxNeighborIndexFromNeighborOrder ( 1 );
-
         }
     }
 }
@@ -129,7 +124,7 @@ void BoundaryPixelTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCe
 
     if ( newCell )
     {
-        std::set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessor.get ( newCell->extraAttribPtr )->pixelSet;
+        std::set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessor->get ( newCell->extraAttribPtr )->pixelSet;
         bool ptInsertedAsBoundary=false;
         //new pixel is NOT automatically inserted into set of boundary pixels  - it will be inserted after we determine that indeed it belongs to the boundary
         //pixelSetRef.insert(BoundaryPixelTrackerData(pt));
@@ -180,15 +175,13 @@ void BoundaryPixelTrackerPlugin::field3DChange ( const Point3D &pt, CellG *newCe
                                   sitr!=pixelSetRef.end() );
                 pixelSetRef.erase ( sitr );
             }
-
         }
-
     }
 
     if ( oldCell )
     {
         //first erase pt from set of boundary pixels
-        std::set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessor.get ( oldCell->extraAttribPtr )->pixelSet;
+        std::set<BoundaryPixelTrackerData > & pixelSetRef=boundaryPixelTrackerAccessor->get ( oldCell->extraAttribPtr )->pixelSet;
         std::set<BoundaryPixelTrackerData >::iterator sitr;
         sitr=pixelSetRef.find ( BoundaryPixelTrackerData ( pt ) );
         //ASSERT_OR_THROW("Could not find point:"+pt+" inside cell of id: "+BasicString(oldCell->id)+" type: "+BasicString((int)oldCell->type),

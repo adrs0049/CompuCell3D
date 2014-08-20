@@ -1153,7 +1153,7 @@ void MitosisSteppable::initializeClusters ( std::vector<int> & originalCompartme
         pixelAssignedFlag=false;
         pixel=sitr->pixel;
 
-        for ( int i = 0 ; i < clusterKernelsVec.size() ; ++i )
+        for ( unsigned int i = 0 ; i < clusterKernelsVec.size() ; ++i )
         {
             Point3D kernel=clusterKernelsVec[i].pt;
             dist=distInvariantCM ( pixel.x,pixel.y,pixel.z,kernel.x,kernel.y,kernel.z,fieldDim,boundaryStrategy );
@@ -1206,7 +1206,7 @@ void MitosisSteppable::initializeClusters ( std::vector<int> & originalCompartme
     // first we will deal with cluster kernels
     long childClusterId=0; //holder for cluster id of child cell
     vector<CellG *> kernelCellVec ( clusterKernels.size(),0 ); //holds pointers to cells at kernel pixels
-    for ( int i = 0 ; i < clusterKernels.size() ; ++i )
+    for ( unsigned int i = 0 ; i < clusterKernels.size() ; ++i )
     {
         //set<PixelTrackerData> shiftedCompartmentPixels;
         //shiftCellPixels(compartmentPixelsVector[i],shiftedCompartmentPixels,-1.0*shiftVec) ; //we are shifting back so shift Vec is multiplied by -1
@@ -1258,7 +1258,7 @@ void MitosisSteppable::initializeClusters ( std::vector<int> & originalCompartme
         }
     }
     //at this point kernels have been initialized now we have to deal with the rest of pixels
-    for ( int i = 0 ; i < compartmentPixelsVector.size() ; ++i )
+    for ( unsigned int i = 0 ; i < compartmentPixelsVector.size() ; ++i )
     {
         set<PixelTrackerData> &comparmentPixels=compartmentPixelsVector[i];
         set<PixelTrackerData> comparmentPixelsShifted;
