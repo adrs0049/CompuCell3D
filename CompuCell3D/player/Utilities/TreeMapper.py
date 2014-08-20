@@ -189,92 +189,6 @@ class TreeItem:
             
         print s
 
-
-# # Very important!
-# # Populates tree with TreeItem based on the 
-# # QDomDocument and returns tree root item
-
-# def treeNode(itemNode,_superParent=None):
-    # import XMLUtils
-    # # itemNode can only be Element!
-    # # itemNode is of type CC3DXMLElement
-    # if not itemNode:
-        # return None
-        
-    # node = itemNode
-    # print "creating TreeItem ",node.name," cdata=",node.cdata
-    
-    # tNode=TreeItem(node.name, node.cdata)
-    
-    # tNode.setCC3DXMLElement(node) # domNode holds reference to current CC3DXMLElement
-    
-    # childIdx = 0
-    # # setting superParents -they are either Potts, Metadata, Plugin or Steppable. SuperParents are used in steering. Essentially when we change any TreeItem in the TreeView
-    # # we can quickly extract name of the superParent and tell CC3D to reinitialize module that superParent describes. Otherwise if we dont keep track of super parents we would either have to do:
-    # # 1. time consuming and messy tracking back of which module needs to be changed in response to change in one of the parameter
-    # # or
-    # # 2. reinitialize all modules each time a single parameter is changed
-    
-    # superParent=_superParent
-    # if not _superParent:
-        # if node.name in ("Plugin","Steppable","Potts","Metadata"):
-            # superParent=tNode
-            
-
-    
-    # tNode.setSuperParent(superParent)
-    
-    
-    
-    # # setting value for the Potts element
-    # if node.name=="Potts":
-        # tNode.setValue("Potts")
-    
-    # if node.name=="Metadata":
-        # tNode.setValue("Metadata")    
-    
-    # # handling opening elements for Plugin and Steppables
-    # if node.name=="Plugin":
-        # tNode.setValue(node.getAttribute("Name"))
-    # if node.name=="Steppable":
-        # tNode.setValue(node.getAttribute("Type"))    
-    
-
-
-    
-    # if node.attributes.size()>0:
-        
-        # for attributeName in node.attributes:
-            # # print " value x=",node.attributes['x']    
-            # # print " value y=",node.attributes['y']    
-            # # print " value z=",node.attributes['z']    
-            # if node.name=="Plugin" and attributeName=="Name":
-                # continue
-            # if node.name=="Steppable" and attributeName=="Type":
-                # continue
-            # # print "attributeName ",attributeName, " value=",node.attributes[attributeName]    
-            # treeChild = TreeItem(attributeName, node.attributes[attributeName]) #attribute name, attribute value pair
-            # treeChild.setCC3DXMLElement(node)
-            # treeChild.setSuperParent(superParent)
-            # treeChild.setElementType("attribute")
-            
-            # tNode.addChild(treeChild)
-            
-            # childIdx+=1
-        
-
-    
-    # children=XMLUtils.CC3DXMLListPy(node.children)
-    # for child in children:
-        # print "element=",child
-        # tChild=treeNode(child,superParent)
-        # tNode.addChild(tChild)
-        
-        # print "tChild.domNode().getName()=",tChild.domNode().getName()," parentName=",tChild.parent().name()
-        
-        # childIdx+=1
-        
-    # return tNode    
 # # Very important!
 # # Populates tree with TreeItem based on the 
 # # QDomDocument and returns tree root item
@@ -292,22 +206,22 @@ def treeNode(itemNode,_superParent=None):
 #    if node.name == 'Plugin':
 #      print MODULENAME,'     rwh: exception here', foo
     
-    tNode=TreeItem(node.name, node.cdata)
+    tNode=TreeItem(node.getName(), node.getData())
 
     # Setting item values for Potts, Metadata,  Plugins and Steppables. Those settings are for display purposes only and do not affect CC3DXML element that Compucell3d uses to configure the data
     # all we do is to label Potts tree element as Posst and Plugin and Steppables are named using their names extracted from xml file.
     # we are using _itemValue to label label those elements and do not change cdata of the CC3DXMLelement
     
-    if node.name=="Potts":
+    if node.getName()=="Potts":
         tNode.setItemValueOnly("Potts")
 
-    if node.name=="Metadata":
+    if node.getName()=="Metadata":
         tNode.setItemValueOnly("Metadata")
         
     # handling opening elements for Plugin and Steppables
-    if node.name=="Plugin":
+    if node.getName()=="Plugin":
         tNode.setItemValueOnly(node.getAttribute("Name"))
-    if node.name=="Steppable":
+    if node.getName()=="Steppable":
         tNode.setItemValueOnly(node.getAttribute("Type"))    
     
     tNode.setCC3DXMLElement(node) # domNode holds reference to current CC3DXMLElement
@@ -321,24 +235,20 @@ def treeNode(itemNode,_superParent=None):
     
     superParent=_superParent
     if not _superParent:
-        if node.name in ("Plugin","Steppable","Potts", "Metadata"):
+        if node.getName() in ("Plugin","Steppable","Potts", "Metadata"):
             superParent=tNode
     
     tNode.setSuperParent(superParent)
-     
-    
-    
     
     # FOR AN UNKNOWN REASON "regular" map iteration does not work so i had to implement by hand iterators in C++ and Python to walk thrugh all the elementnts in the map<string,string> in python
-    
-    attribList=XMLUtils.MapStrStrPy(node.attributes)
+    attribList=XMLUtils.MapStrStrPy(node.getAttributes())
     # # # print "attributes=",attribList
     for attr in attribList:
         attributeName=attr[0]
         attributeValue=attr[1]
-        if node.name=="Plugin" and attributeName=="Name":
+        if node.getName()=="Plugin" and attributeName=="Name":
             continue
-        if node.name=="Steppable" and attributeName=="Type":
+        if node.getName()=="Steppable" and attributeName=="Type":
             continue
         # print "attributeName ",attributeName, " value=",node.attributes[attributeName]    
         treeChild = TreeItem(attributeName, attributeValue) #attribute name, attribute value pair
@@ -350,16 +260,11 @@ def treeNode(itemNode,_superParent=None):
             # ," parentName=",treeChild.parent().name()," super parent=",treeChild.getSuperParent().name()
         tNode.addChild(treeChild)
     
-    
-    children=XMLUtils.CC3DXMLListPy(node.children)
+    children=XMLUtils.CC3DXMLListPy(node.getChildren())
     for child in children:
         # # # print "element=",child
         tChild=treeNode(child,superParent)
         tNode.addChild(tChild)
-        
         # # # if tChild.getSuperParent() is not None:
             # # # print MODULENAME,"tChild.domNode().getName()=",tChild.domNode().getName()," parentName=",tChild.parent().name()," super parent=",tChild.getSuperParent().name()
-        
     return tNode    
-
-      
