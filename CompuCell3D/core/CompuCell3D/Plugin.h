@@ -32,5 +32,5 @@ namespace CompuCell3D {
   virtual std::string toString() override { return "Plugin"; }
   virtual ~Plugin(){}
   };
-};
+} // end namespace
 #endif
