@@ -25,20 +25,25 @@
 
 #include "SimObject.h"
 
-namespace CompuCell3D {
-  class Simulator;
+namespace CompuCell3D
+{
+class Simulator;
 
-  class Steppable : public SimObject {
-  public:
+class Steppable : public SimObject
+{
+public:
     int frequency;
 
-    Steppable() : frequency(1) {}
+    Steppable() : frequency ( 1 ) {}
     virtual ~Steppable() {}
 
     virtual void start() {};
-    virtual void step(const unsigned int currentStep) {};
+    virtual void step ( const unsigned int currentStep ) {};
     virtual void finish() {};
-    virtual std::string toString() override { return "Steppable"; }
-  };
+    virtual std::string toString() override
+    {
+        return "Steppable";
+    }
 };
+} // end namespace
 #endif
