@@ -8,7 +8,6 @@ from distutils.dir_util import mkpath
 
 #import Configuration
 
-
 cc3dModuleDictionary={}
 cc3dActiveSteerableList=[]
 cc3dXML2ObjConverter=None
@@ -562,26 +561,26 @@ def initModules(sim,_cc3dXML2ObjConverter):
 
     pluginDataList=XMLUtils.CC3DXMLListPy(_cc3dXML2ObjConverter.root.getElements("Plugin"))
     for pluginData in pluginDataList:
-        print "Element",pluginData.name
+        print "Element",pluginData.getName()
         sim.ps.addPluginDataCC3D(pluginData)
 
     steppableDataList=XMLUtils.CC3DXMLListPy(_cc3dXML2ObjConverter.root.getElements("Steppable"))
     for steppableData in steppableDataList:
-        print "Element",steppableData.name
+        print "Element",steppableData.getName()
         sim.ps.addSteppableDataCC3D(steppableData)
 
     pottsDataList=XMLUtils.CC3DXMLListPy(_cc3dXML2ObjConverter.root.getElements("Potts"))
     assert pottsDataList.getBaseClass().size()<=1, 'You have more than 1 definition of the Potts section'
     if pottsDataList.getBaseClass().size()==1:
         for pottsData in pottsDataList:
-            print "Element",pottsData.name
+            print "Element",pottsData.getName()
             sim.ps.addPottsDataCC3D(pottsData)
 
     metadataDataList=XMLUtils.CC3DXMLListPy(_cc3dXML2ObjConverter.root.getElements("Metadata"))
     assert metadataDataList.getBaseClass().size()<=1, 'You have more than 1 definition of the Metadata section'
     if metadataDataList.getBaseClass().size()==1:
         for metadataData in metadataDataList:
-            print "Element",metadataData.name
+            print "Element",metadataData.getName()
             sim.ps.addMetadataDataCC3D(metadataData)
 
 
@@ -694,14 +693,18 @@ def getCoreSimulationObjectsNewPlayer(_parseOnlyFlag=False, _cmlOnly=False):
         # if cc3dXML2ObjConverter.root.findElement("PythonScript"):
             # simulationPaths.setPythonScriptNameFromXML(cc3dXML2ObjConverter.root.getFirstElement("PythonScript").getText())
     
+    print 'set simulator'
     global simulationPaths
     if not _parseOnlyFlag:
         sim = CompuCell.Simulator()
+        print 'Constructed sim'
         sim.setNewPlayerFlag(True)
+        print 'set newplayerflag'
         sim.setBasePath(simulationPaths.basePath)
         if simthread is not None:            
             simthread.setSimulator(sim)
 
+        print 'set sim paths'
         if simulationPaths.simulationXMLFileName!="":
             global simulationPaths
             global cc3dXML2ObjConverter
@@ -712,6 +715,7 @@ def getCoreSimulationObjectsNewPlayer(_parseOnlyFlag=False, _cmlOnly=False):
             if cc3dXML2ObjConverter.root.findElement("PythonScript"):
                 simulationPaths.setPythonScriptNameFromXML(cc3dXML2ObjConverter.root.getFirstElement("PythonScript").getText())
 
+        print 'check consistency'
         simulationPaths.ensurePathsConsistency()
 
         # #here I will append path to search paths based on the paths to XML file and Python script paths
@@ -812,15 +816,18 @@ def getCoreSimulationObjects(_parseOnlyFlag=False):
     global playerType
 #    print MYMODULENAME, 'getCoreSimulationObjects: playerType=',playerType
     if playerType=="CML":
+        print 'player is CML'
         return getCoreSimulationObjectsNewPlayer(_parseOnlyFlag,True) 
         
     if playerType=="CMLResultReplay":
+        print 'player is CMLResultReplay'
         return getCoreSimulationObjectsNewPlayerCMLReplay(_parseOnlyFlag) 
         
     if simulationThreadObject is None:
 #        return getCoreSimulationObjectsOldPlayer(_parseOnlyFlag)
         print MYMODULENAME,' getCoreSimulationObjects(): error, simThreadObj is None'
     else:
+        print 'player is not set?'
         return getCoreSimulationObjectsNewPlayer(_parseOnlyFlag)
 
 def createCMLFieldHandler():
