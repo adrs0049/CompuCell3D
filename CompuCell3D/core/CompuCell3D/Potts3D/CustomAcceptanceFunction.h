@@ -50,8 +50,8 @@ public:
     virtual void setOffset ( double _offset ) override {};
     virtual void setK ( double _k ) override {};
 
-    void initialize ( Simulator *_sim );
-    void update ( CC3DXMLElement *_xmlData, bool _fullInitFlag=false );
+    virtual void initialize ( Simulator *_sim ) override;
+    virtual void update ( CC3DXMLElement *_xmlData, bool _fullInitFlag=false ) override;
 };
 
 } // end namespace

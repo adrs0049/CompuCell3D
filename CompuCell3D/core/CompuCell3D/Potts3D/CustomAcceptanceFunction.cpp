@@ -21,26 +21,34 @@
  *************************************************************************/
 
 #include <CompuCell3D/Simulator.h>
+#include <BasicUtils/debugHelpers.h>
 #include "CustomAcceptanceFunction.h"
 #include <iostream>
 using namespace CompuCell3D;
 using namespace std;
 
-double CustomAcceptanceFunction::accept(const double temp, const double change){
-	//cerr<<"pUtils="<<pUtils<<endl;
+double CustomAcceptanceFunction::accept(const double temp, const double change)
+{
 	int currentWorkNodeNumber=pUtils->getCurrentWorkNodeNumber();	
 	ExpressionEvaluator & ev=eed[currentWorkNodeNumber];
 	double acceptance=0.0;
-	//cerr<<"size="<<eed.size()<<endl;
-	//cerr<<"temp="<<temp<<endl;
-	//cerr<<"change="<<change<<endl;
-
+	
+    DBG_ONLY(
+    cerr<<"pUtils="<<pUtils<<endl;
+    cerr<<"currentWorkNodeNumber="<<currentWorkNodeNumber<<endl;
+    cerr<<"size eed="<<eed.size()<<endl;
+    ASSERT_OR_THROW("size of eed has to be greater than currentWorkNodeNumber",eed.size()>currentWorkNodeNumber);
+    cerr<<"size ev="<<ev.getNumberOfVars()<<endl;
+	cerr<<"temp="<<temp<<endl;
+	cerr<<"change="<<change<<endl;
+    ASSERT_OR_THROW("number of vars in ev should be 2!\n", ev.getNumberOfVars()==2);
+    );
 
 	ev[0]=temp;
 	ev[1]=change;
 	
 	acceptance=ev.eval();
-	//cerr<<"acceptance="<<acceptance<<endl;
+	DBG_ONLY(cerr<<"acceptance="<<acceptance<<endl);
 
 	return acceptance;
 }
@@ -59,10 +67,7 @@ void CustomAcceptanceFunction::initialize(Simulator *_sim){
 	variableNames.push_back("DeltaE");	
 
 	eed.addVariables(variableNames.begin(),variableNames.end());
-
-
 	eed.initializeUsingParseData();
-
 }
 
 void CustomAcceptanceFunction::update(CC3DXMLElement *_xmlData, bool _fullInitFlag){
