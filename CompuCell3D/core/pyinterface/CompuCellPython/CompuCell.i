@@ -38,69 +38,6 @@
 %feature("autodoc",LambdaVolume_func) LambdaVolume;
 %include <windows.i>
 
-%{
-// CompuCell3D Include Files
-// #include <Potts3D/Cell.h>
-#include <CompuCell3D/Plugin.h>
-#include <CompuCell3D/Potts3D/Stepper.h>
-#include <CompuCell3D/plugins/VolumeTracker/VolumeTrackerPlugin.h> //necesssary to make slicing in cellfield work
-#include <CompuCell3D/Steppable.h>
-#include <CompuCell3D/Field3D/Neighbor.h>
-#include <CompuCell3D/Boundary/BoundaryStrategy.h>
-#include <CompuCell3D/Field3D/Field3D.h>
-#include <CompuCell3D/Field3D/Field3DImpl.h>
-#include <CompuCell3D/Field3D/WatchableField3D.h>
-#include <CompuCell3D/ClassRegistry.h>
-#include <CompuCell3D/CC3DEvents.h>
-#include <CompuCell3D/Simulator.h>
-
-#include <CompuCell3D/PluginManager.h>
-#include <CompuCell3D/Potts3D/CellInventory.h>
-#include <CompuCell3D/Potts3D/TypeChangeWatcher.h>
-#include <CompuCell3D/Potts3D/TypeTransition.h>
-#include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
-
-#include <CompuCell3D/Potts3D/Potts3D.h>
-//NeighborFinderParams
-#include <NeighborFinderParams.h>
-
-// Third Party Libraries
-#include <PublicUtilities/NumericalUtils.h>
-#include <PublicUtilities/Vector3.h>
-
-#include <BasicUtils/BasicException.h>
-#include <BasicUtils/BasicClassFactory.h>
-#include <BasicUtils/BasicPluginManager.h>
-
-// System Libraries
-#include <iostream>
-#include <stdlib.h>
-
-
-#include "STLPyIterator.h"
-#include "STLPyIteratorMap.h"
-#include "STLPyIteratorRefRetType.h"
-
-
-//EnergyFcns
-//#include <CompuCell3D/Potts3D/EnergyFunction.h>
-#include <EnergyFunctionPyWrapper.h>
-
-#include <TypeChangeWatcherPyWrapper.h>
-
-#include <CompuCell3D/Potts3D/AttributeAdder.h>
-
-#include <numpy/arrayobject.h>
-
-// Namespaces
-using namespace std;
-using namespace CompuCell3D;
-%}
-
-%include stl.i //to ensure stl functionality 
-
-%include "CompuCellExtraIncludes.i"
-
 // C++ std::string handling
 %include "std_string.i"
 
@@ -114,9 +51,7 @@ using namespace CompuCell3D;
 %include "std_vector.i"
 
 // c++ std::shared_ptr handling
-#define SWIG_SHARED_PTR_SUBNAMESPACE tr1
 %include <std_shared_ptr.i>
-
 %include "stl.i"
 
 //enables better handling of STL exceptions
@@ -129,6 +64,8 @@ using namespace CompuCell3D;
     SWIG_exception(SWIG_RuntimeError, e.what());
   }
 }
+
+%include "CompuCellExtraIncludes.i"
 
 %include "swig_includes/numpy.i"
 
@@ -165,9 +102,7 @@ using namespace CompuCell3D;
 #define ELASTICITY_EXPORT
 #define PLASTICITYTRACKER_EXPORT
 #define PLASTICITY_EXPORT
-
 #define CONNECTIVITYLOCALFLEX_EXPORT
-// #define LENGTHCONSTRAINTLOCALFLEX_EXPORT
 #define LENGTHCONSTRAINT_EXPORT
 #define MOLECULARCONTACT_EXPORT 
 #define SECRETION_EXPORT 
@@ -214,10 +149,8 @@ using namespace CompuCell3D;
         print 'tuple=',tup
         self.this = _CompuCell.new_Point3D(tup[0],tup[1],tup[2])
         self.thisown=1            
-	
 %}   
 };
-
 
 %extend CompuCell3D::Dim3D{
   std::string __str__(){
@@ -416,9 +349,22 @@ using namespace CompuCell3D;
       %}
     };
 
+%shared_ptr( CompuCell3D::SteerableObject )
+%shared_ptr( CompuCell3D::SimObject )
+%shared_ptr( CompuCell3D::Steppable )
+%shared_ptr( CompuCell3D::Plugin )
+    
+%include <CompuCell3D/SteerableObject.h>
+%include <CompuCell3D/SimObject.h>
+%include <CompuCell3D/Plugin.h>
+%include <CompuCell3D/Steppable.h>
+
+%template(mapPluginManager) std::map<std::string, std::shared_ptr<Plugin> >;
+%template(mapPluginManager) std::map<std::string, std::shared_ptr<Steppable> >;
+
 %include <NeighborFinderParams.h>
-%include <CompuCell3D/PluginManager.h>
 %include <BasicUtils/BasicPluginManager.h>
+%include <CompuCell3D/PluginManager.h>
 
 %template(bpmPlugin) BasicPluginManager<Plugin> ;
 %template(bpmSteppable) BasicPluginManager<Steppable> ;
@@ -427,13 +373,11 @@ using namespace CompuCell3D;
 %template(steppablemanagertemplate) CompuCell3D::PluginManager<Steppable> ;
 
 %inline %{
-
-  
-  BasicPluginManager<Plugin> * getPluginManagerAsBPM(){
+  BasicPluginManager<CompuCell3D::Plugin> * getPluginManagerAsBPM(){
     return (BasicPluginManager<Plugin> *)&Simulator::pluginManager;
   }
 
-  BasicPluginManager<Steppable> * getSteppableManagerAsBPM(){
+  BasicPluginManager<CompuCell3D::Steppable> * getSteppableManagerAsBPM(){
     return (BasicPluginManager<Steppable> *)&Simulator::steppableManager;
   }
 %}
@@ -467,9 +411,7 @@ using namespace CompuCell3D;
                 returnType val = self->get(Point3D(x,y,z));
                 if (val<minVal) minVal=val;            
             }
-            
     return minVal;        
-    
   }
   
   returnType max(){
@@ -617,14 +559,11 @@ FIELD3DEXTENDERBASE(type,returnType)
 
     }
 
-    
     // cerr<<"start x="<< start_x<<endl;
     // cerr<<"stop x="<< stop_x<<endl;
     // cerr<<"step x="<< step_x<<endl;
     // cerr<<"sliceLength="<<sliceLength<<endl;
-    
-    
-//     int x,y,z;
+	// int x,y,z;
     PyObject *sliceX=0,*sliceY=0,* sliceZ=0;
     
     for (Py_ssize_t x=start_x ; x<=stop_x ; x+=step_x)
@@ -632,31 +571,13 @@ FIELD3DEXTENDERBASE(type,returnType)
             for (Py_ssize_t z=start_z ; z<=stop_z ; z+=step_z){
                 $self->set(Point3D(x,y,z),_val); 
             }
-    
   }
-
-  
 }
 %enddef    
     
 %define CELLFIELD3DEXTENDER(type,returnType)
+
 FIELD3DEXTENDERBASE(type,returnType)    
-// %extend  type{
-//     
-//   std::string __str__(){
-//     std::ostringstream s;
-//     s<<#type<<" dim"<<self->getDim();
-//     return s.str();
-//   }
-//   
-//   returnType __getitem__(PyObject *_indexTuple) {
-//     if (!PyTuple_Check( _indexTuple) || PyTuple_GET_SIZE(_indexTuple)!=3){
-//         throw std::runtime_error(std::string(#type)+std::string(": Wrong Syntax: Expected someting like: field[1,2,3]"));
-//     }
-// 
-//     return self->get(Point3D(PyInt_AsLong(PyTuple_GetItem(_indexTuple,0)),PyInt_AsLong(PyTuple_GetItem(_indexTuple,1)),PyInt_AsLong(PyTuple_GetItem(_indexTuple,2))));    
-//   }
-  
 //for cell field we call __setitem__ Python implementation which in turn calls setitem c++ implementation. We do this to pass volumeTracker plugin
 //to setitem (c++) so that after each set operation on the field we can check if ther is any cell which needs to be deleted (this is what volumeTrackerPlugin step fcn does)
 // otherwise we might end up with memory leaks.
@@ -673,7 +594,6 @@ FIELD3DEXTENDERBASE(type,returnType)
     }
     
     VolumeTrackerPlugin *volumeTrackerPlugin=(VolumeTrackerPlugin *)_volumeTrackerPlugin;
-       
     
     PyObject *xCoord=PyTuple_GetItem(_indexTuple,0);
     PyObject *yCoord=PyTuple_GetItem(_indexTuple,1);
@@ -759,37 +679,43 @@ FIELD3DEXTENDERBASE(type,returnType)
 }
 %enddef    
 
+// dont need this anymore it seems
+//%inline %{
+//    #include <memory>
+//    typedef std::shared_ptr<CompuCell3D::WatchableField3D<CompuCell3D::CellG *> > cellFieldPtr;
+//%}
+
+%shared_ptr( CompuCell3D::WatchableField3D<CompuCell3D::CellG *>  )
+%shared_ptr( CompuCell3D::Field3D<CompuCell3D::CellG *>  )
+%shared_ptr( CompuCell3D::Field3DImpl<CompuCell3D::CellG *>  )
+
 %include "Field3D/Field3D.h"
 %include "Field3D/Field3DImpl.h"
 %include "Field3D/WatchableField3D.h"
-
-// %template(cellfield) CompuCell3D::Field3D<CellG *>;
-// %template(floatfield) CompuCell3D::Field3D<float>;
-// %template(floatfieldImpl) CompuCell3D::Field3DImpl<float>;
-// %template(watchablecellfield) CompuCell3D::WatchableField3D<CellG *>;
 
 %ignore CompuCell3D::Field3D<float>::typeStr;
 %ignore CompuCell3D::Field3DImpl<float>::typeStr;
 %ignore CompuCell3D::Field3D<int>::typeStr;
 %ignore CompuCell3D::Field3DImpl<int>::typeStr;
-%ignore CompuCell3D::Field3D<CellG*>::typeStr;
-%ignore CompuCell3D::Field3DImpl<CellG*>::typeStr;
-%ignore CompuCell3D::WatchableField3D<CellG*>::typeStr;
+%ignore CompuCell3D::Field3D<CompuCell3D::CellG*>::typeStr;
+%ignore CompuCell3D::Field3DImpl<CompuCell3D::CellG*>::typeStr;
+%ignore CompuCell3D::WatchableField3D<CompuCell3D::CellG*>::typeStr;
 
 %template(floatfield) CompuCell3D::Field3D<float>;
 %template(floatfieldImpl) CompuCell3D::Field3DImpl<float>;
 %template(intfield) CompuCell3D::Field3D<int>;
 %template(intfieldImpl) CompuCell3D::Field3DImpl<int>;
 
-%template(cellfield) CompuCell3D::Field3D<CellG *>;
-%template(cellfieldImpl) CompuCell3D::Field3DImpl<CellG *>;
-%template(watchablecellfield) CompuCell3D::WatchableField3D<CellG *>;
+%template(cellfield) CompuCell3D::Field3D<CompuCell3D::CellG *>;
+%template(cellfieldImpl) CompuCell3D::Field3DImpl<CompuCell3D::CellG *>;
+%template(watchablecellfield) CompuCell3D::WatchableField3D<CompuCell3D::CellG *>;
 
-CELLFIELD3DEXTENDER(Field3D<CellG *>,CellG*)
-FIELD3DEXTENDER(Field3D<float>,float)
-FIELD3DEXTENDER(Field3D<int>,int)
+%template(charfield) CompuCell3D::Field3D< unsigned char >;
+%template(charfieldImpl) CompuCell3D::Field3DImpl< unsigned char >;
 
-
+CELLFIELD3DEXTENDER(CompuCell3D::Field3D<CompuCell3D::CellG *>,CompuCell3D::CellG*)
+FIELD3DEXTENDER(CompuCell3D::Field3D<float>,float)
+FIELD3DEXTENDER(CompuCell3D::Field3D<int>,int)
 
 %template(vectorstdstring) std::vector<std::string>;
 %template(vectordouble) std::vector<double>;
@@ -797,33 +723,38 @@ FIELD3DEXTENDER(Field3D<int>,int)
 %template(vectorint) std::vector<int>;
 %template(vectorunsignedchar) std::vector<unsigned char>;
 
-
+%shared_ptr ( CompuCell3D::Field3DChangeWatcher<CompuCell3D::CellG *>)
 %include "Field3D/Field3DChangeWatcher.h"
 %template(cellgchangewatcher) CompuCell3D::Field3DChangeWatcher<CompuCell3D::CellG *>;
 
+%template (mvectorCellGPtr) std::vector<CompuCell3D::CellG *>;
+%template (mapLongCellGPtr) std::map<long, CompuCell3D::CellG *> ;
+%template (mapLongmapLongCellGPtr)std::map<long,std::map<long, CompuCell3D::CellG *> >;
 
+%shared_ptr (CompuCell3D::Stepper)
+%shared_ptr (CompuCell3D::FixedStepper)
+%shared_ptr (CompuCell3D::EnergyFunction)
+%shared_ptr (CompuCell3D::CellGChangeWatcher)
+%shared_ptr (CompuCell3D::ClassRegistry)
+%shared_ptr (CompuCell3D::Automaton)
+%shared_ptr (CompuCell3D::TypeChangeWatcher)
+%shared_ptr (CompuCell3D::AttributeAdder)
+%shared_ptr (CompuCell3D::Potts3D)
 
-%template (mvectorCellGPtr) std::vector<CellG *>;
-%template(mapLongCellGPtr)std::map<long,CellG *> ;
-%template(mapLongmapLongCellGPtr)std::map<long,std::map<long,CellG *> >;
-
-
-%include "Potts3D/CellGChangeWatcher.h"
-%include "Potts3D/TypeChangeWatcher.h"
-%include "Potts3D/TypeTransition.h"
-%include "Automaton/Automaton.h"
+%include <CompuCell3D/Potts3D/AttributeAdder.h>
+%include <CompuCell3D/Potts3D/Stepper.h>
+%include <CompuCell3D/Potts3D/FixedStepper.h>
+%include <CompuCell3D/Potts3D/EnergyFunction.h>
+%include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
+%include <CompuCell3D/Potts3D/TypeChangeWatcher.h>
+%include <CompuCell3D/Potts3D/TypeTransition.h>
+%include <CompuCell3D/Automaton/Automaton.h>
 %include <CompuCell3D/Potts3D/CellInventory.h>
-
-
 %include <CompuCell3D/Potts3D/Potts3D.h>
 
-%include "Steppable.h"
-%include "ClassRegistry.h"
-%include <CompuCell3D/SteerableObject.h>
-%include "Simulator.h"
+%include <CompuCell3D/ClassRegistry.h>
+%include <CompuCell3D/Simulator.h>
 %include <CompuCell3D/CC3DEvents.h>
-
-
 %include <CompuCell3D/ParseData.h>
 %include <CompuCell3D/ParserStorage.h>
 %include <CompuCell3D/PottsParseData.h>
@@ -836,13 +767,12 @@ FIELD3DEXTENDER(Field3D<int>,int)
 // ************************************************************
 // Inline Functions
 // ************************************************************
-
 %inline %{
 
    Field3D<float> * getConcentrationField(CompuCell3D::Simulator & simulator, std::string fieldName){
       std::map<std::string,Field3D<float>*> & fieldMap=simulator.getConcentrationFieldNameMap();
-      std::map<std::string,Field3D<float>*>::iterator mitr;
-      mitr=fieldMap.find(fieldName);
+      //std::map<std::string,Field3D<float>*>::iterator mitr;
+      auto mitr=fieldMap.find(fieldName);
         
       if(mitr!=fieldMap.end()){
 	Potts3D *potts = simulator.getPotts();  
@@ -854,12 +784,9 @@ FIELD3DEXTENDER(Field3D<int>,int)
          return 0;
       }
    }
-  
-
 %}
 
 %inline %{
-
    bool areCellsDifferent(CellG *_cell1,CellG *_cell2){
       return _cell1 != _cell2;
    }
@@ -867,23 +794,20 @@ FIELD3DEXTENDER(Field3D<int>,int)
    CellG* getMediumCell(){
     return (CellG*)0;
    }
-   
 %}
 
 %include "STLPyIterator.h"
 %include "STLPyIteratorMap.h"
-
 %include "STLPyIteratorRefRetType.h"
 
 %template (cellInvPyItr) STLPyIterator<CompuCell3D::CellInventory::cellInventoryContainerType>;
 //iterators for maps - we cannot rely on swig generated iterators for STL containers when we have multiple modules
-%template(mapLongCellGPtr)std::map<long,CellG *> ;
+// %template(mapLongCellGPtr) std::map<long,CellG *> ;
 // %template (mapLongCellGPtrPyItr) STLPyIteratorRefRetType<std::map<long, CompuCell3D::CellG *> , std::pair<long,CellG *> >;
 %template (pairLongCellGPtr) std::pair<long const, CompuCell3D::CellG *>;
 %template (mapLongCellGPtrPyItr) STLPyIteratorMap<std::map<long, CompuCell3D::CellG *>, CompuCell3D::CellG *>;
 %template (compartmentinventoryPtrPyItr) STLPyIteratorMap<CompuCell3D::CompartmentInventory::compartmentInventoryContainerType, CompuCell3D::CompartmentInventory::compartmentListContainerType>;
 // %template (mapLongCellGPtrPyItr) STLPyIterator<std::map<long, CompuCell3D::CellG *> >;
-
 
 %inline %{
 
@@ -895,16 +819,13 @@ public:
     CompuCell3D::CellInventory::cellInventoryContainerType::iterator begin;
     CompuCell3D::CellInventory::cellInventoryContainerType::iterator end;
 
-
     STLPyIteratorCINV(CompuCell3D::CellInventory::cellInventoryContainerType& a)
     {
       initialize(a);
     }
 
     STLPyIteratorCINV()
-    {
-    }
-
+    {}
 
      CompuCell3D::CellG * getCurrentRef(){
       return const_cast<CompuCell3D::CellG * >(current->second);
@@ -920,21 +841,15 @@ public:
 
     void previous(){
         if(current != begin){
-
             --current;
          }
-
     }
 
     void next()
     {
-
         if(current != end){
-
             ++current;
          }
-
-
     }
 };
 
@@ -990,31 +905,20 @@ public:
 
     void next()
     {
-
         if(current != end){
-
             ++current;
          }
-
-
     }
 };
-
-
-
 %}
 
-
 %inline %{
-
   /**
    * Wrap the plugin initialization code from main.cpp.
    * This must be called before the config file is loaded and any
    * plugins are used.
    */
-
  
-  
   void initializePlugins() {
     // Set the path and load the plugins
 
@@ -1026,15 +930,11 @@ public:
     cerr<<"pluginPath="<<pluginPath<<endl;
     cerr<<"THIS IS JUST BEFORE LOADING LIBRARIES"<<endl;
       
-   
     if (pluginPath) Simulator::pluginManager.loadLibraries(pluginPath);
 
     cerr<<" AFTER LOAD LIBRARIES"<<endl;
     // Display the plugins that were loaded
-
   }
-
-
 
   /**
    * Read and parse the config file.  This should be called after
@@ -1042,10 +942,7 @@ public:
    *
    * @param sConfig the path to the config file
    */
-
-
-
-  void assignParseDataPtr(ParseData * source, ParseData * destination){
+   void assignParseDataPtr(ParseData * source, ParseData * destination){
       destination=source;
    }
 

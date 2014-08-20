@@ -7,6 +7,67 @@
 %{
 
 // CompuCell3D Include Files
+// #include <Potts3D/Cell.h>
+#include <CompuCell3D/Plugin.h>
+#include <CompuCell3D/Potts3D/Stepper.h>
+#include <CompuCell3D/plugins/VolumeTracker/VolumeTrackerPlugin.h> //necesssary to make slicing in cellfield work
+#include <CompuCell3D/Steppable.h>
+#include <CompuCell3D/Field3D/Neighbor.h>
+#include <CompuCell3D/Boundary/BoundaryStrategy.h>
+#include <CompuCell3D/Field3D/Field3D.h>
+#include <CompuCell3D/Field3D/Field3DImpl.h>
+#include <CompuCell3D/Field3D/WatchableField3D.h>
+#include <CompuCell3D/ClassRegistry.h>
+#include <CompuCell3D/CC3DEvents.h>
+#include <CompuCell3D/Simulator.h>
+
+#include <CompuCell3D/PluginManager.h>
+#include <CompuCell3D/Potts3D/CellInventory.h>
+#include <CompuCell3D/Potts3D/TypeChangeWatcher.h>
+#include <CompuCell3D/Potts3D/TypeTransition.h>
+#include <CompuCell3D/Potts3D/CellGChangeWatcher.h>
+
+#include <CompuCell3D/Potts3D/Potts3D.h>
+//NeighborFinderParams
+#include <NeighborFinderParams.h>
+
+// Third Party Libraries
+#include <PublicUtilities/NumericalUtils.h>
+#include <PublicUtilities/Vector3.h>
+
+#include <BasicUtils/BasicException.h>
+#include <BasicUtils/BasicClassFactory.h>
+#include <BasicUtils/BasicPluginManager.h>
+
+// System Libraries
+#include <iostream>
+#include <stdlib.h>
+
+#include "STLPyIterator.h"
+#include "STLPyIteratorMap.h"
+#include "STLPyIteratorRefRetType.h"
+
+//PyObjectAdapetrs
+//EnergyFcns
+//#include <CompuCell3D/Potts3D/EnergyFunction.h>
+//#include <CompuCell3D/Potts3D/AttributeAdder.h>
+#include <PyCompuCellObjAdapter.h>
+#include <EnergyFunctionPyWrapper.h>
+#include <ChangeWatcherPyWrapper.h>
+#include <TypeChangeWatcherPyWrapper.h>
+#include <StepperPyWrapper.h>
+#include <PyAttributeAdder.h>
+#include <CompuCell3D/steppables/PDESolvers/DiffusableVector.h>
+#include <CompuCell3D/ParseData.h>
+#include <CompuCell3D/ParserStorage.h>
+
+#include <numpy/arrayobject.h>
+
+// Namespaces
+using namespace std;
+using namespace CompuCell3D;
+
+// CompuCell3D Include Files
 #include <CompuCell3D/ClassRegistry.h>
 #include <CompuCell3D/Simulator.h>
 #include <CompuCell3D/PluginManager.h>
@@ -23,91 +84,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-//PyObjectAdapetrs
-//EnergyFcns
-//#include <CompuCell3D/Potts3D/EnergyFunction.h>
-#include <PyCompuCellObjAdapter.h>
-#include <EnergyFunctionPyWrapper.h>
-#include <ChangeWatcherPyWrapper.h>
-#include <TypeChangeWatcherPyWrapper.h>
-#include <StepperPyWrapper.h>
-#include <PyAttributeAdder.h>
-#include <CompuCell3D/steppables/PDESolvers/DiffusableVector.h>
-#include <CompuCell3D/ParseData.h>
-#include <CompuCell3D/ParserStorage.h>
-
-//Plugins
-#include <BasicUtils/BasicClassAccessor.h>
-#include <BasicUtils/BasicClassGroup.h> //had to include it to avoid problems with template instantiation
-#include <CompuCell3D/Automaton/Automaton.h>
-#include <CompuCell3D/plugins/ConnectivityLocalFlex/ConnectivityLocalFlexData.h>
-#include <CompuCell3D/plugins/ConnectivityLocalFlex/ConnectivityLocalFlexPlugin.h>
-#include <CompuCell3D/plugins/ConnectivityGlobal/ConnectivityGlobalData.h>
-#include <CompuCell3D/plugins/ConnectivityGlobal/ConnectivityGlobalPlugin.h>
-// #include <CompuCell3D/plugins/LengthConstraintLocalFlex/LengthConstraintLocalFlexData.h>
-// #include <CompuCell3D/plugins/LengthConstraintLocalFlex/LengthConstraintLocalFlexPlugin.h>
-#include <CompuCell3D/plugins/LengthConstraint/LengthConstraintData.h>
-#include <CompuCell3D/plugins/LengthConstraint/LengthConstraintPlugin.h>
-#include <CompuCell3D/plugins/ChemotaxisSimple/ChemotaxisSimpleEnergy.h>
-#include <CompuCell3D/plugins/Chemotaxis/ChemotaxisData.h>
-#include <CompuCell3D/plugins/Chemotaxis/ChemotaxisPlugin.h>
-#include <CompuCell3D/plugins/Mitosis/MitosisPlugin.h>
-#include <CompuCell3D/plugins/Mitosis/MitosisSimplePlugin.h>
-#include <CompuCell3D/plugins/VolumeTracker/VolumeTrackerPlugin.h>
-#include <CompuCell3D/plugins/CenterOfMass/CenterOfMassPlugin.h>
-#include <CompuCell3D/plugins/NeighborTracker/NeighborTracker.h>
-#include <CompuCell3D/plugins/NeighborTracker/NeighborTrackerPlugin.h>
-#include <CompuCell3D/plugins/PixelTracker/PixelTracker.h>
-#include <CompuCell3D/plugins/PixelTracker/PixelTrackerPlugin.h>
-#include <CompuCell3D/plugins/BoundaryPixelTracker/BoundaryPixelTracker.h>
-#include <CompuCell3D/plugins/BoundaryPixelTracker/BoundaryPixelTrackerPlugin.h>
-#include <CompuCell3D/plugins/ContactLocalFlex/ContactLocalFlexData.h>
-#include <CompuCell3D/plugins/ContactLocalFlex/ContactLocalFlexPlugin.h>
-#include <CompuCell3D/plugins/ContactLocalProduct/ContactLocalProductData.h>
-#include <CompuCell3D/plugins/ContactLocalProduct/ContactLocalProductPlugin.h>
-#include <CompuCell3D/plugins/ContactMultiCad/ContactMultiCadData.h>
-#include <CompuCell3D/plugins/ContactMultiCad/ContactMultiCadPlugin.h>
-#include <CompuCell3D/plugins/AdhesionFlex/AdhesionFlexData.h>
-#include <CompuCell3D/plugins/AdhesionFlex/AdhesionFlexPlugin.h>
-// #include <CompuCell3D/plugins/MolecularContact/MolecularContactPlugin.h>
-#include <CompuCell3D/plugins/CellOrientation/CellOrientationVector.h>
-#include <CompuCell3D/plugins/CellOrientation/CellOrientationPlugin.h>
-#include <CompuCell3D/plugins/PolarizationVector/PolarizationVector.h>
-#include <CompuCell3D/plugins/PolarizationVector/PolarizationVectorPlugin.h>
-#include <CompuCell3D/plugins/ElasticityTracker/ElasticityTracker.h>
-#include <CompuCell3D/plugins/ElasticityTracker/ElasticityTrackerPlugin.h>
-#include <CompuCell3D/plugins/PlasticityTracker/PlasticityTracker.h>
-#include <CompuCell3D/plugins/PlasticityTracker/PlasticityTrackerPlugin.h>
-#include <CompuCell3D/plugins/FocalPointPlasticity/FocalPointPlasticityTracker.h>
-#include <CompuCell3D/plugins/FocalPointPlasticity/FocalPointPlasticityPlugin.h>
-#include <CompuCell3D/plugins/MomentOfInertia/MomentOfInertiaPlugin.h>
-#include <CompuCell3D/plugins/Secretion/FieldSecretor.h>
-#include <CompuCell3D/plugins/Secretion/SecretionPlugin.h>
-
-//Steppables
-#include <CompuCell3D/steppables/Mitosis/MitosisSteppable.h>
-
-//AutogeneratedModules - DO NOT REMOVE THIS LINE IT IS USED BY TWEDIT TO LOCATE CODE INSERTION POINT
-//CleaverMeshDumper_autogenerated
-#include <CompuCell3D/steppables/CleaverMeshDumper/CleaverMeshDumper.h>
-
-// // // //CGALMeshDumper_autogenerated
-// // // #include <CompuCell3D/steppables/CGALMeshDumper/CGALMeshDumper.h>
-
-//ContactOrientation_autogenerated
-#include <CompuCell3D/plugins/ContactOrientation/ContactOrientationData.h>
-#include <CompuCell3D/plugins/ContactOrientation/ContactOrientationPlugin.h>
-//BoundaryMonitor_autogenerated
-#include <CompuCell3D/plugins/BoundaryMonitor/BoundaryMonitorPlugin.h>
-//CellTypeMonitor_autogenerated
-#include <CompuCell3D/plugins/CellTypeMonitor/CellTypeMonitorPlugin.h>
-//Polarization23_autogenerated
-#include <CompuCell3D/plugins/Polarization23/Polarization23Data.h>
-#include <CompuCell3D/plugins/Polarization23/Polarization23Plugin.h>
-//ClusterSurface_autogenerated
-#include <CompuCell3D/plugins/ClusterSurface/ClusterSurfacePlugin.h>
-//ClusterSurfaceTracker_autogenerated
-#include <CompuCell3D/plugins/ClusterSurfaceTracker/ClusterSurfaceTrackerPlugin.h>
+#include <memory>
 
 // Namespaces
 using namespace std;
