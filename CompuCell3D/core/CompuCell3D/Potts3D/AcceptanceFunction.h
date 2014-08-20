@@ -23,7 +23,11 @@
 #ifndef ACCEPTANCEFUNCTION_H
 #define ACCEPTANCEFUNCTION_H
 
+class CC3DXMLElement;
+
 namespace CompuCell3D {
+
+    class Simulator;
 
   /** 
    * The Potts3D acceptance function interface.
@@ -46,7 +50,9 @@ namespace CompuCell3D {
     virtual double accept(const double temp, const double change) = 0;
     virtual void setOffset(double _offset)=0;
     virtual void setK(double _k)=0;
-
+    
+    virtual void initialize ( Simulator *_sim ) {}
+    virtual void update ( CC3DXMLElement *_xmlData, bool _fullInitFlag=false ) {}
   };
 } // end namespace
 #endif
