@@ -346,8 +346,8 @@ try:
         # exec fileObj
         # fileObj.close()        
         print "INSIDE IF CompuCellPythonSimulationNewPlayer \n\n\n"
-        
-        
+        print "execuring file=",CompuCellSetup.simulationPaths.simulationPythonScriptName
+		
         execfile(CompuCellSetup.simulationPaths.simulationPythonScriptName)
         print "COMPLETED execfile in CompuCellPythonSimulationNewPlayer \n\n\n"
     else:
@@ -355,18 +355,11 @@ try:
         sim,simthread = CompuCellSetup.getCoreSimulationObjects() # here , once initial info has been extracted we starrt creating CC3D objects - e.g. Simulator is created in this Fcn call
         import CompuCell #notice importing CompuCell to main script has to be done after call to getCoreSimulationObjects()
         #import CompuCellSetup
-        
-        
         CompuCellSetup.initializeSimulationObjects(sim,simthread)
-                
         steppableRegistry = CompuCellSetup.getSteppableRegistry()
-        
         CompuCellSetup.mainLoop(sim,simthread,steppableRegistry) # main loop - simulation is invoked inside this function
-        
         # # # sim,simthread=None,None
-        
         # # # print '\n\n\n\n GOT HERE AFTER MAIN LOOP'
-        
 
 except IndentationError,e:
     print "CompuCellSetup.simulationObjectsCreated=",CompuCellSetup.simulationObjectsCreated
