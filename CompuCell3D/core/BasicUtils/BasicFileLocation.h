@@ -26,13 +26,15 @@
 #define BASICFILELOCATION_H
 
 #include <string>
+#include <ostream>
 
 /**
  * This class is mainly used by BasicException, but can be used
  * as a general class for recording a line and column location
  * with in a file.
  */
-class BasicFileLocation {
+class BasicFileLocation
+{
     std::string filename;
     long line;
     long col;
@@ -42,72 +44,76 @@ public:
     /**
      * Construct a default BasicFileLocation with an empty value.
      */
-    BasicFileLocation() : line{-1}, col{-1}, empty{true} {}
+    BasicFileLocation() : line {-1}, col {-1}, empty {true} {}
 
     /**
      * Copy constructor.
      */
-    BasicFileLocation(const BasicFileLocation &x) :
-        filename{x.filename}, line{x.line}, col{x.col}, empty{x.empty} 
+    BasicFileLocation ( const BasicFileLocation &x ) :
+        filename {x.filename}, line {x.line}, col {x.col}, empty {x.empty}
     {}
 
     /**
-	 * Move constructor.
-	 */
-    BasicFileLocation(BasicFileLocation&& x) :
-		filename{std::move(x.filename)}, line{x.line}, col{x.col}, empty{x.empty}
-	{
-		x.empty = true;
-		x.col = -1;
-		x.line = -1;
-	}
-	
-	BasicFileLocation& operator=(BasicFileLocation other)
-	{
-		BasicFileLocation tmp(other);
-		swap(other);
-		return *this;
-	}
-	
+     * Move constructor.
+     */
+    BasicFileLocation ( BasicFileLocation&& x ) :
+        filename {std::move ( x.filename ) }, line {x.line}, col {x.col}, empty {x.empty}
+    {
+        x.empty = true;
+        x.col = -1;
+        x.line = -1;
+    }
+
+    BasicFileLocation& operator= ( BasicFileLocation other )
+    {
+        BasicFileLocation tmp ( other );
+        swap ( other );
+        return *this;
+    }
+
     /**
      * @param filename The name of the file.
      * @param line The line with that file.
      * @param col The column on that line.
      */
-    BasicFileLocation(const std::string filename, const long line,
-                      const long col) :
-        filename{filename}, line{line}, col{col}, empty{false} {}
+    BasicFileLocation ( const std::string filename, const long line,
+                        const long col ) :
+        filename {filename}, line {line}, col {col}, empty {false} {}
 
     virtual ~BasicFileLocation() {}
 
-    const std::string getFilename() const {
+    const std::string getFilename() const
+    {
         return filename;
     }
 
     /**
      * @return -1 if no line was set the line number otherwise.
      */
-    const long getLine() const {
+    const long getLine() const
+    {
         return line;
     }
 
     /**
      * @return -1 of no column was set the column number otherwise.
      */
-    const long getCol() const {
+    const long getCol() const
+    {
         return col;
     }
 
     /**
      * @return True of no filename, line, or column have been set.
      */
-    bool isEmpty() const {
+    bool isEmpty() const
+    {
         return empty;
     }
 
     /**
-	 * Clear BasicFileLocation
-	 */
+     * Clear BasicFileLocation
+     */
     void clear()
     {
         filename.clear();
@@ -115,17 +121,17 @@ public:
         col = -1;
         empty = true;
     }
-    
-    void swap(BasicFileLocation other)
-	{
-		std::swap(filename, other.filename);
-		line = other.line;
-		col = other.col;
-		empty = other.empty;
-	}
 
-    friend std::ostream &operator<<(std::ostream &stream,
-                                    const BasicFileLocation &fl);
+    void swap ( BasicFileLocation other )
+    {
+        std::swap ( filename, other.filename );
+        line = other.line;
+        col = other.col;
+        empty = other.empty;
+    }
+
+    friend std::ostream &operator<< ( std::ostream &stream,
+                                      const BasicFileLocation &fl );
 };
 
 /**
@@ -137,7 +143,7 @@ public:
  *
  * @return A reference to the passed stream.
  */
-std::ostream &operator<<(std::ostream &stream, const BasicFileLocation &fl);
+std::ostream &operator<< ( std::ostream &stream, const BasicFileLocation &fl );
 
 #define FILE_LOCATION BasicFileLocation(__FILE__, __LINE__, -1)
 
