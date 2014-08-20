@@ -6,6 +6,7 @@ namespace CompuCell3D {
   class FixedStepper {
   public:
     virtual void step() = 0;
+	virtual ~FixedStepper() {}
   };
-};
+} // end namespace
 #endif
