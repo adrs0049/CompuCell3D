@@ -215,18 +215,28 @@ void Potts3D::setAcceptanceFunctionByName ( std::string _acceptanceFunctionName 
 {
     if ( _acceptanceFunctionName=="FirstOrderExpansion" )
     {
+        DBG_ONLY(cerr<<"FirstOrderExpansion Acceptance Function set!\n");
         acceptanceFunction=std::make_unique<FirstOrderExpansionAcceptanceFunction>();
 		//&firstOrderExpansionAcceptanceFunction;
         //          cerr<<"setting FirstOrderExpansion"<<endl;
+        customAcceptanceExpressionDefined = false;
     }
     else if ( _acceptanceFunctionName=="Dynamic" )
 	{
+        DBG_ONLY(cerr<<"Dynamic Acceptance Function set!\n");
 		acceptanceFunction=std::make_unique<DynamicAcceptanceFunction>();
+        customAcceptanceExpressionDefined = false;
 	}	
+	else if ( _acceptanceFunctionName=="Custom")
+    {
+        DBG_ONLY(cerr<<"Custom Acceptance Function set!\n");
+        customAcceptanceExpressionDefined = true;
+    }
 	else
     {
+        DBG_ONLY(cerr<<"Default Acceptance Function set!\n");
 		acceptanceFunction=std::make_unique<DefaultAcceptanceFunction>();
-//         acceptanceFunction=&defaultAcceptanceFunction;
+        customAcceptanceExpressionDefined = false;
     }
 }
 
@@ -473,7 +483,7 @@ unsigned int Potts3D::metropolisList ( const unsigned int steps, const double te
 
     if ( customAcceptanceExpressionDefined )
     {
-        customAcceptanceFunction.initialize ( this->sim ); //actual initialization will happen only once at MCS=0 all other calls will return without doing anything
+        acceptanceFunction->initialize ( this->sim ); //actual initialization will happen only once at MCS=0 all other calls will return without doing anything
     }
 
     //here we will allocate Random number generators for each thread. Note that since user may change number of work nodes we have to monitor if the max number of work threads is greater than size of random number generator vector
@@ -620,7 +630,7 @@ unsigned int Potts3D::metropolisFast ( const unsigned int steps, const double te
 
     if ( customAcceptanceExpressionDefined )
     {
-        customAcceptanceFunction.initialize ( this->sim ); //actual initialization will happen only once at MCS=0 all other calls will return without doing anything
+        acceptanceFunction->initialize ( this->sim ); //actual initialization will happen only once at MCS=0 all other calls will return without doing anything
     }
 
     //here we will allocate Random number generators for each thread. Note that since user may change number of work nodes we have to monitor if the max number of work threads is greater than size of random number generator vector
@@ -840,7 +850,7 @@ unsigned int Potts3D::metropolisBoundaryWalker ( const unsigned int steps, const
 
     if ( customAcceptanceExpressionDefined )
     {
-        customAcceptanceFunction.initialize ( this->sim ); //actual initialization will happen only once at MCS=0 all other calls will return without doing anything
+        acceptanceFunction->initialize ( this->sim ); //actual initialization will happen only once at MCS=0 all other calls will return without doing anything
     }
 
     ASSERT_OR_THROW ( "BoundaryWalker Algorithm works only in single processor mode. Please change number of processors to 1",pUtils->getNumberOfWorkNodesPotts() ==1 );
@@ -1138,16 +1148,20 @@ void Potts3D::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
     unsigned int currentStep=sim->getStep();
     if ( _xmlData->getFirstElement ( "CustomAcceptanceFunction" ) )
     {
+        DBG_ONLY(cerr<<"customAcceptanceFunction defined:"<<customAcceptanceExpressionDefined<<endl);
+        // this is slightly a lot of work
+        auto customAcceptanceFunction = std::make_unique<CustomAcceptanceFunction>();
+        
         if ( currentStep>0 )
         {
             //we can only update custom acceptance function when simulation has been initialized and we know how many cores are used
-            customAcceptanceFunction.update ( _xmlData->getFirstElement ( "CustomAcceptanceFunction" ),true );
+            customAcceptanceFunction->update ( _xmlData->getFirstElement ( "CustomAcceptanceFunction" ),true );
         }
 
         //first  initialization of the acceptance function will be done in the metropolis function
         customAcceptanceExpressionDefined=true;
-        customAcceptanceFunction.update ( _xmlData->getFirstElement ( "CustomAcceptanceFunction" ),false ); //this stores XML information inside ExpressionEvaluationDepot local variables
-        registerAcceptanceFunction ( std::make_unique<CustomAcceptanceFunction>() );
+        customAcceptanceFunction->update ( _xmlData->getFirstElement ( "CustomAcceptanceFunction" ),false ); //this stores XML information inside ExpressionEvaluationDepot local variables
+        registerAcceptanceFunction ( std::move(customAcceptanceFunction) );
     }
 
     //Units

@@ -120,7 +120,7 @@ private:
     std::unique_ptr<AcceptanceFunction> acceptanceFunction;
 
     //ExpressionEvaluatorDepot acceptanceEed;
-    CustomAcceptanceFunction customAcceptanceFunction;
+//     CustomAcceptanceFunction customAcceptanceFunction;
     bool customAcceptanceExpressionDefined;
 
     std::unique_ptr<FluctuationAmplitudeFunction> fluctAmplFcn;
