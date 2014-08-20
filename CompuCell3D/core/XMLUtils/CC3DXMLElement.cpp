@@ -469,6 +469,11 @@ void CC3DXMLElement::setData ( string _data )
 	cdata = _data;
 }
 
+void CC3DXMLElement::appendData ( string _data )
+{
+	cdata += _data;
+}
+
 CC3DXMLElementList CC3DXMLElement::getElements ( std::string _name )
 {
      CC3DXMLElementList elementList;
@@ -548,4 +553,14 @@ char CC3DXMLElement::getByte()
 unsigned char CC3DXMLElement::getUByte()
 {
      return BasicString::parseUByte ( cdata );
+}
+
+CC3DXMLElementList& CC3DXMLElement::getChildren(void)
+{
+	return children;
+}
+
+string CC3DXMLElement::getComment(void)
+{
+	return comment;
 }
