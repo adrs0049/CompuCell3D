@@ -6,9 +6,13 @@
 using namespace CompuCell3D;
 using namespace std;
 
-EnergyFunctionCalculator::EnergyFunctionCalculator()
-: potts(nullptr)
-{}
+EnergyFunctionCalculator::EnergyFunctionCalculator(Simulator* _sim, Potts3D* _potts)
+: potts(_potts), sim(_sim)
+{
+    ASSERT_OR_THROW("EnergyFunctionCalculator() Sim is NULL!\n", sim!=nullptr);
+    ASSERT_OR_THROW("EnergyFunctionCalculator() Potts3D is NULL!\n", potts!=nullptr);
+	DBG_ONLY(cerr<<"Constructing EnergyFunctionCalculator"<<endl;);
+}
 
 EnergyFunctionCalculator::~EnergyFunctionCalculator()
 {}

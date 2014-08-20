@@ -20,7 +20,7 @@ class EnergyFunctionCalculator
 {
 
 public:
-    EnergyFunctionCalculator();
+    EnergyFunctionCalculator(Simulator* _sim, Potts3D* _potts);
     virtual ~EnergyFunctionCalculator();
 
     virtual void init ( CC3DXMLElement *_xmlData ) {}
