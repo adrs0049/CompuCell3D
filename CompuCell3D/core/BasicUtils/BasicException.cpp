@@ -25,4 +25,4 @@
 #include "BasicException.h"
 
 unsigned int BasicException::causePrintLevel = 10;
-bool BasicException::enableStackTraces = false;
+bool BasicException::enableStackTraces = true;
