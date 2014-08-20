@@ -81,7 +81,8 @@ double EnergyFunctionCalculatorStatistics::changeEnergy ( Point3D &pt,
 														  const CellG *oldCell,
 														  const unsigned int _flipAttempt )
 {
-    auto pUtils=sim->getParallelUtils();
+	DBG_ONLY(ASSERT_OR_THROW("EnergyFunctionCalculatorStatistics::changeEnergy: SimulatorPtr is NULL\n!!", sim!=nullptr));
+    ParallelUtilsOpenMP * pUtils=sim->getParallelUtils();
 
     if ( pUtils->getNumberOfWorkNodesPotts() ==1 )
     {
