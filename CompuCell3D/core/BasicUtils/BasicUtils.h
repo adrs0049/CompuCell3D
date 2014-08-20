@@ -1,17 +1,15 @@
 #ifndef BASICUTILS_H
 #define BASICUTILS_H
-//     #include <BasicUtils/BasicArray.h>
+    #include <BasicUtils/debugHelpers.h>
     #include <BasicUtils/BasicClassGroupArray.h>
     #include <BasicUtils/BasicClassGroup.h>
     #include <BasicUtils/BasicClassAccessor.h>
     #include <BasicUtils/BasicClassRegistry.h>
     #include <BasicUtils/BasicFileLocation.h>
-//     #include <BasicUtils/BasicDynamicClassNode.h>
     #include <BasicUtils/BasicPluginProxy.h>
     #include <BasicUtils/BasicStringTable.h>
     #include <BasicUtils/BasicString.h>
     #include <BasicUtils/BasicRandomNumberGenerator.h>
-//     #include <BasicUtils/BasicDynamicClassFactory.h>
     #include <BasicUtils/BasicClassFactoryBase.h>
     #include <BasicUtils/BasicClassFactory.h>
     #include <BasicUtils/BasicPluginInfo.h>
