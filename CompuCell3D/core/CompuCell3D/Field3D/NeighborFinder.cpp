@@ -27,7 +27,7 @@
 using namespace CompuCell3D;
 using namespace std;
 
-std::mutex         NeighborFinder::_mutex;
+std::mutex         NeighborFinder::instance_mutex;
 NeighborFinderPtr  NeighborFinder::instance = nullptr;
 
 void NeighborFinder::getMore()
@@ -118,14 +118,11 @@ void NeighborFinder::destroy()
 {
     if ( instance )
 	{
-		std::lock_guard< std::mutex > lock ( _mutex );
-		
-		if ( instance )
-		{
-			cerr << "Use count for NeighborFinder is : " << instance.use_count() << "\n";
-			instance.reset();
-			cerr << "NeighborFinder Singleton is DEAD!\n";
-		}
+        with_lock(instance_mutex, []() {
+            cerr << "Use count for NeighborFinder is : " << instance.use_count() << "\n";
+            instance.reset();
+            cerr << "NeighborFinder Singleton is DEAD!\n";
+        });
 	}
 	else
 		cerr << "NeighborFinder singleton was alread DEAD!\n";

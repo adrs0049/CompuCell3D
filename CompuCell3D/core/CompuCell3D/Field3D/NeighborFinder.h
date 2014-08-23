@@ -29,6 +29,8 @@
 #include <vector>
 #include <mutex>
 
+#include <BasicUtils/lock_helper.h>
+
 namespace CompuCell3D
 {
 
@@ -43,10 +45,11 @@ typedef std::shared_ptr< NeighborFinder > NeighborFinderPtr;
 */
 class NeighborFinder
 {
-    std::vector<Neighbor> neighbors;
-    int depth;
+    mutable std::vector<Neighbor> neighbors;
+    mutable std::mutex cache_mutex;
 
-	static std::mutex 	_mutex;
+    int depth;
+    static std::mutex 	        instance_mutex;
 	static NeighborFinderPtr 	instance;
 
 	NeighborFinder() : depth ( 0 ) {}
@@ -62,12 +65,9 @@ public:
     {
 		if ( !instance )
 		{
-			std::lock_guard< std::mutex > lock ( _mutex );
-			
-			if ( !instance )
-			{
-				instance.reset( new NeighborFinder() );
-			}
+            with_lock(instance_mutex, []() {
+                if ( !instance )    instance.reset( new NeighborFinder() );
+            });
 		}
 
 		return NeighborFinder::instance;
@@ -86,9 +86,11 @@ public:
      */
     Neighbor &getNeighbor ( const unsigned int i ) const
     {
-        while ( i >= neighbors.size() )
-             ( ( NeighborFinder * ) this )->getMore();
-        return const_cast<Neighbor&> ( neighbors[i] );
+        return with_lock(cache_mutex, [this, i]() -> Neighbor& {
+            while ( i >= neighbors.size() )
+                this->getMore();
+            return const_cast<Neighbor&> ( neighbors[i] );
+        });
     }
 
     ~NeighborFinder();
