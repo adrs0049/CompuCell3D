@@ -61,11 +61,9 @@ public:
     {
         return typeName<rhs.typeName;
     }
-
-
 };
 
-class SECRETION_EXPORT SecretionDataP: public SteerableObject
+class SECRETION_EXPORT SecretionDataP : public SteerableObject
 {
 protected:
     Automaton * automaton;
@@ -91,7 +89,6 @@ public:
     std::set<UptakeDataP> uptakeDataSet;
 
     //std::string secretionName;
-
     std::map<unsigned char,float> typeIdSecrConstMap;
     std::map<unsigned char,float> typeIdSecrConstConstantConcentrationMap;
     std::map<unsigned char, std::string> typeIdSecrVarConcentrationMap;
@@ -138,7 +135,6 @@ public:
         {
             Secretion ( _typeName, _const );
         }
-
     }
 
     void Secretion ( std::string _typeName, float _secretionConst );
@@ -156,9 +152,6 @@ public:
     bool useBoxWatcher;
 
     std::vector<secrSingleFieldFcnPtr_t>  secretionFcnPtrVec;
-
-
-
 };
 
 } // end namespace
