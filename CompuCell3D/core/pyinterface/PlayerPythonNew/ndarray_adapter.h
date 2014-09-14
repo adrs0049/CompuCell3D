@@ -148,7 +148,7 @@ void NdarrayAdapter<datatype, ndim>::clear()
         arraySize*=shape[i];
     }
     
-    for (int i  ; i < arraySize ; ++i){
+    for (int i= 0 ; i < arraySize ; ++i){
         data[i]=datatype();
     }
 }
@@ -293,7 +293,7 @@ long NdarrayAdapter<datatype, 1>::getShape(const int axis)
 template<typename datatype>
 void NdarrayAdapter<datatype, 1>::clear()
 {
-    for (int i  ; i < shape[0]; ++i){
+    for (int i=0 ; i < shape[0]; ++i){
         data[i]=datatype();
     }
 }
