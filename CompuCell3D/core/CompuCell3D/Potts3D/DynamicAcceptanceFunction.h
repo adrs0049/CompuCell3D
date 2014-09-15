@@ -63,8 +63,8 @@ public:
             else cerr<<" return="<<tanh(temp) * exp ( - ( change - offset ) / ( k * temp ) )<<endl;
         );
         
-		if ( change <= offset ) return tanh(temp);
-		return tanh(temp) * exp ( - ( change - offset ) / ( k * temp ) );
+        if ( change <= offset ) return tanh(temp);
+        return tanh(temp) * exp ( - ( change - offset ) / ( k * temp ) );
     }
 };
 
