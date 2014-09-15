@@ -25,6 +25,7 @@
 
 #include "AcceptanceFunction.h"
 #include <BasicUtils/debugHelpers.h>
+#include <BasicUtils/BasicException.h>
 #include <ctgmath>
 
 namespace CompuCell3D
