@@ -208,10 +208,13 @@ public:
 			
 			if ( !instance )
 			{
+                cerr<<"BoundaryStrategy constructing singleton\n";
 				instance.reset(new BoundaryStrategy(boundary_x, boundary_y, 
                              boundary_z, alg, index, size, inputfile, latticeType) );
 			}
         }
+        
+        cerr<<"BoundaryStrategy singleton is ALIVE!\n";
     }
     //prepares list of offsets for neighbors
     void prepareNeighborListsBasedOnNeighborOrder ( unsigned int _neighborOrder );
@@ -231,7 +234,7 @@ public:
      */
 	static BoundaryStrategyPtr& getInstance()
     {
-        ASSERT_OR_THROW ( "instantiate function has not been called yet for BoundaryStrategy. Cannot return an object ", instance );
+        ASSERT_OR_THROW ( "instantiate function has not been called yet for BoundaryStrategy. Cannot return an object ", instance != nullptr );
         return instance;
     }
 
@@ -241,6 +244,7 @@ public:
      */
     static void destroy()
     {
+        cerr<<"BoundaryStrategy destroy()\n";
         if ( instance )
         {
 			std::lock_guard<std::mutex> lock ( _mutex );
@@ -251,10 +255,6 @@ public:
 				instance.reset();
 			}
             cerr << "BoundaryStrategy singleton is DEAD!\n";
-        }
-        else
-        {
-            cerr << "BoundaryStrategy singleton was already DEAD!\n";
         }
     }
 };
