@@ -321,7 +321,6 @@ CellG * Potts3D::createCellG ( const Point3D pt,long _clusterId )
     ASSERT_OR_THROW ( "createCell() cellFieldG Point out of range!", cellFieldG->isValid ( pt ) );
     CellG * cell=createCell ( _clusterId );
     cellFieldG->set ( pt, cell );
-
     return cell;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -336,14 +335,11 @@ CellG *Potts3D::createCell ( long _clusterId )
 
     if ( _clusterId <= 0 ) //default behavior if user does not specify cluster id or cluster id is 0
     {
-
         cell->clusterId=recentlyCreatedClusterId;
         ++recentlyCreatedClusterId;
-
     }
     else if ( _clusterId > recentlyCreatedClusterId ) //clusterId specified by user is greater than recentlyCreatedClusterId
     {
-
         cell->clusterId=_clusterId;
         recentlyCreatedClusterId=_clusterId+1; // if we get cluster id greater than recentlyCreatedClusterId we set recentlyCreatedClusterId to be _clusterId+1
         // this way if users add "non-cluster" cells after definition of clustered cells	the cell->clusterId is guaranteed to be greater than any of the clusterIds specified for clustered cells
