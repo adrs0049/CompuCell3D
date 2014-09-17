@@ -32,6 +32,7 @@
 #include "BoundaryFactory.h"
 #include "AlgorithmFactory.h"
 #include "Algorithm.h"
+#include <BasicUtils/debugHelpers.h>
 
 #define roundf(a) ((fmod(a,1)<0.5)?floor(a):ceil(a))
 
@@ -45,6 +46,8 @@ std::mutex BoundaryStrategy::_mutex;
 // Default constructor
 BoundaryStrategy::BoundaryStrategy()
 {
+    DBG_ONLY(cerr<<"BoundaryStrategy()\n"; );
+    
     strategy_x = BoundaryFactory::createBoundary ( BoundaryFactory::no_flux );
     strategy_y = BoundaryFactory::createBoundary ( BoundaryFactory::no_flux );
     strategy_z = BoundaryFactory::createBoundary ( BoundaryFactory::no_flux );
@@ -54,12 +57,12 @@ BoundaryStrategy::BoundaryStrategy()
     neighborListsInitializedFlag=false;
     latticeType=SQUARE_LATTICE;
 
-#ifdef _DEBUG
+DBG_ONLY(
     const unsigned int maxHexArraySize=6;
     cerr<<"maxHexArraySize="<<maxHexArraySize<<endl;
 
     cerr<<"\t\t\t\t\t\t\t CALLING DEFAULT CONSTRUCTOR FOR BOUNDARY STRATEGY"<<endl;
-#endif
+);
 
 }
 
@@ -68,6 +71,8 @@ BoundaryStrategy::BoundaryStrategy ( string boundary_x, string boundary_y,
                                      string boundary_z, string alg, int index,
 									 int size, string inputfile,LatticeType latticeType )
 {
+    DBG_ONLY(cerr<<"BoundaryStrategy()\n"; );
+    
     strategy_x = BoundaryFactory::createBoundary ( boundary_x );
     strategy_y = BoundaryFactory::createBoundary ( boundary_y );
     strategy_z = BoundaryFactory::createBoundary ( boundary_z );
@@ -76,19 +81,19 @@ BoundaryStrategy::BoundaryStrategy ( string boundary_x, string boundary_y,
     neighborListsInitializedFlag=false;
     this->latticeType=latticeType;
 
-#ifdef _DEBUG
+DBG_ONLY(
     const unsigned int maxHexArraySize=6;
     cerr<<"\t\t\t\t\t\t\t CALLING SPECILIZED CONSTRUCTOR FOR BOUNDARY STRATEGY"<<endl;
     cerr<<"maxHexArraySize="<<maxHexArraySize<<endl;
-
-#endif
+);
 
 }
 
 // Destructor
 BoundaryStrategy::~BoundaryStrategy()
 {
-     instance.reset();
+    DBG_ONLY(cerr<<"~BoundaryStrategy\n");
+    destroy();
 }
 
 LatticeMultiplicativeFactors BoundaryStrategy::generateLatticeMultiplicativeFactors ( LatticeType _latticeType,Dim3D dim )
