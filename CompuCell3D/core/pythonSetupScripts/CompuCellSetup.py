@@ -648,6 +648,11 @@ def getCoreSimulationObjectsNewPlayer(_parseOnlyFlag=False, _cmlOnly=False):
     import sys
     from os import environ
     import string
+    
+    # ATTENTION something isn't cleaned up properly after a crash?
+    global globalSteppableRegistry
+    globalSteppableRegistry=None
+    
     python_module_path = os.environ["PYTHON_MODULE_PATH"]
     appended = sys.path.count(python_module_path)
     if not appended:
@@ -991,6 +996,7 @@ def ExtractTypeNamesAndIds():
     return typeIdTypeNameDict
     
 def initializeSimulationObjects(sim,simthread):
+    print 'initSimObjs'
     if not playerType=="CMLResultReplay":
         global cc3dXML2ObjConverter
         global cc3dXML2ObjConverterAdapter
@@ -1001,7 +1007,7 @@ def initializeSimulationObjects(sim,simthread):
 
         sim.initializeCC3D()
         
-        
+    print "SIM=",sim
     print "SIMTHREAD=",simthread
     if simthread is not None:
         simthread.clearGraphicsFields()
@@ -1033,11 +1039,12 @@ def attachListToCells(sim):
 #     return adder,listAdder #returning those two objects ensures that they will not be garbage collected. They are needed for proper functioning of the attribute adder
 
 def extraInitSimulationObjects(sim,simthread,_restartEnabled=False):
+    print 'extraIinitSimObjs'
     if playerType=="CMLResultReplay":
         simthread.preStartInit()
         simthread.postStartInit()
     else:
-        
+        print 'Running ExtraInit from python'
         sim.extraInit()#after all xml steppables and plugins have been loaded we call extraInit to complete initialization
 
         # 62 mb    
@@ -1343,12 +1350,13 @@ def printSimulationRuntime(_timeInterval):
 def stopSimulation():   
     global userStopSimulationFlag    
     userStopSimulationFlag=True
-    
 
 def mainLoopNewPlayer(sim, simthread, steppableRegistry= None, _screenUpdateFrequency = None):
+    print 'mainLoopNewPlayer'
     global cmlFieldHandler  #rwh2
     global globalSteppableRegistry  #rwh2
     globalSteppableRegistry=steppableRegistry
+  
     import time
     global userStopSimulationFlag
     userStopSimulationFlag=False
@@ -1356,14 +1364,13 @@ def mainLoopNewPlayer(sim, simthread, steppableRegistry= None, _screenUpdateFreq
     print 'SIMULATION FILE NAME=',simthread.getSimFileName()
     global simulationFileName
     simulationFileName=simthread.getSimFileName()
-    
+
     import weakref
     # restart manager
     import RestartManager
     restartManager=RestartManager.RestartManager(sim)
     
     simthread.restartManager=weakref.ref(restartManager)
-    
         
     # restartEnabled=restartManager.restartEnabled()
     restartEnabled=restartManager.restartEnabled()
@@ -1538,7 +1545,6 @@ def mainLoopNewPlayer(sim, simthread, steppableRegistry= None, _screenUpdateFreq
     
     #In exception handlers you have to call sim.finish to unload the plugins .
     #We may need to introduce new funuction name (e.g. unload) because finish does more than unloading
-
     
 def mainLoopCML(sim, simthread, steppableRegistry= None, _screenUpdateFrequency = None):
     global cmlFieldHandler   #rwh2
@@ -1638,109 +1644,23 @@ def mainLoopCML(sim, simthread, steppableRegistry= None, _screenUpdateFrequency 
     printSimulationRuntime((t2-t1)*1000.0)    
     #In exception handlers you have to call sim.finish to unload the plugins .
     #We may need to introduce new funuction name (e.g. unload) because finish does more than unloading
-
-# # # def mainLoopCMLReplay(sim, simthread, steppableRegistry= None, _screenUpdateFrequency = None):
-    # # # # have to read fsimulation data (vtk file) before proceeding to extrainit.
-    # # # # this is because extra init will send a signal to initialize simulation view but simulation view refers to simulation data. therefore this data better be ready
-    # # # global globalSteppableRegistry  #rwh2
-    # # # globalSteppableRegistry=steppableRegistry
-    
-    # # # if simthread:
-        # # # simthread.readSimulationData(0)
-        # # # if not simthread.simulationData:
-            # # # simthread.simulationFinishedPostEvent(True)
-            # # # return
-    # # # else:
-        # # # return
-        
-    # # # extraInitSimulationObjects(sim,simthread)
-    # # # # simthread.waitForInitCompletion()
-    # # # simthread.waitForPlayerTaskToFinish()
-    
-    # # # runFinishFlag = True;
-    
-    # # # if not steppableRegistry is None:
-        # # # steppableRegistry.init(sim)
-        # # # steppableRegistry.start()
-    
-    # # # # simthread.waitForInitCompletion()
-    
-    # # # screenUpdateFrequency=1
-    # # # numberOfSteps = len(simthread.ldsFileList)
-    
-    # # # # for i in range(numberOfSteps):
-    # # # i=0
-    # # # mcsDirectAccess=0
-    # # # directAccessFlag=False
-    # # # while i<numberOfSteps :
-        # # # # print 'i=',i
-        # # # # print 'COMPUCELLSETUP field dim before=',simthread.fieldDim
-        
-        # # # if simthread is not None:
-            # # # mcsDirectAccess,directAccessFlag = simthread.getCurrentStepDirectAccess()
-        # # # if directAccessFlag:
-# # # #            print MYMODULENAME," mainLoopCMLReplay():  GOT DIRECT FLAG AND mcsDirectAccess=",mcsDirectAccess
-            # # # simthread.resetDirectAccessFlag()
-            # # # i = mcsDirectAccess
-            
-        # # # # print "working on MCS " , i
-        # # # if simthread is not None:
-            # # # if i!=0: # new data for step 0 is already read
-                
-                # # # simthread.readSimulationData(i)    
-                # # # # print 'field dim after=',simthread.fieldDim
-                
-            # # # simthread.beforeStep(i)                
-            # # # # print "simthread=",simthread
-            # # # if simthread.getStopSimulation():
-                # # # runFinishFlag=False
-                # # # break
-        # # # if i>=numberOfSteps:
-            # # # break                 
-
-
-        # # # screenUpdateFrequency = simthread.getScreenUpdateFrequency()
-        # # # screenshotFrequency=simthread.getScreenshotFrequency()
-        
-# # # #        print MYMODULENAME,"screenUpdateFrequency=",screenUpdateFrequency," screenshotFrequency=",screenshotFrequency
-        # # # simthread.loopWork(i)
-        # # # simthread.loopWorkPostEvent(i)
-        # # # screenUpdateFrequency = simthread.getScreenUpdateFrequency()
-        # # # i+=1
-        # # # # if ((not i % screenUpdateFrequency) or (not i % screenshotFrequency)) and simthread is not None:
-            # # # # simthread.loopWork(i)
-            # # # # simthread.loopWorkPostEvent(i)
-            # # # # screenUpdateFrequency = simthread.getScreenUpdateFrequency()
-
-    # # # print "END OF SIMULATION  "
-    # # # if runFinishFlag:
-        # # # # sim.finish()
-        # # # # if sim.getRecentErrorMessage()!="":        
-            # # # # raise CC3DCPlusPlusError(sim.getRecentErrorMessage())        
-        # # # # steppableRegistry.finish()
-        # # # simthread.simulationFinishedPostEvent(True)
-        # # # print "CALLING FINISH"
-    # # # else:
-        # # # # sim.cleanAfterSimulation()
-        # # # print "CALLING UNLOAD MODULES"
-        # # # if simthread is not None:
-            # # # simthread.sendStopSimulationRequest()
-            # # # simthread.simulationFinishedPostEvent(True)
-    
-    # # # #In exception handlers you have to call sim.finish to unload the plugins .
-    # # # #We may need to introduce new funuction name (e.g. unload) because finish does more than unloading
-
     
 def mainLoop(sim, simthread, steppableRegistry= None, _screenUpdateFrequency = None):
     global playerType
 #    print MYMODULENAME,"playerType=",playerType
 #    import pdb; pdb.set_trace()
     
+    print 'mainLoop'
+    
     if playerType=="CML":
+        print 'Player is CML'
         return mainLoopCML(sim, simthread, steppableRegistry, _screenUpdateFrequency )
     if playerType=="CMLResultReplay":
+        print 'Player is CMLResultReplay'
         return mainLoopCMLReplay(sim, simthread, steppableRegistry, _screenUpdateFrequency )
-        
+    
+    print 'mainLoop2'
+    
 #    print MYMODULENAME,' mainLoop:  simulationFileName =',simulationFileName
     if simulationThreadObject is None:
         print MYMODULENAME,' mainLoop:  error, simulationThreadObject is None (no longer an OldPlayer)'
