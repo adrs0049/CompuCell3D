@@ -57,14 +57,24 @@ public:
     double accept ( const double temp, const double change ) override
     {
         DBG_ONLY(
-            ASSERT_OR_THROW("Temperature needs to be >= 0!\n", temp>=0);
+            //ASSERT_OR_THROW("Temperature needs to be >= 0!\n", temp>=0);
             cerr<<"change="<<change<<" offset="<<offset<<" k="<<k;
             if ( change <= offset ) cerr<<" return="<<tanh(temp)<<endl;
             else cerr<<" return="<<tanh(temp) * exp ( - ( change - offset ) / ( k * temp ) )<<endl;
         );
         
-        if ( change <= offset ) return tanh(temp);
-        return tanh(temp) * exp ( - ( change - offset ) / ( k * temp ) );
+        if ( temp <= 0 )
+        {
+            if ( change > 0 ) return  0.0;
+            if ( change == 0 ) return 0.5;
+            return  1.0;
+
+        }
+        else 
+        {
+            if ( change <= offset ) return tanh(temp);
+            return tanh(temp) * exp ( - ( change - offset ) / ( k * temp ) );
+        }
     }
 };
 
