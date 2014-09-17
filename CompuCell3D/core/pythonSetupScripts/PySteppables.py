@@ -1027,6 +1027,7 @@ class DolfinSolverSteppable(RunBeforeMCSSteppableBasePy):
         
 class SteppableRegistry(SteppablePy):
     def __init__(self):
+        print 'init SteppableRegistry'
         self.steppableList=[]
         self.runBeforeMCSSteppableList=[]
         self.steppableDict={} # {steppableClassName:[steppable inst0,steppable inst1,...]}
@@ -1061,10 +1062,8 @@ class SteppableRegistry(SteppablePy):
         for steppable in self.runBeforeMCSSteppableList:
             steppable.init(_simulator)            
 
-
         for steppable in self.steppableList:
             steppable.init(_simulator)
-            
 
     def extraInit(self,_simulator):
         for steppable in self.runBeforeMCSSteppableList:
