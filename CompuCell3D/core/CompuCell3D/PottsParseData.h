@@ -155,6 +155,7 @@ public:
 
     unsigned int numSteps;
     unsigned int anneal;
+    unsigned int anneal_begin;
     double flip2DimRatio;
     double temperature;
     double depth;
