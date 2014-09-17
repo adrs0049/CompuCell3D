@@ -113,15 +113,13 @@ void SecretionPlugin::extraInit ( Simulator *simulator )
             boundaryPixelTrackerPlugin->init ( simulator );
         }
     }
-
-
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Field3D<float>*  SecretionPlugin::getConcentrationFieldByName ( std::string _fieldName )
 {
-    std::map<std::string,Field3D<float>*> & fieldMap=sim->getConcentrationFieldNameMap();
-    std::map<std::string,Field3D<float>*>::iterator mitr;
-    mitr=fieldMap.find ( _fieldName );
+    auto& fieldMap=sim->getConcentrationFieldNameMap();
+    auto mitr=fieldMap.find ( _fieldName );
     if ( mitr!=fieldMap.end() )
     {
         return mitr->second;
@@ -237,36 +235,7 @@ void SecretionPlugin::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
     {
         elem.initialize ( potts->getAutomaton() );
     }
-
-    // CC3DXMLElementList pdeSolversXMLList=_xmlData->getElements("CallPDE");
-    // for(unsigned int i=0; i < pdeSolversXMLList.size() ; ++i ){
-    // solverDataVec.push_back(SolverData(pdeSolversXMLList[i]->getAttribute("PDESolverName"),pdeSolversXMLList[i]->getAttributeAsUInt("ExtraTimesPerMC")));
-    // SolverData & sd=solverDataVec[solverDataVec.size()-1];
-
-    // steppable=classRegistry->getStepper(sd.solverName);
-    // solverPtrVec.push_back(steppable);
-
-    // }
-
 }
-
-//bool SecretionPlugin::secreteInsideCell(CellG * _cell, string _fieldName, float _amount){
-//	if (!pixelTrackerPlugin){
-//		return false;
-//	}
-//	BasicClassAccessor<PixelTracker> *pixelTrackerAccessorPtr=pixelTrackerPlugin->getPixelTrackerAccessorPtr();
-//	set<PixelTrackerData > & pixelSetRef=pixelTrackerAccessorPtr->get(_cell->extraAttribPtr)->pixelSet;
-//
-//	Field3DImpl<float> & concentrationField=*getConcentrationFieldByName(_fieldName);
-//
-//	for (set<PixelTrackerData>::iterator sitr=pixelSetRef.begin() ; sitr!=pixelSetRef.end(); ++sitr){
-//
-//		concentrationField.set(sitr->pixel,concentrationField.get(sitr->pixel)+_amount);
-//
-//	}
-//
-//	return true;
-//}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void SecretionPlugin::secreteSingleField ( unsigned int idx )
