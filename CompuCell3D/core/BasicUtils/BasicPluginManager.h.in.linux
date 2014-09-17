@@ -36,6 +36,7 @@
 #include <string.h>
 #include <glob.h>
 #include <memory>
+#include "debugHelpers.h"
 
 template <class T>
 class BasicPluginManager {
@@ -188,6 +189,7 @@ public:
     std::shared_ptr<T> get(const std::string pluginName, bool *_pluginAlreadyRegisteredFlag=nullptr) {
         auto plugin = plugins[pluginName];
         if (plugin) {
+            DBG_ONLY(cerr<<"PluginManager::get(): Plugin"<<pluginName<<" known!"<<endl);
             if(_pluginAlreadyRegisteredFlag)
                 *_pluginAlreadyRegisteredFlag=true;
             return plugin;
