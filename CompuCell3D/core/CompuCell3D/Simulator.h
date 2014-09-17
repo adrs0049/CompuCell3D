@@ -93,6 +93,8 @@ public:
     long getCerrStreamBufOrig();
     void restoreCerrStreamBufOrig ( long _ptr );
 
+    void printLoadedPlugins();
+    
     void setRestartEnabled ( bool _restartEnabled )
     {
         restartEnabled=_restartEnabled;
@@ -143,7 +145,7 @@ public:
         return pUtilsSingle;
     }
 
-    BoundaryStrategyPtr getBoundaryStrategy();
+    BoundaryStrategyPtr& getBoundaryStrategy();
     void registerSteerableObject ( SteerableObject * );
     void unregisterSteerableObject ( const std::string & );
     SteerableObject * getSteerableObject ( const std::string & _objectName );

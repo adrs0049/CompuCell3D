@@ -159,7 +159,7 @@ void Simulator::setOutputRedirectionTarget ( long  _ptr )
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-BoundaryStrategyPtr Simulator::getBoundaryStrategy()
+BoundaryStrategyPtr& Simulator::getBoundaryStrategy()
 {
     return BoundaryStrategy::getInstance();
 }
@@ -279,6 +279,7 @@ void Simulator::start()
     try
     {
         // Print the names of loaded plugins
+        cerr << "SimObj at="<<this<<endl;
         cerr << "Simulator::start():\n\tPlugins: \n";
         BasicPluginManager<Plugin>::infos_t& Pinfos = pluginManager.getPluginInfos();
 
@@ -305,6 +306,17 @@ void Simulator::start()
              << endl;
 
         simulatorIsStepping=true; //initialize flag that simulator is stepping
+        
+        /*
+        auto temp = ppdCC3DPtr->temperature;
+        ppdCC3DPtr->temperature = 0.0;
+        //cerr<<"inside finish 1"<<endl;
+
+        for ( unsigned int i = 1; i <= ppdCC3DPtr->anneal; i++ )
+            step ( ppdCC3DPtr->numSteps+i );
+        
+        ppdCC3DPtr->temperature = temp;
+        */
         cerr << "Simulator::start() successful\n";
     }
     catch ( const BasicException &e )
@@ -427,6 +439,7 @@ void Simulator::step ( const unsigned int currentStep )
 
 void Simulator::finish()
 {
+    cerr<<"Simulator finish() up!"<<endl;
     try
     {
         //cerr<<"inside finish"<<endl;
@@ -439,7 +452,7 @@ void Simulator::finish()
         classRegistry->finish();
         unloadModules();
         //cerr<<"inside finish 3"<<endl;
-
+        BoundaryStrategy::destroy();
     }
     catch ( const BasicException &e )
     {
@@ -469,12 +482,14 @@ void Simulator::finish()
 
 void Simulator::cleanAfterSimulation()
 {
+    DBG_ONLY(cerr<<"Simulator::cleanAfterSimulation\n");
     potts.getCellInventory().cleanInventory();
     unloadModules();
 }
 
 void Simulator::unloadModules()
 {
+    DBG_ONLY(cerr<<"Simulator::unloadModules\n");
     pluginManager.unload();
     steppableManager.unload();
 }
@@ -555,6 +570,7 @@ void Simulator::initializeCC3D()
         for ( const auto& elem : ps.pluginCC3DXMLElementVector )
         {
             std::string pluginName {elem->getAttribute ( "Name" ) };
+            cerr<<"Loading Plugin " << pluginName <<endl;
             bool pluginAlreadyRegisteredFlag=false;
             auto plugin = pluginManager.get ( pluginName,&pluginAlreadyRegisteredFlag );
             if ( !pluginAlreadyRegisteredFlag )
@@ -563,11 +579,14 @@ void Simulator::initializeCC3D()
                 cerr<<"INITIALIZING "<<pluginName<<endl;
                 plugin->init ( this, elem );
             }
+            else
+                cerr<<"Plugin "<<pluginName<<" was already registered!"<<endl;
         }
 
         for ( const auto& elem : ps.steppableCC3DXMLElementVector )
         {
             std::string steppableName {elem->getAttribute ( "Type" ) };
+            cerr<<"Loading Steppable " << steppableName <<endl;
             bool steppableAlreadyRegisteredFlag=false;
             auto steppable = steppableManager.get ( steppableName,&steppableAlreadyRegisteredFlag );
 
@@ -581,6 +600,8 @@ void Simulator::initializeCC3D()
                 steppable->init ( this, elem );
                 classRegistry->addStepper ( steppableName,steppable );
             }
+            else
+                cerr<<"Steppable "<<steppableName<<" was already registered!"<<endl;
         }
         if ( ppdCC3DPtr->cellTypeMotilityVector.size() )
         {
@@ -603,15 +624,37 @@ void Simulator::initializeCC3D()
         {
             throw e;
         }
-
     }
 
+   printLoadedPlugins();
+    
     cerr<<"Successfully initialised CompuCell3D simulation."<<endl;
 }
+
+void Simulator::printLoadedPlugins()
+{
+    cerr << "SimObj at="<<this<<endl;
+     BasicPluginManager<Plugin>::infos_t& Pinfos = pluginManager.getPluginInfos();
+
+        for ( const auto& info : Pinfos )
+            if ( pluginManager.isLoaded ( info->getName() ) )
+                cerr << "\t\t" << info->getName() << std::endl;
+        cerr << endl;
+
+        cerr << "\tSteppables: \n";
+        BasicPluginManager<Steppable>::infos_t& Sinfos = steppableManager.getPluginInfos();
+
+        for ( const auto& info : Sinfos )
+            if ( steppableManager.isLoaded ( info->getName() ) )
+                cerr << "\t\t" << info->getName() << std::endl;
+        cerr << endl;
+}
+
 
 void Simulator::initializePottsCC3D ( CC3DXMLElement * _xmlData )
 {
     cerr<<"Initialising Potts..."<<endl;
+    cerr<<"in SimObj@"<<this<<endl;
     //registering Potts as SteerableObject
     registerSteerableObject ( &potts );
 
@@ -684,6 +727,11 @@ void Simulator::initializePottsCC3D ( CC3DXMLElement * _xmlData )
     {
         cerr<<"Anneal="<<_xmlData->getFirstElement ( "Anneal" )->getUInt() <<std::endl;
         ppdCC3DPtr->anneal=_xmlData->getFirstElement ( "Anneal" )->getUInt();
+    }
+    if ( _xmlData->getFirstElement( "AnnealBeginning" ) )
+    {
+        cerr<<"AnnealBeginning="<<_xmlData->getFirstElement( "AnnealBeginning" )->getUInt()<<std::endl;
+        ppdCC3DPtr->anneal_begin=_xmlData->getFirstElement( "AnnealBeginning" )->getUInt();
     }
     if ( _xmlData->getFirstElement ( "Flip2DimRatio" ) )
     {
@@ -774,7 +822,7 @@ void Simulator::initializePottsCC3D ( CC3DXMLElement * _xmlData )
 
     changeToLower ( ppdCC3DPtr->latticeType );
 
-    BoundaryStrategy::destroy(); // TEMP, se what happens: It hangs after second selection of the file.
+    //BoundaryStrategy::destroy(); // TEMP, se what happens: It hangs after second selection of the file.
 
     // This is the ONLY place where the BoundaryStrategy singleton is instantiated!!!
     if ( ppdCC3DPtr->latticeType=="hexagonal" )
