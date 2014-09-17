@@ -23,6 +23,7 @@ try:
 
         CompuCellSetup.initializeSimulationObjects(sim,simthread)
         steppableRegistry = CompuCellSetup.getSteppableRegistry()
+        print 'CompCell Sim calling mainLoop'
         CompuCellSetup.mainLoop(sim,simthread,steppableRegistry) # main loop - simulation is invoked inside this function
 
 except IndentationError,e:
