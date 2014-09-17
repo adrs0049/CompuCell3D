@@ -60,8 +60,11 @@ public:
         auto oldValue = Field3DImpl<T>::get ( pt );
         Field3DImpl<T>::set ( pt, value );
 
-		for ( const auto& changeWatcher : changeWatchers )
+		for ( const auto& changeWatcher : changeWatchers ) 
+        {
+            ASSERT_OR_THROW("Watcher cannot be null!", changeWatcher);
 			changeWatcher->field3DChange ( pt, value, oldValue );
+        }
     }
 };
 
