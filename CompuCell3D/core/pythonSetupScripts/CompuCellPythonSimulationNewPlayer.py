@@ -339,7 +339,7 @@ try:
         
     sim,simthread = CompuCellSetup.getCoreSimulationObjects(True) # this only parses xml to extract initial info. No CC3D object is created at this point
     
-    
+    print 'Python New Player'
 
     if CompuCellSetup.simulationPaths.simulationPythonScriptName != "":
         # fileObj=file(CompuCellSetup.simulationPaths.simulationPythonScriptName,"r")
@@ -357,6 +357,7 @@ try:
         #import CompuCellSetup
         CompuCellSetup.initializeSimulationObjects(sim,simthread)
         steppableRegistry = CompuCellSetup.getSteppableRegistry()
+        print 'calling mainLoop'
         CompuCellSetup.mainLoop(sim,simthread,steppableRegistry) # main loop - simulation is invoked inside this function
         # # # sim,simthread=None,None
         # # # print '\n\n\n\n GOT HERE AFTER MAIN LOOP'
