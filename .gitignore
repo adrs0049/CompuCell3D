@@ -14,3 +14,4 @@ RoadRunner/ThirdParty/libsbml/src/sbml/common/libsbml-config-common.h
 ehthumbs.db
 Thumbs.db
 *~
+build/*
