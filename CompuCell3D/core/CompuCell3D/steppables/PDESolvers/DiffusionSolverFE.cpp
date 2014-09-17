@@ -364,9 +364,11 @@ void DiffusionSolverFE<Cruncher>::init(Simulator *_simulator, CC3DXMLElement *_x
 	cellTypeMonitorPlugin=get_plugin<CellTypeMonitorPlugin>("CellTypeMonitor", &pluginAlreadyRegisteredFlag);
 	if(!pluginAlreadyRegisteredFlag){
 		cellTypeMonitorPlugin->init(simulator);	
-		h_celltype_field=cellTypeMonitorPlugin->getCellTypeArray();
-        h_cellid_field=cellTypeMonitorPlugin->getCellIdArray();
 	}
+	
+	// thse need to be set regardless of whether the plugin is already registered 
+    h_celltype_field=cellTypeMonitorPlugin->getCellTypeArray();
+    h_cellid_field=cellTypeMonitorPlugin->getCellIdArray();
     
 	simulator->registerSteerableObject(this);
 
@@ -798,18 +800,24 @@ Dim3D DiffusionSolverFE<Cruncher>::getInternalDim(){
 template <class Cruncher>
 void DiffusionSolverFE<Cruncher>::prepCellTypeField(int idx){
 
+    ASSERT_OR_THROW("h_celltype_field cannot be null!", h_celltype_field);
+    
     // here we set up cellTypeArray boundaries
     Array3DCUDA<unsigned char> & cellTypeArray= *h_celltype_field;   
     BoundaryConditionSpecifier & bcSpec=bcSpecVec[idx];
     int numberOfIters=1;
     
-    // for (int i = 0 ; i < 6 ; ++i){
-        // cerr<<"PREP planePositions["<<i<<"]="<<bcSpec.planePositions[i] <<endl;
-        // cerr<<"PREP values["<<i<<"]="<<bcSpec.values[i] <<endl;
-        
-    // }  
-    // cerr<<"PREP workFieldDim="<<workFieldDim<<endl;
-    // cerr<<"PREP fieldDim="<<fieldDim<<endl;
+    /*
+    for (int i = 0 ; i < 6 ; ++i){
+        cerr<<"PREP planePositions["<<i<<"]="<<bcSpec.planePositions[i] <<endl;
+        cerr<<"PREP values["<<i<<"]="<<bcSpec.values[i] <<endl;
+    }  
+    cerr<<"PREP workFieldDim="<<workFieldDim<<endl;
+    cerr<<"PREP fieldDim="<<fieldDim<<endl;
+    cerr<<"perCheckVec="<<periodicBoundaryCheckVector.size()<<endl;
+    cerr<<"idx="<<idx<<endl;
+    cerr<<"planepos="<<bcSpec.planePositions[0]<<endl;
+    */
     
     if (static_cast<Cruncher*>(this)->getBoundaryStrategy()->getLatticeType() == HEXAGONAL_LATTICE ){ //for hex lattice we need two passes to correctly initialize lattice corners
         numberOfIters=2;
@@ -823,14 +831,12 @@ void DiffusionSolverFE<Cruncher>::prepCellTypeField(int idx){
                 // for(int z=0 ; z<workFieldDimInternal.z-1 ; ++z){
             for(int y=0 ; y< fieldDim.y+2; ++y)
                 for(int z=0 ; z<fieldDim.z+2 ; ++z){
-                    
-                    cellTypeArray.setDirect(x,y,z,cellTypeArray.getDirect(fieldDim.x,y,z));                    
+                    cellTypeArray.setDirect(x,y,z, cellTypeArray.getDirect(fieldDim.x,y,z));
                 }
 
                 x=fieldDim.x+1;
                 for(int y=0 ; y< fieldDim.y+2; ++y)
                     for(int z=0 ; z<fieldDim.z+2 ; ++z){
-                        
                         cellTypeArray.setDirect(x,y,z,cellTypeArray.getDirect(1,y,z));
                     }    
                     
@@ -882,7 +888,6 @@ void DiffusionSolverFE<Cruncher>::prepCellTypeField(int idx){
         }
         
         if(periodicBoundaryCheckVector[2] || bcSpec.planePositions[4]==BoundaryConditionSpecifier::PERIODIC || bcSpec.planePositions[5]==BoundaryConditionSpecifier::PERIODIC){    
-        
             int z=0;
             for(int x=0 ; x< fieldDim.x+2; ++x)
                 for(int y=0 ; y<fieldDim.y+2 ; ++y){                
@@ -896,7 +901,7 @@ void DiffusionSolverFE<Cruncher>::prepCellTypeField(int idx){
                     }    
         
         }else{    
-        
+            cerr<<"z per eles"<<endl;
             int z=0;
             for(int x=0 ; x< fieldDim.x+2; ++x)
                 for(int y=0 ; y<fieldDim.y+2 ; ++y){
@@ -912,24 +917,7 @@ void DiffusionSolverFE<Cruncher>::prepCellTypeField(int idx){
         
         }
     }
-  
-        
-        
-		// for (int z = 1; z < fieldDim.z+2; z++)
-			// for (int y = 1; y < fieldDim.y+2; y++)
-				// for (int x = 1; x < fieldDim.x+2; x++){
-                    // // if (concentrationField.getDirect(x,y,z) !=0.0){
-                    // // if (x>54 && z >10 && y >8){
-                        // if (cellTypeArray.getDirect(x,y,z)){
-                        // // cerr<<"("<<x<<","<<y<<","<<z<<")="<<concentrationField.getDirect(x,y,z)<<endl;
-                        // cerr<<"PREP cellType("<<x<<","<<y<<","<<z<<")="<<(int)cellTypeArray.getDirect(x,y,z)<<endl;
-                    // }
-                    
-                // }    
-  
-    
 }
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template <class Cruncher>
