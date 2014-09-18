@@ -88,7 +88,7 @@ public:
     {
         return with_lock(cache_mutex, [this, i]() -> Neighbor& {
             while ( i >= neighbors.size() )
-                this->getMore();
+                ((NeighborFinder*)this)->getMore();
             return const_cast<Neighbor&> ( neighbors[i] );
         });
     }
