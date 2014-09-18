@@ -191,7 +191,6 @@ void SecretionDataP::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
     unsigned int j=0;
     for ( const auto &elem : secrTypesNameSet )
     {
-
         if ( ( elem ) == "Secretion" )
         {
             secretionFcnPtrVec[j]=&SecretionPlugin::secreteSingleField;
@@ -207,11 +206,8 @@ void SecretionDataP::update ( CC3DXMLElement *_xmlData, bool _fullInitFlag )
             secretionFcnPtrVec[j]=&SecretionPlugin::secreteConstantConcentrationSingleField;
             ++j;
         }
-        else if ( ( elem ) == "VariableConcentration" )
-        {
-            secretionFcnPtrVec[j]=&SecretionPlugin::secreteVariableConcentrationSingleField;
-            ++j;
-        }
+        else
+            ASSERT_OR_THROW("SecretionType unknown!", 0);
     }
 }
 
