@@ -18,7 +18,6 @@
 #include <CompuCell3D/plugins/ContactLocalProduct/ContactLocalProductData.h>
 #include <CompuCell3D/plugins/ContactMultiCad/ContactMultiCadData.h>
 #include <CompuCell3D/plugins/AdhesionFlex/AdhesionFlexData.h>
-#include <CompuCell3D/plugins/PersistentMotion/PersistentMotionData.h>
 #include <CompuCell3D/plugins/CellOrientation/CellOrientationVector.h>
 #include <CompuCell3D/plugins/PolarizationVector/PolarizationVector.h>
 #include <CompuCell3D/plugins/ElasticityTracker/ElasticityTracker.h>
@@ -43,7 +42,6 @@
 #include <CompuCell3D/plugins/ContactLocalProduct/ContactLocalProductData.h>
 #include <CompuCell3D/plugins/ContactMultiCad/ContactMultiCadData.h>
 #include <CompuCell3D/plugins/AdhesionFlex/AdhesionFlexData.h>
-#include <CompuCell3D/plugins/PersistentMotion/PersistentMotionData.h>
 #include <CompuCell3D/plugins/CellOrientation/CellOrientationVector.h>
 #include <CompuCell3D/plugins/PolarizationVector/PolarizationVector.h>
 #include <CompuCell3D/plugins/ElasticityTracker/ElasticityTracker.h>
