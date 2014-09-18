@@ -36,10 +36,10 @@ using namespace std;
 SecretionPlugin::SecretionPlugin()
     : sim ( nullptr ), potts ( nullptr ), xmlData ( nullptr ), cellFieldG ( nullptr ),
       automaton ( nullptr ), boxWatcherSteppable ( nullptr ), pUtils ( nullptr ),
-      cellTypeVariableName ( "CellType" ), boundaryStrategy ( nullptr ),
+      boundaryStrategy ( nullptr ),
       maxNeighborIndex ( 0 ), pixelTrackerPlugin ( nullptr ),
       boundaryPixelTrackerPlugin ( nullptr ), disablePixelTracker ( false ),
-      disableBoundaryPixelTracker ( false ), numberOfFields ( 0 ) {}
+      disableBoundaryPixelTracker ( false ) {}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 SecretionPlugin::~SecretionPlugin()
 {}
