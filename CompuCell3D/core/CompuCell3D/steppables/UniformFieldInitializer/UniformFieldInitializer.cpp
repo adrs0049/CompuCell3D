@@ -33,7 +33,7 @@ void UniformFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlD
 {
 	sim=simulator;
 	potts = simulator->getPotts();   
-	WatchableField3D<CellG *> *cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+	auto cellFieldG = potts->getCellFieldG();
 	ASSERT_OR_THROW("initField() Cell field G cannot be null!", cellFieldG);
 	Dim3D dim = cellFieldG->getDim();
 
@@ -59,7 +59,6 @@ void UniformFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlD
 	}
 	if(_xmlData->getFirstElement("Gap")){
 		oldStyleInitData.gap=_xmlData->getFirstElement("Gap")->getUInt();
-
 	}
 
 	//clearing vector storing UniformFieldInitializerData (region definitions)
@@ -71,19 +70,19 @@ void UniformFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlD
 	{
 		UniformFieldInitializerData initData;
 
-		if(regionVec[i]->findElement("Gap"))
-			initData.gap=regionVec[i]->getFirstElement("Gap")->getUInt();
-		if(regionVec[i]->findElement("Width"))
-			initData.width=regionVec[i]->getFirstElement("Width")->getUInt();
+		if(elem->findElement("Gap"))
+			initData.gap=elem->getFirstElement("Gap")->getUInt();
+		if(elem->findElement("Width"))
+			initData.width=elem->getFirstElement("Width")->getUInt();
 
-		ASSERT_OR_THROW("UniformInitializer requires Types element inside Region section.See manual for details.",regionVec[i]->getFirstElement("Types"));
-		initData.typeNamesString=regionVec[i]->getFirstElement("Types")->getText();
+		ASSERT_OR_THROW("UniformInitializer requires Types element inside Region section.See manual for details.",elem->getFirstElement("Types"));
+		initData.typeNamesString=elem->getFirstElement("Types")->getText();
 		parseStringIntoList(initData.typeNamesString , initData.typeNames , ",");
 
-		if(regionVec[i]->findElement("BoxMax")){
-			initData.boxMax.x=regionVec[i]->getFirstElement("BoxMax")->getAttributeAsUInt("x");
-			initData.boxMax.y=regionVec[i]->getFirstElement("BoxMax")->getAttributeAsUInt("y");
-			initData.boxMax.z=regionVec[i]->getFirstElement("BoxMax")->getAttributeAsUInt("z");
+		if(elem->findElement("BoxMax")){
+			initData.boxMax.x=elem->getFirstElement("BoxMax")->getAttributeAsUInt("x");
+			initData.boxMax.y=elem->getFirstElement("BoxMax")->getAttributeAsUInt("y");
+			initData.boxMax.z=elem->getFirstElement("BoxMax")->getAttributeAsUInt("z");
 		}
 		if(elem->findElement("BoxMin")){
 			initData.boxMin.x=elem->getFirstElement("BoxMin")->getAttributeAsUInt("x");
