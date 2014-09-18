@@ -46,10 +46,9 @@ void BlobFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlData
 {
 	sim=simulator;
 	potts = simulator->getPotts();   
-	WatchableField3D<CellG *> *cellFieldG = (WatchableField3D<CellG *> *)potts->getCellFieldG();
+	auto cellFieldG = potts->getCellFieldG();
 	ASSERT_OR_THROW("initField() Cell field G cannot be null!", cellFieldG);
 	Dim3D dim = cellFieldG->getDim();
-
 
 	bool pluginAlreadyRegisteredFlag;
 	auto plugin=Simulator::pluginManager.get("VolumeTracker",&pluginAlreadyRegisteredFlag); //this will load VolumeTracker plugin if it is not already loaded
@@ -71,16 +70,12 @@ void BlobFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlData
 		cerr<<"Got FE This Gap: "<<oldStyleInitData.gap<<endl;
 	}
 
-
-
 	if (_xmlData->getFirstElement("CellSortInit")){
 		if(_xmlData->getFirstElement("CellSortInit")->getText()=="yes" ||_xmlData->getFirstElement("CellSortInit")->getText()=="Yes"){
 			cellSortInit=true;
 			cerr<<"SET CELLSORT INIT"<<endl;
 		}
 	}
-
-
 
 	CC3DXMLElement *elem=_xmlData->getFirstElement("Engulfment");
 	if (elem){
@@ -91,36 +86,34 @@ void BlobFieldInitializer::init(Simulator *simulator,  CC3DXMLElement * _xmlData
 		engulfmentData.engulfmentCoordinate=elem->getAttribute("EngulfmentCoordinate");
 	}
 
-
 	//clearing vector storing BlobFieldInitializerData (region definitions)
 	blobInitializerData.clear();
 
 	CC3DXMLElementList regionVec=_xmlData->getElements("Region");
 	
-
 	for (const auto& elem : regionVec)
 	{
 		BlobFieldInitializerData initData;
-		ASSERT_OR_THROW("BlobInitializer requires Radius element inside Region section.See manual for details.",regionVec[i]->getFirstElement("Radius"));
-		initData.radius=regionVec[i]->getFirstElement("Radius")->getUInt();
-		if (regionVec[i]->getFirstElement("Gap")){
-			initData.gap=regionVec[i]->getFirstElement("Gap")->getUInt();
+		ASSERT_OR_THROW("BlobInitializer requires Radius element inside Region section.See manual for details.",elem->getFirstElement("Radius"));
+		initData.radius=elem->getFirstElement("Radius")->getUInt();
+		if (elem->getFirstElement("Gap")){
+			initData.gap=elem->getFirstElement("Gap")->getUInt();
 		}
 
-		if (regionVec[i]->getFirstElement("Width")){
-			initData.width=regionVec[i]->getFirstElement("Width")->getUInt();
+		if (elem->getFirstElement("Width")){
+			initData.width=elem->getFirstElement("Width")->getUInt();
 		}
 
-		ASSERT_OR_THROW("BlobInitializer requires Types element inside Region section.See manual for details.",regionVec[i]->getFirstElement("Types"));
-		initData.typeNamesString=regionVec[i]->getFirstElement("Types")->getData();
+		ASSERT_OR_THROW("BlobInitializer requires Types element inside Region section.See manual for details.",elem->getFirstElement("Types"));
+		initData.typeNamesString=elem->getFirstElement("Types")->getData();
 
 		parseStringIntoList(initData.typeNamesString , initData.typeNames , ",");
 
-		ASSERT_OR_THROW("BlobInitializer requires Center element inside Region section.See manual for details.",regionVec[i]->getFirstElement("Center"));
+		ASSERT_OR_THROW("BlobInitializer requires Center element inside Region section.See manual for details.",elem->getFirstElement("Center"));
 
-		initData.center.x=regionVec[i]->getFirstElement("Center")->getAttributeAsUInt("x");
-		initData.center.y=regionVec[i]->getFirstElement("Center")->getAttributeAsUInt("y");
-		initData.center.z=regionVec[i]->getFirstElement("Center")->getAttributeAsUInt("z");
+		initData.center.x=elem->getFirstElement("Center")->getAttributeAsUInt("x");
+		initData.center.y=elem->getFirstElement("Center")->getAttributeAsUInt("y");
+		initData.center.z=elem->getFirstElement("Center")->getAttributeAsUInt("z");
 
 		cerr<<"radius="<<initData.radius<<" gap="<<initData.gap<<" types="<<initData.typeNamesString<<endl;
 		blobInitializerData.push_back(initData);
@@ -240,10 +233,10 @@ void BlobFieldInitializer::start()
     Dim3D dim = cellFieldG->getDim();
     if ( blobInitializerData.size() !=0 )
     {
-        for ( int i = 0 ; i < blobInitializerData.size(); ++i )
+        for (const auto& elem : blobInitializerData )
         {
             cerr<<"GOT HERE"<<endl;
-            layOutCells ( blobInitializerData[i] );
+            layOutCells ( elem );
             //          exit(0);
         }
     }
